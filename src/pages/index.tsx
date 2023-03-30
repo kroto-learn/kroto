@@ -1,9 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Link from "next/link";
 import { MdArrowRightAlt } from "react-icons/md";
-import Image from "next/image";
 import { useEffect } from "react";
 
 const Home: NextPage = () => {
@@ -99,7 +97,7 @@ export function Hero() {
               <span>with the creators you love</span>
             </h1>
             <p className="mb-8 px-0 text-lg text-gray-600 md:text-xl lg:px-24">
-              Start gaining the traction you've always wanted with our
+              Start gaining the traction you&apos;ve always wanted with our
               next-level templates and designs. Crafted to help you tell your
               story.
             </p>
@@ -116,7 +114,7 @@ export function Hero() {
                   fill="currentColor"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
                     clip-rule="evenodd"
                   ></path>

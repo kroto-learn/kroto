@@ -1,6 +1,4 @@
 import React from "react";
-import { cx } from "class-variance-authority";
-import { coverStyle } from "./CreatorPage.style";
 
 const CreatorCover = () => {
   {
@@ -8,12 +6,7 @@ const CreatorCover = () => {
   }
 
   return (
-    <div
-      className={cx(
-        coverStyle(),
-        "bg-[url('https://res.cloudinary.com/dvisf70pm/image/upload/v1680098856/1664349376731_sdktvy.jpg')]"
-      )}
-    ></div>
+    <div className="aspect-[16/3] w-full bg-[url('https://res.cloudinary.com/dvisf70pm/image/upload/v1680098856/1664349376731_sdktvy.jpg')] bg-cover bg-center"></div>
   );
 };
 

@@ -5,7 +5,7 @@
       "cover_art_url": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680098856/1664349376731_sdktvy.jpg",
       "name": "Rose Kamal Love",
       "image_url": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680098256/1676536900360_gpwhyw.jpg",
-      "bio": "rosekamal.love sharing his learnings about tech, life, and philosophy\nGoogle SoC 22' @LibreHealth • Front-End Intern @Solvio / @BlendEd (Summer 22') • Open Source Developer @MLH (Fall 21') • B-Tech (CSIT 24U+2019)",
+      "bio": "rosekamal.love sharing his learnings about tech, life, and philosophy\nGoogle SoC 22' @LibreHealth • Front-End Intern @Solvio / @BlendEd (Summer 22') • Open Source Developer @MLH (Fall 21') • B-Tech (CSIT 24)",
       "links": [
         { "href": "https://www.youtube.com/@rosekamallove", "type": "youtube" },
         {
@@ -22,6 +22,51 @@
           "href": "https://www.kroto.in/",
           "type": "other",
           "text": "kroto.in"
+        }
+      ],
+      "courses": [
+        {
+          "title": "Full Stack Blog App with Next.js",
+          "description": "In this video series, I will review how I built https://rosekamal.love using Next.js as the front-end framework, tailwind CSS for the styling system, TRPC for  API Routes, and Prisma for our Database. I will show you how to create a complete stack application that is type-safe from the backend till the front end shares the same types. And then deploy it on Vercel.",
+          "price": 0,
+          "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg",
+          "featured": true
+        },
+        {
+          "title": "Full Stack Blog App with Next.js",
+          "description": "In this video series, I will review how I built https://rosekamal.love using Next.js as the front-end framework, tailwind CSS for the styling system, TRPC for  API Routes, and Prisma for our Database. I will show you how to create a complete stack application that is type-safe from the backend till the front end shares the same types. And then deploy it on Vercel.",
+          "price": 0,
+          "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg"
+        },
+        {
+          "title": "Full Stack Blog App with Next.js",
+          "description": "In this video series, I will review how I built https://rosekamal.love using Next.js as the front-end framework, tailwind CSS for the styling system, TRPC for  API Routes, and Prisma for our Database. I will show you how to create a complete stack application that is type-safe from the backend till the front end shares the same types. And then deploy it on Vercel.",
+          "price": 0,
+          "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg"
+        }
+      ],
+      "events": [
+        {
+          "title": "Web Development Bootcamp",
+          "description": "In this bootcamp I will go through complete web development fundamentals and modern full stack development tech tutorials.",
+          "price": 0,
+          "datetime": "2023-06-22T01:30:00.000-05:00",
+          "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg",
+          "featured": true
+        },
+        {
+          "title": "Web Development Bootcamp",
+          "description": "In this bootcamp I will go through complete web development fundamentals and modern full stack development tech tutorials.",
+          "price": 0,
+          "datetime": "2023-06-22T01:30:00.000-05:00",
+          "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg"
+        },
+        {
+          "title": "Web Development Bootcamp",
+          "description": "In this bootcamp I will go through complete web development fundamentals and modern full stack development tech tutorials.",
+          "price": 0,
+          "datetime": "2023-06-22T01:30:00.000-05:00",
+          "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg"
         }
       ]
     }
