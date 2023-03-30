@@ -1,17 +1,30 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { signIn } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { MdArrowRightAlt } from "react-icons/md";
 import Image from "next/image";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    console.log(session);
+  }, [session]);
+
   return (
     <>
       <Head>
         <title>Kroto - Learn Collectively</title>
       </Head>
-      <main className="bg-neutral-900">
+      <main className="bg-neutral-900 ">
+        <button
+          className="absolute right-5 top-5 z-10 text-white"
+          onClick={() => void signOut()}
+        >
+          Sing out
+        </button>
         <PingHero />
       </main>
     </>
