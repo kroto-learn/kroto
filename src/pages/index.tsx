@@ -40,7 +40,7 @@ export function PingHero() {
           <div className="">
             <div className="mx-auto max-w-lg sm:max-w-4xl sm:px-4 sm:text-center lg:flex lg:items-center lg:pl-0 lg:text-left">
               <div className="">
-                <h1 className="relative max-w-4xl text-center font-extrabold tracking-tight text-white sm:mt-5 sm:text-6xl lg:mt-6 xl:text-7xl">
+                <h1 className="relative max-w-4xl text-center text-4xl font-extrabold tracking-tight text-white sm:mt-5 sm:text-6xl lg:mt-6 xl:text-7xl">
                   <span className="block">Collective learning with the </span>
                   <span className="block pb-3 text-pink-500 sm:pb-5">
                     creators you love
