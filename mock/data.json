@@ -1,7 +1,29 @@
 {
   "creators": [
     {
-      "id": "@rosekamallove"
+      "id": "@rosekamallove",
+      "cover_art_url": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680098856/1664349376731_sdktvy.jpg",
+      "name": "Rose Kamal Love",
+      "image_url": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680098256/1676536900360_gpwhyw.jpg",
+      "bio": "rosekamal.love sharing his learnings about tech, life, and philosophy\nGoogle SoC 22' @LibreHealth • Front-End Intern @Solvio / @BlendEd (Summer 22') • Open Source Developer @MLH (Fall 21') • B-Tech (CSIT 24U+2019)",
+      "links": [
+        { "href": "https://www.youtube.com/@rosekamallove", "type": "youtube" },
+        {
+          "href": "https://www.linkedin.com/in/rose-kamal-love-1146141b0",
+          "type": "linkedin"
+        },
+        { "href": "https://twitter.com/RoseKamalLove1", "type": "twitter" },
+        {
+          "href": "https://www.instagram.com/rosekamallove",
+          "type": "instagram"
+        },
+        { "href": "https://www.rosekamal.love/", "type": "website" },
+        {
+          "href": "https://www.kroto.in/",
+          "type": "other",
+          "text": "kroto.in"
+        }
+      ]
     }
   ]
 }

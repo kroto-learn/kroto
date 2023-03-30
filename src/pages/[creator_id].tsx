@@ -1,15 +1,24 @@
+import CreatorPage from "@/components/CreatorPage/CreatorPage";
 import type { Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import type { GetStaticPropsContext } from "next";
+import Head from "next/head";
 import type { ParsedUrlQuery } from "querystring";
 import React from "react";
 
 type CreatorPageProps = {
-  creator: Creator | null;
+  creator: Creator;
 };
 
-const CreatorPage = ({ creator }: CreatorPageProps) => {
-  return <div>{creator?.id}</div>;
+const Index = ({ creator }: CreatorPageProps) => {
+  return (
+    <>
+      <Head>
+        <title>{creator.name + " - Kroto"}</title>
+      </Head>
+      <CreatorPage creator={creator} />
+    </>
+  );
 };
 
 export async function getStaticPaths() {
@@ -21,7 +30,7 @@ export async function getStaticPaths() {
         creator_id: c.id,
       },
     })),
-    fallback: false,
+    fallback: "blocking",
   };
 }
 
@@ -36,9 +45,14 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     (c: Creator) => c.id === (context.params as CParams).creator_id
   );
 
+  if (!creator)
+    return {
+      notFound: true,
+    };
+
   return {
     props: { creator },
   };
 }
 
-export default CreatorPage;
+export default Index;
