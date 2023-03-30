@@ -18,10 +18,10 @@ const Home: NextPage = () => {
       </Head>
       <main className="bg-neutral-900 ">
         <button
-          className="absolute right-5 top-5 z-10 text-white"
+          className="absolute right-5 top-5 z-10 text-neutral-300 hover:underline"
           onClick={() => void signOut()}
         >
-          Sing out
+          Sign out
         </button>
         <PingHero />
       </main>
@@ -78,97 +78,6 @@ export function PingHero() {
             {/*   </div> */}
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-export function Hero() {
-  return (
-    <body className="flex h-screen items-center justify-center overflow-hidden">
-      <section className="bg-white pt-24">
-        <div className="mx-auto max-w-7xl px-12">
-          <div className="mx-auto w-full text-left md:w-11/12 md:text-center xl:w-9/12">
-            <h1 className="mb-8 text-4xl font-extrabold leading-none tracking-normal text-gray-900 md:text-6xl md:tracking-tight">
-              <span>Start</span>{" "}
-              <span className="leading-12 block w-full bg-gradient-to-r from-green-400 to-purple-500 bg-clip-text py-2 text-transparent lg:inline">
-                learnive collectively
-              </span>{" "}
-              <span>with the creators you love</span>
-            </h1>
-            <p className="mb-8 px-0 text-lg text-gray-600 md:text-xl lg:px-24">
-              Start gaining the traction you&apos;ve always wanted with our
-              next-level templates and designs. Crafted to help you tell your
-              story.
-            </p>
-            <div className="mb-4 space-x-0 md:mb-8 md:space-x-2">
-              <button
-                onClick={() => void signIn()}
-                className="mb-2 inline-flex w-full items-center justify-center rounded-2xl bg-green-400 px-6 py-3 text-lg text-white sm:mb-0 sm:w-auto"
-              >
-                Get Started
-                <svg
-                  className="ml-1 h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div className="mx-auto mt-20 w-full text-center md:w-10/12">
-            <div className="relative z-0 mt-8 w-full">
-              <div className="relative overflow-hidden shadow-2xl">
-                <div className="flex h-11 flex-none items-center rounded-xl rounded-b-none bg-green-400 px-4">
-                  <div className="flex space-x-1.5">
-                    <div className="h-3 w-3 rounded-full border-2 border-white"></div>
-                    <div className="h-3 w-3 rounded-full border-2 border-white"></div>
-                    <div className="h-3 w-3 rounded-full border-2 border-white"></div>
-                  </div>
-                </div>
-                <img src="https://cdn.devdojo.com/images/march2021/green-dashboard.jpg" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </body>
-  );
-}
-
-export function TeacherHeader() {
-  return (
-    <div className="relative overflow-hidden">
-      <SVGBackground />
-      <div className="relative pb-32 pt-16 sm:pb-48">
-        <main className="max-w-8xl mx-auto mt-16 px-4 sm:mt-24">
-          <div className="text-center">
-            <h1 className="text-4xl font-extrabold text-gray-900 sm:text-6xl md:text-8xl">
-              <span>Learn collectively</span> with the{" "}
-              <span>creators you love</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-6xl text-base text-gray-700 sm:text-lg md:mt-8 md:max-w-6xl md:text-4xl">
-              Saves over 90% of teachers&apos; time in creating, sharing,
-              grading and managing assignments
-            </p>
-            <div className="mx-auto mt-5 max-w-md sm:flex sm:justify-center md:mt-8">
-              <div className="rounded-md shadow">
-                <button
-                  onClick={() => void signIn()}
-                  className="flex w-full items-center justify-center rounded-md border border-transparent bg-orange-600 px-8 py-3 text-base font-medium text-white transition-all hover:bg-orange-700 md:px-10 md:py-4 md:text-lg"
-                >
-                  Get started now
-                </button>
-              </div>
-            </div>
-          </div>
-        </main>
       </div>
     </div>
   );
