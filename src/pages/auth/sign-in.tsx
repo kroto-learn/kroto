@@ -2,6 +2,9 @@ import { IoLogoGoogle, IoLogoGithub, IoLogoFacebook } from "react-icons/io";
 import { BsDiscord } from "react-icons/bs";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import Image from "next/image";
+import logo from "public/kroto-logo.png";
 
 const options = [
   {
@@ -26,10 +29,26 @@ const options = [
   },
 ];
 
+export function KrotoLogo() {
+  return (
+    <div>
+      <Link href="/">
+        <div className="flex">
+          <div>
+            <Image src={logo} width={512 / 13} height={512 / 13} alt="logo" />
+          </div>
+          <h2 className="-translate-x-1 text-3xl font-bold text-white">roto</h2>
+        </div>
+      </Link>
+    </div>
+  );
+}
+
 export default function SignIn() {
   const { query } = useRouter();
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="flex flex-col gap-5 h-screen items-center justify-center">
+      <KrotoLogo />
       <div className="max-w-sm rounded-lg border border-neutral-700 bg-neutral-800 p-5">
         {query.error && (
           <p className="py-2 text-center text-sm font-medium text-red-400">
@@ -46,7 +65,7 @@ export default function SignIn() {
             <button
               key={o.id}
               onClick={() => void signIn(o.id, { callbackUrl: "/" })}
-              className="mb-2 mr-2 flex justify-center items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 px-16 py-2.5 text-lg font-medium text-neutral-300 transition hover:bg-neutral-700"
+              className="mb-2 mr-2 flex items-center justify-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 px-16 py-2.5 text-lg font-medium text-neutral-300 transition hover:bg-neutral-700"
             >
               {o.icon} {o.name}
             </button>
