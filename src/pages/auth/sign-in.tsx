@@ -30,7 +30,7 @@ export default function SignIn() {
   const { query } = useRouter();
   return (
     <div className="flex h-screen items-center justify-center">
-      <div className="max-w-md rounded-lg border border-neutral-700 bg-neutral-800 p-5">
+      <div className="max-w-sm rounded-lg border border-neutral-700 bg-neutral-800 p-5">
         {query.error && (
           <p className="py-2 text-center text-sm font-medium text-red-400">
             Can't sign you in, issue with {query.error}
@@ -46,7 +46,7 @@ export default function SignIn() {
             <button
               key={o.id}
               onClick={() => void signIn(o.id, { callbackUrl: "/" })}
-              className="mb-2 mr-2 flex items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 px-16 py-2.5 text-lg font-medium text-neutral-300 transition hover:bg-neutral-700"
+              className="mb-2 mr-2 flex justify-center items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 px-16 py-2.5 text-lg font-medium text-neutral-300 transition hover:bg-neutral-700"
             >
               {o.icon} {o.name}
             </button>
