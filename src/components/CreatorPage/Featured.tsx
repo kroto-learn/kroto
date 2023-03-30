@@ -8,7 +8,7 @@ type Props = {
 
 const Featured = ({ creator }: Props) => {
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-gray-400/30 bg-gray-700 p-4 backdrop-blur-sm">
+    <div className="flex flex-col gap-2 rounded-lg border border-gray-400/30 bg-neutral-700 p-4 backdrop-blur-sm">
       <p className="text-base font-medium uppercase text-gray-300">
         {"✨ "}FEATURED
       </p>

@@ -7,7 +7,7 @@ type Props = {
 
 const CourseCard = ({ course }: Props) => {
   return (
-    <div className="max-w-[20rem] rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800">
+    <div className="max-w-[20rem] rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-neutral-800">
       <div className="relative h-48 w-full overflow-hidden rounded-t-lg object-cover">
         <Image
           src={course.thumbnail}
