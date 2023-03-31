@@ -51,6 +51,7 @@
           "description": "In this bootcamp I will go through complete web development fundamentals and modern full stack development tech tutorials.",
           "price": 0,
           "datetime": "2023-06-22T01:30:00.000-05:00",
+          "duration": 60,
           "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg",
           "featured": true
         },
@@ -59,6 +60,7 @@
           "description": "In this bootcamp I will go through complete web development fundamentals and modern full stack development tech tutorials.",
           "price": 0,
           "datetime": "2023-06-22T01:30:00.000-05:00",
+          "duration": 60,
           "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg"
         },
         {
@@ -66,6 +68,7 @@
           "description": "In this bootcamp I will go through complete web development fundamentals and modern full stack development tech tutorials.",
           "price": 0,
           "datetime": "2023-06-22T01:30:00.000-05:00",
+          "duration": 60,
           "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg"
         }
       ]

@@ -1,13 +1,14 @@
-import type { Course } from "interfaces/Course";
+import type { Event } from "interfaces/Event";
 import Image from "next/image";
 import React from "react";
 import { HiArrowSmRight } from "react-icons/hi";
+import DateTime from "./DateTime";
 type Props = {
-  course: Course;
+  event: Event;
   collapsed?: boolean;
 };
 
-const CourseCard = ({ course, collapsed }: Props) => {
+const EventCard = ({ event, collapsed }: Props) => {
   return (
     <div
       className={`flex gap-4 rounded-lg border border-neutral-700 bg-neutral-800 shadow transition-all duration-300 ${
@@ -22,8 +23,8 @@ const CourseCard = ({ course, collapsed }: Props) => {
         `}
       >
         <Image
-          src={course.thumbnail}
-          alt={course.title}
+          src={event.thumbnail}
+          alt={event.title}
           fill
           style={{ objectFit: "cover" }}
           className="rounded-lg"
@@ -35,30 +36,39 @@ const CourseCard = ({ course, collapsed }: Props) => {
             collapsed ? "text-xs" : "text-lg"
           }`}
         >
-          {course.title}
+          {event.title}
         </h5>
         <p
           className={`duration-30 mb-3 max-h-[4rem] overflow-y-hidden text-sm font-normal text-gray-400 transition-all ${
             collapsed ? "hidden" : ""
           }`}
         >
-          {course.description}
+          {event.description}
         </p>
-        <div className="flex w-full items-center justify-end gap-6">
-          <p className={`text-green-500 ${collapsed ? "text-xs" : ""}`}>FREE</p>
-          <a
-            href="#"
-            className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-pink-600 text-center font-medium text-neutral-200 transition-all duration-300 ${
-              collapsed ? "px-2 py-1 text-xs" : "px-3  py-2 text-sm"
-            }`}
-          >
-            Enroll now
-            <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
-          </a>
+        <div className="flex w-full items-center justify-between gap-4">
+          {!collapsed ? (
+            <DateTime datetime={event.datetime} duration={event.duration} />
+          ) : (
+            <></>
+          )}
+          <div className="flex items-center gap-4">
+            <p className={`text-green-500 ${collapsed ? "text-xs" : ""}`}>
+              FREE
+            </p>
+            <a
+              href="#"
+              className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-pink-600 text-center font-medium text-neutral-200 transition-all duration-300 ${
+                collapsed ? "px-2 py-1 text-xs" : "px-3  py-2 text-sm"
+              }`}
+            >
+              Enroll now
+              <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default CourseCard;
+export default EventCard;

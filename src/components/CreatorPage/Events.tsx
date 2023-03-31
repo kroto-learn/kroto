@@ -1,6 +1,6 @@
 import React from "react";
-import CourseCard from "../CourseCard";
 import type { Event } from "interfaces/Event";
+import EventCard from "../EventCard";
 
 type Prop = {
   events: Event[];
@@ -12,7 +12,7 @@ const Events = ({ events }: Prop) => {
       <h2 className="text-3xl text-neutral-200">Upcoming Events</h2>
       <div className="flex flex-col gap-12">
         {events.map((event) => (
-          <CourseCard key={event.title} course={event} />
+          <EventCard key={event.title} event={event} />
         ))}
       </div>
     </div>

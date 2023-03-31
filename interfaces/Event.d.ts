@@ -11,4 +11,5 @@ export type Event = {
   price: number;
   featured?: boolean;
   datetime: string;
+  duration: number;
 };
