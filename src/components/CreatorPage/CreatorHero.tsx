@@ -11,8 +11,8 @@ type Props = {
 
 const CreatorHero = ({ creator, collapsed }: Props) => {
   return (
-    <div className="relative my-6 flex w-6/12 flex-col items-start">
-      <div className="absolute left-32 z-[2]">
+    <div className="relative my-6 flex w-full max-w-3xl flex-col items-center p-4 lg:items-start">
+      <div className="absolute z-[2] lg:left-32">
         <div
           className={`relative aspect-square w-28 overflow-hidden  rounded-full border border-neutral-900 outline outline-neutral-800 transition-all`}
         >
@@ -20,7 +20,7 @@ const CreatorHero = ({ creator, collapsed }: Props) => {
         </div>
       </div>
       <div
-        className={`mt-[3.7rem] flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 px-12 pb-12 pt-16 backdrop-blur-lg transition-all duration-300`}
+        className={`mt-[3.7rem] flex w-full flex-col items-center justify-between gap-4 rounded-xl bg-neutral-800 px-8 pb-8 pt-16 backdrop-blur-lg transition-all duration-300 lg:flex-row lg:px-12 lg:pb-12 lg:pt-16`}
       >
         <CreatorDetail creator={creator} collapsed={collapsed} />
         <Featured creator={creator} collapsed={collapsed} />

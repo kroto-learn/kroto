@@ -20,20 +20,20 @@ const CreatorDetail = ({ creator, collapsed }: Props) => {
         }`}
       >
         <h1
-          className={`font-medium text-neutral-200 transition-all duration-300 ${
+          className={`text-center font-medium text-neutral-200 transition-all duration-300 lg:text-left ${
             collapsed ? "text-2xl" : "text-4xl"
           }`}
         >
           {creator.name}
         </h1>
         <p
-          className={`text-neutral-400 transition-all duration-300 ${
+          className={`text-center text-neutral-400 transition-all  duration-300 lg:text-left ${
             collapsed ? "" : ""
           }`}
         >
           {creator.bio}
         </p>
-        <div className="flex max-w-sm flex-wrap items-center justify-start gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
           {creator.links.map((link) => (
             <SocialLink
               collapsed={collapsed}
