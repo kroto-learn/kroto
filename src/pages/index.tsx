@@ -1,7 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { MdArrowRightAlt } from "react-icons/md";
+
+import { HiArrowSmRight } from "react-icons/hi";
 import { useEffect } from "react";
 
 const Home: NextPage = () => {
@@ -56,11 +57,10 @@ export function PingHero() {
                     <div className="flex flex-wrap gap-x-4 gap-y-2 sm:justify-center lg:justify-start">
                       <button
                         onClick={() => void signIn()}
-                        className="relative inline-flex items-center rounded-md border border-pink-700 bg-pink-600 px-6 py-3 text-lg font-medium text-white shadow-sm hover:border-pink-800 hover:bg-pink-700"
+                        className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
                       >
-                        <span className="flex items-center gap-1">
-                          Start your journey now <MdArrowRightAlt />
-                        </span>
+                        Start you journey now
+                        <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
                       </button>
                     </div>
                   </div>
