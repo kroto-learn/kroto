@@ -11,12 +11,12 @@ const CourseCard = ({ course, collapsed }: Props) => {
   return (
     <div
       className={`flex gap-4 rounded-lg border border-gray-200 bg-white p-3 shadow transition-all duration-300 dark:border-gray-300/10 dark:bg-[#27272A] ${
-        collapsed ? "w-[28rem]" : "max-w-[20rem] flex-col"
+        collapsed ? "w-[28rem]" : "max-w-2xl"
       }`}
     >
       <div
         className={`relative aspect-[16/10] object-cover transition-all duration-300
-        ${collapsed ? "w-40" : " w-full"}
+        ${collapsed ? "w-40" : "w-72"}
         `}
       >
         <Image
