@@ -3,7 +3,6 @@ import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { HiArrowSmRight } from "react-icons/hi";
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 
 const Home: NextPage = () => {

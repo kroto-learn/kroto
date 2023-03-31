@@ -1,3 +1,10 @@
+import { useSession } from "next-auth/react";
+
 export default function Dashboard() {
-  return <div>This is the dashboard</div>;
+  const { data: session } = useSession();
+  return (
+    <div className="">
+      <pre>{JSON.stringify(session, null, 2)}</pre>
+    </div>
+  );
 }
