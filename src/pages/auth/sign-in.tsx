@@ -64,7 +64,7 @@ export default function SignIn() {
           {options.map((o) => (
             <button
               key={o.id}
-              onClick={() => void signIn(o.id, { callbackUrl: "/" })}
+              onClick={() => void signIn(o.id, { callbackUrl: "/dashboard" })}
               className="mb-2 mr-2 flex items-center justify-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 px-16 py-2.5 text-lg font-medium text-neutral-300 transition hover:bg-neutral-700"
             >
               {o.icon} {o.name}

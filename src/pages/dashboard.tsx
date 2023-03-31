@@ -42,6 +42,10 @@ export default function Dashboard() {
       </div>
 
       <div>
+        <RegisteredEvents />
+      </div>
+
+      <div>
         <h3 className="mb-5 text-2xl font-medium">Discover Creators</h3>
         <div>
           <form onSubmit={(e) => e.preventDefault()}>
@@ -81,11 +85,18 @@ export default function Dashboard() {
               </button>
             </div>
           </form>
+          <div>
+            <CreatorCard />
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
+export const RegisteredEvents = () => {
+  return <div />;
+};
 
 export const CreatorCard = () => {
   return <div></div>;
