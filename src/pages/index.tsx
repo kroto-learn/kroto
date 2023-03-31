@@ -4,14 +4,9 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { HiArrowSmRight } from "react-icons/hi";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    console.log(session);
-  }, [session]);
-
   return (
     <>
       <Head>
@@ -33,6 +28,9 @@ const Home: NextPage = () => {
 export default Home;
 
 export function PingHero() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
   return (
     <div className="relative overflow-hidden">
       <SVGBackground />
@@ -56,10 +54,16 @@ export function PingHero() {
                   <div className="sm:mx-auto sm:max-w-xl lg:mx-0">
                     <div className="flex flex-wrap gap-x-4 gap-y-2 sm:justify-center lg:justify-start">
                       <button
-                        onClick={() => void signIn()}
+                        onClick={() => {
+                          session?.user
+                            ? router.push("/dashboard")
+                            : void signIn();
+                        }}
                         className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
                       >
-                        Start you journey now
+                        {session?.user
+                          ? "Go to dashboard"
+                          : "Start you journey now"}
                         <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
                       </button>
                     </div>
