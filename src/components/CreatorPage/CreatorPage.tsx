@@ -24,7 +24,7 @@ const CreatorPage = ({ creator }: Props) => {
   return (
     <main className="flex h-full min-h-screen w-screen flex-col items-center overflow-x-hidden bg-neutral-900 bg-[url('/pattern.svg')] pb-24">
       <CreatorCover />
-      <CreatorHero creator={creator} collapsed={scrollLength > 250} />
+      <CreatorHero creator={creator} collapsed={scrollLength > 200} />
       {/* <Courses courses={creator.courses} /> */}
       <Events events={creator.events} />
     </main>
