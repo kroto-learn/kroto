@@ -10,7 +10,7 @@ type Props = {
 const CourseCard = ({ course, collapsed }: Props) => {
   return (
     <div
-      className={`flex gap-4 rounded-lg border border-gray-200 bg-white p-3 shadow transition-all duration-300 dark:border-gray-300/10 dark:bg-[#27272A] ${
+      className={`flex gap-4 rounded-lg border border-gray-300/10 bg-[#27272A] p-3 shadow transition-all duration-300 ${
         collapsed ? "w-[28rem]" : "max-w-2xl"
       }`}
     >
@@ -29,14 +29,14 @@ const CourseCard = ({ course, collapsed }: Props) => {
       </div>
       <div className="w-full">
         <h5
-          className={`mb-2 font-bold tracking-tight text-gray-900 transition-all duration-300 dark:text-white ${
+          className={`mb-2 font-bold tracking-tight text-white transition-all duration-300 ${
             collapsed ? "text-lg" : "text-lg"
           }`}
         >
           {course.title}
         </h5>
         <p
-          className={`mb-3 max-h-[4rem] overflow-y-hidden text-sm font-normal text-gray-700 transition-all duration-300 dark:text-gray-400 ${
+          className={`duration-30 mb-3 max-h-[4rem] overflow-y-hidden text-sm font-normal text-gray-400 transition-all ${
             collapsed ? "hidden" : ""
           }`}
         >
@@ -46,7 +46,7 @@ const CourseCard = ({ course, collapsed }: Props) => {
           <p className="text-green-500">FREE</p>
           <a
             href="#"
-            className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-[#C01A62] px-3 py-2 text-center font-medium text-white transition-all duration-300 hover:bg-[#C01A62] focus:bg-[#C01A62] focus:outline-none focus:ring-4 dark:bg-[#C01A62] ${
+            className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-[#C01A62] px-3 py-2 text-center font-medium text-white transition-all duration-300 ${
               collapsed ? "text-xs" : "text-sm"
             }`}
           >
