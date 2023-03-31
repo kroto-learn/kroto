@@ -57,7 +57,7 @@ const EventCard = ({ event, collapsed }: Props) => {
             </p>
             <a
               href="#"
-              className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-pink-600 text-center font-medium text-neutral-200 transition-all duration-300 ${
+              className={`group inline-flex items-center gap-[0.15rem] rounded-md bg-pink-600 text-center font-medium text-neutral-200 transition-all duration-300 ${
                 collapsed ? "px-2 py-1 text-xs" : "px-3  py-2 text-sm"
               }`}
             >

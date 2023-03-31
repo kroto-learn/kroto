@@ -27,7 +27,7 @@
       "courses": [
         {
           "title": "Full Stack Blog App with Next.js",
-          "description": "In this video series, I will review how I built https://rosekamal.love using Next.js as the front-end framework, tailwind CSS for the styling system, TRPC for  API Routes, and Prisma for our Database. I will show you how to create a complete stack application that is type-safe from the backend till the front end shares the same types. And then deploy it on Vercel.",
+          "description": "In this video series, I will review how I built https://rosekamal.love using Next.js as the front-end framework, tailwind CSS for the styling system, TRPC for  API Routes, and Prisma for our Database. ",
           "price": 0,
           "thumbnail": "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg",
           "featured": true
