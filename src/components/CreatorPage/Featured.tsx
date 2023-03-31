@@ -16,9 +16,9 @@ const Featured = ({ creator, collapsed }: Props) => {
           : "rounded-lg border border-gray-400/20 bg-[#1F1F20] p-4 backdrop-blur-sm"
       }`}
     >
-      <p className="text-base font-medium uppercase text-gray-300">
+      {/* <p className="text-base font-medium uppercase text-gray-300">
         {"✨ "}FEATURED
-      </p>
+      </p> */}
       <div
         className={`flex items-center gap-6 transition-all duration-300 ${
           collapsed ? "flex-col" : ""
