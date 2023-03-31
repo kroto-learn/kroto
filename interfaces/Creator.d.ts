@@ -1,5 +1,4 @@
-import type { Course } from "./Course";
-import type { Event } from "./Event";
+import type { CourseEvent } from "./CourseEvent";
 
 type Link = {
   href: string;
@@ -14,6 +13,6 @@ export type Creator = {
   image_url: string;
   bio: string;
   links: Link[];
-  courses: Course[];
-  events: Event[];
+  courses: CourseEvent[];
+  events: CourseEvent[];
 };

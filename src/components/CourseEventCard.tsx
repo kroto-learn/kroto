@@ -1,14 +1,14 @@
-import type { Event } from "interfaces/Event";
 import Image from "next/image";
 import React from "react";
 import { HiArrowSmRight } from "react-icons/hi";
 import DateTime from "./DateTime";
+import type { CourseEvent } from "interfaces/CourseEvent";
 type Props = {
-  event: Event;
+  courseevent: CourseEvent;
   collapsed?: boolean;
 };
 
-const EventCard = ({ event, collapsed }: Props) => {
+const CourseEventCard = ({ courseevent, collapsed }: Props) => {
   return (
     <div
       className={`flex flex-col gap-4 rounded-lg border border-neutral-700 bg-neutral-800 shadow transition-all duration-300 sm:flex-row ${
@@ -23,8 +23,8 @@ const EventCard = ({ event, collapsed }: Props) => {
         `}
       >
         <Image
-          src={event.thumbnail}
-          alt={event.title}
+          src={courseevent.thumbnail}
+          alt={courseevent.title}
           fill
           style={{ objectFit: "cover" }}
           className="rounded-lg"
@@ -36,18 +36,21 @@ const EventCard = ({ event, collapsed }: Props) => {
             collapsed ? "text-xs" : "text-lg"
           }`}
         >
-          {event.title}
+          {courseevent.title}
         </h5>
         <p
           className={`duration-30 mb-3 max-h-[4rem] overflow-y-hidden text-sm font-normal text-gray-400 transition-all ${
             collapsed ? "hidden" : ""
           }`}
         >
-          {event.description}
+          {courseevent.description}
         </p>
         <div className="flex w-full items-center justify-between gap-4">
-          {!collapsed ? (
-            <DateTime datetime={event.datetime} duration={event.duration} />
+          {!collapsed && courseevent.datetime && courseevent.duration ? (
+            <DateTime
+              datetime={courseevent.datetime}
+              duration={courseevent.duration}
+            />
           ) : (
             <></>
           )}
@@ -71,4 +74,4 @@ const EventCard = ({ event, collapsed }: Props) => {
   );
 };
 
-export default EventCard;
+export default CourseEventCard;

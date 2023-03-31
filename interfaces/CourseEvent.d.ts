@@ -1,4 +1,4 @@
-export type Course = {
+export type CourseEvent = {
   title: string;
   description:
     | "youtube"
@@ -10,4 +10,6 @@ export type Course = {
   thumbnail: string;
   price: number;
   featured?: boolean;
+  datetime?: string;
+  duration?: number;
 };
