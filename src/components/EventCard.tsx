@@ -11,7 +11,7 @@ type Props = {
 const EventCard = ({ event, collapsed }: Props) => {
   return (
     <div
-      className={`flex gap-4 rounded-lg border border-neutral-700 bg-neutral-800 shadow transition-all duration-300 ${
+      className={`flex flex-col gap-4 rounded-lg border border-neutral-700 bg-neutral-800 shadow transition-all duration-300 sm:flex-row ${
         collapsed
           ? "h-24 w-full max-w-lg items-center p-2 px-3"
           : "max-w-2xl p-3"
@@ -19,7 +19,7 @@ const EventCard = ({ event, collapsed }: Props) => {
     >
       <div
         className={`relative aspect-[16/10] object-cover transition-all duration-300
-        ${collapsed ? " h-full" : "w-[30rem]"}
+        ${collapsed ? "h-full" : "w-full sm:w-[18rem] md:w-[30rem]"}
         `}
       >
         <Image

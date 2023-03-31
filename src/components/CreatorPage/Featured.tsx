@@ -10,7 +10,7 @@ type Props = {
 const Featured = ({ creator, collapsed }: Props) => {
   return (
     <div
-      className={`flex w-full flex-col items-end gap-2 ${
+      className={`mt-4 flex w-full flex-col items-end gap-2 lg:mt-0 ${
         collapsed
           ? ""
           : "rounded-lg border border-neutral-700 bg-neutral-800 p-4 backdrop-blur-sm"
