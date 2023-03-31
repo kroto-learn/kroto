@@ -66,7 +66,7 @@ const Text: ({
 const SocialLink = ({ href, type = "other", children, collapsed }: Props) => {
   return (
     <a
-      className={`flex cursor-pointer items-center gap-2 border border-gray-200/20 bg-white/10 px-3 py-2 font-medium text-gray-200 duration-300 hover:bg-gray-200 hover:text-black ${
+      className={`flex cursor-pointer items-center gap-2 border border-neutral-600 bg-white/10 px-3 py-2 font-medium text-gray-200 duration-300 hover:bg-gray-200 hover:text-black ${
         collapsed ? "aspect-square rounded-full text-base" : "text-xs"
       }`}
       href={href}

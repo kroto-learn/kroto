@@ -10,8 +10,8 @@ type Props = {
 const CourseCard = ({ course, collapsed }: Props) => {
   return (
     <div
-      className={`flex gap-4 rounded-lg border border-gray-300/10 bg-[#27272A] p-3 shadow transition-all duration-300 ${
-        collapsed ? "w-[28rem]" : "max-w-2xl"
+      className={`flex gap-4 rounded-lg border border-neutral-700 bg-neutral-800 p-3 shadow transition-all duration-300 ${
+        collapsed ? "w-full max-w-lg" : "max-w-2xl"
       }`}
     >
       <div
@@ -29,8 +29,8 @@ const CourseCard = ({ course, collapsed }: Props) => {
       </div>
       <div className="w-full">
         <h5
-          className={`mb-2 font-bold tracking-tight text-white transition-all duration-300 ${
-            collapsed ? "text-lg" : "text-lg"
+          className={`mb-2 font-bold tracking-tight text-neutral-200 transition-all duration-300 ${
+            collapsed ? "text-md" : "text-lg"
           }`}
         >
           {course.title}
@@ -46,7 +46,7 @@ const CourseCard = ({ course, collapsed }: Props) => {
           <p className="text-green-500">FREE</p>
           <a
             href="#"
-            className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-[#C01A62] px-3 py-2 text-center font-medium text-white transition-all duration-300 ${
+            className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-pink-600 px-3 py-2 text-center font-medium text-neutral-200 transition-all duration-300 ${
               collapsed ? "text-xs" : "text-sm"
             }`}
           >

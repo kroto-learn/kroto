@@ -10,17 +10,17 @@ type Props = {
 const Featured = ({ creator, collapsed }: Props) => {
   return (
     <div
-      className={`flex flex-col gap-2 ${
+      className={`flex w-full flex-col items-end gap-2 ${
         collapsed
           ? ""
-          : "rounded-lg border border-gray-400/20 bg-[#1F1F20] p-4 backdrop-blur-sm"
+          : "rounded-lg border border-neutral-700 bg-neutral-800 p-4 backdrop-blur-sm"
       }`}
     >
       {/* <p className="text-base font-medium uppercase text-gray-300">
         {"✨ "}FEATURED
       </p> */}
       <div
-        className={`flex items-center gap-6 transition-all duration-300 ${
+        className={`flex w-full items-center gap-6 transition-all duration-300 ${
           collapsed ? "flex-col" : ""
         }`}
       >
