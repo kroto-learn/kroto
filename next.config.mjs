@@ -24,6 +24,9 @@ const config = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      {
+        hostname: "cdn.discordapp.com",
+      },
     ],
   },
 };
