@@ -37,7 +37,7 @@ export function KrotoLogo() {
           <div>
             <Image src={logo} width={512 / 13} height={512 / 13} alt="logo" />
           </div>
-          <h2 className="-translate-x-1 text-3xl font-bold text-white">roto</h2>
+          <h2 className="-translate-x-1 text-3xl font-medium text-white">roto</h2>
         </div>
       </Link>
     </div>

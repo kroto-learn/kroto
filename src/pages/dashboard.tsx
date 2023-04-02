@@ -5,6 +5,7 @@ export default function Dashboard() {
   const { data: session } = useSession();
   return (
     <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
+      {/* <ClaimLink variant="sm"/> */}
       <div className="my-20 rounded-lg border border-neutral-700 bg-neutral-800 p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5">
