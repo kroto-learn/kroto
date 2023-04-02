@@ -45,12 +45,16 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
       </div>
 
       <div>
-        <h3 className="mb-5 text-2xl font-medium">Upcoming Events</h3>
+        <h3 className="mb-5 text-2xl font-medium text-neutral-300">
+          Upcoming Events
+        </h3>
         <RegisteredEvents />
       </div>
 
       <div>
-        <h3 className="mb-5 text-2xl font-medium">Discover Creators</h3>
+        <h3 className="mb-5 text-2xl font-medium text-neutral-300">
+          Discover Creators
+        </h3>
         <div>
           <form onSubmit={(e) => e.preventDefault()}>
             <label className="sr-only mb-2 text-sm font-medium dark:text-white">
@@ -77,7 +81,7 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
               <input
                 type="search"
                 id="default-search"
-                className="block w-full rounded-lg border border-neutral-700 bg-neutral-800 p-4 pl-10 text-sm placeholder-neutral-400 outline-none ring-transparent focus:border-neutral-500 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                className="block w-full rounded-lg border border-neutral-700 bg-neutral-800 p-4 pl-10 text-sm placeholder-neutral-400 outline-none ring-transparent transition focus:border-neutral-500 focus:ring-neutral-500 active:outline-none active:ring-transparent"
                 placeholder="Search for you favorite creators..."
                 required
               />
