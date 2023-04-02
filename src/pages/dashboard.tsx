@@ -1,11 +1,27 @@
+import CourseEventCard from "@/components/CourseEventCard";
+import { CourseEvent } from "interfaces/CourseEvent";
 import { Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
+import { getEvents } from "mock/getEvents";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import Image from "next/image";
 import { MdAccountCircle, MdSubscriptions } from "react-icons/md";
 
-export default function Dashboard({ creators }: { creators: Creator[] }) {
+import HardWorkingCat from "public/CatWorkingHard.png";
+
+export default function Dashboard({
+  creators,
+  events,
+}: {
+  creators: Creator[];
+  events: CourseEvent[];
+}) {
   const { data: session } = useSession();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [inputValue, setInputValue] = useState("");
+
   return (
     <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
       <div className="my-10 rounded-lg border border-neutral-700 bg-neutral-800 p-5">
@@ -48,7 +64,16 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
         <h3 className="mb-5 text-2xl font-medium text-neutral-300">
           Upcoming Events
         </h3>
-        <RegisteredEvents />
+        {events?.map((e) => (
+          <div key={e.ogdescription}>
+            <RegisteredEvents event={e} />
+            <br />
+          </div>
+        ))}
+        <div className="mx-2 mb-10 flex justify-between">
+          <button className="transition text-pink-500 hover:text-pink-600">View More</button>
+          <button className="transition text-pink-500 hover:text-pink-600">Show past</button>
+        </div>
       </div>
 
       <div>
@@ -56,7 +81,12 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
           Discover Creators
         </h3>
         <div>
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setSearchQuery(inputValue);
+            }}
+          >
             <label className="sr-only mb-2 text-sm font-medium dark:text-white">
               Search
             </label>
@@ -83,7 +113,7 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
                 id="default-search"
                 className="block w-full rounded-lg border border-neutral-700 bg-neutral-800 p-4 pl-10 text-sm placeholder-neutral-400 outline-none ring-transparent transition focus:border-neutral-500 focus:ring-neutral-500 active:outline-none active:ring-transparent"
                 placeholder="Search for you favorite creators..."
-                required
+                onChange={(e) => setInputValue(e.target.value)}
               />
               <button
                 type="submit"
@@ -94,9 +124,26 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
             </div>
           </form>
           <div>
-            {creators?.map((c) => (
-              <CreatorCard key={c.id} creator={c} />
-            ))}
+            {searchQuery === "" ? (
+              creators?.map((c) => <CreatorCard key={c.id} creator={c} />)
+            ) : (
+              <div className="my-5 flex flex-col items-center justify-center rounded-lg border border-neutral-700 bg-neutral-800 p-5">
+                <h4 className="max-w-md text-center text-2xl text-neutral-400">
+                  Hang in there,
+                </h4>
+                <div className="relative aspect-square h-56">
+                  <Image
+                    className="h-56"
+                    src={HardWorkingCat}
+                    fill
+                    alt="hard working cat"
+                  />
+                </div>
+                <h4 className="max-w-md text-center text-2xl text-neutral-400">
+                  We're working really hard to get more creators on board.
+                </h4>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -106,14 +153,15 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
 
 export async function getStaticProps() {
   const creators = await getCreators();
+  const events = await getEvents();
 
   return {
-    props: { creators: creators },
+    props: { creators, events },
   };
 }
 
-export const RegisteredEvents = () => {
-  return <div />;
+export const RegisteredEvents = ({ event }: { event: CourseEvent }) => {
+  return <CourseEventCard courseevent={event} />;
 };
 
 export const CreatorCard = ({ creator }: { creator: Creator }) => {
