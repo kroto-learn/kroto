@@ -7,12 +7,17 @@ import Head from "next/head";
 import type { ParsedUrlQuery } from "querystring";
 import React from "react";
 import Image from "next/image";
+import { getEvents } from "mock/getEvents";
+import { getCourses } from "mock/getCourses";
+import type { CourseEvent } from "interfaces/CourseEvent";
 
 type CreatorPageProps = {
   creator: Creator;
+  hostedCourses: CourseEvent[];
+  hostedEvents: CourseEvent[];
 };
 
-const Index = ({ creator }: CreatorPageProps) => {
+const Index = ({ creator, hostedCourses, hostedEvents }: CreatorPageProps) => {
   return (
     <>
       <Head>
@@ -66,7 +71,7 @@ const Index = ({ creator }: CreatorPageProps) => {
               <div
                 className={`flex w-full flex-col items-center gap-6 transition-all duration-300`}
               >
-                {creator.courses.map((course) =>
+                {hostedCourses.map((course) =>
                   course?.featured ? (
                     <CourseEventCard
                       collapsed={true}
@@ -77,7 +82,7 @@ const Index = ({ creator }: CreatorPageProps) => {
                     <></>
                   )
                 )}
-                {creator.events.map((event) =>
+                {hostedEvents.map((event) =>
                   event.featured ? (
                     <CourseEventCard
                       collapsed={true}
@@ -95,8 +100,12 @@ const Index = ({ creator }: CreatorPageProps) => {
         <div className="my-8 flex flex-col items-start justify-start gap-8 p-8">
           <h2 className="text-2xl text-neutral-200">Upcoming Events</h2>
           <div className="flex flex-col gap-12">
-            {creator.events.map((event) => (
-              <CourseEventCard key={event.title} courseevent={event} />
+            {hostedEvents.map((event) => (
+              <CourseEventCard
+                creator={creator}
+                key={event.title}
+                courseevent={event}
+              />
             ))}
           </div>
         </div>
@@ -106,10 +115,10 @@ const Index = ({ creator }: CreatorPageProps) => {
 };
 
 export async function getStaticPaths() {
-  const creatorsData = await getCreators();
+  const creators = await getCreators();
 
   return {
-    paths: creatorsData.creators.map((c) => ({
+    paths: creators.map((c) => ({
       params: {
         creator_id: c.id,
       },
@@ -123,10 +132,19 @@ interface CParams extends ParsedUrlQuery {
 }
 
 export async function getStaticProps(context: GetStaticPropsContext) {
-  const creatorsData = await getCreators();
+  const creators = await getCreators();
+  const courses = await getCourses();
+  const events = await getEvents();
 
-  const creator = creatorsData.creators.find(
+  const creator = creators.find(
     (c: Creator) => c.id === (context.params as CParams).creator_id
+  );
+
+  const hostedEvents = events.filter((c: CourseEvent) => {
+    return c.creator === (context.params as CParams).creator_id;
+  });
+  const hostedCourses = courses.filter(
+    (c: CourseEvent) => c.creator === (context.params as CParams).creator_id
   );
 
   if (!creator)
@@ -135,7 +153,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     };
 
   return {
-    props: { creator },
+    props: { creator, hostedCourses, hostedEvents },
   };
 }
 

@@ -12,4 +12,6 @@ export type CourseEvent = {
   featured?: boolean;
   datetime?: string;
   duration?: number;
+  creator: string;
+  ogdescription: string;
 };

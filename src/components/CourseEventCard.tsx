@@ -1,25 +1,28 @@
 import Image from "next/image";
 import React from "react";
-import { HiArrowSmRight } from "react-icons/hi";
 import DateTime from "./DateTime";
 import type { CourseEvent } from "interfaces/CourseEvent";
+import CalenderBox from "./CalenderBox";
+import type { Creator } from "interfaces/Creator";
 type Props = {
   courseevent: CourseEvent;
   collapsed?: boolean;
+  creator?: Creator;
 };
 
-const CourseEventCard = ({ courseevent, collapsed }: Props) => {
+const CourseEventCard = ({ courseevent, collapsed, creator }: Props) => {
   return (
     <div
-      className={`flex flex-col gap-4 rounded-lg border border-neutral-700 bg-neutral-800 shadow transition-all duration-300 sm:flex-row ${
+      className={`flex cursor-pointer items-center gap-4 rounded-lg border border-neutral-700 bg-neutral-800 shadow transition-all duration-300 hover:border-neutral-600  ${
         collapsed
-          ? "h-24 w-full max-w-lg items-center p-2 px-3"
-          : "max-w-2xl p-3"
+          ? "h-16 min-w-[24rem] max-w-lg items-center p-2 px-3"
+          : "max-w-2xl flex-col p-3 sm:flex-row"
       }`}
     >
+      {courseevent.datetime && <CalenderBox datetime={courseevent.datetime} />}
       <div
-        className={`relative aspect-[16/10] object-cover transition-all duration-300
-        ${collapsed ? "h-full" : "w-full sm:w-[18rem] md:w-[30rem]"}
+        className={`relative aspect-[18/9] object-cover transition-all duration-300
+        ${collapsed ? "my-12 h-full" : "w-full sm:w-[12rem] md:w-[16rem]"}
         `}
       >
         <Image
@@ -30,32 +33,48 @@ const CourseEventCard = ({ courseevent, collapsed }: Props) => {
           className="rounded-lg"
         />
       </div>
-      <div className="flex w-full flex-col gap-3">
+      <div className="flex w-1/2 flex-col items-start gap-2">
+        {creator && (
+          <div className="flex items-center gap-2">
+            <div
+              className={`relative aspect-square w-4 overflow-hidden rounded-full`}
+            >
+              <Image src={creator.image_url} alt={creator.name} fill />
+            </div>
+            <p
+              className={`text-xs text-neutral-300 transition-all duration-300 ${
+                collapsed ? "hidden" : ""
+              }`}
+            >
+              Hosted by {creator.name}
+            </p>
+          </div>
+        )}
         <h5
-          className={`mb-2 font-medium tracking-tight text-neutral-200 transition-all duration-300 ${
+          className={`font-medium tracking-tight text-neutral-200 transition-all duration-300 ${
             collapsed ? "text-xs" : "text-lg"
           }`}
         >
           {courseevent.title}
         </h5>
         <p
-          className={`duration-30 mb-3 max-h-[4rem] overflow-y-hidden text-sm font-normal text-gray-400 transition-all ${
+          className={`text-sm tracking-tight text-neutral-300 ${
             collapsed ? "hidden" : ""
           }`}
         >
-          {courseevent.description}
+          {courseevent.ogdescription}
         </p>
-        <div className="flex w-full items-center justify-between gap-4">
-          {!collapsed && courseevent.datetime && courseevent.duration ? (
-            <DateTime
-              datetime={courseevent.datetime}
-              duration={courseevent.duration}
-            />
-          ) : (
-            <></>
-          )}
-          <div className="flex items-center gap-4">
-            <p className={`text-green-500 ${collapsed ? "text-xs" : ""}`}>
+
+        {courseevent.datetime && courseevent.duration ? (
+          <DateTime
+            datetime={courseevent.datetime}
+            duration={courseevent.duration}
+          />
+        ) : (
+          <></>
+        )}
+        {/* <div className="flex items-center gap-4">
+            <p className={`text-green-500/70 ${collapsed ? "text-xs" : ""}`}>
               FREE
             </p>
             <a
@@ -67,8 +86,7 @@ const CourseEventCard = ({ courseevent, collapsed }: Props) => {
               Enroll now
               <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
             </a>
-          </div>
-        </div>
+          </div> */}
       </div>
     </div>
   );
