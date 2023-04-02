@@ -1,12 +1,16 @@
+import { Creator } from "interfaces/Creator";
+import { getCreators } from "mock/getCreators";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { MdAccountCircle, MdSubscriptions } from "react-icons/md";
 
-export default function Dashboard() {
+export default function Dashboard({ creators }: { creators: Creator[] }) {
   const { data: session } = useSession();
+  console.log(creators);
+
   return (
     <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
-      {/* <ClaimLink variant="sm"/> */}
-      <div className="my-20 rounded-lg border border-neutral-700 bg-neutral-800 p-5">
+      <div className="my-10 rounded-lg border border-neutral-700 bg-neutral-800 p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5">
             <img
@@ -43,6 +47,7 @@ export default function Dashboard() {
       </div>
 
       <div>
+        <h3 className="mb-5 text-2xl font-medium">Upcoming Events</h3>
         <RegisteredEvents />
       </div>
 
@@ -87,7 +92,9 @@ export default function Dashboard() {
             </div>
           </form>
           <div>
-            <CreatorCard />
+            {creators?.map((c) => (
+              <CreatorCard key={c.id} creator={c} />
+            ))}
           </div>
         </div>
       </div>
@@ -95,10 +102,39 @@ export default function Dashboard() {
   );
 }
 
+export async function getStaticProps() {
+  const creators = await getCreators();
+
+  return {
+    props: { creators: creators.creators },
+  };
+}
+
 export const RegisteredEvents = () => {
   return <div />;
 };
 
-export const CreatorCard = () => {
-  return <div></div>;
+export const CreatorCard = ({ creator }: { creator: Creator }) => {
+  const router = useRouter();
+  return (
+    <div
+      onClick={() => router.push(`/${creator.id}`)}
+      className="my-10 cursor-pointer rounded-lg border border-neutral-700 bg-neutral-800 p-5 transition hover:border-neutral-600"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-5">
+          <img
+            className="aspect-square w-28 rounded-full"
+            src={creator?.image_url ?? ""}
+          />
+          <div>
+            <h3 className="mb-1 text-3xl font-medium text-neutral-200">
+              {creator.name}
+            </h3>
+            <p className="text-neutral-400">{creator.bio}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
