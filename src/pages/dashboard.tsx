@@ -6,8 +6,6 @@ import { MdAccountCircle, MdSubscriptions } from "react-icons/md";
 
 export default function Dashboard({ creators }: { creators: Creator[] }) {
   const { data: session } = useSession();
-  console.log(creators);
-
   return (
     <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
       <div className="my-10 rounded-lg border border-neutral-700 bg-neutral-800 p-5">
@@ -106,7 +104,7 @@ export async function getStaticProps() {
   const creators = await getCreators();
 
   return {
-    props: { creators: creators.creators },
+    props: { creators: creators },
   };
 }
 
