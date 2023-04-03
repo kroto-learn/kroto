@@ -24,7 +24,7 @@ export default function Dashboard({
 
   return (
     <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
-      <div className="my-10 rounded-lg border border-neutral-700 bg-neutral-800 p-5">
+      <div className="my-10 rounded-xl border border-neutral-700 bg-neutral-800 p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5">
             <img
@@ -45,13 +45,13 @@ export default function Dashboard({
           </div>
           <div className="flex flex-col gap-3">
             <button
-              className={`group inline-flex items-center gap-1 rounded-md border border-neutral-700 bg-neutral-800 px-4 py-2 text-center font-medium text-neutral-200 transition hover:bg-neutral-700`}
+              className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-center font-medium text-neutral-200 transition hover:bg-neutral-700`}
             >
               <MdAccountCircle />
               Account
             </button>
             <button
-              className={`group inline-flex items-center gap-1 rounded-md border border-neutral-700 bg-neutral-800 px-4 py-2 text-center font-medium text-neutral-200 transition hover:bg-neutral-700`}
+              className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-center font-medium text-neutral-200 transition hover:bg-neutral-700`}
             >
               <MdSubscriptions />
               Subscriptions
@@ -71,8 +71,12 @@ export default function Dashboard({
           </div>
         ))}
         <div className="mx-2 mb-10 flex justify-between">
-          <button className="transition text-pink-500 hover:text-pink-600">View More</button>
-          <button className="transition text-pink-500 hover:text-pink-600">Show past</button>
+          <button className="text-pink-500 transition hover:text-pink-600">
+            View More
+          </button>
+          <button className="text-pink-500 transition hover:text-pink-600">
+            Show past
+          </button>
         </div>
       </div>
 
@@ -111,13 +115,13 @@ export default function Dashboard({
               <input
                 type="search"
                 id="default-search"
-                className="block w-full rounded-lg border border-neutral-700 bg-neutral-800 p-4 pl-10 text-sm placeholder-neutral-400 outline-none ring-transparent transition focus:border-neutral-500 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                className="block w-full rounded-xl border border-neutral-700 bg-neutral-800 p-4 pl-10 text-sm placeholder-neutral-400 outline-none ring-transparent transition focus:border-neutral-500 focus:ring-neutral-500 active:outline-none active:ring-transparent"
                 placeholder="Search for you favorite creators..."
                 onChange={(e) => setInputValue(e.target.value)}
               />
               <button
                 type="submit"
-                className="absolute bottom-2.5 right-2.5 rounded-lg bg-pink-600 px-6 py-2 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-pink-700 "
+                className="absolute bottom-2.5 right-2.5 rounded-xl bg-pink-600 px-6 py-2 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-pink-700 "
               >
                 Search
               </button>
@@ -127,7 +131,7 @@ export default function Dashboard({
             {searchQuery === "" ? (
               creators?.map((c) => <CreatorCard key={c.id} creator={c} />)
             ) : (
-              <div className="my-5 flex flex-col items-center justify-center rounded-lg border border-neutral-700 bg-neutral-800 p-5">
+              <div className="my-5 flex flex-col items-center justify-center rounded-xl border border-neutral-700 bg-neutral-800 p-5">
                 <h4 className="max-w-md text-center text-2xl text-neutral-400">
                   Hang in there,
                 </h4>
@@ -169,7 +173,7 @@ export const CreatorCard = ({ creator }: { creator: Creator }) => {
   return (
     <div
       onClick={() => router.push(`/${creator.id}`)}
-      className="my-10 cursor-pointer rounded-lg border border-neutral-700 bg-neutral-800 p-5 transition hover:border-neutral-600"
+      className="my-10 cursor-pointer rounded-xl border border-neutral-700 bg-neutral-800 p-5 transition hover:border-neutral-600"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-5">

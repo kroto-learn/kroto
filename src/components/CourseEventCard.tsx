@@ -14,7 +14,7 @@ type Props = {
 const CourseEventCard = ({ courseevent, collapsed, creator }: Props) => {
   return (
     <div
-      className={`flex cursor-pointer items-center gap-4 rounded-lg border border-neutral-700 bg-neutral-800 shadow transition-all hover:border-neutral-600  ${
+      className={`flex cursor-pointer items-center gap-4 rounded-xl border border-neutral-700 bg-neutral-800 shadow transition-all hover:border-neutral-600  ${
         collapsed
           ? "h-16 min-w-[24rem] max-w-lg items-center p-2 px-3"
           : "max-w-full flex-col p-3 sm:flex-row"
@@ -31,7 +31,7 @@ const CourseEventCard = ({ courseevent, collapsed, creator }: Props) => {
           alt={courseevent.title}
           fill
           style={{ objectFit: "cover" }}
-          className="rounded-lg"
+          className={collapsed ? "rounded-md" : "rounded-xl"}
         />
       </div>
       <div className="flex w-1/2 flex-col items-start gap-2">

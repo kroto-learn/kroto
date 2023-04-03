@@ -58,7 +58,7 @@ export function PingHero() {
                             ? router.push("/dashboard")
                             : void signIn();
                         }}
-                        className={`group inline-flex items-center gap-[0.15rem] rounded-lg bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
+                        className={`group inline-flex items-center gap-[0.15rem] rounded-xl bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
                       >
                         {session?.user
                           ? "Go to dashboard"
