@@ -14,4 +14,5 @@ export type CourseEvent = {
   duration?: number;
   creator: string;
   ogdescription: string;
+  id: string;
 };

@@ -54,9 +54,9 @@ export function PingHero() {
                     <div className="flex flex-wrap gap-x-4 gap-y-2 sm:justify-center lg:justify-start">
                       <button
                         onClick={() => {
-                          session?.user
+                          void (session?.user
                             ? router.push("/dashboard")
-                            : void signIn();
+                            : void signIn());
                         }}
                         className={`group inline-flex items-center gap-[0.15rem] rounded-xl bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
                       >

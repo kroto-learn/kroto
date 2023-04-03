@@ -4,16 +4,30 @@ import DateTime from "./DateTime";
 import type { CourseEvent } from "interfaces/CourseEvent";
 import CalenderBox from "./CalenderBox";
 import type { Creator } from "interfaces/Creator";
+import Link from "next/link";
 
 type Props = {
   courseevent: CourseEvent;
   collapsed?: boolean;
   creator?: Creator;
+  manage?: boolean;
 };
 
-const CourseEventCard = ({ courseevent, collapsed, creator }: Props) => {
+const CourseEventCard = ({
+  courseevent,
+  collapsed,
+  creator,
+  manage,
+}: Props) => {
   return (
-    <div
+    <Link
+      href={
+        courseevent.datetime
+          ? manage
+            ? `/creator/dashboard/event/${courseevent.id}`
+            : `/event/${courseevent.id}`
+          : `/course/${courseevent.id}`
+      }
       className={`flex cursor-pointer items-center gap-4 rounded-xl border border-neutral-700 bg-neutral-800 shadow transition-all hover:border-neutral-600  ${
         collapsed
           ? "h-16 min-w-[24rem] max-w-lg items-center p-2 px-3"
@@ -89,7 +103,7 @@ const CourseEventCard = ({ courseevent, collapsed, creator }: Props) => {
             </a>
           </div> */}
       </div>
-    </div>
+    </Link>
   );
 };
 
