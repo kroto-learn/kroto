@@ -11,7 +11,7 @@ const Home: NextPage = () => {
       <Head>
         <title>Kroto - Learn Collectively</title>
       </Head>
-      <main className="bg-neutral-900 ">
+      <main>
         <button
           className="absolute right-5 top-5 z-10 text-neutral-300 hover:underline"
           onClick={() => void signOut()}
@@ -32,7 +32,7 @@ export function PingHero() {
 
   return (
     <div className="relative overflow-hidden">
-      <SVGBackground />
+      {/* <SVGBackground /> */}
       <div className="mx-auto flex h-screen max-w-7xl items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="pt-10 sm:pt-16 lg:pb-14 lg:pt-0">
           <div className="">

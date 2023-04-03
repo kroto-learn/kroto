@@ -23,7 +23,7 @@ const Index = ({ creator, hostedCourses, hostedEvents }: CreatorPageProps) => {
       <Head>
         <title>{creator.name + " - Kroto"}</title>
       </Head>
-      <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden bg-neutral-900 pb-24">
+      <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden pb-24">
         <div className="relative my-6 flex w-full max-w-4xl flex-col items-center p-4 lg:items-start">
           <div className="absolute z-[2] lg:left-32">
             <div
@@ -69,7 +69,7 @@ const Index = ({ creator, hostedCourses, hostedEvents }: CreatorPageProps) => {
               className={`mt-4 flex w-full flex-col items-end gap-2 lg:mt-0`}
             >
               <div
-                className={`flex w-full flex-col items-center gap-6 transition-all duration-300`}
+                className={`flex w-full flex-col items-center gap-4 transition-all duration-300`}
               >
                 {hostedCourses.map((course) =>
                   course?.featured ? (
