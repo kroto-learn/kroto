@@ -34,24 +34,24 @@ const DashboardNavWrapper = ({ children }: Props) => {
     <main className="relative flex h-full min-h-screen w-full items-center overflow-x-hidden">
       <div className="absolute left-0 top-0 flex h-full w-4/12 justify-end bg-neutral-800">
         <div className="flex w-full max-w-[16rem] flex-col items-start justify-between gap-8 px-2 py-12">
-          <div className="flex w-full max-w-[11rem] flex-col gap-3">
+          <div className="flex w-full flex-col gap-3">
             <Link
               href="/creator/dashboard/events"
-              className={`group flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-lg duration-150 hover:text-pink-600 ${
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition  hover:bg-neutral-700/50 ${
                 router.asPath.startsWith("/creator/dashboard/event")
                   ? "text-pink-600"
                   : ""
               }`}
             >
               <BsCalendarEvent
-                className={`group-hover:hidden ${
+                className={` ${
                   router.asPath.startsWith("/creator/dashboard/event")
                     ? "hidden"
                     : ""
                 }`}
               />{" "}
               <BsCalendarEventFill
-                className={`group-hover:flex ${
+                className={`${
                   router.asPath.startsWith("/creator/dashboard/event")
                     ? "flex"
                     : "hidden"
@@ -61,21 +61,21 @@ const DashboardNavWrapper = ({ children }: Props) => {
             </Link>
             <Link
               href="/creator/dashboard/audience"
-              className={`group flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-lg duration-150 hover:text-pink-600 ${
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition  hover:bg-neutral-700/50 ${
                 router.asPath.startsWith("/creator/dashboard/audience")
                   ? "text-pink-600"
                   : ""
               }`}
             >
               <BsPeople
-                className={`group-hover:hidden ${
+                className={`${
                   router.asPath.startsWith("/creator/dashboard/audience")
                     ? "hidden"
                     : ""
                 }`}
               />{" "}
               <BsPeopleFill
-                className={`group-hover:flex ${
+                className={`${
                   router.asPath.startsWith("/creator/dashboard/audience")
                     ? "flex"
                     : "hidden"
@@ -85,21 +85,21 @@ const DashboardNavWrapper = ({ children }: Props) => {
             </Link>
             <Link
               href="/creator/dashboard/settings"
-              className={`group flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-lg duration-150 hover:text-pink-600 ${
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition hover:bg-neutral-700/50 ${
                 router.asPath.startsWith("/creator/dashboard/settings")
                   ? "text-pink-600"
                   : ""
               }`}
             >
               <RiSettings3Line
-                className={`group-hover:hidden ${
+                className={`${
                   router.asPath.startsWith("/creator/dashboard/settings")
                     ? "hidden"
                     : ""
                 }`}
               />{" "}
               <RiSettings3Fill
-                className={`group-hover:flex ${
+                className={`${
                   router.asPath.startsWith("/creator/dashboard/settings")
                     ? "flex"
                     : "hidden"

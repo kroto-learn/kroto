@@ -45,13 +45,13 @@ export default function Dashboard({
           </div>
           <div className="flex flex-col gap-3">
             <button
-              className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-center font-medium text-neutral-200 transition hover:bg-neutral-700`}
+              className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-center font-medium text-neutral-200 transition duration-300 hover:bg-neutral-700`}
             >
               <MdAccountCircle />
               Account
             </button>
             <button
-              className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-center font-medium text-neutral-200 transition hover:bg-neutral-700`}
+              className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-center font-medium text-neutral-200 transition duration-300 hover:bg-neutral-700`}
             >
               <MdSubscriptions />
               Subscriptions

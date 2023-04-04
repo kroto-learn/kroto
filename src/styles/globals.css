@@ -8,5 +8,7 @@
 @layer base {
   html {
     font-family: 'Nunito', system-ui, sans-serif;
+    @apply transition ease-in-out duration-300;
+    @apply bg-neutral-900;
   }
 }

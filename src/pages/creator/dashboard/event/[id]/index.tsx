@@ -21,7 +21,7 @@ const EventOverview = () => {
   return (
     <>
       <Head>
-        <title>{event?.title}| Manage</title>
+        <title>{event?.title} | Manage</title>
       </Head>
       <DashboardNavWrapper>
         <DashboardEventTabWrapper>Hello</DashboardEventTabWrapper>
