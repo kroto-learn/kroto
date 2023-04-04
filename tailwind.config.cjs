@@ -1,7 +1,7 @@
 const config = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {},
-  plugins: [],
+  plugins: [require("daisyui")],
 };
 
 module.exports = config;
