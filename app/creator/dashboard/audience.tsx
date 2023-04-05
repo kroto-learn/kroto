@@ -1,4 +1,3 @@
-import DashboardNavWrapper from "@/components/DashboardNavWrapper";
 import Head from "next/head";
 import React from "react";
 
@@ -8,7 +7,7 @@ const Audience = () => {
       <Head>
         <title>Events</title>
       </Head>
-      <DashboardNavWrapper>Hello</DashboardNavWrapper>
+      Hello
     </>
   );
 };

@@ -1,12 +1,10 @@
-import DashboardEventTabWrapper from "@/components/DashboardEventTabWrapper";
-import DashboardNavWrapper from "@/components/DashboardNavWrapper";
 import { type CourseEvent } from "interfaces/CourseEvent";
 import { getEventsClient } from "mock/getEventsClient";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-const EventSettings = () => {
+const EventOverview = () => {
   const router = useRouter();
   const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
 
@@ -21,14 +19,11 @@ const EventSettings = () => {
   return (
     <>
       <Head>
-        <title>{event?.title} | Settings</title>
+        <title>{event?.title} | Manage</title>
       </Head>
-      <DashboardNavWrapper>
-        {" "}
-        <DashboardEventTabWrapper>Hello</DashboardEventTabWrapper>
-      </DashboardNavWrapper>
+      Hello
     </>
   );
 };
 
-export default EventSettings;
+export default EventOverview;

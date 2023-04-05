@@ -1,5 +1,3 @@
-import DashboardEventTabWrapper from "@/components/DashboardEventTabWrapper";
-import DashboardNavWrapper from "@/components/DashboardNavWrapper";
 import { type CourseEvent } from "interfaces/CourseEvent";
 import { getEventsClient } from "mock/getEventsClient";
 import Head from "next/head";
@@ -24,10 +22,7 @@ const EventRegistrations = () => {
       <Head>
         <title>{event?.title} | Registrations</title>
       </Head>
-      <DashboardNavWrapper>
-        {" "}
-        <DashboardEventTabWrapper>Hello</DashboardEventTabWrapper>
-      </DashboardNavWrapper>
+      Hello
     </>
   );
 };
