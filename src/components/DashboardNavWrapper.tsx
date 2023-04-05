@@ -37,7 +37,7 @@ const DashboardNavWrapper = ({ children }: Props) => {
           <div className="flex w-full flex-col gap-3">
             <Link
               href="/creator/dashboard/events"
-              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition  hover:bg-neutral-700/50 ${
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-xl transition  hover:bg-neutral-700/50 ${
                 router.asPath.startsWith("/creator/dashboard/event")
                   ? "text-pink-600"
                   : ""
@@ -61,7 +61,7 @@ const DashboardNavWrapper = ({ children }: Props) => {
             </Link>
             <Link
               href="/creator/dashboard/audience"
-              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition  hover:bg-neutral-700/50 ${
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-xl transition  hover:bg-neutral-700/50 ${
                 router.asPath.startsWith("/creator/dashboard/audience")
                   ? "text-pink-600"
                   : ""
@@ -85,7 +85,7 @@ const DashboardNavWrapper = ({ children }: Props) => {
             </Link>
             <Link
               href="/creator/dashboard/settings"
-              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition hover:bg-neutral-700/50 ${
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-xl transition  hover:bg-neutral-700/50 ${
                 router.asPath.startsWith("/creator/dashboard/settings")
                   ? "text-pink-600"
                   : ""
