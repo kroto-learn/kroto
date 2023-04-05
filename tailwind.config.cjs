@@ -1,7 +1,7 @@
 const config = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {},
-  // plugins: [require("daisyui")],
+  plugins: [require("@tailwindcss/typography")],
 };
 
 module.exports = config;
