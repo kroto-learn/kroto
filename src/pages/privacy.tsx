@@ -3,7 +3,7 @@ export default function PrivacyPage() {
     <div className="mx-auto my-20 w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
       <div className="flex flex-grow flex-col gap-3">
         <div className="flex min-h-[20px] flex-col items-start gap-4 whitespace-pre-wrap">
-          <div className="markdown prose prose-invert w-full break-words">
+          <div className="prose prose-invert w-full break-words">
             <h1>Privacy Policy for Kroto</h1>
             <p>
               {`Kroto Creator Labs ("us", "we", or "our") operates the kroto.in
@@ -40,12 +40,12 @@ export default function PrivacyPage() {
             </ul>
             <h4>Usage Data</h4>
             <p>
-              We may also collect information how the Service is accessed and
+              {`We may also collect information how the Service is accessed and
               used ("Usage Data"). This Usage Data may include information such
               as your computer's Internet Protocol address (e.g. IP address),
               browser type, browser version, the pages of our Service that you
               visit, the time and date of your visit, the time spent on those
-              pages, unique device identifiers and other diagnostic data.
+              pages, unique device identifiers and other diagnostic data.`}
             </p>
             <h4>Tracking &amp; Cookies Data</h4>
             <p>
@@ -128,10 +128,10 @@ export default function PrivacyPage() {
             </p>
             <h3>Service Providers</h3>
             <p>
-              We may employ third party companies and individuals to facilitate
+              {` We may employ third party companies and individuals to facilitate
               our Service ("Service Providers"), to provide the Service on our
               behalf, to perform Service-related services or to assist us in
-              analyzing how our Service is used.
+              analyzing how our Service is used.`}
             </p>
           </div>
         </div>
