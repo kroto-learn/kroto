@@ -38,7 +38,7 @@ export default function Dashboard({
                   {session?.user.name}
                 </span>
                 <span className="block text-neutral-400">
-                  You&aposre looking nice today!
+                  You&apos;re looking nice today!
                 </span>
               </p>
             </div>
@@ -144,7 +144,7 @@ export default function Dashboard({
                   />
                 </div>
                 <h4 className="max-w-md text-center text-2xl text-neutral-400">
-                  We&aposre working really hard to get more creators on board.
+                  We&apos;re working really hard to get more creators on board.
                 </h4>
               </div>
             )}

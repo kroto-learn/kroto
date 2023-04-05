@@ -54,7 +54,7 @@ export default function SignIn() {
       <div className="max-w-sm rounded-xl border border-neutral-700 bg-neutral-800 p-5">
         {query.error && (
           <p className="py-2 text-center text-sm font-medium text-red-400">
-            Can&apost sign you in, issue with {query.error}
+            Can&apos;t sign you in, issue with {query.error}
           </p>
         )}
         {!query.error && (
