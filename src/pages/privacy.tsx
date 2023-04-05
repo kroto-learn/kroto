@@ -3,7 +3,7 @@ export default function PrivacyPage() {
     <div className="mx-auto my-20 w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
       <div className="flex flex-grow flex-col gap-3">
         <div className="flex min-h-[20px] flex-col items-start gap-4 whitespace-pre-wrap">
-          <div className="markdown prose prose-pink w-full break-words">
+          <div className="markdown prose prose-invert w-full break-words">
             <h1>Privacy Policy for Kroto</h1>
             <p>
               {`Kroto Creator Labs ("us", "we", or "our") operates the kroto.in
