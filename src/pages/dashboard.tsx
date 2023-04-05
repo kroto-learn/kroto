@@ -38,7 +38,7 @@ export default function Dashboard({
                   {session?.user.name}
                 </span>
                 <span className="block text-neutral-400">
-                  You're looking nice today!
+                  You&aposre looking nice today!
                 </span>
               </p>
             </div>
@@ -144,7 +144,7 @@ export default function Dashboard({
                   />
                 </div>
                 <h4 className="max-w-md text-center text-2xl text-neutral-400">
-                  We're working really hard to get more creators on board.
+                  We&aposre working really hard to get more creators on board.
                 </h4>
               </div>
             )}
@@ -172,7 +172,7 @@ export const CreatorCard = ({ creator }: { creator: Creator }) => {
   const router = useRouter();
   return (
     <div
-      onClick={() => router.push(`/${creator.id}`)}
+      onClick={() => void router.push(`/${creator.id}`)}
       className="my-10 cursor-pointer rounded-xl border border-neutral-700 bg-neutral-800 p-5 transition hover:border-neutral-600"
     >
       <div className="flex items-center justify-between">

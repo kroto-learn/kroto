@@ -3,19 +3,8 @@ import { Head, Html, Main, NextScript } from "next/document";
 export default function Document() {
   return (
     <Html className="antialiased" lang="en">
-      <Head>
-        <link
-          rel="alternate"
-          type="application/rss+xml"
-          href={`${process.env.NEXT_PUBLIC_SITE_URL}/rss/feed.xml`}
-        />
-        <link
-          rel="alternate"
-          type="application/feed+json"
-          href={`${process.env.NEXT_PUBLIC_SITE_URL}/rss/feed.json`}
-        />
-      </Head>
-      <body className="flex h-full flex-col bg-[url('/topography.svg')] bg-neutral-900 text-neutral-200">
+      <Head></Head>
+      <body className="flex h-full flex-col bg-neutral-900 bg-[url('/topography.svg')] text-neutral-200">
         <Main />
         <NextScript />
       </body>
