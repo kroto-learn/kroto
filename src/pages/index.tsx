@@ -10,6 +10,10 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>Kroto - Learn Collectively</title>
+        <meta
+          name="description"
+          content="Collective learning with the creators you love"
+        />
       </Head>
       <main>
         <button
