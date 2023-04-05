@@ -24,7 +24,7 @@ export default function EventPage() {
             <Image
               src="https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg"
               alt="Web Development Bootcamp"
-              className="rounded-xl"
+              className="rounded-xl shadow-md shadow-black"
               fill
             />
           </div>
