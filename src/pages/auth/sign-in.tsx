@@ -12,11 +12,11 @@ const options = [
     name: "Google",
     icon: <IoLogoGoogle />,
   },
-  {
-    id: "github",
-    name: "GitHub",
-    icon: <IoLogoGithub />,
-  },
+  // {
+  //   id: "github",
+  //   name: "GitHub",
+  //   icon: <IoLogoGithub />,
+  // },
   {
     id: "discord",
     name: "Discord",
