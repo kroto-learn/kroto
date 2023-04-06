@@ -21,7 +21,7 @@ export default function EventsLayout({ children }: Props) {
               href="/creator/dashboard/events"
               className={`inline-block rounded-t-lg p-4 ${
                 pathname === "/creator/dashboard/events"
-                  ? "border-b-2 border-pink-600 text-pink-600 transition"
+                  ? "border-b-2 border-pink-500 text-pink-500 transition"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
               }`}
             >
@@ -33,7 +33,7 @@ export default function EventsLayout({ children }: Props) {
               href="/creator/dashboard/events/past"
               className={`inline-block rounded-t-lg p-4 transition ${
                 pathname === "/creator/dashboard/events/past"
-                  ? "border-b-2 border-pink-600 text-pink-600"
+                  ? "border-b-2 border-pink-500 text-pink-500"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
               }`}
               aria-current="page"

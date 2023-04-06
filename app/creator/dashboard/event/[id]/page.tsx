@@ -24,6 +24,7 @@ export async function generateMetadata({ params }: Props) {
 export default async function EventOverview({ params }: Props) {
   const events = await getEventsClient();
   const event = events.find((e) => e.id === params.id);
+  console.log(event)
 
   return (
     <>
