@@ -1,14 +1,15 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { type ReactNode } from "react";
+"use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { type ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
 };
 
-export const DashboardEventsLayout = ({ children }: Props) => {
-  const router = useRouter();
+export default function EventsLayout({ children }: Props) {
+  const pathname = usePathname();
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
@@ -19,7 +20,7 @@ export const DashboardEventsLayout = ({ children }: Props) => {
             <Link
               href="/creator/dashboard/events"
               className={`inline-block rounded-t-lg p-4 ${
-                router.asPath === "/creator/dashboard/events"
+                pathname === "/creator/dashboard/events"
                   ? "border-b-2 border-pink-600 text-pink-600 transition"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
               }`}
@@ -31,7 +32,7 @@ export const DashboardEventsLayout = ({ children }: Props) => {
             <Link
               href="/creator/dashboard/events/past"
               className={`inline-block rounded-t-lg p-4 transition ${
-                router.asPath === "/creator/dashboard/events/past"
+                pathname === "/creator/dashboard/events/past"
                   ? "border-b-2 border-pink-600 text-pink-600"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
               }`}
@@ -45,4 +46,4 @@ export const DashboardEventsLayout = ({ children }: Props) => {
       {children}
     </div>
   );
-};
+}

@@ -1,21 +1,30 @@
-import { type CourseEvent } from "interfaces/CourseEvent";
 import { getEventsClient } from "mock/getEventsClient";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-const EventOverview = () => {
-  const router = useRouter();
-  const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
+// export const dynamicParams = true;
 
-  useEffect(() => {
-    const loadEvents = async () => {
-      const events = await getEventsClient();
-      const matchedEvent = events.find((e) => e.id === router.query.id);
-      matchedEvent && setEvent(matchedEvent);
-    };
-    void loadEvents();
-  }, [router]);
+export function generateStaticParams() {
+  return [{ id: "whfh456" }];
+}
+
+type Props = {
+  params: { id: string };
+};
+
+export async function generateMetadata({ params }: Props) {
+  const events = await getEventsClient();
+  const event = events.find((e) => e.id === params.id);
+
+  return {
+    title: (event?.title as string) + "| Overview",
+  };
+}
+
+export default async function EventOverview({ params }: Props) {
+  const events = await getEventsClient();
+  const event = events.find((e) => e.id === params.id);
+
   return (
     <>
       <Head>
@@ -24,6 +33,4 @@ const EventOverview = () => {
       Hello
     </>
   );
-};
-
-export default EventOverview;
+}

@@ -1,25 +1,19 @@
-import { type CourseEvent } from "interfaces/CourseEvent";
+"use client";
+
 import { getEventsClient } from "mock/getEventsClient";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { type ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
+  params: { id: string };
 };
 
-export const Layout = ({ children }: Props) => {
-  const router = useRouter();
-  const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
-
-  useEffect(() => {
-    const loadEvents = async () => {
-      const events = await getEventsClient();
-      const matchedEvent = events.find((e) => e.id === router.query.id);
-      matchedEvent && setEvent(matchedEvent);
-    };
-    void loadEvents();
-  }, [router]);
+export default async function EventLayout({ children, params }: Props) {
+  const pathname = usePathname();
+  const events = await getEventsClient();
+  const event = events.find((e) => e.id === params.id);
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
@@ -28,10 +22,9 @@ export const Layout = ({ children }: Props) => {
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-2">
             <Link
-              href={`/creator/dashboard/event/${router.query.id as string}`}
+              href={`/creator/dashboard/event/${event?.id as string}`}
               className={`inline-block rounded-t-lg p-4 ${
-                router.asPath ===
-                `/creator/dashboard/event/${router.query.id as string}`
+                pathname === `/creator/dashboard/event/[id]}`
                   ? "border-b-2 border-pink-600 text-pink-600"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
               }`}
@@ -42,13 +35,11 @@ export const Layout = ({ children }: Props) => {
           <li className="mr-2">
             <Link
               href={`/creator/dashboard/event/${
-                router.query.id as string
+                event?.id as string
               }/registrations`}
               className={`inline-block rounded-t-lg p-4 ${
-                router.asPath ===
-                `/creator/dashboard/event/${
-                  router.query.id as string
-                }/registrations`
+                pathname ===
+                `/creator/dashboard/event/${event?.id as string}/registrations`
                   ? "border-b-2 border-pink-600 text-pink-600"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
               }`}
@@ -59,12 +50,10 @@ export const Layout = ({ children }: Props) => {
           </li>
           <li className="mr-2">
             <Link
-              href={`/creator/dashboard/event/${
-                router.query.id as string
-              }/settings`}
+              href={`/creator/dashboard/event/${event?.id as string}/settings`}
               className={`inline-block rounded-t-lg p-4 ${
-                router.asPath ===
-                `/creator/dashboard/event/${router.query.id as string}/settings`
+                pathname ===
+                `/creator/dashboard/event/${event?.id as string}/settings`
                   ? "border-b-2 border-pink-600 text-pink-600"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
               }`}
@@ -78,4 +67,4 @@ export const Layout = ({ children }: Props) => {
       {children}
     </div>
   );
-};
+}

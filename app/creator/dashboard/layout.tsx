@@ -1,8 +1,10 @@
+"use client";
+
 import { type Creator } from "interfaces/Creator";
 import { getCreatorsClient } from "mock/getCreatorsClient";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   BsCalendarEvent,
@@ -16,7 +18,7 @@ type Props = {
   children: ReactNode;
 };
 
-export const Layout = ({ children }: Props) => {
+export default function DashboardLayout({ children }: Props) {
   const [creator, setCreator] = useState<Creator | undefined>(undefined);
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export const Layout = ({ children }: Props) => {
     void loadEvents();
   }, []);
 
-  const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <main className="relative flex h-full min-h-screen w-full items-center overflow-x-hidden">
@@ -38,21 +40,21 @@ export const Layout = ({ children }: Props) => {
             <Link
               href="/creator/dashboard/events"
               className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition  hover:bg-neutral-700/50 ${
-                router.asPath.startsWith("/creator/dashboard/event")
+                pathname && pathname.startsWith("/creator/dashboard/event")
                   ? "text-pink-600"
                   : ""
               }`}
             >
               <BsCalendarEvent
                 className={` ${
-                  router.asPath.startsWith("/creator/dashboard/event")
+                  pathname && pathname.startsWith("/creator/dashboard/event")
                     ? "hidden"
                     : ""
                 }`}
               />{" "}
               <BsCalendarEventFill
                 className={`${
-                  router.asPath.startsWith("/creator/dashboard/event")
+                  pathname && pathname.startsWith("/creator/dashboard/event")
                     ? "flex"
                     : "hidden"
                 }`}
@@ -62,21 +64,21 @@ export const Layout = ({ children }: Props) => {
             <Link
               href="/creator/dashboard/audience"
               className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition  hover:bg-neutral-700/50 ${
-                router.asPath.startsWith("/creator/dashboard/audience")
+                pathname && pathname.startsWith("/creator/dashboard/audience")
                   ? "text-pink-600"
                   : ""
               }`}
             >
               <BsPeople
                 className={`${
-                  router.asPath.startsWith("/creator/dashboard/audience")
+                  pathname && pathname.startsWith("/creator/dashboard/audience")
                     ? "hidden"
                     : ""
                 }`}
               />{" "}
               <BsPeopleFill
                 className={`${
-                  router.asPath.startsWith("/creator/dashboard/audience")
+                  pathname && pathname.startsWith("/creator/dashboard/audience")
                     ? "flex"
                     : "hidden"
                 }`}
@@ -86,21 +88,21 @@ export const Layout = ({ children }: Props) => {
             <Link
               href="/creator/dashboard/settings"
               className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition hover:bg-neutral-700/50 ${
-                router.asPath.startsWith("/creator/dashboard/settings")
+                pathname && pathname.startsWith("/creator/dashboard/settings")
                   ? "text-pink-600"
                   : ""
               }`}
             >
               <RiSettings3Line
                 className={`${
-                  router.asPath.startsWith("/creator/dashboard/settings")
+                  pathname && pathname.startsWith("/creator/dashboard/settings")
                     ? "hidden"
                     : ""
                 }`}
               />{" "}
               <RiSettings3Fill
                 className={`${
-                  router.asPath.startsWith("/creator/dashboard/settings")
+                  pathname && pathname.startsWith("/creator/dashboard/settings")
                     ? "flex"
                     : "hidden"
                 }`}
@@ -133,4 +135,4 @@ export const Layout = ({ children }: Props) => {
       <div className="absolute right-0 top-0 w-8/12">{children}</div>
     </main>
   );
-};
+}
