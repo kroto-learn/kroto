@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 const EventRegistrations = ({ params }: Props) => {
-  return <>Hello</>;
+  return <>Hello {params.id}</>;
 };
 
 export default EventRegistrations;
