@@ -1,4 +1,4 @@
-import { getEventsClient } from "mock/getEventsClient";
+import { getEvents } from "mock/getEvents";
 import React from "react";
 
 type Props = {
@@ -6,7 +6,7 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props) {
-  const events = await getEventsClient();
+  const events = await getEvents();
   const event = events.find((e) => e.id === params.id);
 
   return {

@@ -1,5 +1,5 @@
-import { getEventsClient } from "mock/getEventsClient";
-import Head from "next/head";
+import CourseEventCard from "@/components/CourseEventCard";
+import { getEvents } from "mock/getEvents";
 import React from "react";
 
 export const dynamicParams = true;
@@ -13,7 +13,7 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props) {
-  const events = await getEventsClient();
+  const events = await getEvents();
   const event = events.find((e) => e.id === params.id);
 
   return {
@@ -22,16 +22,9 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function EventOverview({ params }: Props) {
-  const events = await getEventsClient();
+  const events = await getEvents();
   const event = events.find((e) => e.id === params.id);
-  console.log(event)
 
-  return (
-    <>
-      <Head>
-        <title>{event?.title} | Manage</title>
-      </Head>
-      Hello
-    </>
-  );
+  if (event) return <CourseEventCard courseevent={event} />;
+  else return <></>;
 }
