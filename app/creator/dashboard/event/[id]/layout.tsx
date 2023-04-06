@@ -1,10 +1,12 @@
 "use client";
 
+import { type CourseEvent } from "interfaces/CourseEvent";
+import { getEventsClient } from "mock/getEventsClient";
 // import { getEventsClient } from "mock/getEventsClient";
 // import { getEventsClient } from "mock/getEventsClient";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode, useState } from "react";
 
 type Props = {
   children: ReactNode;
@@ -12,19 +14,21 @@ type Props = {
 };
 
 export default function EventLayout({ children, params }: Props) {
-  // const events = await getEventsClient();
-  // const event = events.find((e) => e.id === params.id);
+  const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
+
+  useEffect(() => {
+    const loadEvent = async () => {
+      const events = await getEventsClient();
+      const mEvent = events.find((e) => e.id === params.id);
+      if (mEvent) setEvent(mEvent);
+    };
+    void loadEvent();
+  }, [params]);
   const pathname = usePathname();
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <h1 className="text-2xl text-neutral-200">
-        {
-          // FIXME
-          // event?.title
-          "Web Development Bootcamp"
-        }
-      </h1>
+      <h1 className="text-2xl text-neutral-200">{event?.title}</h1>
       <div className="border-b border-neutral-200 text-center text-sm font-medium text-neutral-500 dark:border-gray-700 dark:text-gray-400">
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-2">
