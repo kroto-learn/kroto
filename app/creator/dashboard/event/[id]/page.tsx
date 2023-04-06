@@ -2,7 +2,7 @@ import { getEventsClient } from "mock/getEventsClient";
 import Head from "next/head";
 import React from "react";
 
-// export const dynamicParams = true;
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return [{ id: "whfh456" }];
