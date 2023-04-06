@@ -36,6 +36,16 @@ const Settings = async () => {
             />
           </div>
           <label className="mb-2 block font-medium text-neutral-400">
+            Bio
+          </label>
+          <div className="relative mb-6">
+            <textarea
+              id="input-group-2"
+              className="block min-w-[20rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+              placeholder="I am this, and this and this"
+            />
+          </div>
+          <label className="mb-2 block font-medium text-neutral-400">
             Username
           </label>
           <div className="flex">
@@ -58,14 +68,6 @@ const Settings = async () => {
       </div>
       <div className="mx-5 my-5 rounded-xl border border-neutral-700 bg-neutral-800 p-5">
         <h2 className="text-2xl">Social Links</h2>
-        <div></div>
-      </div>
-      <div className="mx-5 my-5 rounded-xl border border-neutral-700 bg-neutral-800 p-5">
-        <h2 className="text-2xl">Manage Featured</h2>
-        <div></div>
-      </div>
-      <div className="mx-5 my-5 rounded-xl border border-neutral-700 bg-neutral-800 p-5">
-        <h2 className="text-2xl">Private Info</h2>
         <div></div>
       </div>
     </div>
