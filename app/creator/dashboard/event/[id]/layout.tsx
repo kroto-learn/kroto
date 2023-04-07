@@ -38,7 +38,7 @@ export default function EventLayout({ children, params }: Props) {
           <BsGlobe /> Event Public Page
         </Link>
       </div>
-      <div className="border-b border-neutral-200 text-center text-sm font-medium text-neutral-500 dark:border-gray-700 dark:text-gray-400">
+      <div className="border-b border-neutral-200 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-2">
             <Link

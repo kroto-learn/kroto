@@ -37,10 +37,15 @@ const giveFirstTimeIdx: (times: string[]) => number = (times) => {
       const hour = parseInt(time.slice(0, 2), 10);
       const minute = parseInt(time.slice(3, 5), 10);
       const meridiem = time.slice(6);
-      const hour24 = hour === 12 ? 12 : hour + (meridiem === "PM" ? 12 : 0);
+      const hour24 =
+        hour === 12
+          ? meridiem === "AM"
+            ? 0
+            : 12
+          : hour + (meridiem === "PM" ? 12 : 0);
 
-      //   console.log("current", currentHour, currentMinute);
-      //   console.log("currentn", hour24, minute);
+      // console.log("current", currentHour, currentMinute);
+      // console.log("currentn", hour24, minute);
 
       if (
         hour24 > currentHour ||
