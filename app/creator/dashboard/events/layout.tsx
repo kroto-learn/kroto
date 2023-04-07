@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
+import { IoMdAdd } from "react-icons/io";
 
 type Props = {
   children: ReactNode;
@@ -13,7 +14,15 @@ export default function EventsLayout({ children }: Props) {
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <h1 className="text-2xl text-neutral-200">Events</h1>
+      <div className="flex w-full items-center justify-between gap-4 px-4">
+        <h1 className="text-2xl text-neutral-200">Events</h1>
+        <Link
+          href="/event/create"
+          className="flex items-center gap-1 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
+        >
+          <IoMdAdd className="text-lg" /> Create Event
+        </Link>
+      </div>
       <div className="border-b border-neutral-400 text-center text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-2">

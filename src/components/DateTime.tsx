@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 type Prop = {
   datetime: string;
@@ -8,14 +6,8 @@ type Prop = {
 };
 
 const DateTime = ({ datetime, duration }: Prop) => {
-  const [date, setDate] = useState<Date | undefined>(undefined);
-
-  const [endTime, setEndTime] = useState<Date | undefined>(undefined);
-
-  useEffect(() => {
-    setDate(new Date(datetime));
-    setEndTime(new Date(new Date(datetime).getTime() + duration * 60000));
-  }, [datetime, duration]);
+  const date = new Date(datetime);
+  const endTime = new Date(new Date(datetime).getTime() + duration * 60000);
 
   return (
     <p className="text-left text-xs text-neutral-400">
