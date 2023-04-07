@@ -398,7 +398,7 @@ const CreateEvent = () => {
   );
 };
 
-const LoadInitialThumbnail = () => {
+export const LoadInitialThumbnail = () => {
   const { setFieldValue } = useFormikContext();
 
   useEffect(() => {
