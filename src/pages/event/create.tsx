@@ -171,6 +171,7 @@ const CreateEvent = () => {
               />
             </div>
 
+            {/* TODO: Make it a rich text editor */}
             <div className="flex flex-col gap-3">
               <label
                 htmlFor="description"
@@ -374,8 +375,12 @@ const CreateEvent = () => {
               />
             </div>
 
-            <button type="submit" disabled={isSubmitting}>
-              Submit
+            <button
+              className={`group inline-flex max-w-[10rem] items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center text-lg font-medium text-neutral-200 transition-all duration-300 disabled:bg-neutral-700 disabled:text-neutral-300`}
+              type="submit"
+              disabled={isSubmitting}
+            >
+              Create Event
             </button>
           </Form>
         );
