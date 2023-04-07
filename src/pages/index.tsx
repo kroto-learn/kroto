@@ -48,7 +48,7 @@ export function PingHero() {
                     creators you love
                   </span>
                 </h1>
-                <p className="relative my-5 text-center text-base text-gray-300 sm:text-xl lg:text-lg xl:text-2xl">
+                <p className="relative my-5 text-center text-base text-neutral-300 sm:text-xl lg:text-lg xl:text-2xl">
                   Learn directly and in public with the creator through
                   cohort-based courses, live events or courses with amazing
                   learning experience.

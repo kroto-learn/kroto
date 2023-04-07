@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 type Props = {
   datetime: string;
 };
 
 const CalenderBox = ({ datetime }: Props) => {
-  const [date, setDate] = useState<Date | undefined>(undefined);
-
-  useEffect(() => {
-    setDate(new Date(datetime));
-  }, [setDate, datetime]);
+  const date = new Date(datetime);
 
   return (
     <div className="flex h-12 w-12 flex-col overflow-hidden rounded-lg border border-neutral-600">

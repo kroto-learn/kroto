@@ -9,7 +9,7 @@ export default function ClaimLink({
 }) {
   return (
     <div>
-      <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+      <label className="mb-2 block text-sm font-medium text-neutral-900 dark:text-white">
         Username
       </label>
       <div className="flex justify-center">

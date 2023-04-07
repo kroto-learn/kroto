@@ -35,11 +35,11 @@ export default function DashboardLayout({ children }: Props) {
   return (
     <main className="relative flex h-full min-h-screen w-full items-center overflow-x-hidden">
       <div className="absolute left-0 top-0 flex h-full w-4/12 justify-end bg-neutral-800">
-        <div className="flex w-full max-w-[16rem] text-neutral-400 flex-col items-start justify-between gap-8 px-2 py-12">
+        <div className="flex w-1/2 flex-col items-start justify-between gap-8 px-2 py-12 text-neutral-400">
           <div className="flex w-full flex-col gap-3">
             <Link
               href="/creator/dashboard/events"
-              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-2 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
                 pathname && pathname.startsWith("/creator/dashboard/event")
                   ? "text-pink-500"
                   : ""
@@ -63,7 +63,7 @@ export default function DashboardLayout({ children }: Props) {
             </Link>
             <Link
               href="/creator/dashboard/audience"
-              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-2 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
                 pathname && pathname.startsWith("/creator/dashboard/audience")
                   ? "text-pink-500"
                   : ""
@@ -87,7 +87,7 @@ export default function DashboardLayout({ children }: Props) {
             </Link>
             <Link
               href="/creator/dashboard/settings"
-              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+              className={`group flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-2 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
                 pathname && pathname.startsWith("/creator/dashboard/settings")
                   ? "text-pink-500"
                   : ""
@@ -132,7 +132,9 @@ export default function DashboardLayout({ children }: Props) {
           )}
         </div>
       </div>
-      <div className="absolute right-0 top-0 w-8/12">{children}</div>
+      <div className="absolute right-0 top-0 flex w-8/12 justify-start">
+        <div className="w-2/3"> {children}</div>
+      </div>
     </main>
   );
 }
