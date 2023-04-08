@@ -4,8 +4,8 @@ import { SessionProvider } from "next-auth/react";
 
 import { api } from "@/utils/api";
 
-import NProgress from "nprogress";
-import "nprogress/nprogress.css";
+import { Progress } from "@/components/Progress";
+import { useProgressStore } from "@/helpers/useProgressStore";
 
 import "@/styles/globals.css";
 import { useRouter } from "next/router";
@@ -15,17 +15,19 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const setIsAnimating = useProgressStore((state: any) => state.setIsAnimating);
+  const isAnimating = useProgressStore((state: any) => state.isAnimating);
   const router = useRouter();
 
   useEffect(() => {
-    const handleStart = () => NProgress.start();
-    const handleStop = () => NProgress.done();
+    const handleStart = () => setIsAnimating(true);
+    const handleStop = () => setIsAnimating(false);
 
     router.events.on("routeChangeStart", handleStart);
     router.events.on("routeChangeComplete", handleStop);
     router.events.on("routeChangeError", handleStop);
 
-    return () => {
+    () => {
       router.events.off("routeChangeStart", handleStart);
       router.events.off("routeChangeComplete", handleStop);
       router.events.off("routeChangeError", handleStop);
@@ -34,6 +36,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
   return (
     <SessionProvider session={session}>
+      <Progress isAnimating={isAnimating} />
       <Component {...pageProps} />
     </SessionProvider>
   );

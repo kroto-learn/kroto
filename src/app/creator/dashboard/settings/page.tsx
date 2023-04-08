@@ -43,7 +43,7 @@ const Settings = async () => {
             />
           </div>
           <label className="mb-2 block font-medium text-neutral-400">
-            Username
+            Creator Profile
           </label>
           <div className="flex">
             <span className="inline-flex items-center rounded-l-md border border-r-0 border-neutral-600 bg-neutral-700 px-3 font-medium text-neutral-400">
