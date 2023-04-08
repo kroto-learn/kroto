@@ -4,10 +4,11 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { HiArrowSmRight } from "react-icons/hi";
 import { useRouter } from "next/router";
+import Layout from "@/components/layouts/main";
 
 const Home: NextPage = () => {
   return (
-    <>
+    <Layout>
       <Head>
         <title>Kroto - Learn Collectively</title>
         <meta
@@ -24,7 +25,7 @@ const Home: NextPage = () => {
         </button>
         <PingHero />
       </main>
-    </>
+    </Layout>
   );
 };
 
