@@ -1,4 +1,5 @@
 import Footer from "../Footer";
+import Navbar from "../Navbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -23,6 +24,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* <header className="mt-10 flex justify-center"> */}
       {/*   {home ? <></> : ""} */}
       {/* </header> */}
+      <nav>
+        <Navbar />
+      </nav>
       <main>{children}</main>
 
       {/* {!home && ( */}
