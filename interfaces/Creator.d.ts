@@ -11,4 +11,5 @@ export type Creator = {
   image_url: string;
   bio: string;
   links: Link[];
+  topmate_url: string;
 };

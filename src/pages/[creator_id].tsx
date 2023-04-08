@@ -10,6 +10,7 @@ import Image from "next/image";
 import { getEvents } from "mock/getEvents";
 import { getCourses } from "mock/getCourses";
 import type { CourseEvent } from "interfaces/CourseEvent";
+import Link from "next/link";
 
 type CreatorPageProps = {
   creator: Creator;
@@ -39,7 +40,7 @@ const Index = ({ creator, hostedCourses, hostedEvents }: CreatorPageProps) => {
               className={`flex w-full max-w-xl items-center  justify-start gap-6 transition-all duration-300`}
             >
               <div
-                className={`flex flex-col gap-4 transition-all duration-300`}
+                className={`flex flex-col items-start gap-4 transition-all duration-300`}
               >
                 <h1
                   className={`text-center text-2xl font-medium text-neutral-200 transition-all duration-300 lg:text-left`}
@@ -93,6 +94,21 @@ const Index = ({ creator, hostedCourses, hostedEvents }: CreatorPageProps) => {
                     <></>
                   )
                 )}
+                <Link
+                  href={creator.topmate_url}
+                  target="_blank"
+                  className="group flex w-full items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332] hover:text-neutral-200"
+                >
+                  <div className="group relative h-4 w-4">
+                    <Image
+                      src="/topmate_logo.png"
+                      alt="topmate"
+                      fill
+                      className="opacity-70 group-hover:opacity-100"
+                    />
+                  </div>{" "}
+                  Schedule a 1:1 call
+                </Link>
               </div>
             </div>
           </div>
