@@ -26,8 +26,11 @@ const generateTimesArray = () => {
   return times;
 };
 
-const giveFirstTimeIdx: (times: string[]) => number = (times) => {
-  const now = new Date();
+const giveFirstTimeIdx: (times: string[], now?: Date) => number = (
+  times,
+  now = new Date()
+) => {
+  // console.log("date in", now);
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
 
@@ -49,7 +52,7 @@ const giveFirstTimeIdx: (times: string[]) => number = (times) => {
 
       if (
         hour24 > currentHour ||
-        (hour24 === currentHour && minute > currentMinute)
+        (hour24 === currentHour && minute >= currentMinute)
       ) {
         return i;
       }
