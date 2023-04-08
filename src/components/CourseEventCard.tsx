@@ -5,6 +5,7 @@ import CalenderBox from "./CalenderBox";
 import type { Creator } from "interfaces/Creator";
 import Link from "next/link";
 import { BiTimeFive } from "react-icons/bi";
+import { MdToday } from "react-icons/md";
 
 type Props = {
   courseevent: CourseEvent;
@@ -28,11 +29,15 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
             : `/event/${courseevent.id}`
           : `/course/${courseevent.id}`
       }
-      className={`flex max-w-full cursor-pointer flex-col items-center gap-4 rounded-xl p-3 transition-all hover:bg-neutral-800 sm:flex-row`}
+      className={`flex w-full justify-center cursor-pointer flex-col xs:items-center gap-4 rounded-xl p-3 transition-all hover:bg-neutral-700 xs:flex-row`}
     >
-      {courseevent.datetime && <CalenderBox datetime={courseevent.datetime} />}
+      {courseevent.datetime && (
+        <div className="md:block hidden">
+          <CalenderBox datetime={courseevent.datetime} />
+        </div>
+      )}
       <div
-        className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[8rem] md:w-[12rem]`}
+        className={`xs:w-[12rem] md:w-[10rem] relative aspect-[18/9] w-full object-cover transition-all`}
       >
         <Image
           src={courseevent.thumbnail}
@@ -42,7 +47,7 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
           className={collapsed ? "rounded-md" : "rounded-xl"}
         />
       </div>
-      <div className="flex w-1/2 flex-col items-start gap-2">
+      <div className="flex flex-col items-start gap-2">
         {/* {creator && (
           <div className="flex items-center gap-2">
             <div
@@ -60,7 +65,7 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
           </div>
         )} */}
         <h5
-          className={`text-lg font-medium tracking-tight text-neutral-200 transition-all`}
+          className="text-base sm:text-base lg:text-lg xs:text-sm font-medium tracking-tight text-neutral-200 transition-all"
         >
           {courseevent.title}
         </h5>
@@ -72,15 +77,17 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
           {courseevent.ogdescription}
         </p> */}
 
-        <p className="m-0 flex items-center gap-3 p-0 text-left text-sm text-neutral-300">
-          {/* <span className="flex items-center gap-1">
-            <IoTodayOutline />{" "}
+        <div className="text-sm sm:text-sm lg:text-base xs:text-xs m-0 flex flex-col items-start gap-1 p-0 text-left text-neutral-300">
+          <span className="md:hidden flex items-center gap-1">
+            <MdToday />{" "}
             {date?.toLocaleString("en-US", {
               weekday: "long",
+              day: "numeric",
+              month: "short",
             })}
-          </span> */}
+          </span>
           <span className="flex items-center gap-1">
-            <BiTimeFive className="mt-[0.1rem]" />
+            <BiTimeFive />
             {date?.toLocaleString("en-US", {
               hour: "numeric",
               minute: "2-digit",
@@ -93,7 +100,7 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
               hour12: true,
             })}
           </span>
-        </p>
+        </div>
 
         {/* <div className="flex items-center gap-4">
             <p className={`text-green-500/70 ${collapsed ? "text-xs" : ""}`}>

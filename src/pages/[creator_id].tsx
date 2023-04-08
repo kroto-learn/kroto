@@ -25,7 +25,7 @@ const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
       <Head>
         <title>{creator.name + " - Kroto"}</title>
       </Head>
-      <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden pb-24">
+      <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
         <div className="relative mt-6 flex w-full max-w-2xl flex-col items-center">
           <div className="absolute z-[2]">
             <div
@@ -43,7 +43,7 @@ const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
               {creator.name}
             </h1>
             <p
-              className={`text-center text-neutral-400 transition-all  duration-300`}
+              className={`text-center text-sm text-neutral-400 transition-all duration-300  sm:text-base`}
             >
               {creator.bio}
             </p>
@@ -80,7 +80,7 @@ const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
           <h2 className="text-lg font-medium uppercase tracking-wider text-neutral-200">
             Upcoming Events
           </h2>
-          <div className="flex flex-col gap-12">
+          <div className="flex w-full flex-col items-center gap-4">
             {hostedEvents.map((event) => (
               <CourseEventCard
                 creator={creator}
