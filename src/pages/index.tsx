@@ -26,7 +26,9 @@ const Home: NextPage = () => {
       <div id="features">
         <Features />
       </div>
-      <ClaimLinkBanner />
+      <div id="claim-link">
+        <ClaimLinkBanner />
+      </div>
     </Layout>
   );
 };
@@ -38,7 +40,7 @@ export function Hero() {
   const router = useRouter();
 
   return (
-    <div className="my-10 mb-10">
+    <div className="my-20">
       <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 sm:px-6 lg:px-8">
         <div className="flex h-full flex-col pt-10 sm:pt-16 lg:pt-0">
           <div className="mx-auto max-w-lg sm:max-w-4xl sm:px-4 sm:text-center lg:flex lg:items-center lg:pl-0 lg:text-left">
@@ -75,8 +77,12 @@ export function Hero() {
               </div>
             </div>
           </div>
-          <div className="relative">
-            <Image src={HeroImage} alt="Hero Image" />
+          <div className="relative ">
+            <Image
+              src={HeroImage}
+              className="transition duration-700 hover:scale-105"
+              alt="Hero Image"
+            />
           </div>
         </div>
       </div>
