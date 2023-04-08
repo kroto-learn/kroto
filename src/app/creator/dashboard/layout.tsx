@@ -132,9 +132,11 @@ export default function DashboardLayout({ children }: Props) {
           )}
         </div>
       </div>
+      {/* <Suspense fallback={<Loading />}> */}
       <div className="absolute right-0 top-0 flex w-8/12 justify-start">
         <div className="w-2/3"> {children}</div>
       </div>
+      {/* </Suspense> */}
     </main>
   );
 }
