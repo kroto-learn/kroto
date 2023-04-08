@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { Formik, ErrorMessage, Form, Field, useFormikContext } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";

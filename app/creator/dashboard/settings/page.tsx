@@ -10,9 +10,8 @@ const Settings = async () => {
   const creators = await getCreators();
   const creator = creators[0];
   return (
-    <div className="my-10 text-neutral-400">
-      <h1 className="mx-5 text-3xl">Account Settings</h1>
-      <div className="mx-5 my-5 rounded-xl border border-neutral-700 bg-neutral-800 p-5">
+    <div className="mx-5 my-10 w-full text-neutral-400">
+      <div className="my-5 rounded-xl border border-neutral-700 bg-neutral-800 p-5">
         <h2 className="mb-5 text-2xl">Profile</h2>
         <div
           className={`relative mb-5 aspect-square w-28 overflow-hidden rounded-full border border-neutral-900 outline outline-neutral-800 transition-all`}
@@ -35,9 +34,7 @@ const Settings = async () => {
               placeholder="Your Name, not your mom's"
             />
           </div>
-          <label className="mb-2 block font-medium text-neutral-400">
-            Bio
-          </label>
+          <label className="mb-2 block font-medium text-neutral-400">Bio</label>
           <div className="relative mb-6">
             <textarea
               id="input-group-2"
@@ -66,7 +63,7 @@ const Settings = async () => {
           </button>
         </div>
       </div>
-      <div className="mx-5 my-5 rounded-xl border border-neutral-700 bg-neutral-800 p-5">
+      <div className="my-5 rounded-xl border border-neutral-700 bg-neutral-800 p-5">
         <h2 className="text-2xl">Social Links</h2>
         <div></div>
       </div>
