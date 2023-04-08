@@ -1,6 +1,11 @@
 import { create } from "zustand";
 
-export const useProgressStore = create((set) => ({
+export type ProgressState = {
+  isAnimating: boolean;
+  setIsAnimating: (isAnimating: boolean) => void;
+};
+
+export const useProgressStore = create<ProgressState>((set) => ({
   isAnimating: false,
   setIsAnimating: (isAnimating: boolean) => set(() => ({ isAnimating })),
 }));
