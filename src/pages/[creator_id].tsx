@@ -11,6 +11,7 @@ import { getEvents } from "mock/getEvents";
 import { getCourses } from "mock/getCourses";
 import type { CourseEvent } from "interfaces/CourseEvent";
 import Link from "next/link";
+import Layout from "@/components/layouts/main";
 
 type CreatorPageProps = {
   creator: Creator;
@@ -20,7 +21,7 @@ type CreatorPageProps = {
 
 const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
   return (
-    <>
+    <Layout>
       <Head>
         <title>{creator.name + " - Kroto"}</title>
       </Head>
@@ -90,7 +91,7 @@ const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
           </div>
         </div>
       </main>
-    </>
+    </Layout>
   );
 };
 
