@@ -11,7 +11,7 @@ const UpcomingEvents = async () => {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex w-full flex-col items-start gap-4">
         {events.map((event) => (
           <CourseEventCard key={event.title} manage courseevent={event} />
         ))}

@@ -8,7 +8,7 @@ type Props = {
 export default function RootLayout({ children }: Props) {
   return (
     <html className="antialiased" lang="en">
-      <body className="flex h-full flex-col bg-neutral-900 bg-[url('/topography.svg')] text-neutral-200">
+      <body className="box-border flex h-full flex-col bg-neutral-950 bg-[url('/topography.svg')] text-neutral-200">
         <body>{children}</body>
       </body>
     </html>
