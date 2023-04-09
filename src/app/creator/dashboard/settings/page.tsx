@@ -23,38 +23,48 @@ const Settings = async () => {
           />
         </div>
         <div>
-          <label className="mb-2 block font-medium text-neutral-400">
-            Name
-          </label>
-          <div className="relative mb-6">
-            <input
-              type="text"
-              id="input-group-1"
-              className="block min-w-[20rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-              placeholder="Your Name, not your mom's"
-            />
+          <div className="flex gap-5">
+            <div>
+              <label className="mb-2 block font-medium text-neutral-400">
+                Name
+              </label>
+              <div className="relative mb-6">
+                <input
+                  type="text"
+                  id="input-group-1"
+                  className="block min-w-[20rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                  placeholder="Your Name, not your mom's"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="mb-2 block font-medium text-neutral-400">
+                Kreator Profile
+              </label>
+              <div className="flex">
+                <span className="inline-flex items-center rounded-l-xl border border-r-0 border-neutral-600 bg-neutral-700 px-3 font-medium text-neutral-400">
+                  kroto.in/@
+                </span>
+                <input
+                  type="text"
+                  id="website-admin"
+                  className="block min-w-[14rem] rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                  placeholder="rosekamallove"
+                />
+              </div>
+            </div>
           </div>
-          <label className="mb-2 block font-medium text-neutral-400">Bio</label>
-          <div className="relative mb-6">
-            <textarea
-              id="input-group-2"
-              className="block min-w-[20rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-              placeholder="I am this, and this and this"
-            />
-          </div>
-          <label className="mb-2 block font-medium text-neutral-400">
-            Creator Profile
-          </label>
-          <div className="flex">
-            <span className="inline-flex items-center rounded-l-md border border-r-0 border-neutral-600 bg-neutral-700 px-3 font-medium text-neutral-400">
-              kroto.in/@
-            </span>
-            <input
-              type="text"
-              id="website-admin"
-              className="block min-w-[14rem] rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-              placeholder="rosekamallove"
-            />
+          <div>
+            <label className="mb-2 block font-medium text-neutral-400">
+              Bio
+            </label>
+            <div className="relative mb-6">
+              <textarea
+                id="input-group-2"
+                className="block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                placeholder="I am this, and this and this"
+              />
+            </div>
           </div>
           <button
             className={`group my-5 inline-flex items-center gap-1 rounded-xl bg-pink-600 px-6 py-2 text-center font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
