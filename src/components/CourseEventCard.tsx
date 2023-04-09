@@ -29,15 +29,15 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
             : `/event/${courseevent.id}`
           : `/course/${courseevent.id}`
       }
-      className={`flex w-full justify-center cursor-pointer flex-col xs:items-center gap-4 rounded-xl p-3 transition-all hover:bg-neutral-700/50 xs:flex-row`}
+      className={`flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 transition-all hover:bg-neutral-700/50 xs:flex-row xs:items-center`}
     >
       {courseevent.datetime && (
-        <div className="md:block hidden">
+        <div className="hidden sm:block">
           <CalenderBox datetime={courseevent.datetime} />
         </div>
       )}
       <div
-        className={`xs:w-[12rem] md:w-[10rem] relative aspect-[18/9] w-full object-cover transition-all`}
+        className={`relative aspect-[18/9] w-full object-cover transition-all xs:w-2/5`}
       >
         <Image
           src={courseevent.thumbnail}
@@ -47,7 +47,7 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
           className={collapsed ? "rounded-md" : "rounded-xl"}
         />
       </div>
-      <div className="flex flex-col items-start gap-2">
+      <div className="flex w-full flex-col items-start gap-2 xs:w-3/5">
         {/* {creator && (
           <div className="flex items-center gap-2">
             <div
@@ -64,9 +64,7 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
             </p>
           </div>
         )} */}
-        <h5
-          className="text-base sm:text-base lg:text-lg xs:text-sm font-medium tracking-tight text-neutral-200 transition-all"
-        >
+        <h5 className="text-base font-medium tracking-tight text-neutral-200 transition-all xs:text-sm sm:text-base lg:text-lg">
           {courseevent.title}
         </h5>
         {/* <p
@@ -77,8 +75,8 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
           {courseevent.ogdescription}
         </p> */}
 
-        <div className="text-sm sm:text-sm lg:text-base xs:text-xs m-0 flex flex-col items-start gap-1 p-0 text-left text-neutral-300">
-          <span className="md:hidden flex items-center gap-1">
+        <div className="m-0 flex flex-col items-start gap-1 p-0 text-left text-sm text-neutral-300 xs:text-xs sm:text-sm lg:text-base">
+          <span className="flex items-center gap-1 sm:hidden">
             <MdToday />{" "}
             {date?.toLocaleString("en-US", {
               weekday: "long",

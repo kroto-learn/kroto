@@ -1,14 +1,8 @@
-import { createColumnHelper, useReactTable } from "@tanstack/react-table";
-import { access } from "fs";
-
 export const metadata = {
   title: "Audience | Dashboard",
 };
 
-const columnHelper = createColumnHelper<Person>();
-
 const Audience = () => {
-  const columns = [];
   return <>Hello</>;
 };
 
