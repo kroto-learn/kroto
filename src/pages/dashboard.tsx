@@ -45,7 +45,7 @@ export default function Dashboard({
                 </p>
               </div>
             </div>
-            <div className="flex flex-col gap-3">
+            {/* <div className="flex flex-col gap-3">
               <button
                 className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-2 text-center font-medium text-neutral-200 transition duration-300 hover:bg-neutral-800`}
               >
@@ -58,7 +58,7 @@ export default function Dashboard({
                 <MdSubscriptions />
                 Subscriptions
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 

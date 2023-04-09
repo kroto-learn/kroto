@@ -77,13 +77,18 @@ export function Hero() {
               </div>
             </div>
           </div>
-          <div className="relative">
-            <Image
+          {/* <div className="z-50 h-48 w-96 bg-[url('/hero_image.png')] object-contain"> */}
+          {/* <Image
               src={HeroImage}
               className="transition duration-700 hover:scale-105"
               alt="Hero Image"
-            />
-          </div>
+            /> */}
+          {/* </div> */}
+          <img
+            className="h-96 object-cover md:h-1/2 xl:h-2/3"
+            src="/hero_image.png"
+            alt="crap"
+          />
         </div>
       </div>
     </div>
@@ -334,7 +339,7 @@ export const Features = () => {
 };
 
 export const ClaimLinkBanner = () => (
-  <div className="my-10 bg-neutral-950 px-0 py-10 md:px-24">
+  <div className="my-10 overflow-hidden bg-neutral-950 px-0 py-10 md:px-24">
     <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left xl:flex-row">
       <div className="text-3xl">
         Become a{" "}
