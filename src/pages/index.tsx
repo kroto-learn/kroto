@@ -40,7 +40,7 @@ export function Hero() {
   const router = useRouter();
 
   return (
-    <div className="my-10">
+    <div className="my-20">
       <div className="mx-auto flex w-full flex-col gap-10 px-2 sm:px-6 md:max-w-7xl lg:px-8">
         <div className="flex h-full flex-col pt-10 sm:pt-16 lg:pt-0">
           <div className="mx-auto max-w-lg sm:max-w-4xl sm:px-4 sm:text-center lg:flex lg:items-center lg:pl-0 lg:text-left">
@@ -77,15 +77,15 @@ export function Hero() {
               </div>
             </div>
           </div>
-          {/* <div className="z-50 h-48 w-96 bg-[url('/hero_image.png')] object-contain"> */}
-          {/* <Image
+          {/* <div className="h-96 bg-gradient-to-t to-neutral-950/ object-cover md:h-1/2 xl:h-2/3">
+            <Image
               src={HeroImage}
               className="transition duration-700 hover:scale-105"
               alt="Hero Image"
-            /> */}
-          {/* </div> */}
+            />
+          </div> */}
           <img
-            className="h-96 object-cover md:h-1/2 xl:h-2/3"
+            className="h-96 bg-gradient-to-t from-neutral-950 object-cover md:h-1/2 xl:h-2/3"
             src="/hero_image.png"
             alt="crap"
           />

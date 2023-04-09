@@ -8,13 +8,13 @@ export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
   return (
-    <div className="bg-neutral-950 ">
-      <div className="mx-auto max-w-7xl bg-neutral-950">
-        <div className="flex items-center justify-between gap-5 p-5">
+    <div className="fixed top-0 z-40 w-full border-b border-neutral-900/50 bg-neutral-950/50 font-medium backdrop-blur-lg">
+      <div className="mx-auto max-w-7xl">
+        <div className="flex items-center justify-between gap-5 px-5 py-2">
           <div className="flex items-center gap-5">
             <KrotoLogo />
             {router.asPath === "/" && (
-              <div className="gap-5 hidden md:flex">
+              <div className="hidden gap-5 md:flex">
                 <Link
                   className="transition-all hover:text-neutral-400"
                   href="#features"

@@ -27,7 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <nav>
         <Navbar />
       </nav>
-      <main>{children}</main>
+      <main className="mt-20">{children}</main>
 
       {/* {!home && ( */}
       {/*   <div> */}
