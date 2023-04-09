@@ -1,10 +1,10 @@
 import { IoLogoTwitter } from "react-icons/io5";
 import { BsDiscord } from "react-icons/bs";
-import Link from 'next/link'
+import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-neutral-950">
+    <footer className="border-t border-neutral-800 bg-neutral-950">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-y-4 px-4 py-12 sm:px-6 md:justify-between lg:flex-row lg:px-8">
         <div className="text-center font-medium text-neutral-400">
           Created by <span className="text-neutral-200">The Kreator Labs</span>

@@ -10,6 +10,13 @@ import { useRouter } from "next/router";
 import Layout from "@/components/layouts/main";
 import { Loader } from "@/components/Loader";
 import ClaimLink from "@/components/ClaimLink";
+import {
+  BsCalendarEventFill,
+  BsCardChecklist,
+  BsListCheck,
+} from "react-icons/bs";
+import { FaListAlt, FaMoneyBill } from "react-icons/fa";
+import { AiFillDatabase } from "react-icons/ai";
 
 const Home: NextPage = () => {
   return (
@@ -100,81 +107,55 @@ export const Features = () => {
     <div className="relative mx-auto my-20 max-w-7xl px-4 sm:px-6 lg:px-8">
       <div className="relative">
         <h2 className="text-center text-3xl font-extrabold leading-8 tracking-tight sm:text-4xl">
-          Modern education platform built for professional creators
+          Modern Education Platform for Professional Creators
         </h2>
         <p className="mx-auto mt-4 max-w-3xl text-center text-xl text-neutral-400">
           Content creation is hard. Making money while doing so is even harder.
-          <br />
-          We built Kroto to help creators monetize their content and provide a
-          seamless learning experience for their students.
+          Kroto helps creators monetize their content and provides a seamless
+          learning experience for their students.
         </p>
       </div>
       <div className="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:items-center lg:gap-8">
         <div className="relative">
           <h3 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-            Keeps you looking your best
-            <span className="text-neutral-400">for LSF</span>
+            Monetize your audience with ease
           </h3>
           <p className="mt-3 text-lg text-neutral-400">
-            We&apos;re built for high-end cameras and mics, not 7 year old
-            phones and earbuds. You&apos;ll see the difference instantly.
+            We&apos;re built for creators who are serious about sharing their
+            knowledge, and do that scalably so that you can focus on what you
+            do.
           </p>
           <dl className="mt-10 space-y-10">
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                    className="h-6 w-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    ></path>
-                  </svg>
+                  <BsCalendarEventFill />
                 </div>
                 <p className="ml-16 text-lg font-medium leading-6">
-                  High definition by default
+                  Live events to filter your audience
                 </p>
               </dt>
               <dd className="ml-16 mt-2 text-base text-neutral-400">
-                HD isn&apos;t optional for our creators. We support up to 1080p
-                at 60fps for every caller (if you have the bandwidth for it).
+                Live events are a great way to connect with your audience and
+                filter out the crowd with the ones who truly care.
               </dd>
             </div>
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                    className="h-6 w-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                    ></path>
-                  </svg>
+                  <FaListAlt />
                 </div>
                 <p className="ml-16 text-lg font-medium leading-6">
-                  Low Latency coast to coast
+                  Create courses for a cohort of students{" "}
+                  <span className="rounded-full border border-pink-600 bg-pink-500 p-1 text-xs text-pink-200">
+                    Upcoming
+                  </span>
                 </p>
               </dt>
               <dd className="ml-16 mt-2 text-base text-neutral-400">
-                When we say live, we mean it. Latency in Ping is often under ⅓
-                of the competition. No more awkward pauses or cutoffs, Ping
-                feels more like IRL than anything else.
+                Recorded courses are fine, but live courses are a lot better.
+                You can create and manage cohort based courses for the select
+                few who are serious about learning from you.
               </dd>
             </div>
           </dl>
@@ -185,71 +166,43 @@ export const Features = () => {
         <div className="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:items-center lg:gap-8">
           <div className="lg:col-start-2">
             <h3 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-              Easier than cheating
-              <span className="text-neutral-400">in TF2</span>
+              Actionable analytics to help you grow
             </h3>
             <p className="mt-3 text-lg text-neutral-400">
-              Getting your guests onto your show is as easy as sending them a
-              link. No more leaked join codes - you can see who&apos;s joining
-              by their Twitch username.
+              Getting to a 10k subscriber count is a mamoth task, it&apos;s hard
+              still to make a living out of it. We&apos;ve built analytics to
+              help you grow your audience and make more money.
             </p>
             <dl className="mt-10 space-y-10">
               <div className="relative">
                 <dt>
                   <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                      className="h-6 w-6"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      ></path>
-                    </svg>
+                    <AiFillDatabase />
                   </div>
                   <p className="ml-16 text-lg font-medium leading-6">
-                    Secure by design
+                    Database of audience who really care
                   </p>
                 </dt>
                 <dd className="ml-16 mt-2 text-base text-neutral-400">
-                  We don&apos;t screw around with your safety on stream. All
-                  users are authenticated with Twitch, Twitter or Youtube, so
-                  you know the person joining is the person you invited.
+                  It is really hard to know who the active part of your audience
+                  who don&apos;t just watch your videos and leave. Wehelp you
+                  build a database of your audience who are truely interested in
+                  your content.
                 </dd>
               </div>
               <div className="relative">
                 <dt>
                   <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                      className="h-6 w-6"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                      ></path>
-                    </svg>
+                    <FaMoneyBill />
                   </div>
                   <p className="ml-16 text-lg font-medium leading-6">
-                    Layouts built for broadcast
+                    Paying audience is important
                   </p>
                 </dt>
                 <dd className="ml-16 mt-2 text-base text-neutral-400">
-                  Our default layouts are built around creation, not call
-                  participation. That means no more frames moving around when
-                  you don&apos;t want them to.
+                  We help you identify the audience who won&apos;t mind
+                  supporting you to get the best of the content, which is
+                  exclusive and help you support yourself to keep creating.
                 </dd>
               </div>
             </dl>
@@ -263,34 +216,19 @@ export const Features = () => {
       <div className="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:items-center lg:gap-8">
         <div className="relative">
           <h3 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-            Plays well with others
+            Targeted marketing is the key
           </h3>
           <p className="mt-3 text-lg text-neutral-400">
-            No more screen capture chaos. Ping calls integrate seamlessly with
-            your favorite streaming software.
+            Giving a call to action to a random audience is not going to help, a
+            targetted marketing strategy is important to convert your audience
+            into paying customers.
           </p>
           <dl className="mt-10 space-y-10">
             <div className="relative">
               <dt>
-                <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                    className="h-6 w-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
-                    ></path>
-                  </svg>
-                </div>
+                <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white"></div>
                 <p className="ml-16 text-lg font-medium leading-6">
-                  Embed your feeds directly
+                  Newsletters to target your audience
                 </p>
               </dt>
               <dd className="ml-16 mt-2 text-base text-neutral-400">
@@ -300,25 +238,9 @@ export const Features = () => {
             </div>
             <div className="relative">
               <dt>
-                <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="2"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                    className="h-6 w-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-                    ></path>
-                  </svg>
-                </div>
+                <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white"></div>
                 <p className="ml-16 text-lg font-medium leading-6">
-                  Maintain full control
+                  Send custom emails to the database we help you build
                 </p>
               </dt>
               <dd className="ml-16 mt-2 text-base text-neutral-400">
@@ -339,7 +261,7 @@ export const Features = () => {
 };
 
 export const ClaimLinkBanner = () => (
-  <div className="my-10 overflow-hidden bg-neutral-950 px-0 py-10 md:px-24">
+  <div className="my-10 overflow-hidden border-y border-neutral-800 bg-neutral-950 px-0 py-10 md:px-24">
     <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left xl:flex-row">
       <div className="text-3xl">
         Become a{" "}
