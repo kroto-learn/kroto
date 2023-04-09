@@ -41,7 +41,7 @@ export function Hero() {
 
   return (
     <div className="my-10">
-      <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full flex-col gap-10 px-2 sm:px-6 md:max-w-7xl lg:px-8">
         <div className="flex h-full flex-col pt-10 sm:pt-16 lg:pt-0">
           <div className="mx-auto max-w-lg sm:max-w-4xl sm:px-4 sm:text-center lg:flex lg:items-center lg:pl-0 lg:text-left">
             <div className="">
@@ -53,7 +53,7 @@ export function Hero() {
               </h1>
               <p className="relative my-5 text-center text-base text-neutral-300 sm:text-xl lg:text-lg xl:text-2xl">
                 We help YouTube educators monetize their content and provide
-                students with a seamless learning experience.
+                students with a seamless learning experience
               </p>
               <div className="mt-6 flex justify-center sm:mt-8">
                 <div className="sm:mx-auto sm:max-w-xl lg:mx-0">
@@ -77,7 +77,7 @@ export function Hero() {
               </div>
             </div>
           </div>
-          <div className="relative ">
+          <div className="relative">
             <Image
               src={HeroImage}
               className="transition duration-700 hover:scale-105"
@@ -99,6 +99,7 @@ export const Features = () => {
         </h2>
         <p className="mx-auto mt-4 max-w-3xl text-center text-xl text-neutral-400">
           Content creation is hard. Making money while doing so is even harder.
+          <br />
           We built Kroto to help creators monetize their content and provide a
           seamless learning experience for their students.
         </p>
@@ -333,11 +334,25 @@ export const Features = () => {
 };
 
 export const ClaimLinkBanner = () => (
-  <div className="my-10 bg-neutral-950 px-24 py-10">
-    <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-10 text-center lg:flex-row lg:text-left">
-      <div className="text-3xl">Become a kreator and claim you link now</div>
+  <div className="my-10 bg-neutral-950 px-0 py-10 md:px-24">
+    <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left xl:flex-row">
+      <div className="text-3xl">
+        Become a{" "}
+        <span className="text-pink-500 transition duration-300 hover:text-pink-600">
+          Kreator
+        </span>{" "}
+        now, and claim your kreator proflie
+      </div>
       <div>
-        <ClaimLink variant="lg" />
+        <div className="hidden lg:block">
+          <ClaimLink variant="lg" />
+        </div>
+        <div className="hidden md:block lg:hidden">
+          <ClaimLink variant="md" />
+        </div>
+        <div className="block md:hidden">
+          <ClaimLink variant="sm" />
+        </div>
       </div>
     </div>
   </div>
