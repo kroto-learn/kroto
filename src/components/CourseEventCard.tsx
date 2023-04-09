@@ -29,7 +29,7 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
             : `/event/${courseevent.id}`
           : `/course/${courseevent.id}`
       }
-      className={`flex w-full justify-center cursor-pointer flex-col xs:items-center gap-4 rounded-xl p-3 transition-all hover:bg-neutral-700 xs:flex-row`}
+      className={`flex w-full justify-center cursor-pointer flex-col xs:items-center gap-4 rounded-xl p-3 transition-all hover:bg-neutral-700/50 xs:flex-row`}
     >
       {courseevent.datetime && (
         <div className="md:block hidden">
