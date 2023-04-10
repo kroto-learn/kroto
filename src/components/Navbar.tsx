@@ -13,7 +13,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between gap-5 px-5 py-2">
           <div className="flex items-center gap-5">
             <KrotoLogo />
-            {router.asPath === "/" && (
+            {false && (
               <div className="hidden gap-5 md:flex">
                 <Link
                   className="transition-all hover:text-neutral-400"

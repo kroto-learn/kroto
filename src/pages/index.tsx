@@ -162,7 +162,9 @@ export const Features = () => {
             </div>
           </dl>
         </div>
-        <div className="mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true"></div>
+        <div className="mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
+          <img src="/courses.png" />
+        </div>
       </div>
       <div className="relative mt-12 sm:mt-16 lg:mt-24">
         <div className="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:items-center lg:gap-8">
@@ -212,7 +214,9 @@ export const Features = () => {
           <div
             className="relative mt-10 px-4 lg:col-start-1 lg:mt-0 lg:pl-0 lg:pr-8"
             aria-hidden="true"
-          ></div>
+          >
+            <img src="/audience.png" />
+          </div>
         </div>
       </div>
       <div className="relative mt-12 lg:mt-24 lg:grid lg:grid-cols-2 lg:items-center lg:gap-8">
@@ -268,12 +272,12 @@ export const Features = () => {
 };
 
 export const ClaimLinkBanner = () => (
-  <div className="relative my-10 overflow-hidden bg-neutral-950 px-0 py-10 md:px-24">
+  <div className="relative mt-10 overflow-hidden bg-neutral-950 px-0 py-10 md:px-24">
     <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
       <div className="">
         <h2 className="text-center text-2xl font-extrabold leading-8 tracking-tight sm:text-3xl md:text-4xl">
           Become a{" "}
-          <span className="text-pink-500 transition duration-300 hover:text-pink-600">
+          <span className="cursor-none text-pink-500 transition duration-300 hover:text-pink-600">
             Kreator
           </span>{" "}
           now, and claim your kreator proflie
@@ -283,7 +287,7 @@ export const ClaimLinkBanner = () => (
           like never before.
         </p>
 
-        <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-40 translate-y-48 rounded-full bg-pink-600/20 blur-3xl"></div>
+        {/* <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-40 translate-y-48 rounded-full bg-pink-600/20 blur-3xl"></div> */}
       </div>
 
       <div className="z-10">
