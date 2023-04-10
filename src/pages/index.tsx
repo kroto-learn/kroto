@@ -1,10 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { signIn, useSession } from "next-auth/react";
 import { HiArrowSmRight } from "react-icons/hi";
-import { useRouter } from "next/router";
 import Layout from "@/components/layouts/main";
-import { Loader } from "@/components/Loader";
 import ClaimLink from "@/components/ClaimLink";
 import { BsCalendarEventFill } from "react-icons/bs";
 import { FaListAlt, FaMoneyBill } from "react-icons/fa";
@@ -37,9 +34,6 @@ const Home: NextPage = () => {
 export default Home;
 
 export function Hero() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-
   return (
     <div className="my-28">
       <div className="mx-auto flex w-full flex-col gap-10 px-2 sm:px-6 md:max-w-7xl lg:px-8">
@@ -59,20 +53,22 @@ export function Hero() {
               <div className="mt-6 flex justify-center sm:mt-8">
                 <div className="sm:mx-auto sm:max-w-xl lg:mx-0">
                   <div className="flex flex-wrap gap-x-4 gap-y-2 sm:justify-center lg:justify-start">
-                    <button
-                      onClick={() => {
-                        void (session?.user
-                          ? router.push("/dashboard")
-                          : void signIn());
-                      }}
+                    <a
+                      href="#claim-link"
+                      // onClick={() => {
+                      //   void (session?.user
+                      //     ? router.push("/dashboard")
+                      //     : void signIn());
+                      // }}
                       className={`group inline-flex items-center gap-[0.15rem] rounded-xl bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
                     >
-                      {status === "loading" && <Loader />}
+                      {/* {status === "loading" && <Loader />}
                       {session?.user
                         ? "Go to dashboard"
-                        : "Become a Kreator now"}
+                        : "Become a Kreator now"} */}
+                      Become a Kreator now
                       <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -254,10 +250,9 @@ export const Features = () => {
             </div>
           </dl>
         </div>
-        <div
-          className="relative mt-10 px-4 lg:mt-0 lg:px-0"
-          aria-hidden="true"
-        ></div>
+        <div className="relative mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
+          <img src="/landing/newsletter.png" />
+        </div>
       </div>
     </div>
   );
