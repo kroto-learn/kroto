@@ -1,8 +1,9 @@
-import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 import DashboardLayout from "./layout";
+import { useEffect } from "react";
 
 export default function Dashboard() {
-  redirect("/creator/dashboard/events");
+  return <div />;
 }
 
 Dashboard.getLayout = DashboardLayout;
