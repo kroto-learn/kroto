@@ -17,6 +17,8 @@ import {
 } from "react-icons/bs";
 import { FaListAlt, FaMoneyBill } from "react-icons/fa";
 import { AiFillDatabase } from "react-icons/ai";
+import { BiNews } from "react-icons/bi";
+import { MdMarkEmailUnread } from "react-icons/md";
 
 const Home: NextPage = () => {
   return (
@@ -145,9 +147,9 @@ export const Features = () => {
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
                   <FaListAlt />
                 </div>
-                <p className="ml-16 text-lg font-medium leading-6">
+                <p className="ml-16 flex items-center gap-2 text-lg font-medium leading-6">
                   Create courses for a cohort of students{" "}
-                  <span className="rounded-full border border-pink-600 bg-pink-500 p-1 text-xs text-pink-200">
+                  <span className="rounded-full border border-pink-600 bg-pink-500/50 p-1 px-2 text-xs text-pink-100">
                     Upcoming
                   </span>
                 </p>
@@ -226,27 +228,32 @@ export const Features = () => {
           <dl className="mt-10 space-y-10">
             <div className="relative">
               <dt>
-                <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white"></div>
+                <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
+                  <BiNews />
+                </div>
                 <p className="ml-16 text-lg font-medium leading-6">
                   Newsletters to target your audience
                 </p>
               </dt>
               <dd className="ml-16 mt-2 text-base text-neutral-400">
-                Every caller has a feed of their own - just drop a URL in a
-                browser source and you&apos;re set.
+                Optimising for conversion rate should be an important part of
+                your marketing strategy. We help you build a database of your
+                audience who are truely interested in your content.
               </dd>
             </div>
             <div className="relative">
               <dt>
-                <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white"></div>
+                <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
+                  <MdMarkEmailUnread />
+                </div>
                 <p className="ml-16 text-lg font-medium leading-6">
                   Send custom emails to the database we help you build
                 </p>
               </dt>
               <dd className="ml-16 mt-2 text-base text-neutral-400">
-                Want separate layers for every caller? We got you. How about the
-                entire call with nameplates visible? Done. VTubers with a green
-                screened background? Just add your usual chroma key filters.
+                Deliver personalized emails based on their buying behavior,
+                survey responses, chat interactions, and support tickets to
+                promote loyalty and growth.
               </dd>
             </div>
           </dl>
@@ -262,7 +269,7 @@ export const Features = () => {
 
 export const ClaimLinkBanner = () => (
   <div className="my-10 overflow-hidden border-y border-neutral-800 bg-neutral-950 px-0 py-10 md:px-24">
-    <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left xl:flex-row">
+    <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
       <div className="text-3xl">
         Become a{" "}
         <span className="text-pink-500 transition duration-300 hover:text-pink-600">
