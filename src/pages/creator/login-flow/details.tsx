@@ -1,3 +1,4 @@
+import { Loader } from "@/components/Loader";
 import { api } from "@/utils/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -9,25 +10,52 @@ import { FaSave } from "react-icons/fa";
 export default function Page() {
   const { data: session } = useSession();
 
+  const [updating, setUpdating] = useState<boolean>(false);
+
   const [creatorProfile, setCreatorProfile] = useState<string>("");
   const [creatorBio, setBio] = useState<string>("");
   const [creatorName, setName] = useState<string>("");
 
+  useEffect(() => {
+    setCreatorProfile(localStorage.getItem("creatorProfile") ?? "");
+  }, [session]);
+
+  const { data: creator, isLoading } = api.creator.getProfile.useQuery();
   const creatorMutation = api.creator.updateProfile.useMutation().mutateAsync;
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (creator?.isCreator) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <div className="text-3xl font-bold text-neutral-200">
+          You are already a creator!
+        </div>
+        <div className="text-sm text-neutral-300">
+          <Link href="/creator/dashboard">
+            <span className="text-xl text-neutral-500 underline transition-all duration-300 hover:text-pink-500">
+              Go to Dashboard
+            </span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleUpdate = async () => {
+    setUpdating(true);
     const data = await creatorMutation({
       bio: creatorBio,
       name: creatorName,
       creatorProfile,
     });
-    console.log(data);
+    setUpdating(false);
   };
-
-  useEffect(() => {
-    setCreatorProfile(localStorage.getItem("creatorProfile") ?? "");
-    setName(session?.user?.name ?? "");
-  }, [session]);
 
   return (
     <div className="mx-20 my-10 flex h-screen flex-col items-center justify-center">
@@ -98,7 +126,7 @@ export default function Page() {
             onClick={() => void handleUpdate()}
             className={`group my-5 inline-flex items-center gap-1 rounded-xl bg-pink-600 px-6 py-2 text-center font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
           >
-            <FaSave /> Save Changes
+            {updating ? <Loader /> : <FaSave />} Save Changes
           </button>
           <Link
             href="/cc/dashboard/settings"
