@@ -95,7 +95,7 @@ export function Hero() {
           </div> */}
           <img
             className="mt-10 min-h-fit object-cover sm:h-1/2 md:h-2/3 xl:h-2/3"
-            src="/hero_image.png"
+            src="/landing/hero_image.png"
             alt="crap"
           />
         </div>
@@ -163,7 +163,7 @@ export const Features = () => {
           </dl>
         </div>
         <div className="mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
-          <img src="/courses.png" />
+          <img src="/landing/courses.png" />
         </div>
       </div>
       <div className="relative mt-12 sm:mt-16 lg:mt-24">
@@ -215,7 +215,7 @@ export const Features = () => {
             className="relative mt-10 px-4 lg:col-start-1 lg:mt-0 lg:pl-0 lg:pr-8"
             aria-hidden="true"
           >
-            <img src="/audience.png" />
+            <img src="/landing/audience.png" />
           </div>
         </div>
       </div>
