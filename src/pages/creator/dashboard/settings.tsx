@@ -4,6 +4,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaSave } from "react-icons/fa";
+import DashboardLayout from "./layout";
 
 const Settings = () => {
   const [creator, setCreator] = useState<Creator | undefined>(undefined);
@@ -92,3 +93,5 @@ const Settings = () => {
   );
 };
 export default Settings;
+
+Settings.getLayout = DashboardLayout;

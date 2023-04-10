@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { useEffect, type ReactNode, useState } from "react";
 import { BsGlobe } from "react-icons/bs";
 
-export default function EventLayout(page: ReactNode) {
+function EventLayoutR({ children }: { children: ReactNode }) {
   const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
 
   const router = useRouter();
@@ -79,7 +79,11 @@ export default function EventLayout(page: ReactNode) {
           </li>
         </ul>
       </div>
-      {page}
+      {children}
     </div>
   );
+}
+
+export default function EventLayout(page: ReactNode) {
+  return <EventLayoutR>{page}</EventLayoutR>;
 }

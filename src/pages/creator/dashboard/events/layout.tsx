@@ -2,11 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { GoPlus } from "react-icons/go";
 
-export default function EventsLayout(page: ReactNode) {
+function EventsLayoutR({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    console.log("I got remounted");
+  }, []);
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
@@ -48,7 +52,11 @@ export default function EventsLayout(page: ReactNode) {
           </li>
         </ul>
       </div>
-      {page}
+      {children}
     </div>
   );
+}
+
+export default function EventsLayout(page: ReactNode) {
+  return <EventsLayoutR>{page}</EventsLayoutR>;
 }

@@ -1,3 +1,6 @@
+import { ReactNode } from "react";
+import DashboardLayout from "./layout";
+
 export const metadata = {
   title: "Audience | Dashboard",
 };
@@ -599,3 +602,5 @@ const audienceData: Person[] = [
     phone: "+1 (821) 514-3840",
   },
 ];
+
+Audience.getLayout = DashboardLayout;

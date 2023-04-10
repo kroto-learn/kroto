@@ -29,8 +29,6 @@ const UpcomingEvents = () => {
   );
 };
 
-export default UpcomingEvents;
-
 const nestLayout = (parent: any, child: any) => {
   return (page: any) => parent(child(page));
 };
@@ -38,3 +36,5 @@ const nestLayout = (parent: any, child: any) => {
 export const EventsNestedLayout = nestLayout(DashboardLayout, EventsLayout);
 
 UpcomingEvents.getLayout = EventsNestedLayout;
+
+export default UpcomingEvents;

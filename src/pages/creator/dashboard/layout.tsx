@@ -13,7 +13,7 @@ import {
 import { FiArrowUpRight } from "react-icons/fi";
 import { RiSettings3Line, RiSettings3Fill } from "react-icons/ri";
 
-export default function DashboardLayout(page: ReactNode) {
+function DashboardLayoutR({ children }: { children: ReactNode }) {
   const [creator, setCreator] = useState<Creator | undefined>(undefined);
 
   useEffect(() => {
@@ -184,8 +184,12 @@ export default function DashboardLayout(page: ReactNode) {
             </Link>
           </div>
         </div>
-        <div className="ml-12 w-full md:ml-[15rem]">{page}</div>
+        <div className="ml-12 w-full md:ml-[15rem]">{children}</div>
       </div>
     </main>
   );
+}
+
+export default function DashboardLayout(page: ReactNode) {
+  return <DashboardLayoutR>{page}</DashboardLayoutR>;
 }
