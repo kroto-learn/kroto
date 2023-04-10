@@ -44,10 +44,10 @@ export function KrotoDotIn({ variant }: { variant: "sm" | "lg" | "md" }) {
       <div>
         <Link href="/">
           <div className="flex items-center">
-            <div>
+            <div className="translate-y-[2px]">
               <Image src={logo} width={512 / 12} height={512 / 12} alt="logo" />
             </div>
-            <h2 className="flex -translate-x-1 -translate-y-[3px] items-center text-4xl ">
+            <h2 className="flex -translate-x-1 items-center text-4xl ">
               roto.in/@
             </h2>
           </div>
@@ -59,10 +59,10 @@ export function KrotoDotIn({ variant }: { variant: "sm" | "lg" | "md" }) {
       <div>
         <Link href="/">
           <div className="flex items-center">
-            <div>
+            <div className="translate-y-[2px]">
               <Image src={logo} width={512 / 15} height={512 / 15} alt="logo" />
             </div>
-            <h2 className="flex -translate-x-1 -translate-y-[1px] items-center text-2xl ">
+            <h2 className="flex -translate-x-1 items-center text-2xl ">
               roto.in/@
             </h2>
           </div>

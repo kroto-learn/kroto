@@ -94,7 +94,7 @@ export function Hero() {
             />
           </div> */}
           <img
-            className="mt-10 h-80 object-cover sm:h-1/2 md:h-2/3 xl:h-2/3"
+            className="mt-10 min-h-fit object-cover sm:h-1/2 md:h-2/3 xl:h-2/3"
             src="/hero_image.png"
             alt="crap"
           />
@@ -271,14 +271,14 @@ export const ClaimLinkBanner = () => (
   <div className="relative my-10 overflow-hidden bg-neutral-950 px-0 py-10 md:px-24">
     <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
       <div className="">
-        <h2 className="text-center text-3xl font-extrabold leading-8 tracking-tight sm:text-4xl">
+        <h2 className="text-center text-2xl font-extrabold leading-8 tracking-tight sm:text-3xl md:text-4xl">
           Become a{" "}
           <span className="text-pink-500 transition duration-300 hover:text-pink-600">
             Kreator
           </span>{" "}
           now, and claim your kreator proflie
         </h2>
-        <p className="mx-auto mt-4 max-w-3xl text-center text-xl text-neutral-400">
+        <p className="tex-md mx-auto mt-4 max-w-3xl text-center text-neutral-400 md:text-xl">
           Monetize your audience like never before, and provide them with value
           like never before.
         </p>

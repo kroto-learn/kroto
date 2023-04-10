@@ -12,7 +12,7 @@ export default function Footer() {
         <nav className="flex flex-wrap justify-center" aria-label="Footer">
           <div className="px-5 py-2">
             <Link
-              className="text-base text-neutral-500 hover:text-neutral-400"
+              className="text-base text-neutral-500 transition duration-300 hover:text-neutral-400"
               href="/info/terms-of-service"
             >
               Terms of Service
@@ -20,7 +20,7 @@ export default function Footer() {
           </div>
           <div className="px-5 py-2">
             <Link
-              className="text-base text-neutral-500 hover:text-neutral-400"
+              className="text-base text-neutral-500 transition duration-300 hover:text-neutral-400"
               href="/privacy"
             >
               Privacy Policy
@@ -30,13 +30,13 @@ export default function Footer() {
         <div className="flex items-center justify-center space-x-6">
           <Link
             href="https://twitter.com/RoseKamalLove1"
-            className="text-base text-neutral-300 hover:text-neutral-200"
+            className="text-base text-neutral-400 transition duration-300 hover:text-neutral-200"
           >
             <IoLogoTwitter />
           </Link>
           <Link
             href="https://discord.com/invite/e5SnnVP3ad"
-            className="text-base text-neutral-300 hover:text-neutral-200"
+            className="text-base text-neutral-400 transition duration-300 hover:text-neutral-200"
           >
             <BsDiscord />
           </Link>
