@@ -1,7 +1,7 @@
 import { IoLogoGoogle, IoLogoGithub, IoLogoFacebook } from "react-icons/io";
 import { BsDiscord } from "react-icons/bs";
 import { signIn } from "next-auth/react";
-// import { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "public/kroto-logo.png";
@@ -47,12 +47,12 @@ export function KrotoLogo() {
 }
 
 export default function SignIn() {
-  //   const { query } = useRouter();
+  const { query } = useRouter();
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-5">
       <KrotoLogo />
       <div className="max-w-sm rounded-xl border border-neutral-700 bg-neutral-800 p-5">
-        {/* {query.error && (
+        {query.error && (
           <p className="py-2 text-center text-sm font-medium text-red-400">
             Can&apos;t sign you in, issue with {query.error}
           </p>
@@ -61,7 +61,7 @@ export default function SignIn() {
           <p className="text-center text-sm font-medium text-neutral-300">
             Sign in with
           </p>
-        )} */}
+        )}
         <div className="grid grid-cols-1 px-10 py-5">
           {options.map((o) => (
             <button

@@ -1,12 +1,35 @@
+import { api } from "@/utils/api";
 import { getCreators } from "mock/getCreators";
 import { SessionProvider, useSession } from "next-auth/react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { BsArrowRight, BsUpload } from "react-icons/bs";
 import { FaSave } from "react-icons/fa";
 
 export default function Page() {
   const { data: session } = useSession();
-  const creatorProfile = localStorage.getItem("creatorProfile") ?? "";
+  const [creatorProfile, setCreatorProfile] = useState<string>("");
+  const [creatorBio, setBio] = useState<string>("");
+  const [creatorName, setName] = useState<string>("");
+
+  const { data } = api.creator.createProfile.useQuery({
+    creatorProfile,
+  });
+
+  const creatorMutation = api.creator.updateProfile.useMutation().mutateAsync;
+
+  const handleUpdate = async () => {
+    const data = await creatorMutation({
+      bio: creatorBio,
+      name: creatorName,
+      creatorProfile,
+    });
+    console.log(data);
+  };
+
+  useEffect(() => {
+    setCreatorProfile(localStorage.getItem("creatorProfile") ?? "");
+  }, []);
 
   return (
     <div className="mx-20 my-10 flex h-screen flex-col items-center justify-center">
@@ -34,6 +57,7 @@ export default function Page() {
             <div className="relative mb-6">
               <input
                 value={session?.user?.name ?? ""}
+                onChange={(e) => setName(e.target.value)}
                 type="text"
                 id="input-group-1"
                 className="block min-w-[20rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
@@ -64,6 +88,8 @@ export default function Page() {
           <div className="relative mb-6">
             <textarea
               id="input-group-2"
+              onChange={(e) => setBio(e.target.value)}
+              value={creatorBio}
               className="block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
               placeholder="I am this, and this and this"
             />
@@ -71,6 +97,7 @@ export default function Page() {
         </div>
         <div className="flex gap-1">
           <button
+            onClick={() => void handleUpdate()}
             className={`group my-5 inline-flex items-center gap-1 rounded-xl bg-pink-600 px-6 py-2 text-center font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
           >
             <FaSave /> Save Changes
