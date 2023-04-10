@@ -1,20 +1,12 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, useSession } from "next-auth/react";
-
-import HeroImage from "/public/hero_image.png";
-import Image from "next/image";
-
 import { HiArrowSmRight } from "react-icons/hi";
 import { useRouter } from "next/router";
 import Layout from "@/components/layouts/main";
 import { Loader } from "@/components/Loader";
 import ClaimLink from "@/components/ClaimLink";
-import {
-  BsCalendarEventFill,
-  BsCardChecklist,
-  BsListCheck,
-} from "react-icons/bs";
+import { BsCalendarEventFill } from "react-icons/bs";
 import { FaListAlt, FaMoneyBill } from "react-icons/fa";
 import { AiFillDatabase } from "react-icons/ai";
 import { BiNews } from "react-icons/bi";
