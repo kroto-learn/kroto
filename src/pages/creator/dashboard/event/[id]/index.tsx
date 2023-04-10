@@ -24,38 +24,27 @@ import { SiGooglemeet } from "react-icons/si";
 import { number, object, string } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import DatePicker from "react-datepicker";
-
-export function generateStaticParams() {
-  return [{ id: "whfh456" }];
-}
-
-type Props = {
-  params: { id: string };
-};
-
-// export async function generateMetadata({ params }: Props) {
-//   const events = await getEvents();
-//   const event = events.find((e) => e.id === params.id);
-
-//   return {
-//     title: (event?.title as string) + "| Overview",
-//   };
-// }
+import DashboardLayout from "../../layout";
+import EventLayout from "./layout";
+import { useRouter } from "next/router";
+import Head from "next/head";
 
 // FIXME: time logic fix
 
-export default function EventOverview({ params }: Props) {
+const EventOverview = () => {
   const times = generateTimesArray();
   const minTimeIdx = giveFirstTimeIdx(times);
+  const router = useRouter();
+  const { id } = router.query as { id: string };
 
   useEffect(() => {
     const loadEvents = async () => {
       const events = await getEventsClient();
-      const mevent = events.find((e) => e.id === params.id);
+      const mevent = events.find((e) => e.id === id);
       if (mevent) setEvent(mevent);
     };
     void loadEvents();
-  }, [params]);
+  }, [id]);
 
   const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
   const [startTimeIdx, setStartTimeIdx] = useState<number>(
@@ -124,6 +113,9 @@ export default function EventOverview({ params }: Props) {
   if (event)
     return (
       <>
+        <Head>
+          <title>{`${event.title} | Overview`}</title>
+        </Head>
         <div className="flex w-full max-w-3xl items-start gap-8 rounded-xl bg-neutral-800 p-4">
           <div className="flex flex-col items-start gap-4">
             <div
@@ -520,4 +512,14 @@ export default function EventOverview({ params }: Props) {
       </>
     );
   else return <></>;
-}
+};
+
+const nestLayout = (parent: any, child: any) => {
+  return (page: any) => parent(child(page));
+};
+
+export const EventsNestedLayout = nestLayout(DashboardLayout, EventLayout);
+
+EventOverview.getLayout = EventsNestedLayout;
+
+export default EventOverview;

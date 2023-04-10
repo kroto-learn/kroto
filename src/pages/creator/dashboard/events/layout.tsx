@@ -5,11 +5,7 @@ import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
 import { GoPlus } from "react-icons/go";
 
-type Props = {
-  children: ReactNode;
-};
-
-export default function EventsLayout({ children }: Props) {
+export default function EventsLayout(page: ReactNode) {
   const pathname = usePathname();
 
   return (
@@ -52,7 +48,7 @@ export default function EventsLayout({ children }: Props) {
           </li>
         </ul>
       </div>
-      {children}
+      {page}
     </div>
   );
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import { type Creator } from "interfaces/Creator";
 import { getCreatorsClient } from "mock/getCreatorsClient";
 import Image from "next/image";
@@ -15,11 +13,7 @@ import {
 import { FiArrowUpRight } from "react-icons/fi";
 import { RiSettings3Line, RiSettings3Fill } from "react-icons/ri";
 
-type Props = {
-  children: ReactNode;
-};
-
-export default function DashboardLayout({ children }: Props) {
+export default function DashboardLayout(page: ReactNode) {
   const [creator, setCreator] = useState<Creator | undefined>(undefined);
 
   useEffect(() => {
@@ -190,7 +184,7 @@ export default function DashboardLayout({ children }: Props) {
             </Link>
           </div>
         </div>
-        <div className="ml-12 w-full md:ml-[15rem]">{children}</div>
+        <div className="ml-12 w-full md:ml-[15rem]">{page}</div>
       </div>
     </main>
   );

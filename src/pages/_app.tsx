@@ -5,11 +5,15 @@ import { SessionProvider } from "next-auth/react";
 import { api } from "@/utils/api";
 
 import { Progress } from "@/components/Progress";
-import { ProgressState, useProgressStore } from "@/helpers/useProgressStore";
+import {
+  type ProgressState,
+  useProgressStore,
+} from "@/helpers/useProgressStore";
 
 import "@/styles/globals.css";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { ReactElement, useEffect } from "react";
+import { type NextComponentType, type NextPageContext } from "next";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -41,9 +45,23 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <Progress isAnimating={isAnimating} />
-      <Component {...pageProps} />
+      <Layout Component={Component} pageProps={pageProps} />
     </SessionProvider>
   );
+};
+
+const Layout = ({
+  Component,
+  pageProps,
+}: {
+  Component: any;
+  pageProps: any;
+}) => {
+  if (Component.getLayout) {
+    return Component.getLayout(<Component {...pageProps} />);
+  } else {
+    return <Component {...pageProps} />;
+  }
 };
 
 export default api.withTRPC(MyApp);

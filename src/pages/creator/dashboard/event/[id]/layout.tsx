@@ -6,25 +6,24 @@ import { getEventsClient } from "mock/getEventsClient";
 // import { getEventsClient } from "mock/getEventsClient";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, type ReactNode, useState } from "react";
 import { BsGlobe } from "react-icons/bs";
 
-type Props = {
-  children: ReactNode;
-  params: { id: string };
-};
-
-export default function EventLayout({ children, params }: Props) {
+export default function EventLayout(page: ReactNode) {
   const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
+
+  const router = useRouter();
+  const { id } = router.query as { id: string };
 
   useEffect(() => {
     const loadEvent = async () => {
       const events = await getEventsClient();
-      const mEvent = events.find((e) => e.id === params.id);
+      const mEvent = events.find((e) => e.id === id);
       if (mEvent) setEvent(mEvent);
     };
     void loadEvent();
-  }, [params]);
+  }, [id]);
   const pathname = usePathname();
 
   return (
@@ -32,7 +31,7 @@ export default function EventLayout({ children, params }: Props) {
       <div className="flex w-full items-center justify-between gap-4 px-4">
         <h1 className="text-2xl text-neutral-200">{event?.title}</h1>
         <Link
-          href={`/event/${params.id}`}
+          href={`/event/${id}`}
           className="flex items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
         >
           <BsGlobe /> Event Public Page
@@ -42,9 +41,9 @@ export default function EventLayout({ children, params }: Props) {
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-2">
             <Link
-              href={`/creator/dashboard/event/${params.id}`}
+              href={`/creator/dashboard/event/${id}`}
               className={`inline-block rounded-t-lg p-4 ${
-                pathname === `/creator/dashboard/event/${params.id}`
+                pathname === `/creator/dashboard/event/${id}`
                   ? "border-b-2 border-pink-600 text-pink-600"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
               }`}
@@ -54,10 +53,9 @@ export default function EventLayout({ children, params }: Props) {
           </li>
           <li className="mr-2">
             <Link
-              href={`/creator/dashboard/event/${params.id}/registrations`}
+              href={`/creator/dashboard/event/${id}/registrations`}
               className={`inline-block rounded-t-lg p-4 ${
-                pathname ===
-                `/creator/dashboard/event/${params.id}/registrations`
+                pathname === `/creator/dashboard/event/${id}/registrations`
                   ? "border-b-2 border-pink-600 text-pink-600"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
               }`}
@@ -68,9 +66,9 @@ export default function EventLayout({ children, params }: Props) {
           </li>
           <li className="mr-2">
             <Link
-              href={`/creator/dashboard/event/${params.id}/settings`}
+              href={`/creator/dashboard/event/${id}/settings`}
               className={`inline-block rounded-t-lg p-4 ${
-                pathname === `/creator/dashboard/event/${params.id}/settings`
+                pathname === `/creator/dashboard/event/${id}/settings`
                   ? "border-b-2 border-pink-600 text-pink-600"
                   : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
               }`}
@@ -81,7 +79,7 @@ export default function EventLayout({ children, params }: Props) {
           </li>
         </ul>
       </div>
-      {children}
+      {page}
     </div>
   );
 }
