@@ -12,8 +12,8 @@ import {
 
 import "@/styles/globals.css";
 import { useRouter } from "next/router";
-import { ReactElement, useEffect } from "react";
-import { type NextComponentType, type NextPageContext } from "next";
+import { type ReactNode, useEffect } from "react";
+import { type NextComponentType } from "next";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -45,7 +45,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <Progress isAnimating={isAnimating} />
-      <Layout Component={Component} pageProps={pageProps} />
+      <Layout
+        Component={
+          Component as NextComponentType & {
+            getLayout: (page: ReactNode) => JSX.Element;
+          }
+        }
+        pageProps={pageProps}
+      />
     </SessionProvider>
   );
 };
@@ -54,8 +61,10 @@ const Layout = ({
   Component,
   pageProps,
 }: {
-  Component: any;
-  pageProps: any;
+  Component: NextComponentType & {
+    getLayout: (page: ReactNode) => JSX.Element;
+  };
+  pageProps: object;
 }) => {
   if (Component.getLayout) {
     return Component.getLayout(<Component {...pageProps} />);

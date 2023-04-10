@@ -1,4 +1,4 @@
-import React from "react";
+import React, { type ReactNode } from "react";
 import DashboardLayout from "../layout";
 import EventsLayout from "./layout";
 
@@ -12,8 +12,11 @@ const PastEvents = () => {
 
 export default PastEvents;
 
-const nestLayout = (parent: any, child: any) => {
-  return (page: any) => parent(child(page));
+const nestLayout = (
+  parent: (page: ReactNode) => JSX.Element,
+  child: (page: ReactNode) => JSX.Element
+) => {
+  return (page: ReactNode) => parent(child(page));
 };
 
 export const EventsNestedLayout = nestLayout(DashboardLayout, EventsLayout);

@@ -25,7 +25,7 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
       href={
         courseevent.datetime
           ? manage
-            ? `creator/dashboard/event/${courseevent.id}`
+            ? `/creator/dashboard/event/${courseevent.id}`
             : `/event/${courseevent.id}`
           : `/course/${courseevent.id}`
       }

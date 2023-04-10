@@ -1,12 +1,15 @@
-import { ReactNode } from "react";
+import Head from "next/head";
 import DashboardLayout from "./layout";
 
-export const metadata = {
-  title: "Audience | Dashboard",
-};
-
 const Audience = () => {
-  return <>Hello</>;
+  return (
+    <>
+      <Head>
+        <title>Audience | Dashboard</title>
+      </Head>
+      Hello
+    </>
+  );
 };
 
 export default Audience;

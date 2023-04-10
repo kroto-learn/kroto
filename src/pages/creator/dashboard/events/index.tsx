@@ -1,6 +1,6 @@
 import CourseEventCard from "@/components/CourseEventCard";
 import Head from "next/head";
-import React, { useEffect, useState } from "react";
+import React, { type ReactNode, useEffect, useState } from "react";
 import EventsLayout from "./layout";
 import DashboardLayout from "../layout";
 import { getEventsClient } from "mock/getEventsClient";
@@ -29,8 +29,11 @@ const UpcomingEvents = () => {
   );
 };
 
-const nestLayout = (parent: any, child: any) => {
-  return (page: any) => parent(child(page));
+const nestLayout = (
+  parent: (page: ReactNode) => JSX.Element,
+  child: (page: ReactNode) => JSX.Element
+) => {
+  return (page: ReactNode) => parent(child(page));
 };
 
 export const EventsNestedLayout = nestLayout(DashboardLayout, EventsLayout);

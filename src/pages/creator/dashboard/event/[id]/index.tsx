@@ -12,7 +12,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { type CourseEvent } from "interfaces/CourseEvent";
 import { getEventsClient } from "mock/getEventsClient";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { type ReactNode, useEffect, useState } from "react";
 import { AiOutlineLink } from "react-icons/ai";
 import { BiTime, BiTimeFive } from "react-icons/bi";
 import { BsCalendar3Event } from "react-icons/bs";
@@ -514,8 +514,11 @@ const EventOverview = () => {
   else return <></>;
 };
 
-const nestLayout = (parent: any, child: any) => {
-  return (page: any) => parent(child(page));
+const nestLayout = (
+  parent: (page: ReactNode) => JSX.Element,
+  child: (page: ReactNode) => JSX.Element
+) => {
+  return (page: ReactNode) => parent(child(page));
 };
 
 export const EventsNestedLayout = nestLayout(DashboardLayout, EventLayout);
