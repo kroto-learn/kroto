@@ -1,20 +1,17 @@
 import { api } from "@/utils/api";
-import { getCreators } from "mock/getCreators";
-import { SessionProvider, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BsArrowRight, BsUpload } from "react-icons/bs";
+import { BsUpload } from "react-icons/bs";
 import { FaSave } from "react-icons/fa";
 
 export default function Page() {
   const { data: session } = useSession();
+
   const [creatorProfile, setCreatorProfile] = useState<string>("");
   const [creatorBio, setBio] = useState<string>("");
   const [creatorName, setName] = useState<string>("");
-
-  const { data } = api.creator.createProfile.useQuery({
-    creatorProfile,
-  });
 
   const creatorMutation = api.creator.updateProfile.useMutation().mutateAsync;
 
@@ -29,7 +26,8 @@ export default function Page() {
 
   useEffect(() => {
     setCreatorProfile(localStorage.getItem("creatorProfile") ?? "");
-  }, []);
+    setName(session?.user?.name ?? "");
+  }, [session]);
 
   return (
     <div className="mx-20 my-10 flex h-screen flex-col items-center justify-center">
@@ -56,7 +54,7 @@ export default function Page() {
             </label>
             <div className="relative mb-6">
               <input
-                value={session?.user?.name ?? ""}
+                value={creatorName}
                 onChange={(e) => setName(e.target.value)}
                 type="text"
                 id="input-group-1"
@@ -102,11 +100,12 @@ export default function Page() {
           >
             <FaSave /> Save Changes
           </button>
-          <button
+          <Link
+            href="/cc/dashboard/settings"
             className={`group my-5 inline-flex items-center gap-1 rounded-xl px-6 py-2 text-center font-medium text-pink-600 underline underline-offset-4 transition-all duration-300 hover:text-pink-700 `}
           >
             Go to dashboard
-          </button>
+          </Link>
         </div>
       </div>
     </div>

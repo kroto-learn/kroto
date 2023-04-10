@@ -1,41 +1,25 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 
 export const creatorRouter = createTRPCRouter({
-  createProfile: protectedProcedure
-    .input(
-      z.object({
-        creatorProfile: z.string(),
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const { prisma } = ctx;
-      const { creatorProfile } = input;
+  getProfile: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
 
-      const user = await prisma.user.findUnique({
-        where: { id: ctx.session.user.id },
-      });
+    const user = await prisma.user.findUnique({
+      where: { id: ctx.session.user.id },
+    });
 
-      if (user?.isCreator) return "User is already a creator";
-
-      const updateUser = prisma.user
-        .update({
-          where: {
-            id: ctx.session.user.id,
-          },
-          data: {
-            creatorProfile: creatorProfile,
-            isCreator: true,
-          },
-        })
-        .catch((err: Error) => {
-          return err.message;
-        })
-        .then(() => {
-          "Successfully Created Profile";
-        });
-    }),
+    if (user?.isCreator) {
+      return user;
+    } else {
+      return "User is not a creator";
+    }
+  }),
 
   updateProfile: protectedProcedure
     .input(
@@ -54,6 +38,7 @@ export const creatorRouter = createTRPCRouter({
           id: ctx.session.user.id,
         },
         data: {
+          isCreator: true,
           creatorProfile: creatorProfile,
           bio: bio,
           name: name,
