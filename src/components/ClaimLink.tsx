@@ -10,22 +10,22 @@ export default function ClaimLink({
   return (
     <div>
       <div className="flex justify-center">
-        <div className="flex rounded-full border-2 border-neutral-700">
+        <div className="flex rounded-full border-neutral-700">
           <span
             className={`flex items-center ${
               variant === "sm" ? "pl-3" : "pl-5"
-            }  rounded-l-full border border-r-0 border-neutral-800 bg-neutral-900 text-lg shadow`}
+            }  rounded-l-full border border-r-0 border-neutral-800 bg-neutral-900/50  text-lg shadow backdrop-blur`}
           >
             <KrotoDotIn variant={variant} />
           </span>
           <input
             type="text"
             id="website-admin"
-            className={`block w-min rounded-none rounded-r-full border border-l-0 border-neutral-800 bg-neutral-900 ${
+            className={`block w-min rounded-none rounded-r-full border border-l-0 border-neutral-800 bg-neutral-900/50 backdrop-blur ${
               variant === "sm" ? "p-2" : "p-4"
             } pl-1 ${
               variant === "lg"
-                ? "text-2xl"
+                ? "text-3xl"
                 : variant === "md"
                 ? "text-lg"
                 : "text-md"
@@ -48,7 +48,7 @@ export function KrotoDotIn({ variant }: { variant: "sm" | "lg" | "md" }) {
               <Image src={logo} width={512 / 12} height={512 / 12} alt="logo" />
             </div>
             <h2 className="flex -translate-x-1 -translate-y-[3px] items-center text-4xl ">
-              roto.in /@
+              roto.in/@
             </h2>
           </div>
         </Link>
@@ -63,7 +63,7 @@ export function KrotoDotIn({ variant }: { variant: "sm" | "lg" | "md" }) {
               <Image src={logo} width={512 / 15} height={512 / 15} alt="logo" />
             </div>
             <h2 className="flex -translate-x-1 -translate-y-[1px] items-center text-2xl ">
-              roto.in /@
+              roto.in/@
             </h2>
           </div>
         </Link>
@@ -79,7 +79,7 @@ export function KrotoDotIn({ variant }: { variant: "sm" | "lg" | "md" }) {
             <Image src={logo} width={512 / 18} height={512 / 18} alt="logo" />
           </div>
           <h2 className="flex -translate-x-1 -translate-y-[1px] items-center text-xl">
-            roto.in /@
+            roto.in/@
           </h2>
         </div>
       </Link>

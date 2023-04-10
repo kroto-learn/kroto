@@ -49,7 +49,7 @@ export function Hero() {
   const router = useRouter();
 
   return (
-    <div className="my-20">
+    <div className="my-28">
       <div className="mx-auto flex w-full flex-col gap-10 px-2 sm:px-6 md:max-w-7xl lg:px-8">
         <div className="flex h-full flex-col pt-10 sm:pt-16 lg:pt-0">
           <div className="mx-auto max-w-lg sm:max-w-4xl sm:px-4 sm:text-center lg:flex lg:items-center lg:pl-0 lg:text-left">
@@ -94,7 +94,7 @@ export function Hero() {
             />
           </div> */}
           <img
-            className="h-96 bg-gradient-to-t from-neutral-950 object-cover md:h-1/2 xl:h-2/3"
+            className="mt-10 h-80 object-cover sm:h-1/2 md:h-2/3 xl:h-2/3"
             src="/hero_image.png"
             alt="crap"
           />
@@ -268,24 +268,30 @@ export const Features = () => {
 };
 
 export const ClaimLinkBanner = () => (
-  <div className="my-10 overflow-hidden border-y border-neutral-800 bg-neutral-950 px-0 py-10 md:px-24">
+  <div className="relative my-10 overflow-hidden bg-neutral-950 px-0 py-10 md:px-24">
     <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
-      <div className="text-3xl">
-        Become a{" "}
-        <span className="text-pink-500 transition duration-300 hover:text-pink-600">
-          Kreator
-        </span>{" "}
-        now, and claim your kreator proflie
+      <div className="">
+        <h2 className="text-center text-3xl font-extrabold leading-8 tracking-tight sm:text-4xl">
+          Become a{" "}
+          <span className="text-pink-500 transition duration-300 hover:text-pink-600">
+            Kreator
+          </span>{" "}
+          now, and claim your kreator proflie
+        </h2>
+        <p className="mx-auto mt-4 max-w-3xl text-center text-xl text-neutral-400">
+          Monetize your audience like never before, and provide them with value
+          like never before.
+        </p>
+
+        <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-40 translate-y-48 rounded-full bg-pink-600/20 blur-3xl"></div>
       </div>
-      <div>
+
+      <div className="z-10">
         <div className="hidden lg:block">
           <ClaimLink variant="lg" />
         </div>
-        <div className="hidden md:block lg:hidden">
+        <div className="block lg:hidden">
           <ClaimLink variant="md" />
-        </div>
-        <div className="block md:hidden">
-          <ClaimLink variant="sm" />
         </div>
       </div>
     </div>
