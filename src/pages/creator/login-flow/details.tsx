@@ -30,6 +30,8 @@ export default function Page() {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   if (creator?.isCreator) {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
