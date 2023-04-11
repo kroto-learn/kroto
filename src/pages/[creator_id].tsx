@@ -11,18 +11,21 @@ import { getEvents } from "mock/getEvents";
 import { getCourses } from "mock/getCourses";
 import type { CourseEvent } from "interfaces/CourseEvent";
 import Link from "next/link";
+import { generateSSGHelper } from "@/server/helpers/ssgHelper";
+import { api } from "@/utils/api";
 
 type CreatorPageProps = {
-  creator: Creator;
-  hostedCourses: CourseEvent[];
-  hostedEvents: CourseEvent[];
+  creatorProfile: string;
 };
 
-const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
+const Index = ({ creatorProfile }: CreatorPageProps) => {
+  const { data: creator } = api.creator.getPublicProfile.useQuery({
+    creatorProfile,
+  });
   return (
     <>
       <Head>
-        <title>{creator.name + " - Kroto"}</title>
+        <title>{`${creator?.name ?? ""} - Kroto`}</title>
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
         <div className="relative mt-6 flex w-full max-w-2xl flex-col items-center">
@@ -30,7 +33,11 @@ const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
             <div
               className={`relative aspect-square w-28 overflow-hidden  rounded-full border border-neutral-900 outline outline-neutral-800 transition-all`}
             >
-              <Image src={creator.image_url} alt={creator.name} fill />
+              <Image
+                src={creator?.image ?? ""}
+                alt={creator?.name ?? ""}
+                fill
+              />
             </div>
           </div>
           <div
@@ -39,14 +46,14 @@ const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
             <h1
               className={`text-center text-2xl font-medium text-neutral-200 transition-all duration-300 lg:text-left`}
             >
-              {creator.name}
+              {creator?.name}
             </h1>
             <p
               className={`text-center text-sm text-neutral-400 transition-all duration-300  sm:text-base`}
             >
-              {creator.bio}
+              {creator?.bio}
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+            {/* <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               {creator.links.map((link) => (
                 <SocialLink
                   collapsed={true}
@@ -57,8 +64,8 @@ const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
                   {link?.text}
                 </SocialLink>
               ))}
-            </div>
-            <Link
+            </div> */}
+            {/* <Link
               href={creator.topmate_url}
               target="_blank"
               className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332] hover:text-neutral-200"
@@ -72,14 +79,14 @@ const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
                 />
               </div>
               Schedule a 1:1 call
-            </Link>
+            </Link> */}
           </div>
         </div>
         <div className="flex w-full max-w-2xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-neutral-800 p-8">
           <h2 className="text-lg font-medium uppercase tracking-wider text-neutral-200">
             Upcoming Events
           </h2>
-          <div className="flex w-full flex-col items-center gap-4">
+          {/* <div className="flex w-full flex-col items-center gap-4">
             {hostedEvents.map((event) => (
               <CourseEventCard
                 creator={creator}
@@ -87,7 +94,7 @@ const Index = ({ creator, hostedEvents }: CreatorPageProps) => {
                 courseevent={event}
               />
             ))}
-          </div>
+          </div> */}
         </div>
       </main>
     </>
@@ -112,29 +119,42 @@ interface CParams extends ParsedUrlQuery {
 }
 
 export async function getStaticProps(context: GetStaticPropsContext) {
-  const creators = await getCreators();
-  const courses = await getCourses();
-  const events = await getEvents();
+  const ssg = generateSSGHelper();
+  const creatorProfile = (context.params as CParams).creator_id;
 
-  const creator = creators.find(
-    (c: Creator) => c.id === (context.params as CParams).creator_id
-  );
+  if (typeof creatorProfile !== "string") throw new Error("no slug");
 
-  const hostedEvents = events.filter((c: CourseEvent) => {
-    return c.creator === (context.params as CParams).creator_id;
-  });
-  const hostedCourses = courses.filter(
-    (c: CourseEvent) => c.creator === (context.params as CParams).creator_id
-  );
-
-  if (!creator)
-    return {
-      notFound: true,
-    };
+  await ssg.creator.getPublicProfile.prefetch({ creatorProfile });
 
   return {
-    props: { creator, hostedCourses, hostedEvents },
+    props: {
+      trpcState: ssg.dehydrate(),
+      creatorProfile,
+    },
   };
+  // const creators = await getCreators();
+  // const courses = await getCourses();
+  // const events = await getEvents();
+
+  // const creator = creators.find(
+  //   (c: Creator) => c.id === (context.params as CParams).creator_id
+  // );
+
+  // const hostedEvents = events.filter((c: CourseEvent) => {
+  //   return c.creator === (context.params as CParams).creator_id;
+  // });
+  // const hostedCourses = courses.filter(
+  //   (c: CourseEvent) => c.creator === (context.params as CParams).creator_id
+  // );
+
+  // if (!creator)
+  //   return {
+  //     notFound: true,
+  //   };
+
+  // return {
+  //   props: { creator, hostedCourses, hostedEvents },
+  // };
 }
 
 export default Index;

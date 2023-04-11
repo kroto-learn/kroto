@@ -126,7 +126,7 @@ const Settings = () => {
                 </label>
                 <div className="flex">
                   <span className="inline-flex items-center rounded-l-xl border border-r-0 border-neutral-600 bg-neutral-700 px-3 font-medium text-neutral-400">
-                    kroto.in/@
+                    kroto.in/
                   </span>
                   <input
                     {...methods.register("id")}

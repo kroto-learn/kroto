@@ -17,6 +17,23 @@ export const creatorRouter = createTRPCRouter({
     return user;
   }),
 
+  getPublicProfile: publicProcedure
+    .input(z.object({ creatorProfile: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { creatorProfile } = input;
+      const { prisma } = ctx;
+
+      const creator = await prisma.user.findUnique({
+        where: {
+          creatorProfile: creatorProfile,
+        },
+      });
+
+      console.log(creator);
+
+      return creator;
+    }),
+
   updateProfile: protectedProcedure
     .input(
       z.object({

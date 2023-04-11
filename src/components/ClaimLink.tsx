@@ -73,7 +73,7 @@ export function KrotoDotIn({ variant }: { variant: "sm" | "lg" | "md" }) {
               <Image src={logo} width={512 / 12} height={512 / 12} alt="logo" />
             </div>
             <h2 className="flex -translate-x-1 items-center text-4xl ">
-              roto.in/@
+              roto.in/
             </h2>
           </div>
         </Link>
@@ -88,7 +88,7 @@ export function KrotoDotIn({ variant }: { variant: "sm" | "lg" | "md" }) {
               <Image src={logo} width={512 / 15} height={512 / 15} alt="logo" />
             </div>
             <h2 className="flex -translate-x-1 items-center text-2xl ">
-              roto.in/@
+              roto.in/
             </h2>
           </div>
         </Link>
@@ -104,7 +104,7 @@ export function KrotoDotIn({ variant }: { variant: "sm" | "lg" | "md" }) {
             <Image src={logo} width={512 / 18} height={512 / 18} alt="logo" />
           </div>
           <h2 className="flex -translate-x-1 -translate-y-[1px] items-center text-xl">
-            roto.in/@
+            roto.in/
           </h2>
         </div>
       </Link>
