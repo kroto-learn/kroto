@@ -53,18 +53,16 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
             >
               {creator?.bio}
             </p>
-            {/* <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-              {creator.links.map((link) => (
+            <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              {creator?.socialLinks.map((link) => (
                 <SocialLink
                   collapsed={true}
-                  key={link.href}
-                  href={link.href}
+                  key={link.url}
+                  href={link.url}
                   type={link.type}
-                >
-                  {link?.text}
-                </SocialLink>
+                ></SocialLink>
               ))}
-            </div> */}
+            </div>
             {/* <Link
               href={creator.topmate_url}
               target="_blank"

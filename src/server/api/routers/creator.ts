@@ -5,6 +5,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
+import { loggerLink } from "@trpc/client";
 
 export const creatorRouter = createTRPCRouter({
   getProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -14,7 +15,13 @@ export const creatorRouter = createTRPCRouter({
       where: { id: ctx.session.user.id },
     });
 
-    return user;
+    const socialLinks = await prisma.socialLink.findMany({
+      where: {
+        creatorId: ctx.session.user.id,
+      },
+    });
+
+    return { ...user, socialLinks: socialLinks };
   }),
 
   getPublicProfile: publicProcedure
@@ -29,9 +36,11 @@ export const creatorRouter = createTRPCRouter({
         },
       });
 
-      console.log(creator);
+      const socialLinks = await prisma.socialLink.findMany({
+        where: { creatorId: creator?.id },
+      });
 
-      return creator;
+      return { ...creator, socialLinks: socialLinks };
     }),
 
   updateProfile: protectedProcedure
@@ -40,11 +49,25 @@ export const creatorRouter = createTRPCRouter({
         creatorProfile: z.string(),
         bio: z.string(),
         name: z.string(),
+        socialLinks: z
+          .object({
+            type: z.string(),
+            url: z.string(),
+          })
+          .array(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
-      const { bio, name, creatorProfile } = input;
+      const { bio, name, creatorProfile, socialLinks } = input;
+
+      const createSocialLinks = socialLinks.map((link) => {
+        return { ...link, creatorId: ctx.session.user.id };
+      });
+
+      const createdSocialLinks = await prisma.socialLink.createMany({
+        data: createSocialLinks,
+      });
 
       const updatedUser = await prisma.user.update({
         where: {
@@ -58,6 +81,6 @@ export const creatorRouter = createTRPCRouter({
         },
       });
 
-      return updatedUser;
+      return { ...updatedUser, socialLinks: createdSocialLinks };
     }),
 });

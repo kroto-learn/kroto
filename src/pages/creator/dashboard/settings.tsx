@@ -71,6 +71,7 @@ const Settings = () => {
                 name: values.name,
                 bio: values.bio,
                 creatorProfile: values.id,
+                socialLinks: [{ type: "other", url: values.link ?? "" }],
               });
             } catch (error) {
               console.log(error);
@@ -170,7 +171,7 @@ const Settings = () => {
                 <input
                   {...methods.register("link")}
                   className="block min-w-[20rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-                  placeholder="Your Name, not your mom's"
+                  placeholder="Enter your social link"
                 />
               </div>
               {methods.formState.errors.link?.message && (

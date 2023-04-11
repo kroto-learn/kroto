@@ -10,16 +10,12 @@ import { VscGlobe } from "react-icons/vsc";
 
 type Props = {
   href: string;
-  type: "youtube" | "twitter" | "linkedin" | "instagram" | "website" | "other";
+  type: string;
   children?: ReactNode;
   collapsed?: boolean;
 };
 
-const Icon = ({
-  type,
-}: {
-  type: "youtube" | "twitter" | "linkedin" | "instagram" | "website" | "other";
-}) => {
+const Icon = ({ type }: { type: string }) => {
   switch (type) {
     case "youtube":
       return <AiFillYoutube />;
@@ -41,7 +37,7 @@ const Text: ({
   children,
   collapsed,
 }: {
-  type: "youtube" | "twitter" | "linkedin" | "instagram" | "website" | "other";
+  type: string;
   children: ReactNode;
   collapsed?: boolean;
 }) => ReactElement = ({ type, children, collapsed }) => {
