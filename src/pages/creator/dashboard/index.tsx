@@ -1,9 +1,8 @@
-import { type Creator } from "interfaces/Creator";
-import { getCreatorsClient } from "mock/getCreatorsClient";
+import { api } from "@/utils/api";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode } from "react";
 import {
   BsCalendarEvent,
   BsCalendarEventFill,
@@ -20,16 +19,7 @@ export default function Dashboard() {
 Dashboard.getLayout = DashboardLayout;
 
 function DashboardLayoutR({ children }: { children: ReactNode }) {
-  const [creator, setCreator] = useState<Creator | undefined>(undefined);
-
-  useEffect(() => {
-    const loadEvents = async () => {
-      const creators = await getCreatorsClient();
-      const matchedCreator = creators.find((c) => c.id === "@rosekamallove");
-      matchedCreator && setCreator(matchedCreator);
-    };
-    void loadEvents();
-  }, []);
+  const { data: creator } = api.creator.getProfile.useQuery();
 
   const pathname = usePathname();
 
@@ -43,22 +33,30 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                 <div
                   className={`relative h-full w-full overflow-hidden rounded-full`}
                 >
-                  <Image src={creator.image_url} alt={creator.name} fill />
+                  <Image
+                    src={creator?.image ?? ""}
+                    alt={creator?.name ?? ""}
+                    fill
+                  />
                 </div>
               </Link>
               <div className="hidden w-full flex-col items-center gap-3 px-4 md:flex">
                 <div
                   className={`relative aspect-square w-24 overflow-hidden rounded-full`}
                 >
-                  <Image src={creator.image_url} alt={creator.name} fill />
+                  <Image
+                    src={creator?.image ?? ""}
+                    alt={creator?.name ?? ""}
+                    fill
+                  />
                 </div>
                 <div className="flex flex-col items-center gap-1">
                   <p className="font-medium text-neutral-200">{creator.name}</p>
                   <Link
-                    href={`/${creator.id}`}
+                    href={`/${creator?.creatorProfile ?? ""}`}
                     className="flex items-center text-xs font-medium text-neutral-300 decoration-neutral-400 underline-offset-2 hover:underline"
                   >
-                    kroto.in/{creator.id}{" "}
+                    kroto.in/{creator?.creatorProfile}{" "}
                     <FiArrowUpRight className="text-lg text-pink-600" />
                   </Link>
                 </div>
