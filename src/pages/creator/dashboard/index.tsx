@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
+import { BiLogOut } from "react-icons/bi";
 import {
   BsCalendarEvent,
   BsCalendarEventFill,
@@ -193,9 +194,9 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
           </div>
           <button
             onClick={() => void signOut({ callbackUrl: "/" })}
-            className="text-sm text-neutral-200 transition duration-300 hover:text-neutral-400"
+            className="flex items-center gap-1 text-sm text-neutral-200 transition duration-300 hover:text-neutral-400"
           >
-            Sign Out
+            <BiLogOut /> Sign Out
           </button>
         </div>
         <div className="ml-12 w-full md:ml-[15rem]">{children}</div>

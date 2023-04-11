@@ -62,22 +62,21 @@ const Settings = () => {
       </Head>
       <div className="mx-5 my-10 w-full">
         <form
-          onSubmit={
-            void methods.handleSubmit(async (values) => {
-              setUpdating(true);
-              try {
-                await updateProfile({
-                  name: values.name,
-                  bio: values.bio,
-                  creatorProfile: values.id,
-                  socialLinks: [{ type: "other", url: values.link ?? "" }],
-                });
-              } catch (error) {
-                console.log(error);
-              }
-              setUpdating(false);
-            })
-          }
+          onSubmit={methods.handleSubmit(async (values) => {
+            setUpdating(true);
+            console.log(values.link);
+            try {
+              await updateProfile({
+                name: values.name,
+                bio: values.bio,
+                creatorProfile: values.id,
+                socialLinks: [{ type: "twitter", url: values.link ?? "" }],
+              });
+            } catch (error) {
+              console.log(error);
+            }
+            setUpdating(false);
+          })}
           className="my-5 flex flex-col items-center rounded-xl p-5"
         >
           <div className="relative mb-5">
