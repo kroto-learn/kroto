@@ -33,6 +33,33 @@ export const eventRouter = createTRPCRouter({
       return event;
     }),
 
+  update: protectedProcedure
+    .input(createFormSchema.and(z.object({ id: z.string() })))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const event = await prisma.event.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          title: input.title,
+          description: input.description,
+          datetime: input.datetime,
+          eventUrl: input.eventUrl ?? "",
+          eventLocation: input.eventLocation ?? "",
+          eventType: input.eventType,
+          duration: input.duration,
+
+          creatorId: ctx.session.user.id,
+        },
+      });
+
+      return event;
+    }),
+
   get: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
