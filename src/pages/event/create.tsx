@@ -19,6 +19,7 @@ import Image from "next/image";
 import Head from "next/head";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { type z } from "zod";
+import { api } from "@/utils/api";
 
 export const createFormSchema = object({
   thumbnail: string({
@@ -97,6 +98,8 @@ const CreateEvent = () => {
     },
   });
 
+  const eventMutation = api.event.create.useMutation().mutateAsync;
+
   useEffect(() => {
     methods.setValue("thumbnail", generateRandomGradientImages());
   }, [methods]);
@@ -107,12 +110,16 @@ const CreateEvent = () => {
         <title>Create Event</title>
       </Head>
       <form
-        onSubmit={methods.handleSubmit((values) => {
+        onSubmit={methods.handleSubmit(async (values) => {
           if (!!values) {
             const mValues = values;
             if (mValues.eventType === "virtual") mValues.eventLocation = "";
             else mValues.eventUrl = "";
-            alert(JSON.stringify(values, null, 2));
+            try {
+              await eventMutation({ ...values });
+            } catch (err) {
+              console.log(err);
+            }
           }
         })}
         className="mx-auto my-12 flex w-full max-w-2xl flex-col gap-8"
