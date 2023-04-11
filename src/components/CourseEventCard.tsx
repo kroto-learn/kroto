@@ -40,7 +40,7 @@ const CourseEventCard = ({ courseevent, collapsed, manage }: Props) => {
         className={`relative aspect-[18/9] w-full object-cover transition-all xs:w-2/5`}
       >
         <Image
-          src={courseevent.thumbnail}
+          src={courseevent.thumbnail ?? ""}
           alt={courseevent.title}
           fill
           style={{ objectFit: "cover" }}

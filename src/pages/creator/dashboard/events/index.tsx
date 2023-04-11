@@ -7,23 +7,21 @@ import { DashboardLayout } from "..";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { GoPlus } from "react-icons/go";
+import { api } from "@/utils/api";
 
 const UpcomingEvents = () => {
-  const [events, setEvents] = useState<CourseEvent[]>([]);
-  useEffect(() => {
-    const loadEvents = async () => {
-      setEvents(await getEventsClient());
-    };
-    void loadEvents();
-  }, []);
-
+  const { data: events, isLoading } = api.event.getAll.useQuery();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  console.log(events);
   return (
     <>
       <Head>
         <title>Events | Dashboard</title>
       </Head>
       <div className="flex w-full flex-col items-start gap-4">
-        {events.map((event) => (
+        {events?.map((event) => (
           <CourseEventCard key={event.title} manage courseevent={event} />
         ))}
       </div>

@@ -32,4 +32,16 @@ export const eventRouter = createTRPCRouter({
 
       return event;
     }),
+
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const events = await prisma.event.findMany({
+      where: {
+        creatorId: ctx.session.user.id,
+      },
+    });
+
+    return events;
+  }),
 });
