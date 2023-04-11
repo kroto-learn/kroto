@@ -22,6 +22,8 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   const { data: creator } = api.creator.getPublicProfile.useQuery({
     creatorProfile,
   });
+
+  const { data: events } = api.event.getAllPublic.useQuery({ creatorProfile });
   return (
     <>
       <Head>
@@ -84,15 +86,11 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           <h2 className="text-lg font-medium uppercase tracking-wider text-neutral-200">
             Upcoming Events
           </h2>
-          {/* <div className="flex w-full flex-col items-center gap-4">
-            {hostedEvents.map((event) => (
-              <CourseEventCard
-                creator={creator}
-                key={event.title}
-                courseevent={event}
-              />
+          <div className="flex w-full flex-col items-center gap-4">
+            {events?.map((event) => (
+              <CourseEventCard key={event.title} courseevent={event} />
             ))}
-          </div> */}
+          </div>
         </div>
       </main>
     </>
