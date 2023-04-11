@@ -86,25 +86,4 @@ export const eventRouter = createTRPCRouter({
 
     return events;
   }),
-
-  getAllPublic: publicProcedure
-    .input(z.object({ creatorProfile: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const { prisma } = ctx;
-
-      const creator = await prisma.user.findUnique({
-        where: {
-          creatorProfile: input.creatorProfile,
-        },
-      });
-      if (!creator) throw new TRPCError({ code: "NOT_FOUND" });
-
-      const events = await prisma.event.findMany({
-        where: {
-          creatorId: creator.id,
-        },
-      });
-
-      return events;
-    }),
 });

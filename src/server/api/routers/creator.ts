@@ -23,7 +23,11 @@ export const creatorRouter = createTRPCRouter({
         where: { creatorId: creator?.id },
       });
 
-      return { ...creator, socialLinks: socialLinks };
+      const events = await prisma.event.findMany({
+        where: { creatorId: creator?.id },
+      });
+
+      return { ...creator, socialLinks: socialLinks, events };
     }),
 
   getProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -53,7 +57,8 @@ export const creatorRouter = createTRPCRouter({
             type: z.string(),
             url: z.string(),
           })
-          .array().optional(),
+          .array()
+          .optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {

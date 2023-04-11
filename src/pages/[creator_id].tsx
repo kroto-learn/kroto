@@ -1,15 +1,11 @@
 import CourseEventCard from "@/components/CourseEventCard";
 import SocialLink from "@/components/SocialLink";
-import type { Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import type { GetStaticPropsContext } from "next";
 import Head from "next/head";
 import type { ParsedUrlQuery } from "querystring";
 import React from "react";
 import Image from "next/image";
-import { getEvents } from "mock/getEvents";
-import { getCourses } from "mock/getCourses";
-import type { CourseEvent } from "interfaces/CourseEvent";
 import Link from "next/link";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
@@ -22,8 +18,6 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   const { data: creator } = api.creator.getPublicProfile.useQuery({
     creatorProfile,
   });
-
-  const { data: events } = api.event.getAllPublic.useQuery({ creatorProfile });
   return (
     <>
       <Head>
@@ -87,7 +81,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
             Upcoming Events
           </h2>
           <div className="flex w-full flex-col items-center gap-4">
-            {events?.map((event) => (
+            {creator?.events?.map((event) => (
               <CourseEventCard key={event.title} courseevent={event} />
             ))}
           </div>
@@ -128,29 +122,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       creatorProfile,
     },
   };
-  // const creators = await getCreators();
-  // const courses = await getCourses();
-  // const events = await getEvents();
-
-  // const creator = creators.find(
-  //   (c: Creator) => c.id === (context.params as CParams).creator_id
-  // );
-
-  // const hostedEvents = events.filter((c: CourseEvent) => {
-  //   return c.creator === (context.params as CParams).creator_id;
-  // });
-  // const hostedCourses = courses.filter(
-  //   (c: CourseEvent) => c.creator === (context.params as CParams).creator_id
-  // );
-
-  // if (!creator)
-  //   return {
-  //     notFound: true,
-  //   };
-
-  // return {
-  //   props: { creator, hostedCourses, hostedEvents },
-  // };
 }
 
 export default Index;
