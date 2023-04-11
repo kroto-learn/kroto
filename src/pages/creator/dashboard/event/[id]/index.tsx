@@ -29,6 +29,7 @@ import { usePathname } from "next/navigation";
 import { DashboardLayout } from "../..";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { api } from "@/utils/api";
 
 // FIXME: time logic fix
 
@@ -92,10 +93,14 @@ function useZodForm<TSchema extends z.ZodType>(
 }
 
 const EventOverview = () => {
-  const times = generateTimesArray();
-  const minTimeIdx = giveFirstTimeIdx(times);
   const router = useRouter();
   const { id } = router.query as { id: string };
+
+  const { data } = api.event.get.useQuery({ id });
+  console.log(data);
+
+  const times = generateTimesArray();
+  const minTimeIdx = giveFirstTimeIdx(times);
 
   useEffect(() => {
     const loadEvents = async () => {
