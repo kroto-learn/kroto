@@ -106,34 +106,7 @@ const CreateEvent = () => {
       <Head>
         <title>Create Event</title>
       </Head>
-      {/* <Formik
-        initialValues={{
-          title: "",
-          og_description: "",
-          description: "",
-          eventType: "virtual",
-          eventUrl: "",
-          eventLocation: "",
-          datetime: new Date().toISOString(),
-          duration: 15,
-          thumbnail: "",
-        }}
-        onSubmit={(values, { setSubmitting }) => {
-          const mValues = values;
-          if (mValues.eventType === "virtual") mValues.eventLocation = "";
-          else mValues.eventUrl = "";
-
-          alert(JSON.stringify(values, null, 2));
-          console.log(JSON.stringify(values, null, 2));
-
-          setSubmitting(false);
-        }}
-        validationSchema={toFormikValidationSchema(createFormSchema)}
-      > */}
-      {/* {({ isSubmitting, values, setFieldValue }) => {
-        return ( */}
       <form
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={methods.handleSubmit((values) => {
           if (!!values) {
             const mValues = values;
