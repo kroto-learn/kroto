@@ -1,4 +1,5 @@
 import { api } from "@/utils/api";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -78,7 +79,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               </div>
             </>
           )}
-          <div className="flex w-full flex-col items-center">
+          <div className="flex w-full flex-grow flex-col items-center">
             <Link
               href="/creator/dashboard/events"
               className={`group flex h-12 w-full cursor-pointer items-center justify-between gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
@@ -187,6 +188,12 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               />
             </Link>
           </div>
+          <button
+            onClick={() => void signOut({ callbackUrl: "/" })}
+            className="text-sm text-neutral-200 transition duration-300 hover:text-neutral-400"
+          >
+            Sign Out
+          </button>
         </div>
         <div className="ml-12 w-full md:ml-[15rem]">{children}</div>
       </div>

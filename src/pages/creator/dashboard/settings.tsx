@@ -101,7 +101,7 @@ const Settings = () => {
             )}
           </div>
           <div>
-            <div className="flex gap-5">
+            <div className="flex flex-col gap-5 md:flex-row">
               <div>
                 <label className="mb-2 block font-medium text-neutral-400">
                   Name
@@ -142,7 +142,7 @@ const Settings = () => {
                 )}
               </div>
             </div>
-            <div>
+            <div className="my-5">
               <label className="mb-2 block font-medium text-neutral-400">
                 Bio
               </label>
