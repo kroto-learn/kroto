@@ -54,7 +54,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
               {creator?.bio}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-              {creator?.socialLinks.map((link) => (
+              {creator?.socialLinks?.map((link) => (
                 <SocialLink
                   collapsed={true}
                   key={link.url}

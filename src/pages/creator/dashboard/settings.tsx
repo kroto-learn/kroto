@@ -62,22 +62,22 @@ const Settings = () => {
       </Head>
       <div className="mx-5 my-10 w-full">
         <form
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onSubmit={methods.handleSubmit(async (values) => {
-            setUpdating(true);
-            console.log("link", values.link);
-            try {
-              await updateProfile({
-                name: values.name,
-                bio: values.bio,
-                creatorProfile: values.id,
-                socialLinks: [{ type: "other", url: values.link ?? "" }],
-              });
-            } catch (error) {
-              console.log(error);
-            }
-            setUpdating(false);
-          })}
+          onSubmit={
+            void methods.handleSubmit(async (values) => {
+              setUpdating(true);
+              try {
+                await updateProfile({
+                  name: values.name,
+                  bio: values.bio,
+                  creatorProfile: values.id,
+                  socialLinks: [{ type: "other", url: values.link ?? "" }],
+                });
+              } catch (error) {
+                console.log(error);
+              }
+              setUpdating(false);
+            })
+          }
           className="my-5 flex flex-col items-center rounded-xl p-5"
         >
           {/* <h2 className="mb-5 text-2xl">Profile</h2> */}

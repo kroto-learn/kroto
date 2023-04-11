@@ -30,7 +30,10 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
         <div className="fixed mt-5 flex h-[96%] flex-col items-center justify-start gap-8 rounded-xl bg-neutral-900 py-12 text-neutral-400 md:w-60">
           {creator ? (
             <>
-              <Link href={`/${creator.id}`} className="h-16 w-16 p-2 md:hidden">
+              <Link
+                href={`/${creator?.creatorProfile ?? ""}`}
+                className="h-16 w-16 p-2 md:hidden"
+              >
                 <div
                   className={`relative h-full w-full overflow-hidden rounded-full`}
                 >

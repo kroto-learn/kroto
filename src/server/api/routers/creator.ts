@@ -5,7 +5,6 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { loggerLink } from "@trpc/client";
 
 export const creatorRouter = createTRPCRouter({
   getProfile: protectedProcedure.query(async ({ ctx }) => {
