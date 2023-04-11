@@ -259,7 +259,7 @@ export const Features = () => {
 };
 
 export const ClaimLinkBanner = () => (
-  <div className="relative mt-10 overflow-hidden bg-neutral-950 px-0 py-10 md:px-24">
+  <div className="relative mt-10 overflow-hidden bg-gradient-to-t from-neutral-950 via-neutral-950 px-0 py-10 md:px-24">
     <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
       <div className="">
         <h2 className="text-center text-2xl font-extrabold leading-8 tracking-tight sm:text-3xl md:text-4xl">
