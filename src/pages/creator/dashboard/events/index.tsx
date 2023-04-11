@@ -1,8 +1,6 @@
-import CourseEventCard from "@/components/CourseEventCard";
+import EventCard from "@/components/CourseEventCard";
 import Head from "next/head";
-import React, { type ReactNode, useEffect, useState } from "react";
-import { getEventsClient } from "mock/getEventsClient";
-import { type CourseEvent } from "interfaces/CourseEvent";
+import React, { type ReactNode, useEffect } from "react";
 import { DashboardLayout } from "..";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -22,7 +20,7 @@ const UpcomingEvents = () => {
       </Head>
       <div className="flex w-full flex-col items-start gap-4">
         {events?.map((event) => (
-          <CourseEventCard key={event.title} manage courseevent={event} />
+          <EventCard key={event.title} manage event={event} />
         ))}
       </div>
     </>

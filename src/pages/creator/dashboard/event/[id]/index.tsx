@@ -134,9 +134,9 @@ const EventOverview = () => {
 
   useEffect(() => {
     if (!!event) {
-      methods.setValue("thumbnail", event?.thumbnail);
-      methods.setValue("datetime", event?.datetime);
-      methods.setValue("eventType", event?.event_type);
+      methods.setValue("thumbnail", event?.thumbnail ?? "");
+      methods.setValue("datetime", event?.datetime ?? "");
+      methods.setValue("eventType", event?.eventType ?? "");
 
       setStartTimeIdx(
         giveFirstTimeIdx(times, event ? new Date(event.datetime) : new Date())
@@ -158,7 +158,7 @@ const EventOverview = () => {
               className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
             >
               <Image
-                src={event.thumbnail}
+                src={event.thumbnail ?? ""}
                 alt={event.title}
                 fill
                 style={{ objectFit: "cover" }}
@@ -180,7 +180,7 @@ const EventOverview = () => {
             <div className="flex flex-col gap-3">
               <h3 className="font-medium text-neutral-200">When & Where</h3>
               <div className="flex gap-2">
-                <CalenderBox datetime="2023-06-22T01:30:00.000-05:00" />
+                <CalenderBox date={new Date()} />
                 <p className="text-left text-sm  font-medium text-neutral-300">
                   {date?.toLocaleString("en-US", {
                     weekday: "long",
@@ -225,32 +225,6 @@ const EventOverview = () => {
             <MdClose />
           </button>
 
-          {/* <Formik
-            initialValues={{
-              title: event.title,
-              og_description: event.ogdescription,
-              description: event.description,
-              eventType: event.eventType,
-              eventUrl: event.eventUrl,
-              eventLocation: event.eventLocation,
-              datetime: event.datetime,
-              duration: event.duration,
-              thumbnail: event.thumbnail,
-            }}
-            onSubmit={(values, { setSubmitting }) => {
-              const mValues = values;
-              if (mValues.eventType === "virtual") mValues.eventLocation = "";
-              else mValues.eventUrl = "";
-
-              alert(JSON.stringify(values, null, 2));
-              console.log(JSON.stringify(values, null, 2));
-
-              setSubmitting(false);
-            }}
-            validationSchema={toFormikValidationSchema(editEventFormSchema)}
-          >
-            {({ isSubmitting, values, setFieldValue }) => {
-              return ( */}
           <form
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={methods.handleSubmit((values) => {
@@ -382,7 +356,7 @@ const EventOverview = () => {
                 <div className="relative flex items-center">
                   <input
                     {...methods.register("eventUrl")}
-                    defaultValue={(event && event.event_url) ?? ""}
+                    defaultValue={(event && event.eventUrl) ?? ""}
                     placeholder="Google Meet or YouTube URL"
                     className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
                   />
@@ -401,7 +375,7 @@ const EventOverview = () => {
                     name="eventLocation"
                     type="text"
                     id="eventLocation"
-                    defaultValue={(event && event.event_location) ?? ""}
+                    defaultValue={(event && event.eventLocation) ?? ""}
                     placeholder="Your event's address"
                     className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
                   />
@@ -522,9 +496,6 @@ const EventOverview = () => {
               Update Event
             </button>
           </form>
-          {/* );
-            }} */}
-          {/* </Formik> */}
         </div>
       </>
     );

@@ -55,7 +55,7 @@ export default function EventPage() {
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex gap-2">
-                <CalenderBox datetime="2023-06-22T01:30:00.000-05:00" />
+                <CalenderBox date={new Date()} />
                 <p className="text-left text-sm  font-medium text-neutral-300">
                   {date?.toLocaleString("en-US", {
                     weekday: "long",

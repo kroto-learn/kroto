@@ -1,28 +1,21 @@
-import CourseEventCard from "@/components/CourseEventCard";
-import { CourseEvent } from "interfaces/CourseEvent";
-import { Creator } from "interfaces/Creator";
+import EventCard from "@/components/CourseEventCard";
+import { type Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
-import { getEvents } from "mock/getEvents";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Image from "next/image";
-import { MdAccountCircle, MdSubscriptions } from "react-icons/md";
 
 import HardWorkingCat from "public/CatWorkingHard.png";
 import Layout from "@/components/layouts/main";
 import ClaimLink from "@/components/ClaimLink";
+import { api } from "@/utils/api";
 
-export default function Dashboard({
-  creators,
-  events,
-}: {
-  creators: Creator[];
-  events: CourseEvent[];
-}) {
+export default function Dashboard({ creators }: { creators: Creator[] }) {
   const { data: session } = useSession();
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const { data: events } = api.event.getAll.useQuery();
 
   return (
     <Layout>
@@ -70,8 +63,8 @@ export default function Dashboard({
           <div className="mb-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
             <div className="mt-2">
               {events?.map((e) => (
-                <div key={e.ogdescription}>
-                  <RegisteredEvents event={e} />
+                <div key={e.id}>
+                  <EventCard event={e} />
                   <br />
                 </div>
               ))}
@@ -174,16 +167,11 @@ export default function Dashboard({
 
 export async function getStaticProps() {
   const creators = await getCreators();
-  const events = await getEvents();
 
   return {
-    props: { creators, events },
+    props: { creators },
   };
 }
-
-export const RegisteredEvents = ({ event }: { event: CourseEvent }) => {
-  return <CourseEventCard courseevent={event} />;
-};
 
 export const CreatorCard = ({ creator }: { creator: Creator }) => {
   const router = useRouter();
