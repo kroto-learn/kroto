@@ -55,12 +55,13 @@ export default function Page() {
       bio: creatorBio,
       name: creatorName,
       creatorProfile: `${creatorProfile}`,
+      socialLinks: [],
     });
     setUpdating(false);
   };
 
   return (
-    <div className="mx-20 my-10 flex h-screen flex-col items-center justify-center">
+    <div className="items ?? [],-center mx-20 my-10 flex h-screen flex-col justify-center">
       <div className="relative mb-10">
         <div
           className={`relative mx-auto mb-5 aspect-square w-28  overflow-hidden rounded-full border border-neutral-900 outline outline-neutral-800 transition-all`}

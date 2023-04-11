@@ -53,20 +53,19 @@ export const creatorRouter = createTRPCRouter({
             type: z.string(),
             url: z.string(),
           })
-          .array()
-          .optional(),
+          .array(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
       const { bio, name, creatorProfile, socialLinks } = input;
 
-      const createSocialLinks = socialLinks?.map((link) => {
+      const createSocialLinks = socialLinks.map((link) => {
         return { ...link, creatorId: ctx.session.user.id };
       });
 
       const createdSocialLinks = await prisma.socialLink.createMany({
-        data: createSocialLinks ?? [],
+        data: createSocialLinks,
       });
 
       const updatedUser = await prisma.user.update({
