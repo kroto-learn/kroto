@@ -30,7 +30,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
   return (
     <main className="flex h-screen w-full justify-center overflow-x-hidden">
       <div className="flex h-full w-full max-w-4xl items-start">
-        <div className="fixed flex h-full flex-col items-center justify-start gap-8 rounded-xl bg-neutral-900 py-12 text-neutral-400 md:w-60">
+        <div className="fixed mt-5 flex h-[96%] flex-col items-center justify-start gap-8 rounded-xl bg-neutral-900 py-12 text-neutral-400 md:w-60">
           {creator ? (
             <>
               <Link href={`/${creator.id}`} className="h-16 w-16 p-2 md:hidden">

@@ -39,7 +39,7 @@ export default function Page() {
           You are already a creator!
         </div>
         <div className="text-sm text-neutral-300">
-          <Link href="/creator/dashboard">
+          <Link href="/creator/dashboard/settings">
             <span className="text-xl text-neutral-500 underline transition-all duration-300 hover:text-pink-500">
               Go to Dashboard
             </span>
@@ -131,7 +131,7 @@ export default function Page() {
             {updating ? <Loader /> : <FaSave />} Save Changes
           </button>
           <Link
-            href="/cc/dashboard/settings"
+            href="/creator/dashboard/settings"
             className={`group my-5 inline-flex items-center gap-1 rounded-xl px-6 py-2 text-center font-medium text-pink-600 underline underline-offset-4 transition-all duration-300 hover:text-pink-700 `}
           >
             Go to dashboard

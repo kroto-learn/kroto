@@ -1,4 +1,5 @@
 import { KrotoLogo } from "@/pages/auth/sign-in";
+import { api } from "@/utils/api";
 import { Menu } from "@headlessui/react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -7,6 +8,8 @@ import { useRouter } from "next/router";
 export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
+  const { data: creator } = api.creator.getProfile.useQuery();
+
   return (
     <div className="fixed top-0 z-40 w-full border-b border-neutral-800/50 bg-neutral-950/50 font-medium backdrop-blur-lg">
       <div className="mx-auto max-w-7xl">
@@ -40,7 +43,11 @@ export default function Navbar() {
             <div className="flex gap-5">
               <Link
                 className="transition-all hover:text-neutral-400"
-                href="/dashboard"
+                href={
+                  creator?.isCreator
+                    ? "/creator/dashboard/events"
+                    : "/dashboard"
+                }
               >
                 Dashboard
               </Link>

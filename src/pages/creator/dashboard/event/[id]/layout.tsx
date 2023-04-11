@@ -1,5 +1,3 @@
-"use client";
-
 import { type CourseEvent } from "interfaces/CourseEvent";
 import { getEventsClient } from "mock/getEventsClient";
 // import { getEventsClient } from "mock/getEventsClient";

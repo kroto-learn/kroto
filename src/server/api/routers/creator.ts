@@ -14,11 +14,7 @@ export const creatorRouter = createTRPCRouter({
       where: { id: ctx.session.user.id },
     });
 
-    if (user?.isCreator) {
-      return user;
-    } else {
-      return "User is not a creator";
-    }
+    return user;
   }),
 
   updateProfile: protectedProcedure

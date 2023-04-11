@@ -3,11 +3,17 @@ import Head from "next/head";
 import Image from "next/image";
 import { FaSave } from "react-icons/fa";
 import DashboardLayout from "./layout";
+import { Loader } from "@/components/Loader";
 
 const Settings = () => {
   const { data: creator, isLoading } = api.creator.getProfile.useQuery();
   console.log(creator);
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader />
+      </div>
+    );
   return (
     <>
       <Head>
@@ -19,7 +25,7 @@ const Settings = () => {
           <div
             className={`relative mb-5 aspect-square w-28 overflow-hidden rounded-full border border-neutral-900 outline outline-neutral-800 transition-all`}
           >
-            {/* <Image src={creator?.image ?? ""} alt={creator?.name ?? ""} fill /> */}
+            <Image src={creator?.image ?? ""} alt={creator?.name ?? ""} fill />
           </div>
           <div>
             <div className="flex gap-5">
@@ -30,7 +36,7 @@ const Settings = () => {
                 <div className="relative mb-6">
                   <input
                     type="text"
-                    // value={creator?.name}
+                    value={creator?.name ?? ""}
                     id="input-group-1"
                     className="block min-w-[20rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
                     placeholder="Your Name, not your mom's"
@@ -46,7 +52,7 @@ const Settings = () => {
                     kroto.in/@
                   </span>
                   <input
-                    // value={creator?.creatorProfile}
+                    value={creator?.creatorProfile ?? ""}
                     type="text"
                     id="website-admin"
                     className="block min-w-[14rem] rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
@@ -61,7 +67,7 @@ const Settings = () => {
               </label>
               <div className="relative mb-6">
                 <textarea
-                  // value={creator?.bio}
+                  value={creator?.bio ?? ""}
                   id="input-group-2"
                   className="block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
                   placeholder="I am this, and this and this"
