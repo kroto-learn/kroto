@@ -80,7 +80,6 @@ const Settings = () => {
           }
           className="my-5 flex flex-col items-center rounded-xl p-5"
         >
-          {/* <h2 className="mb-5 text-2xl">Profile</h2> */}
           <div className="relative mb-5">
             <div
               className={`relative mb-5 aspect-square w-28 overflow-hidden rounded-full border border-neutral-900 outline outline-neutral-800 transition-all`}
