@@ -46,10 +46,12 @@ export default function ClaimLink({
                 localStorage.setItem("creatorProfile", creatorProfile);
                 void router.push("/creator/login-flow/auth");
               }}
-              className={`absolute right-8  cursor-pointer rounded-full ${
+              className={`absolute  cursor-pointer rounded-full ${
                 variant === "md"
-                  ? "translate-y-5 text-xl"
-                  : "translate-y-5 text-3xl"
+                  ? "right-8 translate-y-5  text-xl"
+                  : variant === "sm"
+                  ? "text-md right-5 translate-y-3"
+                  : "right-8 translate-y-3 text-3xl "
               } transition-all duration-300 hover:translate-x-1`}
             >
               <BsArrowRight />
