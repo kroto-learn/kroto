@@ -8,14 +8,8 @@ import { FaListAlt, FaMoneyBill } from "react-icons/fa";
 import { AiFillDatabase } from "react-icons/ai";
 import { BiNews } from "react-icons/bi";
 import { MdMarkEmailUnread } from "react-icons/md";
-import { api } from "@/utils/api";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 const Home: NextPage = () => {
-  const { push } = useRouter();
-  const { data: creator } = api.creator.getProfile.useQuery();
-
   return (
     <Layout>
       <Head>

@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "public/kroto-logo.png";
+import { api } from "@/utils/api";
+import { Loader } from "@/components/Loader";
 
 const options = [
   {
@@ -66,7 +68,11 @@ export default function SignIn() {
           {options.map((o) => (
             <button
               key={o.id}
-              onClick={() => void signIn(o.id, { callbackUrl: "/dashboard" })}
+              onClick={() =>
+                void signIn(o.id, {
+                  callbackUrl: "/",
+                })
+              }
               className="mb-2 mr-2 flex items-center justify-center gap-1 rounded-xl border border-neutral-700 bg-neutral-800 px-16 py-2.5 text-lg font-medium text-neutral-300 transition duration-300 hover:bg-neutral-700"
             >
               {o.icon} {o.name}

@@ -7,7 +7,6 @@ const Audience = () => {
       <Head>
         <title>Audience | Dashboard</title>
       </Head>
-      Hello
     </>
   );
 };

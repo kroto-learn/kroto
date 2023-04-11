@@ -39,7 +39,7 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          {session ? (
+          {session && creator ? (
             <div className="flex gap-5">
               <Link
                 className="transition-all hover:text-neutral-400"
@@ -53,7 +53,7 @@ export default function Navbar() {
               </Link>
               <button
                 className="transition-all hover:text-neutral-400"
-                onClick={() => void signOut()}
+                onClick={() => void signOut({ callbackUrl: "/" })}
               >
                 Sign Out
               </button>
