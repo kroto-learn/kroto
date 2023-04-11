@@ -2,8 +2,8 @@ import { api } from "@/utils/api";
 import Head from "next/head";
 import Image from "next/image";
 import { FaSave } from "react-icons/fa";
-import DashboardLayout from "./layout";
 import { Loader } from "@/components/Loader";
+import { DashboardLayout } from ".";
 
 const Settings = () => {
   const { data: creator, isLoading } = api.creator.getProfile.useQuery();

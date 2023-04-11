@@ -1,5 +1,5 @@
 import Head from "next/head";
-import DashboardLayout from "./layout";
+import { DashboardLayout } from ".";
 
 const Audience = () => {
   return (

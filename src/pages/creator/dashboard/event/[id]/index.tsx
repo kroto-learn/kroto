@@ -15,7 +15,7 @@ import Image from "next/image";
 import React, { type ReactNode, useEffect, useState } from "react";
 import { AiOutlineLink } from "react-icons/ai";
 import { BiTime, BiTimeFive } from "react-icons/bi";
-import { BsCalendar3Event } from "react-icons/bs";
+import { BsCalendar3Event, BsGlobe } from "react-icons/bs";
 import { FiEdit2 } from "react-icons/fi";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
@@ -24,10 +24,11 @@ import { SiGooglemeet } from "react-icons/si";
 import { number, object, string } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import DatePicker from "react-datepicker";
-import DashboardLayout from "../../layout";
-import EventLayout from "./layout";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { DashboardLayout } from "../..";
 
 // FIXME: time logic fix
 
@@ -521,8 +522,88 @@ const nestLayout = (
   return (page: ReactNode) => parent(child(page));
 };
 
-export const EventsNestedLayout = nestLayout(DashboardLayout, EventLayout);
+export const EventNestedLayout = nestLayout(DashboardLayout, EventLayout);
 
-EventOverview.getLayout = EventsNestedLayout;
+EventOverview.getLayout = EventNestedLayout;
 
 export default EventOverview;
+
+function EventLayoutR({ children }: { children: ReactNode }) {
+  const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
+
+  const router = useRouter();
+  const { id } = router.query as { id: string };
+
+  useEffect(() => {
+    const loadEvent = async () => {
+      const events = await getEventsClient();
+      const mEvent = events.find((e) => e.id === id);
+      if (mEvent) setEvent(mEvent);
+    };
+    void loadEvent();
+  }, [id]);
+  const pathname = usePathname();
+
+  return (
+    <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
+      <div className="flex w-full items-center justify-between gap-4 px-4">
+        <h1 className="text-2xl text-neutral-200">{event?.title}</h1>
+        <Link
+          href={`/event/${id}`}
+          className="flex items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
+        >
+          <BsGlobe /> Event Public Page
+        </Link>
+      </div>
+      <div className="border-b border-neutral-200 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
+        <ul className="-mb-px flex flex-wrap">
+          <li className="mr-2">
+            <Link
+              href={`/creator/dashboard/event/${id}`}
+              className={`inline-block rounded-t-lg p-4 ${
+                pathname === `/creator/dashboard/event/${id}`
+                  ? "border-b-2 border-pink-600 text-pink-600"
+                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
+              }`}
+            >
+              Overview
+            </Link>
+          </li>
+          <li className="mr-2">
+            <Link
+              href={`/creator/dashboard/event/${id}/registrations`}
+              className={`inline-block rounded-t-lg p-4 ${
+                pathname === `/creator/dashboard/event/${id}/registrations`
+                  ? "border-b-2 border-pink-600 text-pink-600"
+                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
+              }`}
+              aria-current="page"
+            >
+              Registrations
+            </Link>
+          </li>
+          <li className="mr-2">
+            <Link
+              href={`/creator/dashboard/event/${id}/settings`}
+              className={`inline-block rounded-t-lg p-4 ${
+                pathname === `/creator/dashboard/event/${id}/settings`
+                  ? "border-b-2 border-pink-600 text-pink-600"
+                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
+              }`}
+              aria-current="page"
+            >
+              Settings
+            </Link>
+          </li>
+        </ul>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function EventLayout(page: ReactNode) {
+  return <EventLayoutR>{page}</EventLayoutR>;
+}
+
+export { EventLayout };

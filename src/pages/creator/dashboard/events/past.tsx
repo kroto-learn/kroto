@@ -1,6 +1,6 @@
 import React, { type ReactNode } from "react";
-import DashboardLayout from "../layout";
-import EventsLayout from "./layout";
+import { DashboardLayout } from "..";
+import { EventsLayout } from ".";
 
 export const metadata = {
   title: "Past Events | Dashboard",

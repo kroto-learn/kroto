@@ -2,9 +2,9 @@ import { type CourseEvent } from "interfaces/CourseEvent";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { type ReactNode, useEffect, useState } from "react";
-import DashboardLayout from "../../layout";
 import { getEventsClient } from "mock/getEventsClient";
-import EventLayout from "./layout";
+import { DashboardLayout } from "../..";
+import { EventLayout } from ".";
 
 const EventSettings = () => {
   const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
@@ -39,6 +39,6 @@ const nestLayout = (
   return (page: ReactNode) => parent(child(page));
 };
 
-export const EventsNestedLayout = nestLayout(DashboardLayout, EventLayout);
+export const EventNestedLayout = nestLayout(DashboardLayout, EventLayout);
 
-EventSettings.getLayout = EventsNestedLayout;
+EventSettings.getLayout = EventNestedLayout;
