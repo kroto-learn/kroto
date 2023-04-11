@@ -42,11 +42,11 @@ const editEventFormSchema = object({
   description: string({
     required_error: "Please enter event description.",
   }).max(150),
-  event_type: string({
+  eventType: string({
     required_error: "Please select the type of event.",
   }).max(150),
-  event_url: string().url().optional(),
-  event_location: string().optional(),
+  eventUrl: string().url().optional(),
+  eventLocation: string().optional(),
   datetime: string({
     required_error: "Please enter event's date and time.",
   }),
@@ -58,16 +58,16 @@ const editEventFormSchema = object({
   .refine(
     (data) => {
       if (data)
-        return data.event_type === "virtual"
-          ? data.event_url !== undefined && data.event_url !== ""
-          : data.event_location !== undefined && data.event_location !== "";
+        return data.eventType === "virtual"
+          ? data.eventUrl !== undefined && data.eventUrl !== ""
+          : data.eventLocation !== undefined && data.eventLocation !== "";
       else return false;
     },
     (data) => {
       if (data)
         return {
           message:
-            data && data.event_type === "virtual"
+            data && data.eventType === "virtual"
               ? "Please enter the event URL."
               : "Please enter the event location.",
         };
@@ -131,7 +131,7 @@ const EventOverview = () => {
     if (!!event) {
       methods.setValue("thumbnail", event?.thumbnail);
       methods.setValue("datetime", event?.datetime);
-      methods.setValue("event_type", event?.event_type);
+      methods.setValue("eventType", event?.event_type);
 
       setStartTimeIdx(
         giveFirstTimeIdx(times, event ? new Date(event.datetime) : new Date())
@@ -225,17 +225,17 @@ const EventOverview = () => {
               title: event.title,
               og_description: event.ogdescription,
               description: event.description,
-              event_type: event.event_type,
-              event_url: event.event_url,
-              event_location: event.event_location,
+              eventType: event.eventType,
+              eventUrl: event.eventUrl,
+              eventLocation: event.eventLocation,
               datetime: event.datetime,
               duration: event.duration,
               thumbnail: event.thumbnail,
             }}
             onSubmit={(values, { setSubmitting }) => {
               const mValues = values;
-              if (mValues.event_type === "virtual") mValues.event_location = "";
-              else mValues.event_url = "";
+              if (mValues.eventType === "virtual") mValues.eventLocation = "";
+              else mValues.eventUrl = "";
 
               alert(JSON.stringify(values, null, 2));
               console.log(JSON.stringify(values, null, 2));
@@ -251,9 +251,8 @@ const EventOverview = () => {
             onSubmit={methods.handleSubmit((values) => {
               if (!!values) {
                 const mValues = values;
-                if (mValues.event_type === "virtual")
-                  mValues.event_location = "";
-                else mValues.event_url = "";
+                if (mValues.eventType === "virtual") mValues.eventLocation = "";
+                else mValues.eventUrl = "";
                 alert(JSON.stringify(values, null, 2));
               }
             })}
@@ -327,7 +326,7 @@ const EventOverview = () => {
             </div>
 
             <div className="flex flex-col gap-3">
-              <label htmlFor="event_type" className="text-lg  text-neutral-200">
+              <label htmlFor="eventType" className="text-lg  text-neutral-200">
                 Where is event taking place?
               </label>
 
@@ -338,8 +337,8 @@ const EventOverview = () => {
                     value="virtual"
                     id="virtual"
                     className="peer hidden"
-                    {...methods.register("event_type")}
-                    name="event_type"
+                    {...methods.register("eventType")}
+                    name="eventType"
                   />
                   <label
                     htmlFor="virtual"
@@ -354,8 +353,8 @@ const EventOverview = () => {
                     value="in_person"
                     id="in_person"
                     className="peer hidden"
-                    {...methods.register("event_type")}
-                    name="event_type"
+                    {...methods.register("eventType")}
+                    name="eventType"
                   />
                   <label
                     htmlFor="in_person"
@@ -366,27 +365,27 @@ const EventOverview = () => {
                 </li>
               </ul>
 
-              {methods.formState.errors.event_type?.message && (
+              {methods.formState.errors.eventType?.message && (
                 <p className="text-red-700">
-                  {methods.formState.errors.event_type?.message}
+                  {methods.formState.errors.eventType?.message}
                 </p>
               )}
             </div>
 
-            {methods.watch()?.event_type === "virtual" ? (
+            {methods.watch()?.eventType === "virtual" ? (
               <div className="flex flex-col gap-3">
                 <div className="relative flex items-center">
                   <input
-                    {...methods.register("event_url")}
+                    {...methods.register("eventUrl")}
                     defaultValue={(event && event.event_url) ?? ""}
                     placeholder="Google Meet or YouTube URL"
                     className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
                   />
                   <AiOutlineLink className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
                 </div>
-                {methods.formState.errors.event_url?.message && (
+                {methods.formState.errors.eventUrl?.message && (
                   <p className="text-red-700">
-                    {methods.formState.errors.event_url?.message}
+                    {methods.formState.errors.eventUrl?.message}
                   </p>
                 )}
               </div>
@@ -394,9 +393,9 @@ const EventOverview = () => {
               <div className="flex flex-col gap-3">
                 <div className="relative flex items-center">
                   <input
-                    name="event_location"
+                    name="eventLocation"
                     type="text"
-                    id="event_location"
+                    id="eventLocation"
                     defaultValue={(event && event.event_location) ?? ""}
                     placeholder="Your event's address"
                     className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
@@ -404,7 +403,7 @@ const EventOverview = () => {
                   <HiOutlineLocationMarker className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
                 </div>
 
-                {methods.formState.errors.event_location?.message && (
+                {methods.formState.errors.eventLocation?.message && (
                   <p className="text-red-700">
                     {methods.formState.errors.title?.message}
                   </p>
