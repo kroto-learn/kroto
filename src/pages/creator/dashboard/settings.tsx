@@ -4,11 +4,12 @@ import Image from "next/image";
 import { FaSave } from "react-icons/fa";
 import { Loader } from "@/components/Loader";
 import { DashboardLayout } from ".";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsUpload } from "react-icons/bs";
-import { object, string, type z } from "zod";
+import { array, object, string, type z } from "zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IoAdd } from "react-icons/io5";
 
 export const creatorEditSchema = object({
   name: string({
@@ -20,8 +21,16 @@ export const creatorEditSchema = object({
   bio: string({
     required_error: "Please enter event description.",
   }).max(150),
-  link: string().url().optional(),
+  socialLinks: array(
+    object({
+      type: string(),
+      url: string({
+        required_error: "Please enter social link URL.",
+      }).url(),
+    })
+  ),
   image: string().optional(),
+  topmateUrl: string().url().optional(),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
@@ -46,7 +55,16 @@ const Settings = () => {
 
   const methods = useZodForm({
     schema: creatorEditSchema,
+    defaultValues: {
+      socialLinks: [],
+    },
   });
+
+  useEffect(() => {
+    if (creator) {
+      methods.setValue("socialLinks", creator.socialLinks);
+    }
+  }, [creator, methods]);
 
   if (isLoading)
     return (
@@ -64,13 +82,13 @@ const Settings = () => {
         <form
           onSubmit={methods.handleSubmit(async (values) => {
             setUpdating(true);
-            console.log(values.link);
             try {
               await updateProfile({
                 name: values.name,
                 bio: values.bio,
                 creatorProfile: values.id,
-                socialLinks: [{ type: "twitter", url: values.link ?? "" }],
+                socialLinks: values.socialLinks,
+                topmateUrl: values.topmateUrl ?? "",
               });
             } catch (error) {
               console.log(error);
@@ -141,6 +159,91 @@ const Settings = () => {
                 )}
               </div>
             </div>
+            <div className="mb-4 flex w-full flex-col items-start">
+              <label className="mb-2 block font-medium text-neutral-400">
+                Social Links
+              </label>
+              <div className="mb-4 flex flex-wrap items-center justify-start gap-4">
+                {methods.watch()?.socialLinks.map((link, idx) => (
+                  <>
+                    <fieldset
+                      name={`socialLinks.${idx}`}
+                      key={`socialLinks.${idx}`}
+                    >
+                      <div className="flex">
+                        <select
+                          onChange={(e) => {
+                            methods.setValue(
+                              `socialLinks.${idx}.type`,
+                              e.target.value
+                            );
+                          }}
+                          className="z-10 inline-flex flex-shrink-0 items-center rounded-l-lg border border-neutral-700 bg-neutral-800 px-2 py-2.5 text-center text-xs font-medium text-neutral-200 outline-0"
+                        >
+                          <option value="youtube">YouTube</option>
+                          <option value="twitter">Twitter</option>
+                          <option value="instagram">Instagram</option>
+                          <option value="linkedin">Linkedin</option>
+                          <option value="website">Website</option>
+                          <option value="other">Other</option>
+                        </select>
+                        <input
+                          {...methods.register(`socialLinks.${idx}.url`)}
+                          className="rounded-r-lg border border-neutral-700 bg-neutral-800 px-4 py-2.5 text-xs text-neutral-200 outline-0 placeholder:text-neutral-400"
+                          placeholder="https://"
+                        />
+                      </div>
+                      {methods.formState.errors.socialLinks?.[idx]?.url
+                        ?.message && (
+                        <p className="text-red-700">
+                          {
+                            methods.formState.errors.socialLinks?.[idx]?.url
+                              ?.message
+                          }
+                        </p>
+                      )}
+                    </fieldset>
+                  </>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  methods.setValue("socialLinks", [
+                    ...methods.watch().socialLinks,
+                    { type: "other", url: "" },
+                  ]);
+                }}
+                className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-2 py-1 text-sm font-medium text-pink-600"
+              >
+                <IoAdd /> Add Link
+              </button>
+              {methods.formState.errors.socialLinks?.message && (
+                <p className="text-red-700">
+                  {methods.formState.errors.socialLinks?.message}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col gap-5 md:flex-row">
+              <div>
+                <label className="mb-2 block font-medium text-neutral-400">
+                  Topmate Profile URL
+                </label>
+
+                <input
+                  {...methods.register("topmateUrl")}
+                  className="block min-w-[14rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                  placeholder="rosekamallove"
+                  defaultValue={(creator && creator.topmateUrl) ?? ""}
+                />
+
+                {methods.formState.errors.topmateUrl?.message && (
+                  <p className="text-red-700">
+                    {methods.formState.errors.topmateUrl?.message}
+                  </p>
+                )}
+              </div>
+            </div>
             <div className="my-5">
               <label className="mb-2 block font-medium text-neutral-400">
                 Bio
@@ -156,25 +259,6 @@ const Settings = () => {
               {methods.formState.errors.bio?.message && (
                 <p className="text-red-700">
                   {methods.formState.errors.bio?.message}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="flex w-full px-6">
-            <div>
-              <label className="mb-2 block font-medium text-neutral-400">
-                Link
-              </label>
-              <div className="relative mb-6">
-                <input
-                  {...methods.register("link")}
-                  className="block min-w-[20rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-                  placeholder="Enter your social link"
-                />
-              </div>
-              {methods.formState.errors.link?.message && (
-                <p className="text-red-700">
-                  {methods.formState.errors.link?.message}
                 </p>
               )}
             </div>

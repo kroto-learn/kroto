@@ -62,6 +62,7 @@ model User {
   accounts       Account[]
   sessions       Session[]
   socialLinks    SocialLink[]
+  topmateUrl     String?
   events         Event[]
 }
 

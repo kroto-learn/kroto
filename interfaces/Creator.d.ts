@@ -1,7 +1,6 @@
 type Link = {
   href: string;
   type: "youtube" | "twitter" | "linkedin" | "instagram" | "website" | "other";
-  text?: string;
 };
 
 export type Creator = {
