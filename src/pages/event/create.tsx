@@ -217,8 +217,10 @@ const CreateEvent = () => {
               <input
                 type="radio"
                 value="virtual"
+                id="virtual"
                 className="peer hidden"
                 {...methods.register("event_type")}
+                name="event_type"
               />
               <label
                 htmlFor="virtual"
@@ -232,7 +234,9 @@ const CreateEvent = () => {
                 type="radio"
                 value="in_person"
                 className="peer hidden"
+                id="in_person"
                 {...methods.register("event_type")}
+                name="event_type"
               />
               <label
                 htmlFor="in_person"
@@ -250,7 +254,7 @@ const CreateEvent = () => {
           )}
         </div>
 
-        {methods.getValues("event_type") === "virtual" ? (
+        {methods.watch()?.event_type === "virtual" ? (
           <div className="flex flex-col gap-3">
             <div className="relative flex items-center">
               <input
