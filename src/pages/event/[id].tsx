@@ -55,7 +55,7 @@ export default function EventPage({ eventId }: Props) {
                   className={`relative aspect-square w-[1.3rem] overflow-hidden rounded-full`}
                 >
                   <Image
-                    src={creator?.thumbnail ?? ""}
+                    src={creator?.image ?? ""}
                     alt="Rose Kamal Love"
                     fill
                   />
