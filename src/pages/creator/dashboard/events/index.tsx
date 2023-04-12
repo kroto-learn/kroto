@@ -1,4 +1,4 @@
-import EventCardId, { EventCard } from "@/components/EventCard";
+import { EventCard } from "@/components/EventCard";
 import Head from "next/head";
 import React, { type ReactNode } from "react";
 import { DashboardLayout } from "..";
