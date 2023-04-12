@@ -99,4 +99,18 @@ export const eventRouter = createTRPCRouter({
 
     return events;
   }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const event = await prisma.event.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      return event;
+    }),
 });
