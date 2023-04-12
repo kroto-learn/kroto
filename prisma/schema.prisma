@@ -89,6 +89,7 @@ model SocialLink {
   creatorId String
   creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
+  @@unique([type, creatorId])
   @@index([creatorId])
 }
 

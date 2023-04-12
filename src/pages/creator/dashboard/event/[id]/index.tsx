@@ -225,7 +225,10 @@ const EventOverview = () => {
                 if (mValues.eventType === "virtual") mValues.eventLocation = "";
                 else mValues.eventUrl = "";
                 try {
-                  await eventUpdateMutation({ ...values } as EventUpdateType);
+                  await eventUpdateMutation({
+                    ...values,
+                    id: id,
+                  } as EventUpdateType);
                 } catch (err) {
                   console.log(err);
                 }

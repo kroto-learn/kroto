@@ -92,6 +92,7 @@ const Settings = () => {
                 name: values.name,
                 bio: values.bio,
                 creatorProfile: values.id,
+                socialLink: values.socialLinks,
                 topmateUrl: values.topmateUrl ?? "",
               });
             } catch (error) {
@@ -167,7 +168,7 @@ const Settings = () => {
               <label className="mb-2 block font-medium text-neutral-400">
                 Social Links
               </label>
-              <div className="mb-4 flex flex-wrap items-center justify-start gap-4">
+              <div className="mb-4 flex w-full flex-col justify-start gap-4">
                 {methods.watch()?.socialLinks.map((link, idx) => (
                   <>
                     <fieldset
@@ -185,8 +186,7 @@ const Settings = () => {
                           value={
                             methods.watch().socialLinks[idx]?.type ?? "youtube"
                           }
-                          className="-shrink-0 z-10
-                          inline-flex items-center rounded-l-lg border border-neutral-700 bg-neutral-800 px-2 py-2.5 text-center text-xs font-medium text-neutral-200 outline-0"
+                          className="z-10 items-center rounded-l-lg border border-neutral-700 bg-neutral-800 px-2 py-2.5 text-center font-medium text-neutral-200 outline-0"
                         >
                           <option value="youtube">YouTube</option>
                           <option value="twitter">Twitter</option>
@@ -197,7 +197,7 @@ const Settings = () => {
                         </select>
                         <input
                           {...methods.register(`socialLinks.${idx}.url`)}
-                          className="rounded-r-lg border border-neutral-700 bg-neutral-800 px-4 py-2.5 text-xs text-neutral-200 outline-0 placeholder:text-neutral-400"
+                          className="w-full rounded-r-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200 outline-0 placeholder:text-neutral-400"
                           placeholder="https://"
                         />
                         <button
@@ -247,17 +247,28 @@ const Settings = () => {
               )}
             </div>
             <div className="flex flex-col gap-5 md:flex-row">
-              <div>
+              <div className="w-full">
                 <label className="mb-2 block font-medium text-neutral-400">
                   Topmate Profile URL
                 </label>
-
-                <input
-                  {...methods.register("topmateUrl")}
-                  className="block min-w-[14rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-                  placeholder="rosekamallove"
-                  defaultValue={(creator && creator.topmateUrl) ?? ""}
-                />
+                <div className="flex">
+                  <span className="inline-flex items-center rounded-l-xl border border-r-0 border-neutral-600 bg-neutral-700 px-3 font-medium text-neutral-400">
+                    <div className="group relative h-4 w-4">
+                      <Image
+                        src="/topmate_logo.png"
+                        alt="topmate"
+                        fill
+                        className="opacity-70 group-hover:opacity-100"
+                      />
+                    </div>
+                  </span>
+                  <input
+                    {...methods.register("topmateUrl")}
+                    className="block w-full rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                    placeholder="rosekamallove"
+                    defaultValue={(creator && creator.topmateUrl) ?? ""}
+                  />
+                </div>
 
                 {methods.formState.errors.topmateUrl?.message && (
                   <p className="text-red-700">

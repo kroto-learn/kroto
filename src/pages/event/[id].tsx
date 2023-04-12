@@ -5,29 +5,20 @@ import { HiArrowSmRight } from "react-icons/hi";
 import { SiGooglemeet } from "react-icons/si";
 import { GrTextAlignLeft } from "react-icons/gr";
 import { IoPeopleOutline } from "react-icons/io5";
-import { type ParsedUrlQuery } from "querystring";
-import { generateSSGHelper } from "@/server/helpers/ssgHelper";
-import { type GetStaticPropsContext } from "next";
 import { api } from "@/utils/api";
-import { MdLocationOn } from "react-icons/md";
+import { useRouter } from "next/router";
 
-type Props = {
-  eventId: string;
-};
+export default function EventPage() {
+  const router = useRouter();
+  const { id } = router.query;
+  const date = new Date("2023-06-22T01:30:00.000-05:00");
 
-export default function EventPage({ eventId }: Props) {
-  const { data: event } = api.event.get.useQuery({
-    id: eventId,
-  });
+  const endTime = new Date(
+    new Date("2023-06-22T01:30:00.000-05:00").getTime() + 3600000
+  );
 
-  const { data: creator } = api.creator.getPublicProfile.useQuery({
-    creatorProfile: event?.creatorId ?? "",
-  });
-  const date = event?.datetime ?? new Date();
-
-  const endTime = event?.datetime
-    ? new Date(event?.datetime.getTime() + 3600000)
-    : new Date();
+  const { data: event, isLoading } = api.event.get.useQuery({ id: id });
+  if (!isLoading) console.log(event);
 
   return (
     <>

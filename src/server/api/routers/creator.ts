@@ -6,12 +6,6 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 
-interface SocialLink {
-  type: string;
-  url: string;
-  creatorId: string;
-}
-
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
     .input(z.object({ creatorProfile: z.string() }))
@@ -107,12 +101,35 @@ export const creatorRouter = createTRPCRouter({
         creatorProfile: z.string(),
         bio: z.string(),
         name: z.string(),
+        socialLink: z
+          .object({ type: z.string(), url: z.string() })
+          .array()
+          .optional(),
         topmateUrl: z.string().url().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
-      const { bio, name, topmateUrl, creatorProfile } = input;
+      const { bio, name, topmateUrl, creatorProfile, socialLink } = input;
+
+        console.log(socialLink)
+      if (socialLink) {
+        for (const sl of socialLink) {
+          await prisma.socialLink.upsert({
+            where: {
+              type_creatorId: {
+                type: sl.type,
+                creatorId: ctx.session.user.id,
+              },
+            },
+            update: { url: sl.url },
+            create: {
+              ...sl,
+              creator: { connect: { id: ctx.session.user.id } },
+            },
+          });
+        }
+      }
 
       const updatedUser = await prisma.user.update({
         where: {
