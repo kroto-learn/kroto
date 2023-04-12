@@ -1,4 +1,4 @@
-import EventCardId, { EventCard } from "@/components/EventCard";
+import { EventCard } from "@/components/EventCard";
 import { type Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import { useSession } from "next-auth/react";

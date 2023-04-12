@@ -1,4 +1,4 @@
-import EventCardId, { EventCard } from "@/components/EventCard";
+import { EventCard } from "@/components/EventCard";
 import SocialLink from "@/components/SocialLink";
 import type { GetStaticPropsContext } from "next";
 import Head from "next/head";

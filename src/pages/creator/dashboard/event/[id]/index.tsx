@@ -8,8 +8,6 @@ import {
   giveFirstTimeIdx,
   updateTime,
 } from "@/helpers/time";
-import { type CourseEvent } from "interfaces/CourseEvent";
-import { getEventsClient } from "mock/getEventsClient";
 import Image from "next/image";
 import React, { type ReactNode, useEffect, useState } from "react";
 import { AiOutlineLink } from "react-icons/ai";
@@ -106,8 +104,10 @@ const EventOverview = () => {
   const { id } = router.query as { id: string };
 
   const { data: event } = api.event.get.useQuery({ id });
+  const [eventInit, setEventInit] = useState(false);
   const eventUpdateMutation = api.event.update.useMutation().mutateAsync;
   type EventUpdateType = RouterInputs["event"]["update"];
+  const ctx = api.useContext();
 
   const times = generateTimesArray();
   const minTimeIdx = giveFirstTimeIdx(times);
@@ -133,11 +133,13 @@ const EventOverview = () => {
   });
 
   useEffect(() => {
-    if (!!event) {
+    if (!!event && !eventInit) {
+      setEventInit(true);
       methods.setValue("thumbnail", (event?.thumbnail as string) ?? "");
       methods.setValue("datetime", event?.datetime ?? new Date());
       methods.setValue("duration", (event?.duration as number) ?? "");
       methods.setValue("eventType", event?.eventType ?? "");
+      methods.setValue("description", event?.description ?? "");
 
       setStartTimeIdx(
         giveFirstTimeIdx(times, event ? event.datetime : new Date())
@@ -234,10 +236,17 @@ const EventOverview = () => {
                 if (mValues.eventType === "virtual") mValues.eventLocation = "";
                 else mValues.eventUrl = "";
                 try {
-                  await eventUpdateMutation({
-                    ...values,
-                    id: id,
-                  } as EventUpdateType);
+                  await eventUpdateMutation(
+                    {
+                      ...values,
+                      id: id,
+                    } as EventUpdateType,
+                    {
+                      onSuccess: () => {
+                        void ctx.event.get.invalidate();
+                      },
+                    }
+                  );
                 } catch (err) {
                   console.log(err);
                 }
@@ -248,7 +257,7 @@ const EventOverview = () => {
             <div className="relative flex aspect-[18/9] w-full items-end justify-start overflow-hidden rounded-xl bg-neutral-700 text-sm">
               {!!methods.getValues("thumbnail") && (
                 <Image
-                  src={methods.getValues("thumbnail")}
+                  src={methods.watch()?.thumbnail ?? ""}
                   alt="thumbnail"
                   fill
                   className="object-cover"
@@ -543,19 +552,11 @@ EventOverview.getLayout = EventNestedLayout;
 export default EventOverview;
 
 function EventLayoutR({ children }: { children: ReactNode }) {
-  const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
-
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  useEffect(() => {
-    const loadEvent = async () => {
-      const events = await getEventsClient();
-      const mEvent = events.find((e) => e.id === id);
-      if (mEvent) setEvent(mEvent);
-    };
-    void loadEvent();
-  }, [id]);
+  const { data: event } = api.event.get.useQuery({ id });
+
   const pathname = usePathname();
 
   return (

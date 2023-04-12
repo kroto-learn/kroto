@@ -4,7 +4,7 @@ import CalenderBox from "./CalenderBox";
 import Link from "next/link";
 import { BiTimeFive } from "react-icons/bi";
 import { MdToday } from "react-icons/md";
-import { RouterOutputs, api } from "@/utils/api";
+import { type RouterOutputs, api } from "@/utils/api";
 
 type Props = {
   eventId: string;
@@ -86,12 +86,11 @@ export const EventCard = ({
   event: RouterOutputs["event"]["getEvent"];
   manage?: boolean;
 }) => {
-  const date = event?.datetime ? new Date(event?.datetime) : new Date();
-  const endTime = event?.datetime
-    ? new Date(
-        new Date(event?.datetime).getTime() + (event?.duration ?? 0) * 60000
-      )
-    : new Date();
+  const date = event && !!event?.datetime ? event?.datetime : new Date();
+  const endTime =
+    event && !!event?.datetime
+      ? new Date(event?.datetime.getTime() + (event?.duration ?? 0) * 60000)
+      : new Date();
 
   return (
     <Link
