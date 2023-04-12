@@ -113,7 +113,7 @@ export const creatorRouter = createTRPCRouter({
           .object({ type: z.string(), url: z.string() })
           .array()
           .optional(),
-        topmateUrl: z.string().url().optional(),
+        topmateUrl: z.optional(z.string()),
       })
     )
     .mutation(async ({ input, ctx }) => {
