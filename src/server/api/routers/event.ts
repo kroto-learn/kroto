@@ -85,7 +85,13 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      return event;
+      const user = await prisma.user.findUnique({
+        where: {
+          id: event?.creatorId,
+        },
+      });
+
+      return { ...event, creator: user };
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -108,6 +114,7 @@ export const eventRouter = createTRPCRouter({
       const event = await prisma.event.findUnique({
         where: { id: input.eventId },
       });
+
       const user = await prisma.user.findUnique({
         where: {
           id: ctx.session.user.id,
