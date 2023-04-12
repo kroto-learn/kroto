@@ -30,6 +30,15 @@ import { DashboardLayout } from "../..";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterInputs, api } from "@/utils/api";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+
+import { type MDEditorProps } from "@uiw/react-md-editor";
+import dynamic from "next/dynamic";
+
+const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
+  ssr: false,
+});
 
 // FIXME: time logic fix
 
@@ -42,7 +51,7 @@ const editEventFormSchema = object({
   }),
   description: string({
     required_error: "Please enter event description.",
-  }).max(150),
+  }).max(3000),
   eventType: string({
     required_error: "Please select the type of event.",
   }).max(150),
@@ -204,7 +213,7 @@ const EventOverview = () => {
         {/* side edit event drawer */}
 
         <div
-          className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-md flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
+          className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-xl flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
             editEvent ? "translate-x-0" : "translate-x-full"
           }`}
         >
@@ -296,12 +305,21 @@ const EventOverview = () => {
               >
                 Description
               </label>
-              <textarea
+              {/* <textarea
                 rows={8}
                 {...methods.register("description")}
                 defaultValue={(event && event.description) ?? ""}
                 className="w-full rounded-lg bg-neutral-700 px-3 py-2 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-              />
+              /> */}
+              <div data-color-mode="dark">
+                <MDEditor
+                  height={200}
+                  value={methods.watch()?.description}
+                  onChange={(mdtext) => {
+                    if (mdtext) methods.setValue("description", mdtext);
+                  }}
+                />
+              </div>
               {methods.formState.errors.description?.message && (
                 <p className="text-red-700">
                   {methods.formState.errors.description?.message}

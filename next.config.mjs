@@ -1,4 +1,5 @@
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
+import removeImports from "next-remove-imports";
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -22,4 +23,4 @@ const config = {
     ],
   },
 };
-export default config;
+export default removeImports()(config);

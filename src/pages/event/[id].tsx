@@ -10,6 +10,13 @@ import { MdLocationOn } from "react-icons/md";
 import { type GetStaticPropsContext } from "next";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { type ParsedUrlQuery } from "querystring";
+import dynamic from "next/dynamic";
+import "@uiw/react-markdown-preview/markdown.css";
+
+const Markdown = dynamic(
+  () => import("@uiw/react-markdown-preview").then((mod) => mod.default),
+  { ssr: false }
+);
 
 type Props = {
   eventId: string;
@@ -123,7 +130,9 @@ export default function EventPage({ eventId }: Props) {
                 <GrTextAlignLeft />
                 <h2 className="font-medium ">Description</h2>
               </div>
-              <p className="px-4 pb-4 text-neutral-300">{event?.description}</p>
+              <div className="px-4 pb-4">
+                <Markdown source={event?.description ?? ""} />
+              </div>
             </div>
             <div className="flex w-1/3 flex-col gap-4 rounded-xl bg-neutral-800">
               <div className="flex items-center gap-2 border-b border-neutral-600 px-4 py-3 text-neutral-200">

@@ -23,6 +23,15 @@ import { api } from "@/utils/api";
 import { TRPCError } from "@trpc/server";
 import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+
+import { type MDEditorProps } from "@uiw/react-md-editor";
+import dynamic from "next/dynamic";
+
+const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
+  ssr: false,
+});
 
 export const createFormSchema = object({
   thumbnail: string({
@@ -33,7 +42,7 @@ export const createFormSchema = object({
   }),
   description: string({
     required_error: "Please enter event description.",
-  }).max(1500),
+  }).max(3000),
   eventType: string({
     required_error: "Please select the type of event.",
   }).max(150),
@@ -196,11 +205,20 @@ const CreateEvent = () => {
           <label htmlFor="description" className="text-lg  text-neutral-200">
             Description
           </label>
-          <textarea
+          {/* <textarea
             rows={8}
             {...methods.register("description")}
             className="w-full rounded-lg bg-neutral-800 px-3 py-2  font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
-          />
+          /> */}
+          <div data-color-mode="dark">
+            <MDEditor
+              height={200}
+              value={methods.watch()?.description}
+              onChange={(mdtext) => {
+                if (mdtext) methods.setValue("description", mdtext);
+              }}
+            />
+          </div>
           {methods.formState.errors.description?.message && (
             <p className="text-red-700">
               {methods.formState.errors.description?.message}
