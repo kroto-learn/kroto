@@ -9,7 +9,7 @@ interface ImageUploadResponse {
   key: string;
 }
 
-const imageUpload = async (base64: string, id: string): Promise<string> => {
+const imageUpload = async (base64: string, id: string, variant: string): Promise<string> => {
   // Configure AWS with your access and secret key.
   const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET } = env;
 
@@ -41,7 +41,7 @@ const imageUpload = async (base64: string, id: string): Promise<string> => {
   // This won't be needed if they're uploading their avatar, hence the filename, userAvatar.js.
   const params = {
     Bucket: S3_BUCKET,
-    Key: `${id}.${type ?? ""}`, // type is not required
+    Key: `${variant}_${id}.${type ?? ""}`, // type is not required
     Body: base64Data,
     ACL: "public-read",
     ContentEncoding: "base64", // required

@@ -31,7 +31,7 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      const thumbnail = await imageUpload(input.thumbnail, event.id);
+      const thumbnail = await imageUpload(input.thumbnail, event.id, "event");
 
       const updatedEvent = await prisma.event.update({
         where: {
@@ -51,7 +51,7 @@ export const eventRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
-      const thumbnail = await imageUpload(input.thumbnail, input.id);
+      const thumbnail = await imageUpload(input.thumbnail, input.id, "event");
 
       const event = await prisma.event.update({
         where: {
