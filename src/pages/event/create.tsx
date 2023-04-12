@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { object, string, number } from "zod";
+import { object, string, number, date } from "zod";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { AiOutlineLink } from "react-icons/ai";
 import DatePicker from "react-datepicker";
@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   generateTimesArray,
   giveFirstTimeIdx,
-  updateTimeInISOString,
+  updateTime,
 } from "@/helpers/time";
 import fileToBase64 from "@/helpers/file";
 import { generateRandomGradientImages } from "@/helpers/randomGradientImages";
@@ -20,7 +20,6 @@ import Head from "next/head";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { type z } from "zod";
 import { api } from "@/utils/api";
-import { Base64 } from "js-base64";
 
 export const createFormSchema = object({
   thumbnail: string({
@@ -37,7 +36,7 @@ export const createFormSchema = object({
   }).max(150),
   eventUrl: string().url().optional(),
   eventLocation: string().optional(),
-  datetime: string({
+  datetime: date({
     required_error: "Please enter event's date and time.",
   }),
   duration: number({
@@ -93,7 +92,7 @@ const CreateEvent = () => {
       eventType: "virtual",
       eventUrl: "",
       eventLocation: "",
-      datetime: new Date().toISOString(),
+      datetime: new Date(),
       duration: 15,
       thumbnail: "",
     },
@@ -154,6 +153,12 @@ const CreateEvent = () => {
             Upload Cover
           </div>
         </div>
+
+        {methods.formState.errors.thumbnail?.message && (
+          <p className="text-red-700">
+            {methods.formState.errors.thumbnail?.message}
+          </p>
+        )}
 
         <div className="flex flex-col gap-3">
           <label htmlFor="title" className="text-lg  text-neutral-200">
@@ -239,6 +244,7 @@ const CreateEvent = () => {
           <div className="flex flex-col gap-3">
             <div className="relative flex items-center">
               <input
+                key="eventUrl"
                 {...methods.register("eventUrl")}
                 placeholder="Google Meet or YouTube URL"
                 className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8  font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
@@ -256,6 +262,7 @@ const CreateEvent = () => {
           <div className="flex flex-col gap-3">
             <div className="relative flex items-center">
               <input
+                key="eventLocation"
                 {...methods.register("eventLocation")}
                 placeholder="Your event's address"
                 className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8  font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
@@ -282,8 +289,7 @@ const CreateEvent = () => {
               dateFormat="E, d MMM"
               className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-[2.5rem] font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
               onChange={(newDate) => {
-                if (newDate)
-                  methods.setValue("datetime", newDate.toISOString());
+                if (newDate) methods.setValue("datetime", newDate);
               }}
             />
             <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
@@ -296,8 +302,8 @@ const CreateEvent = () => {
                 onChange={(e) => {
                   methods.setValue(
                     "datetime",
-                    updateTimeInISOString(
-                      methods.getValues("datetime"),
+                    updateTime(
+                      methods.getValues("datetime") ?? new Date(),
                       times[parseInt(e.target.value)] as string
                     )
                   );

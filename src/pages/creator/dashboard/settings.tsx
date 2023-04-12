@@ -92,7 +92,6 @@ const Settings = () => {
                 name: values.name,
                 bio: values.bio,
                 creatorProfile: values.id,
-                socialLinks: values.socialLinks,
                 topmateUrl: values.topmateUrl ?? "",
               });
             } catch (error) {

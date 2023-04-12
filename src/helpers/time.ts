@@ -62,7 +62,7 @@ const giveFirstTimeIdx: (times: string[], now?: Date) => number = (
   return 94;
 };
 
-const updateTimeInISOString = (isoString: string, time: string) => {
+const updateTime = (date: Date, time: string) => {
   // Convert the time string to hours and minutes
   const [time12, period] = time.split(" ");
   const [hours12, minutes] = (time12 as string).split(":").map(Number);
@@ -74,14 +74,13 @@ const updateTimeInISOString = (isoString: string, time: string) => {
       : (hours12 as number) + (period === "PM" ? 12 : 0);
 
   // Create a new Date object from the ISO string
-  const date = new Date(isoString);
 
   // Set the hours and minutes of the new Date object
   date.setHours(hours24);
   date.setMinutes(minutes as number);
 
   // Return the updated ISO string
-  return date.toISOString();
+  return date;
 };
 
-export { generateTimesArray, giveFirstTimeIdx, updateTimeInISOString };
+export { generateTimesArray, giveFirstTimeIdx, updateTime };

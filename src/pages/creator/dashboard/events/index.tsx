@@ -43,10 +43,6 @@ export default UpcomingEvents;
 function EventsLayoutR({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
-  useEffect(() => {
-    console.log("I got remounted");
-  }, []);
-
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
       <div className="flex w-full items-center justify-between gap-4 px-4">

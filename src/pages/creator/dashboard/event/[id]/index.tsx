@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import {
   generateTimesArray,
   giveFirstTimeIdx,
-  updateTimeInISOString,
+  updateTime,
 } from "@/helpers/time";
 import { type CourseEvent } from "interfaces/CourseEvent";
 import { getEventsClient } from "mock/getEventsClient";
@@ -20,7 +20,7 @@ import { HiOutlineLocationMarker } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
 import { RxImage } from "react-icons/rx";
 import { SiGooglemeet } from "react-icons/si";
-import { number, object, string, type z } from "zod";
+import { date, number, object, string, type z } from "zod";
 import DatePicker from "react-datepicker";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -29,7 +29,7 @@ import { usePathname } from "next/navigation";
 import { DashboardLayout } from "../..";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "@/utils/api";
+import { type RouterInputs, api } from "@/utils/api";
 
 // FIXME: time logic fix
 
@@ -48,7 +48,7 @@ const editEventFormSchema = object({
   }).max(150),
   eventUrl: string().url().optional(),
   eventLocation: string().optional(),
-  datetime: string({
+  datetime: date({
     required_error: "Please enter event's date and time.",
   }),
   duration: number({
@@ -96,22 +96,13 @@ const EventOverview = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  const { data } = api.event.get.useQuery({ id });
-  console.log(data);
+  const { data: event } = api.event.get.useQuery({ id });
+  const eventUpdateMutation = api.event.update.useMutation().mutateAsync;
+  type EventUpdateType = RouterInputs["event"]["update"];
 
   const times = generateTimesArray();
   const minTimeIdx = giveFirstTimeIdx(times);
 
-  useEffect(() => {
-    const loadEvents = async () => {
-      const events = await getEventsClient();
-      const mevent = events.find((e) => e.id === id);
-      if (mevent) setEvent(mevent);
-    };
-    void loadEvents();
-  }, [id]);
-
-  const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
   const [startTimeIdx, setStartTimeIdx] = useState<number>(
     giveFirstTimeIdx(times, event ? new Date(event.datetime) : new Date())
   );
@@ -128,14 +119,15 @@ const EventOverview = () => {
   const methods = useZodForm({
     schema: editEventFormSchema,
     defaultValues: {
-      datetime: new Date().toISOString(),
+      datetime: new Date(),
     },
   });
 
   useEffect(() => {
     if (!!event) {
-      methods.setValue("thumbnail", event?.thumbnail ?? "");
+      methods.setValue("thumbnail", (event?.thumbnail as string) ?? "");
       methods.setValue("datetime", event?.datetime ?? "");
+      methods.setValue("duration", (event?.duration as number) ?? "");
       methods.setValue("eventType", event?.eventType ?? "");
 
       setStartTimeIdx(
@@ -158,7 +150,7 @@ const EventOverview = () => {
               className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
             >
               <Image
-                src={event.thumbnail ?? ""}
+                src={(event?.thumbnail as string) ?? ""}
                 alt={event.title}
                 fill
                 style={{ objectFit: "cover" }}
@@ -227,12 +219,16 @@ const EventOverview = () => {
 
           <form
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            onSubmit={methods.handleSubmit((values) => {
+            onSubmit={methods.handleSubmit(async (values) => {
               if (!!values) {
                 const mValues = values;
                 if (mValues.eventType === "virtual") mValues.eventLocation = "";
                 else mValues.eventUrl = "";
-                alert(JSON.stringify(values, null, 2));
+                try {
+                  await eventUpdateMutation({ ...values } as EventUpdateType);
+                } catch (err) {
+                  console.log(err);
+                }
               }
             })}
             className="mx-auto my-4 flex w-full max-w-2xl flex-col gap-8"
@@ -265,6 +261,12 @@ const EventOverview = () => {
                 Upload Cover
               </div>
             </div>
+
+            {methods.formState.errors.thumbnail?.message && (
+              <p className="text-red-700">
+                {methods.formState.errors.thumbnail?.message}
+              </p>
+            )}
 
             <div className="flex flex-col gap-3">
               <label htmlFor="title" className="text-lg  text-neutral-200">
@@ -355,6 +357,7 @@ const EventOverview = () => {
               <div className="flex flex-col gap-3">
                 <div className="relative flex items-center">
                   <input
+                    key="eventUrl"
                     {...methods.register("eventUrl")}
                     defaultValue={(event && event.eventUrl) ?? ""}
                     placeholder="Google Meet or YouTube URL"
@@ -372,9 +375,8 @@ const EventOverview = () => {
               <div className="flex flex-col gap-3">
                 <div className="relative flex items-center">
                   <input
-                    name="eventLocation"
-                    type="text"
-                    id="eventLocation"
+                    key="eventLocation"
+                    {...methods.register("eventLocation")}
                     defaultValue={(event && event.eventLocation) ?? ""}
                     placeholder="Your event's address"
                     className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
@@ -384,7 +386,7 @@ const EventOverview = () => {
 
                 {methods.formState.errors.eventLocation?.message && (
                   <p className="text-red-700">
-                    {methods.formState.errors.title?.message}
+                    {methods.formState.errors.eventLocation?.message}
                   </p>
                 )}
               </div>
@@ -404,8 +406,7 @@ const EventOverview = () => {
                   dateFormat="E, d MMM"
                   className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-[2.5rem] text-sm font-medium text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
                   onChange={(newDate) => {
-                    if (newDate)
-                      methods.setValue("datetime", newDate.toISOString());
+                    if (newDate) methods.setValue("datetime", newDate);
                   }}
                 />
                 <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
@@ -418,8 +419,8 @@ const EventOverview = () => {
                     onChange={(e) => {
                       methods.setValue(
                         "datetime",
-                        updateTimeInISOString(
-                          methods.getValues("duration").toString(),
+                        updateTime(
+                          methods.getValues("datetime") ?? new Date(),
                           times[parseInt(e.target.value)] as string
                         )
                       );
@@ -485,6 +486,11 @@ const EventOverview = () => {
               {methods.formState.errors.datetime?.message && (
                 <p className="text-red-700">
                   {methods.formState.errors.datetime?.message}
+                </p>
+              )}
+              {methods.formState.errors.duration?.message && (
+                <p className="text-red-700">
+                  {methods.formState.errors.duration?.message}
                 </p>
               )}
             </div>
