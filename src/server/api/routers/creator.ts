@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { string, z } from "zod";
 
 import {
   createTRPCRouter,
@@ -52,47 +52,67 @@ export const creatorRouter = createTRPCRouter({
     return { ...user, socialLinks: socialLinks };
   }),
 
+  createSocialLink: protectedProcedure
+    .input(z.object({ type: z.string(), url: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const socialLink = await prisma.socialLink.create({
+        data: {
+          type: input.type,
+          url: input.url,
+          creatorId: ctx.session.user.id,
+        },
+      });
+
+      return socialLink;
+    }),
+
+  updateSocialLink: protectedProcedure
+    .input(z.object({ id: z.string(), type: z.string(), url: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const socialLink = await prisma.socialLink.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          type: input.type,
+          url: input.url,
+          creatorId: ctx.session.user.id,
+        },
+      });
+
+      return socialLink;
+    }),
+
+  deleteSocialLink: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const socialLink = await prisma.socialLink.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      return socialLink;
+    }),
+
   updateProfile: protectedProcedure
     .input(
       z.object({
         creatorProfile: z.string(),
         bio: z.string(),
         name: z.string(),
-        socialLinks: z
-          .object({
-            type: z.string(),
-            url: z.string(),
-          })
-          .array()
-          .optional(),
         topmateUrl: z.string().url().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
-      const { bio, name, topmateUrl, creatorProfile, socialLinks } = input;
-
-      const createSocialLinks =
-        socialLinks?.map((link) => {
-          return { ...link, creatorId: ctx.session.user.id };
-        }) ?? [];
-
-      const getSocialLink = await prisma.socialLink.findMany({
-        where: { creatorId: ctx.session.user.id },
-      });
-
-      const mergedArray = [...getSocialLink, ...createSocialLinks];
-
-      const toBeCreatedSocialLinks: SocialLink[] = Object.values(
-        mergedArray.reduce((acc: { [url: string]: SocialLink }, obj) => {
-          acc[obj.url] = obj;
-          return acc;
-        }, {})
-      );
-
-      const createdSocialLinks = await prisma.socialLink.createMany({
-        data: toBeCreatedSocialLinks ?? [],
-      });
+      const { bio, name, topmateUrl, creatorProfile } = input;
 
       const updatedUser = await prisma.user.update({
         where: {
@@ -107,6 +127,13 @@ export const creatorRouter = createTRPCRouter({
         },
       });
 
-      return { ...updatedUser, socialLinks: createdSocialLinks };
+      const socialLinks = await prisma.socialLink.findMany({
+        where: {
+          creatorId: ctx.session.user.id,
+        },
+      });
+
+      // return { ...updatedUser, socialLinks: createdSocialLinks };
+      return { ...updatedUser, socialLinks };
     }),
 });
