@@ -209,6 +209,8 @@ const Settings = () => {
                         <button
                           className="ml-2 rounded-lg bg-red-500/30 p-1 text-neutral-200/50 duration-300 hover:bg-red-500 hover:text-neutral-200"
                           onClick={async () => {
+                            const deleteId =
+                              methods.watch().socialLinks[idx]?.id;
                             methods.setValue(
                               "socialLinks",
                               methods
@@ -216,13 +218,9 @@ const Settings = () => {
                                 .socialLinks.filter((sl, iidx) => idx !== iidx)
                             );
                             try {
-                              if (
-                                (methods.watch().socialLinks[idx]
-                                  ?.id as string) !== ""
-                              )
+                              if ((deleteId as string) !== "")
                                 await deleteSocialLink({
-                                  id: methods.watch().socialLinks[idx]
-                                    ?.id as string,
+                                  id: deleteId as string,
                                 });
                             } catch (err) {
                               console.log(err);
