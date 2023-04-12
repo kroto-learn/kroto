@@ -69,6 +69,7 @@ model User {
 model Event {
   id            String   @id @default(cuid())
   title         String
+  thumbnail     String?
   description   String?  @db.Text
   eventUrl      String?
   eventType     String?

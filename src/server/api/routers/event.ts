@@ -8,6 +8,7 @@ import {
 import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
 import { creatorEditSchema } from "@/pages/creator/dashboard/settings";
+import imageUpload from "@/server/helpers/base64ToS3";
 
 export const eventRouter = createTRPCRouter({
   create: protectedProcedure
@@ -16,6 +17,8 @@ export const eventRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const thumbnail = await imageUpload(input.thumbnail);
 
       const event = await prisma.event.create({
         data: {
@@ -26,6 +29,7 @@ export const eventRouter = createTRPCRouter({
           eventLocation: input.eventLocation ?? "",
           eventType: input.eventType,
           duration: input.duration,
+          thumbnail: thumbnail,
 
           creatorId: ctx.session.user.id,
         },
@@ -40,6 +44,7 @@ export const eventRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+      const thumbnail = await imageUpload(input.thumbnail);
 
       const event = await prisma.event.update({
         where: {
@@ -53,6 +58,7 @@ export const eventRouter = createTRPCRouter({
           eventLocation: input.eventLocation ?? "",
           eventType: input.eventType,
           duration: input.duration,
+          thumbnail: thumbnail,
 
           creatorId: ctx.session.user.id,
         },

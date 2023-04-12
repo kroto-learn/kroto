@@ -20,11 +20,12 @@ import Head from "next/head";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { type z } from "zod";
 import { api } from "@/utils/api";
+import { Base64 } from "js-base64";
 
 export const createFormSchema = object({
   thumbnail: string({
     required_error: "Please upload a cover",
-  }),
+  }).refine(Base64.isValid),
   title: string({
     required_error: "Please enter event title.",
   }),
