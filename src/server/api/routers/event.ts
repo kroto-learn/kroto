@@ -91,7 +91,13 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      return { ...event, creator: user };
+      const registrations = await prisma.registration.findMany({
+        where: {
+          eventId: event?.id,
+        },
+      });
+
+      return { ...event, creator: user, registrations };
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
