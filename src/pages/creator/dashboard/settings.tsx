@@ -24,6 +24,7 @@ export const creatorEditSchema = object({
   }).max(150),
   socialLinks: array(
     object({
+      id: string(),
       type: string(),
       url: string({
         required_error: "Please enter social link URL.",
@@ -51,6 +52,8 @@ const Settings = () => {
   const { data: creator, isLoading } = api.creator.getProfile.useQuery();
   const { mutateAsync: updateProfile } =
     api.creator.updateProfile.useMutation();
+  const { mutateAsync: deleteSocialLink } =
+    api.creator.deleteSocialLink.useMutation();
 
   const [updating, setUpdating] = useState<boolean>(false);
 
@@ -63,10 +66,13 @@ const Settings = () => {
 
   useEffect(() => {
     if (creator) {
-      console.log("fetched sl", creator.socialLinks);
       methods.setValue(
         "socialLinks",
-        creator.socialLinks.map((sl) => ({ type: sl.type, url: sl.url }))
+        creator.socialLinks.map((sl) => ({
+          type: sl.type,
+          url: sl.url,
+          id: sl.id,
+        }))
       );
     }
   }, [creator, methods]);
@@ -202,13 +208,25 @@ const Settings = () => {
                         />
                         <button
                           className="ml-2 rounded-lg bg-red-500/30 p-1 text-neutral-200/50 duration-300 hover:bg-red-500 hover:text-neutral-200"
-                          onClick={() => {
+                          onClick={async () => {
                             methods.setValue(
                               "socialLinks",
                               methods
                                 .watch()
                                 .socialLinks.filter((sl, iidx) => idx !== iidx)
                             );
+                            try {
+                              if (
+                                (methods.watch().socialLinks[idx]
+                                  ?.id as string) !== ""
+                              )
+                                await deleteSocialLink({
+                                  id: methods.watch().socialLinks[idx]
+                                    ?.id as string,
+                                });
+                            } catch (err) {
+                              console.log(err);
+                            }
                           }}
                         >
                           <BiMinus />
@@ -233,7 +251,7 @@ const Settings = () => {
                 onClick={() => {
                   methods.setValue("socialLinks", [
                     ...methods.watch().socialLinks,
-                    { type: "other", url: "" },
+                    { id: "", type: "other", url: "" },
                   ]);
                 }}
                 className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-2 py-1 text-sm font-medium text-pink-600 disabled:border-neutral-600 disabled:bg-neutral-600/10 disabled:text-neutral-700"
