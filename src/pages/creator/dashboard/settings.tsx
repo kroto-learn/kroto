@@ -10,6 +10,7 @@ import { array, object, string, type z } from "zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IoAdd } from "react-icons/io5";
+import { BiMinus } from "react-icons/bi";
 
 export const creatorEditSchema = object({
   name: string({
@@ -62,7 +63,11 @@ const Settings = () => {
 
   useEffect(() => {
     if (creator) {
-      methods.setValue("socialLinks", creator.socialLinks);
+      console.log("fetched sl", creator.socialLinks);
+      methods.setValue(
+        "socialLinks",
+        creator.socialLinks.map((sl) => ({ type: sl.type, url: sl.url }))
+      );
     }
   }, [creator, methods]);
 
@@ -170,7 +175,7 @@ const Settings = () => {
                       name={`socialLinks.${idx}`}
                       key={`socialLinks.${idx}`}
                     >
-                      <div className="flex">
+                      <div className="flex items-center">
                         <select
                           onChange={(e) => {
                             methods.setValue(
@@ -178,7 +183,11 @@ const Settings = () => {
                               e.target.value
                             );
                           }}
-                          className="z-10 inline-flex flex-shrink-0 items-center rounded-l-lg border border-neutral-700 bg-neutral-800 px-2 py-2.5 text-center text-xs font-medium text-neutral-200 outline-0"
+                          value={
+                            methods.watch().socialLinks[idx]?.type ?? "youtube"
+                          }
+                          className="-shrink-0 z-10
+                          inline-flex items-center rounded-l-lg border border-neutral-700 bg-neutral-800 px-2 py-2.5 text-center text-xs font-medium text-neutral-200 outline-0"
                         >
                           <option value="youtube">YouTube</option>
                           <option value="twitter">Twitter</option>
@@ -192,6 +201,19 @@ const Settings = () => {
                           className="rounded-r-lg border border-neutral-700 bg-neutral-800 px-4 py-2.5 text-xs text-neutral-200 outline-0 placeholder:text-neutral-400"
                           placeholder="https://"
                         />
+                        <button
+                          className="ml-2 rounded-lg bg-red-500/30 p-1 text-neutral-200/50 duration-300 hover:bg-red-500 hover:text-neutral-200"
+                          onClick={() => {
+                            methods.setValue(
+                              "socialLinks",
+                              methods
+                                .watch()
+                                .socialLinks.filter((sl, iidx) => idx !== iidx)
+                            );
+                          }}
+                        >
+                          <BiMinus />
+                        </button>
                       </div>
                       {methods.formState.errors.socialLinks?.[idx]?.url
                         ?.message && (
@@ -208,13 +230,14 @@ const Settings = () => {
               </div>
               <button
                 type="button"
+                disabled={methods.watch().socialLinks.length > 5}
                 onClick={() => {
                   methods.setValue("socialLinks", [
                     ...methods.watch().socialLinks,
                     { type: "other", url: "" },
                   ]);
                 }}
-                className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-2 py-1 text-sm font-medium text-pink-600"
+                className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-2 py-1 text-sm font-medium text-pink-600 disabled:border-neutral-600 disabled:bg-neutral-600/10 disabled:text-neutral-700"
               >
                 <IoAdd /> Add Link
               </button>
