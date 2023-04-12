@@ -1,4 +1,5 @@
 import { Loader } from "@/components/Loader";
+import useToast from "@/hooks/useToast";
 import { api } from "@/utils/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -21,6 +22,13 @@ export default function Page() {
   }, [session]);
 
   const { data: creator, isLoading } = api.creator.getProfile.useQuery();
+  const { data: creatorProfileAvailable } =
+    api.creator.userNameAvailable.useQuery({
+      creatorProfile,
+    });
+
+  const { warningToast } = useToast();
+
   const creatorMutation = api.creator.updateProfile.useMutation().mutateAsync;
   if (isLoading) {
     return (
@@ -51,11 +59,14 @@ export default function Page() {
 
   const handleUpdate = async () => {
     setUpdating(true);
-    const data = await creatorMutation({
-      bio: creatorBio,
-      name: creatorName,
-      creatorProfile: `${creatorProfile}`,
-    });
+    if (creatorProfileAvailable) {
+      await creatorMutation({
+        bio: creatorBio,
+        name: creatorName,
+        creatorProfile: `${creatorProfile}`,
+      });
+    } else warningToast("Username not available.");
+
     setUpdating(false);
   };
 

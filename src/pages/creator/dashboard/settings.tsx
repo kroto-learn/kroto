@@ -11,12 +11,13 @@ import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IoAdd } from "react-icons/io5";
 import { BiMinus } from "react-icons/bi";
+import useToast from "@/hooks/useToast";
 
 export const creatorEditSchema = object({
   name: string({
     required_error: "Please enter your name.",
   }),
-  id: string({
+  creatorProfile: string({
     required_error: "Please enter your unique username.",
   }),
   bio: string({
@@ -32,7 +33,7 @@ export const creatorEditSchema = object({
     })
   ),
   image: string().optional(),
-  topmateUrl: string().url().optional(),
+  topmateUrl: string().url().nullable().optional(),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
@@ -64,6 +65,13 @@ const Settings = () => {
     },
   });
 
+  const { warningToast } = useToast();
+
+  const { data: creatorProfileAvailable } =
+    api.creator.userNameAvailable.useQuery({
+      creatorProfile: methods.watch().creatorProfile,
+    });
+
   useEffect(() => {
     if (creator) {
       methods.setValue(
@@ -94,13 +102,18 @@ const Settings = () => {
           onSubmit={methods.handleSubmit(async (values) => {
             setUpdating(true);
             try {
-              await updateProfile({
-                name: values.name,
-                bio: values.bio,
-                creatorProfile: values.id,
-                socialLink: values.socialLinks,
-                topmateUrl: values.topmateUrl ?? "",
-              });
+              if (
+                values.creatorProfile === creator?.creatorProfile ||
+                creatorProfileAvailable
+              )
+                await updateProfile({
+                  name: values.name,
+                  bio: values.bio,
+                  creatorProfile: values.creatorProfile,
+                  socialLink: values.socialLinks,
+                  topmateUrl: values.topmateUrl ?? "",
+                });
+              else warningToast("Username not available.");
             } catch (error) {
               console.log(error);
             }
@@ -157,15 +170,15 @@ const Settings = () => {
                     kroto.in/
                   </span>
                   <input
-                    {...methods.register("id")}
+                    {...methods.register("creatorProfile")}
                     className="block min-w-[14rem] rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
                     placeholder="rosekamallove"
                     defaultValue={(creator && creator.creatorProfile) ?? ""}
                   />
                 </div>
-                {methods.formState.errors.id?.message && (
+                {methods.formState.errors.creatorProfile?.message && (
                   <p className="text-red-700">
-                    {methods.formState.errors.id?.message}
+                    {methods.formState.errors.creatorProfile?.message}
                   </p>
                 )}
               </div>
