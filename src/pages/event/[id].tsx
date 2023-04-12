@@ -20,9 +20,6 @@ export default function EventPage({ eventId }: Props) {
     id: eventId,
   });
 
-  const { data: creator } = api.creator.getPublicProfile.useQuery({
-    creatorId: event?.creatorId ?? "",
-  });
   const date = event?.datetime ?? new Date();
 
   const endTime = event?.datetime
@@ -57,13 +54,13 @@ export default function EventPage({ eventId }: Props) {
                   className={`relative aspect-square w-[1.3rem] overflow-hidden rounded-full`}
                 >
                   <Image
-                    src={creator?.image ?? ""}
+                    src={event?.creator?.image ?? ""}
                     alt="Rose Kamal Love"
                     fill
                   />
                 </div>
                 <p className={`text-sm text-neutral-300 transition-all`}>
-                  Hosted by {creator?.name ?? ""}
+                  Hosted by {event?.creator?.name ?? ""}
                 </p>
               </div>
               <div className="flex items-center gap-2 text-sm text-neutral-400">
@@ -105,8 +102,7 @@ export default function EventPage({ eventId }: Props) {
 
               <button
                 onClick={async () => {
-                  const res = await registerMuatioan({ eventId });
-                  console.log(res);
+                  await registerMuatioan({ eventId });
                 }}
                 className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center text-lg font-medium text-neutral-200 transition-all duration-300`}
               >
@@ -136,13 +132,13 @@ export default function EventPage({ eventId }: Props) {
                     className={`relative aspect-square w-[1.7rem] overflow-hidden rounded-full`}
                   >
                     <Image
-                      src={creator?.image ?? ""}
-                      alt={creator?.name ?? ""}
+                      src={event?.creator?.image ?? ""}
+                      alt={event?.creator?.name ?? ""}
                       fill
                     />
                   </div>
                   <p className={`text-neutral-300 transition-all`}>
-                    {creator?.name}
+                    {event?.creator?.name ?? ""}
                   </p>
                 </div>
               </div>

@@ -9,6 +9,8 @@ import Image from "next/image";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import Link from "next/link";
+import { TRPCError } from "@trpc/server";
+import { IoReturnUpForward } from "react-icons/io5";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -18,6 +20,24 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   const { data: creator } = api.creator.getPublicProfile.useQuery({
     creatorProfile,
   });
+
+  if (!creator) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <h1 className="text-4xl font-medium text-neutral-200">
+          Creator not found
+        </h1>
+        <Link
+          href="/"
+          className="mt-4 flex items-center gap-2 text-xl font-medium text-pink-500 transition duration-300 hover:text-pink-600"
+        >
+          <IoReturnUpForward />
+          Go back to home
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <>
       <Head>

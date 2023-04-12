@@ -1,31 +1,31 @@
-import { string, z } from "zod";
+import { z } from "zod";
 
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
     .input(
       z.object({
         creatorProfile: z.string().optional(),
-        creatorId: z.string().optional(),
       })
     )
     .query(async ({ input, ctx }) => {
-      const { creatorProfile, creatorId } = input;
+      const { creatorProfile } = input;
       const { prisma } = ctx;
+
 
       const creator = await prisma.user.findUnique({
         where: {
           creatorProfile: creatorProfile,
-          id: creatorId,
         },
       });
 
-      console.log(creator);
+      if(!creator) return null;
 
       const socialLinks = await prisma.socialLink.findMany({
         where: { creatorId: creator?.id },
@@ -35,7 +35,13 @@ export const creatorRouter = createTRPCRouter({
         where: { creatorId: creator?.id },
       });
 
-      return { ...creator, socialLinks: socialLinks, events };
+      const output = {
+        ...creator,
+        events: events,
+        socialLinks: socialLinks,
+      };
+
+      return output;
     }),
 
   getProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -51,14 +57,7 @@ export const creatorRouter = createTRPCRouter({
       },
     });
 
-    const events = await prisma.event.findMany({
-      where: { creatorId: user?.id },
-    });
-
-    const registrations = await prisma.registration.findMany({
-      where: { userId: user?.id },
-    });
-    return { ...user, socialLinks: socialLinks, events, registrations };
+    return { ...user, socialLinks: socialLinks };
   }),
 
   createSocialLink: protectedProcedure
@@ -127,7 +126,6 @@ export const creatorRouter = createTRPCRouter({
       const { prisma } = ctx;
       const { bio, name, topmateUrl, creatorProfile, socialLink } = input;
 
-      console.log(socialLink);
       if (socialLink) {
         for (const sl of socialLink) {
           await prisma.socialLink.upsert({
