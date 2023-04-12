@@ -1,4 +1,4 @@
-import EventCard from "@/components/EventCard";
+import EventCardId, { EventCardObject } from "@/components/EventCard";
 import SocialLink from "@/components/SocialLink";
 import type { GetStaticPropsContext } from "next";
 import Head from "next/head";
@@ -100,7 +100,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           </h2>
           <div className="flex w-full flex-col items-center gap-4">
             {creator?.events?.map((event) => (
-              <EventCard key={event?.id ?? ""} eventId={event?.id ?? ""} />
+              <EventCardObject key={event?.id ?? ""} event={event} />
             ))}
           </div>
         </div>

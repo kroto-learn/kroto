@@ -6,6 +6,7 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { EventCardObject } from "@/components/EventCard";
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
@@ -56,8 +57,14 @@ export const creatorRouter = createTRPCRouter({
       },
     });
 
-    const registrations = await prisma.registration.findMany({
+    const registrationId = await prisma.registration.findMany({
       where: { userId: ctx.session.user.id },
+    });
+
+    const registrations = await prisma.event.findMany({
+      where: {
+        id: { in: registrationId.map((r) => r.eventId) },
+      },
     });
 
     return { ...user, registrations, socialLinks: socialLinks };

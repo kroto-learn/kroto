@@ -1,4 +1,4 @@
-import EventCard from "@/components/EventCard";
+import EventCardId, { EventCardObject } from "@/components/EventCard";
 import { type Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import { useSession } from "next-auth/react";
@@ -10,13 +10,15 @@ import HardWorkingCat from "public/CatWorkingHard.png";
 import Layout from "@/components/layouts/main";
 import ClaimLink from "@/components/ClaimLink";
 import { api } from "@/utils/api";
+import { Loader } from "@/components/Loader";
 
 export default function Dashboard({ creators }: { creators: Creator[] }) {
   const { data: session } = useSession();
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
 
-  const { data: profile } = api.creator.getProfile.useQuery();
+  const { data: profile, isLoading } = api.creator.getProfile.useQuery();
+  console.log(profile);
 
   return (
     <Layout>
@@ -62,22 +64,31 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
             Upcoming Events
           </h3>
           <div className="mb-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
-            <div className="mt-2">
-              {(profile?.registrations && profile?.registrations)?.map((e) => (
-                <div key={e?.eventId ?? ""}>
-                  <EventCard eventId={e?.eventId ?? ""} />
-                  <br />
+            {isLoading ? (
+              <div className="flex h-full items-center justify-center">
+                <Loader />
+              </div>
+            ) : (
+              <>
+                <div className="my-2 flex flex-col gap-2">
+                  {(profile?.registrations && profile?.registrations)?.map(
+                    (e) => (
+                      <div key={e.id ?? ""}>
+                        <EventCardObject event={e} />
+                      </div>
+                    )
+                  )}
                 </div>
-              ))}
-            </div>
-            <div className="mx-5 mb-2 flex justify-between">
-              <button className="text-pink-500 transition hover:text-pink-600">
-                View More
-              </button>
-              <button className="text-pink-500 transition hover:text-pink-600">
-                Show past
-              </button>
-            </div>
+                <div className="mx-5 mb-2 flex justify-between">
+                  <button className="text-pink-500 transition hover:text-pink-600">
+                    View More
+                  </button>
+                  <button className="text-pink-500 transition hover:text-pink-600">
+                    Show past
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
         <div className="my-10 flex flex-col items-center justify-center gap-5 rounded-xl border border-neutral-800 bg-neutral-900 p-5 transition duration-300 hover:border-neutral-700">
