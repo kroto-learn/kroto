@@ -100,6 +100,32 @@ export const eventRouter = createTRPCRouter({
     return events;
   }),
 
+  register: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const event = await prisma.event.findUnique({
+        where: { id: input.eventId },
+      });
+      const user = await prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+
+      if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const registration = await prisma.registration.create({
+        data: {
+          userId: user.id,
+          eventId: event.id,
+        },
+      });
+
+      return registration;
+    }),
+
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

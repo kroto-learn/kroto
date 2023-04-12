@@ -51,35 +51,50 @@ model Session {
 }
 
 model User {
-  id             String       @id @default(cuid())
+  id             String    @id @default(cuid())
   name           String?
-  email          String?      @unique
+  email          String?   @unique
   emailVerified  DateTime?
   image          String?
-  creatorProfile String?      @unique
-  isCreator      Boolean      @default(false)
-  bio            String?      @db.Text
-  accounts       Account[]
-  sessions       Session[]
-  socialLinks    SocialLink[]
+  creatorProfile String?   @unique
+  isCreator      Boolean   @default(false)
+  bio            String?   @db.Text
   topmateUrl     String?
-  events         Event[]
+
+  accounts      Account[]
+  sessions      Session[]
+  socialLinks   SocialLink[]
+  events        Event[]
+  registrations Registration[]
 }
 
 model Event {
-  id            String   @id @default(cuid())
+  id            String         @id @default(cuid())
   title         String
   thumbnail     String?
-  description   String?  @db.Text
+  description   String?        @db.Text
   eventUrl      String?
   eventType     String?
   eventLocation String?
   datetime      DateTime
   duration      Int?
   creatorId     String
-  creator       User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creator       User           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  registrations Registration[]
 
   @@index([creatorId])
+}
+
+model Registration {
+  id      String @id @default(cuid())
+  eventId String
+  userId  String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
 }
 
 model SocialLink {

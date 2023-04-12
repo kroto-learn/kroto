@@ -29,6 +29,8 @@ export default function EventPage({ eventId }: Props) {
     ? new Date(event?.datetime.getTime() + 3600000)
     : new Date();
 
+  const registerMuatioan = api.event.register.useMutation().mutateAsync;
+
   return (
     <>
       <Head>
@@ -102,6 +104,10 @@ export default function EventPage({ eventId }: Props) {
               </div>
 
               <button
+                onClick={async () => {
+                  const res = await registerMuatioan({ eventId });
+                  console.log(res);
+                }}
                 className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center text-lg font-medium text-neutral-200 transition-all duration-300`}
               >
                 Register now
