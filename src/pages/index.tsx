@@ -43,11 +43,11 @@ export function Hero() {
               <h1 className="relative max-w-4xl text-center text-4xl font-extrabold tracking-tight text-white sm:mt-5 sm:text-6xl lg:mt-6 xl:text-7xl">
                 <span className="block">Unlocking the potential of</span>
                 <span className="block pb-3 text-pink-500 sm:pb-5">
-                  YouTube Education
+                  Online Education
                 </span>
               </h1>
               <p className="relative my-5 text-center text-base text-neutral-300 sm:text-xl lg:text-lg xl:text-2xl">
-                We help YouTube educators monetize their content and provide
+                We help Online educators monetize their content and provide
                 students with a seamless learning experience
               </p>
               <div className="mt-6 flex justify-center sm:mt-8">

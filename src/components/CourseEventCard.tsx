@@ -17,7 +17,7 @@ type Props = {
 const EventCard = ({ event, collapsed, manage }: Props) => {
   const date = new Date(event.datetime);
   const endTime = new Date(
-    new Date(event.datetime).getTime() + (event.duration ?? 0) * 60000
+    new Date(event?.datetime).getTime() + (event.duration ?? 0) * 60000
   );
 
   return (

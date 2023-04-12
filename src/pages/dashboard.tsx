@@ -51,7 +51,7 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
                 className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-2 text-center font-medium text-neutral-200 transition duration-300 hover:bg-neutral-800`}
               >
                 <MdSubscriptions />
-                Subscriptions
+              Subscriptions
               </button>
             </div> */}
           </div>
