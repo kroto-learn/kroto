@@ -1,4 +1,4 @@
-import EventCard from "@/components/CourseEventCard";
+import EventCard from "@/components/EventCard";
 import Head from "next/head";
 import React, { type ReactNode } from "react";
 import { DashboardLayout } from "..";
@@ -20,7 +20,7 @@ const UpcomingEvents = () => {
       </Head>
       <div className="flex w-full flex-col items-start gap-4">
         {events?.map((event) => (
-          <EventCard key={event.title} manage event={event} />
+          <EventCard key={event?.id ?? ""} manage eventId={event?.id ?? ""} />
         ))}
       </div>
     </>

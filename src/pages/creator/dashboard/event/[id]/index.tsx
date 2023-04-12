@@ -113,7 +113,7 @@ const EventOverview = () => {
   const minTimeIdx = giveFirstTimeIdx(times);
 
   const [startTimeIdx, setStartTimeIdx] = useState<number>(
-    giveFirstTimeIdx(times, event ? new Date(event.datetime) : new Date())
+    giveFirstTimeIdx(times, event ? event?.datetime : new Date())
   );
 
   const [editEvent, setEditEvent] = useState(false);
@@ -135,12 +135,12 @@ const EventOverview = () => {
   useEffect(() => {
     if (!!event) {
       methods.setValue("thumbnail", (event?.thumbnail as string) ?? "");
-      methods.setValue("datetime", event?.datetime ?? "");
+      methods.setValue("datetime", event?.datetime ?? new Date());
       methods.setValue("duration", (event?.duration as number) ?? "");
       methods.setValue("eventType", event?.eventType ?? "");
 
       setStartTimeIdx(
-        giveFirstTimeIdx(times, event ? new Date(event.datetime) : new Date())
+        giveFirstTimeIdx(times, event ? event.datetime : new Date())
       );
     }
 
@@ -151,7 +151,7 @@ const EventOverview = () => {
     return (
       <>
         <Head>
-          <title>{`${event.title} | Overview`}</title>
+          <title>{`${event?.title ?? ""} | Overview`}</title>
         </Head>
         <div className="flex w-full max-w-3xl items-start gap-8 rounded-xl bg-neutral-800 p-4">
           <div className="flex flex-col items-start gap-4">
@@ -160,7 +160,7 @@ const EventOverview = () => {
             >
               <Image
                 src={(event?.thumbnail as string) ?? ""}
-                alt={event.title}
+                alt={event?.title ?? ""}
                 fill
                 style={{ objectFit: "cover" }}
                 className="rounded-xl"

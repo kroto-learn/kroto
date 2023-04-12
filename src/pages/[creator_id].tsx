@@ -1,6 +1,5 @@
-import EventCard from "@/components/CourseEventCard";
+import EventCard from "@/components/EventCard";
 import SocialLink from "@/components/SocialLink";
-import { getCreators } from "mock/getCreators";
 import type { GetStaticPropsContext } from "next";
 import Head from "next/head";
 import type { ParsedUrlQuery } from "querystring";
@@ -9,7 +8,6 @@ import Image from "next/image";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import Link from "next/link";
-import { TRPCError } from "@trpc/server";
 import { IoReturnUpForward } from "react-icons/io5";
 
 type CreatorPageProps = {
@@ -102,7 +100,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           </h2>
           <div className="flex w-full flex-col items-center gap-4">
             {creator?.events?.map((event) => (
-              <EventCard key={event.title} event={event} />
+              <EventCard key={event?.id ?? ""} eventId={event?.id ?? ""} />
             ))}
           </div>
         </div>
