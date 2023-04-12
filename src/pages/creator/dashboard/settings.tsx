@@ -6,7 +6,7 @@ import { Loader } from "@/components/Loader";
 import { DashboardLayout } from ".";
 import { useEffect, useState } from "react";
 import { BsUpload } from "react-icons/bs";
-import { array, object, string, type z } from "zod";
+import { array, object, string, optional, type z } from "zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IoAdd } from "react-icons/io5";
@@ -33,7 +33,7 @@ export const creatorEditSchema = object({
     })
   ),
   image: string().optional(),
-  topmateUrl: string().url().nullable().optional(),
+  topmateUrl: optional(string()),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
