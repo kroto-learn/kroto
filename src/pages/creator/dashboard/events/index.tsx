@@ -1,6 +1,6 @@
 import EventCard from "@/components/CourseEventCard";
 import Head from "next/head";
-import React, { type ReactNode, useEffect } from "react";
+import React, { type ReactNode } from "react";
 import { DashboardLayout } from "..";
 import { usePathname } from "next/navigation";
 import Link from "next/link";

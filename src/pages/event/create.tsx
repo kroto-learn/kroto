@@ -20,6 +20,8 @@ import Head from "next/head";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { type z } from "zod";
 import { api } from "@/utils/api";
+import { TRPCError } from "@trpc/server";
+import { useRouter } from "next/router";
 
 export const createFormSchema = object({
   thumbnail: string({
@@ -97,6 +99,7 @@ const CreateEvent = () => {
       thumbnail: "",
     },
   });
+  const router = useRouter();
 
   const eventMutation = api.event.create.useMutation().mutateAsync;
 
@@ -117,7 +120,15 @@ const CreateEvent = () => {
             if (mValues.eventType === "virtual") mValues.eventLocation = "";
             else mValues.eventUrl = "";
             try {
-              await eventMutation({ ...values });
+              await eventMutation(
+                { ...values },
+                {
+                  onSuccess: (createdEvent) => {
+                    if (!(createdEvent instanceof TRPCError))
+                      void router.push(`/event/${createdEvent.id}`);
+                  },
+                }
+              );
             } catch (err) {
               console.log(err);
             }
