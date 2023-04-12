@@ -6,7 +6,7 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import { EventCardObject } from "@/components/EventCard";
+import { EventCard } from "@/components/EventCard";
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure

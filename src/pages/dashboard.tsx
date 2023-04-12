@@ -1,4 +1,4 @@
-import EventCardId, { EventCardObject } from "@/components/EventCard";
+import EventCardId, { EventCard } from "@/components/EventCard";
 import { type Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import { useSession } from "next-auth/react";
@@ -74,7 +74,7 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
                   {(profile?.registrations && profile?.registrations)?.map(
                     (e) => (
                       <div key={e.id ?? ""}>
-                        <EventCardObject event={e} />
+                        <EventCard event={e} />
                       </div>
                     )
                   )}

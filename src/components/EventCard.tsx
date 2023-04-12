@@ -79,7 +79,7 @@ const EventCardId = ({ eventId, manage }: Props) => {
   );
 };
 
-export const EventCardObject = ({
+export const EventCard = ({
   event,
   manage,
 }: {
