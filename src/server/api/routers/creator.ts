@@ -51,7 +51,14 @@ export const creatorRouter = createTRPCRouter({
       },
     });
 
-    return { ...user, socialLinks: socialLinks };
+    const events = await prisma.event.findMany({
+      where: { creatorId: user?.id },
+    });
+
+    const registrations = await prisma.registration.findMany({
+      where: { userId: user?.id },
+    });
+    return { ...user, socialLinks: socialLinks, events, registrations };
   }),
 
   createSocialLink: protectedProcedure

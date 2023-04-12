@@ -15,7 +15,8 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
   const { data: session } = useSession();
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
-  const { data: events } = api.event.getAll.useQuery();
+
+  const { data: profile } = api.creator.getProfile.useQuery();
 
   return (
     <Layout>
@@ -62,9 +63,9 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
           </h3>
           <div className="mb-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
             <div className="mt-2">
-              {events?.map((e) => (
+              {profile?.registrations?.map((e) => (
                 <div key={e.id}>
-                  <EventCard event={e} />
+                  <EventCard event={e.eventId} />
                   <br />
                 </div>
               ))}
