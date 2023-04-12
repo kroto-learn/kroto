@@ -84,7 +84,7 @@ model Event {
 
 model SocialLink {
   id        String @id @default(cuid())
-  type      String @unique
+  type      String
   url       String
   creatorId String
   creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)

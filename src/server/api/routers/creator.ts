@@ -6,6 +6,12 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 
+interface SocialLink {
+  type: string;
+  url: string;
+  creatorId: string;
+}
+
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
     .input(z.object({ creatorProfile: z.string() }))
@@ -66,12 +72,26 @@ export const creatorRouter = createTRPCRouter({
       const { prisma } = ctx;
       const { bio, name, topmateUrl, creatorProfile, socialLinks } = input;
 
-      const createSocialLinks = socialLinks?.map((link) => {
-        return { ...link, creatorId: ctx.session.user.id };
+      const createSocialLinks =
+        socialLinks?.map((link) => {
+          return { ...link, creatorId: ctx.session.user.id };
+        }) ?? [];
+
+      const getSocialLink = await prisma.socialLink.findMany({
+        where: { creatorId: ctx.session.user.id },
       });
 
+      const mergedArray = [...getSocialLink, ...createSocialLinks];
+
+      const toBeCreatedSocialLinks: SocialLink[] = Object.values(
+        mergedArray.reduce((acc: { [url: string]: SocialLink }, obj) => {
+          acc[obj.url] = obj;
+          return acc;
+        }, {})
+      );
+
       const createdSocialLinks = await prisma.socialLink.createMany({
-        data: createSocialLinks ?? [],
+        data: toBeCreatedSocialLinks ?? [],
       });
 
       const updatedUser = await prisma.user.update({
