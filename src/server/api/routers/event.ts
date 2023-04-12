@@ -17,8 +17,6 @@ export const eventRouter = createTRPCRouter({
 
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
 
-      const thumbnail = await imageUpload(input.thumbnail);
-
       const event = await prisma.event.create({
         data: {
           title: input.title,
@@ -28,13 +26,23 @@ export const eventRouter = createTRPCRouter({
           eventLocation: input.eventLocation ?? "",
           eventType: input.eventType,
           duration: input.duration,
-          thumbnail: thumbnail,
 
           creatorId: ctx.session.user.id,
         },
       });
 
-      return event;
+      const thumbnail = await imageUpload(input.thumbnail, event.id);
+
+      const updatedEvent = await prisma.event.update({
+        where: {
+          id: event.id,
+        },
+        data: {
+          thumbnail,
+        },
+      });
+
+      return updatedEvent;
     }),
 
   update: protectedProcedure
@@ -43,7 +51,7 @@ export const eventRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
-      const thumbnail = await imageUpload(input.thumbnail);
+      const thumbnail = await imageUpload(input.thumbnail, input.id);
 
       const event = await prisma.event.update({
         where: {
