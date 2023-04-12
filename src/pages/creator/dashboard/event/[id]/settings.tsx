@@ -1,31 +1,49 @@
-import { type CourseEvent } from "interfaces/CourseEvent";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { type ReactNode, useEffect, useState } from "react";
-import { getEventsClient } from "mock/getEventsClient";
+import React, { type ReactNode } from "react";
 import { DashboardLayout } from "../..";
 import { EventLayout } from ".";
+import { api } from "@/utils/api";
+import { AiOutlineDelete } from "react-icons/ai";
 
 const EventSettings = () => {
-  const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
   const router = useRouter();
   const { id } = router.query as { id: string };
+  const { data: event } = api.event.get.useQuery({ id });
+  const { mutateAsync: deleteEventMutation } = api.event.delete.useMutation();
 
-  useEffect(() => {
-    const loadEvent = async () => {
-      const events = await getEventsClient();
-
-      const mevent = events.find((e) => e.id === id);
-
-      if (mevent) setEvent(mevent);
-    };
-    void loadEvent();
-  }, [id]);
   return (
     <>
       <Head>
-        <title>{(event?.title as string) + "| Settings"}</title>
+        <title>{(event?.title as string) + " | Settings"}</title>
       </Head>
+      <div className="w-full rounded-xl bg-neutral-900 p-8">
+        <div className="flex flex-col items-start gap-3">
+          <label className="text-lg font-medium">
+            Delete &quot;{event?.title ?? ""}&quot; event ?
+          </label>
+          <button
+            onClick={async () => {
+              try {
+                await deleteEventMutation(
+                  { id },
+                  {
+                    onSuccess: () => {
+                      void router.replace("/creator/dashboard/events");
+                    },
+                  }
+                );
+              } catch (err) {
+                console.log(err);
+              }
+            }}
+            className="flex items-center gap-1 rounded-lg border border-red-500 bg-red-500/10 px-3 py-2 text-red-500"
+          >
+            <AiOutlineDelete />
+            Delete Event
+          </button>
+        </div>
+      </div>
     </>
   );
 };
