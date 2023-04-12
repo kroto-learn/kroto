@@ -14,6 +14,7 @@ import "@/styles/globals.css";
 import { useRouter } from "next/router";
 import { type ReactNode, useEffect } from "react";
 import { type NextComponentType } from "next";
+import { Toaster } from "react-hot-toast";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -45,6 +46,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <Progress isAnimating={isAnimating} />
+      <Toaster />
       <Layout
         Component={
           Component as NextComponentType & {
