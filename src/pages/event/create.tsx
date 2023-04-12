@@ -22,6 +22,7 @@ import { type z } from "zod";
 import { api } from "@/utils/api";
 import { TRPCError } from "@trpc/server";
 import { useRouter } from "next/router";
+import { Loader } from "@/components/Loader";
 
 export const createFormSchema = object({
   thumbnail: string({
@@ -32,7 +33,7 @@ export const createFormSchema = object({
   }),
   description: string({
     required_error: "Please enter event description.",
-  }).max(150),
+  }).max(1500),
   eventType: string({
     required_error: "Please select the type of event.",
   }).max(150),
@@ -86,6 +87,7 @@ const CreateEvent = () => {
   const times = generateTimesArray();
   const minTimeIdx = giveFirstTimeIdx(times);
   const [startTimeIdx, setStartTimeIdx] = useState<number>(minTimeIdx);
+  const [loading, setLoading] = useState<boolean>(false);
   const methods = useZodForm({
     schema: createFormSchema,
     defaultValues: {
@@ -119,6 +121,7 @@ const CreateEvent = () => {
             const mValues = values;
             if (mValues.eventType === "virtual") mValues.eventLocation = "";
             else mValues.eventUrl = "";
+            setLoading(true);
             try {
               await eventMutation(
                 { ...values },
@@ -132,6 +135,7 @@ const CreateEvent = () => {
             } catch (err) {
               console.log(err);
             }
+            setLoading(false);
           }
         })}
         className="mx-auto my-12 flex w-full max-w-2xl flex-col gap-8"
@@ -145,11 +149,11 @@ const CreateEvent = () => {
               className="object-cover"
             />
           )}
-          <div className="relative m-2 flex w-auto cursor-pointer items-center gap-2 rounded-xl border border-neutral-500 bg-neutral-500/50 p-3 text-sm font-medium duration-300 hover:border-neutral-400">
+          <div className="relative m-2 flex w-auto cursor-pointer items-center gap-2 rounded-xl border border-neutral-500 bg-neutral-800/80 p-3 text-sm font-medium duration-300 hover:border-neutral-400">
             <input
               type="file"
               accept="image/*"
-              className=" z-2 absolute h-full w-full cursor-pointer opacity-0"
+              className="z-2 absolute h-full w-full cursor-pointer opacity-0"
               onChange={(e) => {
                 if (e.currentTarget.files && e.currentTarget.files[0]) {
                   fileToBase64(e.currentTarget.files[0])
@@ -383,9 +387,10 @@ const CreateEvent = () => {
         </div>
 
         <button
-          className={`group inline-flex max-w-[10rem] items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center text-lg font-medium text-neutral-200 transition-all duration-300 disabled:bg-neutral-700 disabled:text-neutral-300`}
+          className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
           type="submit"
         >
+          {loading && <Loader />}
           Create Event
         </button>
       </form>

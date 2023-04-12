@@ -161,4 +161,17 @@ export const creatorRouter = createTRPCRouter({
       // return { ...updatedUser, socialLinks: createdSocialLinks };
       return { ...updatedUser, socialLinks };
     }),
+
+  userNameAvailable: publicProcedure
+    .input(z.object({ creatorProfile: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+      const { creatorProfile } = input;
+      const user = await prisma.user.findUnique({
+        where: {
+          creatorProfile,
+        },
+      });
+      return user ? false : true;
+    }),
 });

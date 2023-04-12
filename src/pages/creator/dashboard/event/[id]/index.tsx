@@ -245,11 +245,11 @@ const EventOverview = () => {
                   className="object-cover"
                 />
               )}
-              <div className="relative m-2 flex w-auto cursor-pointer items-center gap-2 rounded-xl border border-neutral-500 bg-neutral-500/50 p-3 text-sm font-medium duration-300 hover:border-neutral-400">
+              <div className="relative m-2 flex w-auto cursor-pointer items-center gap-2 rounded-xl border border-neutral-500 bg-neutral-800/80 p-3 text-sm font-medium duration-300 hover:border-neutral-400">
                 <input
                   type="file"
                   accept="image/*"
-                  className=" z-2 absolute h-full w-full cursor-pointer opacity-0"
+                  className="z-2 absolute h-full w-full cursor-pointer opacity-0"
                   onChange={(e) => {
                     if (e.currentTarget.files && e.currentTarget.files[0]) {
                       fileToBase64(e.currentTarget.files[0])

@@ -252,7 +252,7 @@ const Settings = () => {
                     { id: "", type: "other", url: "" },
                   ]);
                 }}
-                className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-2 py-1 text-sm font-medium text-pink-600 disabled:border-neutral-600 disabled:bg-neutral-600/10 disabled:text-neutral-700"
+                className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-2 py-1 text-sm font-medium text-pink-600 backdrop-blur-sm transition duration-300 hover:bg-pink-600 hover:text-pink-200 disabled:border-neutral-600 disabled:bg-neutral-600/10 disabled:text-neutral-700"
               >
                 <IoAdd /> Add Link
               </button>

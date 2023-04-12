@@ -51,7 +51,7 @@ export default function ClaimLink({
                   ? "right-8 translate-y-5  text-xl"
                   : variant === "sm"
                   ? "text-md right-5 translate-y-3"
-                  : "right-8 translate-y-3 text-3xl "
+                  : "right-8 translate-y-5 text-3xl "
               } transition-all duration-300 hover:translate-x-1`}
             >
               <BsArrowRight />

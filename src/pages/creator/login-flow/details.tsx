@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BsUpload } from "react-icons/bs";
+import { BsArrowRight, BsUpload } from "react-icons/bs";
 import { FaSave } from "react-icons/fa";
 
 export default function Page() {
@@ -36,12 +36,12 @@ export default function Page() {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
         <div className="text-3xl font-bold text-neutral-200">
-          You are already a creator!
+          Congrats! You are a kreator now.
         </div>
-        <div className="text-sm text-neutral-300">
+        <div className="my-5 text-sm text-neutral-300">
           <Link href="/creator/dashboard/settings">
-            <span className="text-xl text-neutral-500 underline transition-all duration-300 hover:text-pink-500">
-              Go to Dashboard
+            <span className="flex items-center gap-1 text-xl text-pink-400 transition-all duration-300 hover:text-pink-500">
+              Go to Dashboard <BsArrowRight />
             </span>
           </Link>
         </div>
@@ -103,6 +103,7 @@ export default function Page() {
               </span>
               <input
                 value={creatorProfile}
+                onChange={(e) => setCreatorProfile(e.target.value)}
                 type="text"
                 id="website-admin"
                 className="block min-w-[14rem] rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
