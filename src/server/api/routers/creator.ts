@@ -64,7 +64,7 @@ export const creatorRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
-      const { bio, name, creatorProfile, socialLinks } = input;
+      const { bio, name, topmateUrl, creatorProfile, socialLinks } = input;
 
       const createSocialLinks = socialLinks?.map((link) => {
         return { ...link, creatorId: ctx.session.user.id };
@@ -83,6 +83,7 @@ export const creatorRouter = createTRPCRouter({
           creatorProfile: creatorProfile,
           bio: bio,
           name: name,
+          topmateUrl,
         },
       });
 

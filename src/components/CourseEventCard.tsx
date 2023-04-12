@@ -40,9 +40,7 @@ const EventCard = ({ event, collapsed, manage }: Props) => {
         className={`relative aspect-[18/9] w-full object-cover transition-all xs:w-2/5`}
       >
         <Image
-          src={
-            "https://res.cloudinary.com/dvisf70pm/image/upload/v1680159544/e7b7a422-4159-4f0e-8413-faafb869bd03_y9yatb.jpg"
-          }
+          src={event?.thumbnail ?? ""}
           alt={event.title}
           fill
           style={{ objectFit: "cover" }}

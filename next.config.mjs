@@ -16,6 +16,9 @@ const config = {
       {
         hostname: "lh3.googleusercontent.com",
       },
+      {
+        hostname: "kroto.s3.ap-south-1.amazonaws.com",
+      },
     ],
   },
 };
