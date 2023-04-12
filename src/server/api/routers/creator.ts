@@ -8,16 +8,24 @@ import {
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
-    .input(z.object({ creatorProfile: z.string() }))
+    .input(
+      z.object({
+        creatorProfile: z.string().optional(),
+        creatorId: z.string().optional(),
+      })
+    )
     .query(async ({ input, ctx }) => {
-      const { creatorProfile } = input;
+      const { creatorProfile, creatorId } = input;
       const { prisma } = ctx;
 
       const creator = await prisma.user.findUnique({
         where: {
           creatorProfile: creatorProfile,
+          id: creatorId,
         },
       });
+
+      console.log(creator);
 
       const socialLinks = await prisma.socialLink.findMany({
         where: { creatorId: creator?.id },
@@ -112,7 +120,7 @@ export const creatorRouter = createTRPCRouter({
       const { prisma } = ctx;
       const { bio, name, topmateUrl, creatorProfile, socialLink } = input;
 
-        console.log(socialLink)
+      console.log(socialLink);
       if (socialLink) {
         for (const sl of socialLink) {
           await prisma.socialLink.upsert({

@@ -5,11 +5,11 @@ import { HiArrowSmRight } from "react-icons/hi";
 import { SiGooglemeet } from "react-icons/si";
 import { GrTextAlignLeft } from "react-icons/gr";
 import { IoPeopleOutline } from "react-icons/io5";
-import { type ParsedUrlQuery } from "querystring";
-import { generateSSGHelper } from "@/server/helpers/ssgHelper";
-import { type GetStaticPropsContext } from "next";
 import { api } from "@/utils/api";
 import { MdLocationOn } from "react-icons/md";
+import { type GetStaticPropsContext } from "next";
+import { generateSSGHelper } from "@/server/helpers/ssgHelper";
+import { type ParsedUrlQuery } from "querystring";
 
 type Props = {
   eventId: string;
@@ -21,7 +21,7 @@ export default function EventPage({ eventId }: Props) {
   });
 
   const { data: creator } = api.creator.getPublicProfile.useQuery({
-    creatorProfile: event?.creatorId ?? "",
+    creatorId: event?.creatorId ?? "",
   });
   const date = event?.datetime ?? new Date();
 
@@ -156,7 +156,7 @@ export function getStaticPaths() {
 }
 
 interface CParams extends ParsedUrlQuery {
-  creator_id: string;
+  id: string;
 }
 
 export async function getStaticProps(context: GetStaticPropsContext) {
