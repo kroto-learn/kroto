@@ -55,7 +55,6 @@ export default function Page() {
       bio: creatorBio,
       name: creatorName,
       creatorProfile: `${creatorProfile}`,
-      socialLinks: [],
     });
     setUpdating(false);
   };

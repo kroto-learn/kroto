@@ -91,18 +91,9 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   );
 };
 
-export async function getStaticPaths() {
-  const creators = await getCreators();
-
-  return {
-    paths: creators.map((c) => ({
-      params: {
-        creator_id: c.id,
-      },
-    })),
-    fallback: "blocking",
-  };
-}
+export const getStaticPaths = () => {
+  return { paths: [], fallback: "blocking" };
+};
 
 interface CParams extends ParsedUrlQuery {
   creator_id: string;
