@@ -91,9 +91,15 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      const registrations = await prisma.registration.findMany({
+      const registrationsIds = await prisma.registration.findMany({
         where: {
           eventId: event?.id,
+        },
+      });
+
+      const registrations = await prisma.user.findMany({
+        where: {
+          id: { in: registrationsIds.map((r) => r.userId) },
         },
       });
 
