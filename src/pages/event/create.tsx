@@ -113,6 +113,7 @@ const CreateEvent = () => {
       <form
         onSubmit={methods.handleSubmit(async (values) => {
           if (!!values) {
+            console.log(values);
             const mValues = values;
             if (mValues.eventType === "virtual") mValues.eventLocation = "";
             else mValues.eventUrl = "";

@@ -7,7 +7,6 @@ import {
 } from "@/server/api/trpc";
 import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
-import { creatorEditSchema } from "@/pages/creator/dashboard/settings";
 import imageUpload from "@/server/helpers/base64ToS3";
 
 export const eventRouter = createTRPCRouter({
