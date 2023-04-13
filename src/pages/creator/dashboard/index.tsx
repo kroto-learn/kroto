@@ -206,7 +206,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                 <>
                   <Menu.Button className="flex h-12 w-full grid-cols-3 items-center gap-3 text-xl transition duration-300 hover:bg-neutral-800 hover:text-pink-500 active:bg-neutral-800  active:text-pink-500">
                     <span className="w-1/3" />
-                    <div className="flex w-full items-center justify-start gap-2 transition duration-300">
+                    <div className="flex w-full items-center justify-start gap-2 transition-transform duration-300">
                       {open ? <BsChevronDown /> : <GiHamburgerMenu />}
                       <span className="hidden md:block">More</span>
                     </div>
