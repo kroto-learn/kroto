@@ -7,7 +7,7 @@ import {
 } from "@/server/api/trpc";
 import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
-import imageUpload from "@/server/helpers/base64ToS3";
+import { imageUpload, isBase64 } from "@/server/helpers/base64ToS3";
 
 export const eventRouter = createTRPCRouter({
   create: protectedProcedure
@@ -51,7 +51,10 @@ export const eventRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
-      const thumbnail = await imageUpload(input.thumbnail, input.id, "event");
+
+      let thumbnail = input.thumbnail;
+      if (isBase64(input.thumbnail))
+        thumbnail = await imageUpload(input.thumbnail, input.id, "event");
 
       const event = await prisma.event.update({
         where: {
@@ -149,10 +152,28 @@ export const eventRouter = createTRPCRouter({
 
       if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
 
+      if (event.creatorId === user.id)
+        return new TRPCError({ code: "BAD_REQUEST" });
+
       const registration = await prisma.registration.create({
         data: {
           userId: user.id,
           eventId: event.id,
+        },
+      });
+
+      return registration;
+    }),
+
+  isRegistered: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
+    .query(({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const registration = prisma.registration.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+          eventId: input.eventId,
         },
       });
 

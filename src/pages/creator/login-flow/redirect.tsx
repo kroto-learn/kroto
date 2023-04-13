@@ -17,7 +17,7 @@ export default function RedirectToSettings() {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [creatorProfile, makeProfile, router]);
 
   return (
     <div className="flex h-screen scale-150 items-center justify-center">

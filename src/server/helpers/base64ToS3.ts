@@ -9,7 +9,11 @@ interface ImageUploadResponse {
   key: string;
 }
 
-const imageUpload = async (base64: string, id: string, variant: string): Promise<string> => {
+export const imageUpload = async (
+  base64: string,
+  id: string,
+  variant: string
+): Promise<string> => {
   // Configure AWS with your access and secret key.
   const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET } = env;
 
@@ -62,4 +66,8 @@ const imageUpload = async (base64: string, id: string, variant: string): Promise
   }
 };
 
-export default imageUpload;
+export const isBase64 = (input: string): boolean => {
+  const base64Regex =
+    /^(?:[A-Za-z0-9+/]{4})*?(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+  return base64Regex.test(input);
+};

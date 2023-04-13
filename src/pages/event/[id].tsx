@@ -10,13 +10,13 @@ import { MdLocationOn } from "react-icons/md";
 import { type GetStaticPropsContext } from "next";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { type ParsedUrlQuery } from "querystring";
-import dynamic from "next/dynamic";
-import "@uiw/react-markdown-preview/markdown.css";
-
-const Markdown = dynamic(
-  () => import("@uiw/react-markdown-preview").then((mod) => mod.default),
-  { ssr: false }
-);
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { signIn, useSession } from "next-auth/react";
+import useToast from "@/hooks/useToast";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { Loader } from "@/components/Loader";
 
 type Props = {
   eventId: string;
@@ -27,6 +27,8 @@ export default function EventPage({ eventId }: Props) {
     id: eventId,
   });
 
+  const { data: session } = useSession();
+
   const date = event?.datetime ?? new Date();
 
   const endTime = event?.datetime
@@ -34,6 +36,13 @@ export default function EventPage({ eventId }: Props) {
     : new Date();
 
   const registerMuatioan = api.event.register.useMutation().mutateAsync;
+  const { data: isRegistered, isLoading } = api.event.isRegistered.useQuery({
+    eventId,
+  });
+
+  const { errorToast } = useToast();
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <>
@@ -107,15 +116,41 @@ export default function EventPage({ eventId }: Props) {
                 </p>
               </div>
 
-              <button
-                onClick={async () => {
-                  await registerMuatioan({ eventId });
-                }}
-                className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center text-lg font-medium text-neutral-200 transition-all duration-300`}
-              >
-                Register now
-                <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
-              </button>
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <Loader />
+                </div>
+              ) : isRegistered ? (
+                <div className="flex items-center justify-center font-bold">
+                  You are already registered!
+                </div>
+              ) : (
+                <button
+                  onClick={async () => {
+                    setLoading(true);
+                    if (!session) {
+                      errorToast("You're not logged in");
+                      void router.push(
+                        `/auth/sign-in/?redirect=/event/${eventId}`
+                      );
+                    }
+                    await registerMuatioan({ eventId });
+                    setLoading(false);
+                  }}
+                  className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center text-lg font-medium text-neutral-200 transition-all duration-300`}
+                >
+                  {loading ? (
+                    <div>
+                      <Loader />
+                    </div>
+                  ) : (
+                    <>
+                      <span>Register now</span>
+                      <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -126,8 +161,10 @@ export default function EventPage({ eventId }: Props) {
                 <GrTextAlignLeft />
                 <h2 className="font-medium ">Description</h2>
               </div>
-              <div className="px-4 pb-4">
-                <Markdown source={event?.description ?? ""} />
+              <div className="prose prose-invert prose-pink px-4 pb-4">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {event?.description ?? ""}
+                </ReactMarkdown>
               </div>
             </div>
             <div className="flex w-1/3 flex-col gap-4 rounded-xl bg-neutral-800">

@@ -45,6 +45,7 @@ export function KrotoLogo() {
 export default function SignIn() {
   const { query } = useRouter();
   const [creatorProfile, setCreatorProfile] = useState<string>("");
+  const { redirect } = query as { redirect?: string };
 
   useEffect(() => {
     if (query.creatorProfile) {
@@ -74,7 +75,7 @@ export default function SignIn() {
                 void signIn(o.id, {
                   callbackUrl: creatorProfile
                     ? `/creator/login-flow/redirect?creatorProfile=${creatorProfile}`
-                    : "/",
+                    : redirect || "/",
                 })
               }
               className="mb-2 mr-2 flex items-center justify-center gap-1 rounded-xl border border-neutral-700 bg-neutral-800 px-16 py-2.5 text-lg font-medium text-neutral-300 transition duration-300 hover:bg-neutral-700"
