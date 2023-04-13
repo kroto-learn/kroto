@@ -56,7 +56,7 @@ const EventRegistrations = () => {
   return (
     <>
       <Head>
-        <title>{(event?.title as string) + "| Registrations"}</title>
+        <title>{(event?.title ?? "Event") + " | Registrations"}</title>
       </Head>
       <div className="flex min-h-[80%] w-full flex-col items-start justify-start gap-4 rounded-xl bg-neutral-900 p-6">
         <h3 className="mb-1 text-2xl font-medium">Registrations</h3>

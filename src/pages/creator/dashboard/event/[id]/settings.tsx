@@ -18,7 +18,7 @@ const EventSettings = () => {
   return (
     <>
       <Head>
-        <title>{(event?.title as string) + " | Settings"}</title>
+        <title>{(event?.title ?? "Event") + " | Settings"}</title>
       </Head>
       <div className="w-full rounded-xl bg-neutral-900 p-8">
         <div className="flex flex-col items-start gap-3">

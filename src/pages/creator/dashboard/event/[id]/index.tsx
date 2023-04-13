@@ -153,7 +153,7 @@ const EventOverview = () => {
     return (
       <>
         <Head>
-          <title>{`${event?.title ?? ""} | Overview`}</title>
+          <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
         <div className="flex w-full max-w-3xl items-start gap-8 rounded-xl bg-neutral-800 p-4">
           <div className="flex flex-col items-start gap-4">
