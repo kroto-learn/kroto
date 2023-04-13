@@ -28,6 +28,7 @@ import "@uiw/react-markdown-preview/markdown.css";
 
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import dynamic from "next/dynamic";
+import Layout from "@/components/layouts/main";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -119,7 +120,7 @@ const CreateEvent = () => {
   }, [methods]);
 
   return (
-    <>
+    <Layout>
       <Head>
         <title>Create Event</title>
       </Head>
@@ -415,7 +416,7 @@ const CreateEvent = () => {
       {/* );
       }} */}
       {/* </Formik> */}
-    </>
+    </Layout>
   );
 };
 

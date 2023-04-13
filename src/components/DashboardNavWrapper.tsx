@@ -123,7 +123,7 @@ const DashboardNavWrapper = ({ children }: Props) => {
                   {creator.name}
                 </p>
                 <p className="text-xs text-neutral-300 decoration-neutral-400 underline-offset-2 group-hover:underline">
-                  kroto.in/{creator.id}
+                  {creator.id}
                 </p>
               </div>
             </Link>

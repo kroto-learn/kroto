@@ -1,14 +1,16 @@
 import { api } from "@/utils/api";
-import { Menu } from "@headlessui/react";
+import { Menu, Transition } from "@headlessui/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type ReactNode } from "react";
-import { BiChevronDown, BiLogOut } from "react-icons/bi";
+import { Fragment, type ReactNode } from "react";
+import { BiLogOut } from "react-icons/bi";
+import { GiHamburgerMenu } from "react-icons/gi";
 import {
   BsCalendarEvent,
   BsCalendarEventFill,
+  BsChevronDown,
   BsPeople,
   BsPeopleFill,
 } from "react-icons/bs";
@@ -66,8 +68,8 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                     <p className="text-sm font-medium text-neutral-200">
                       {creator.name}
                     </p>
-                    <div className="flex items-center text-xs font-medium text-neutral-300 decoration-neutral-400">
-                      kroto.in/{creator?.creatorProfile}{" "}
+                    <div className="flex items-center truncate text-xs font-medium text-neutral-300 decoration-neutral-400">
+                      {creator?.creatorProfile}{" "}
                       <FiArrowUpRight className="text-lg text-pink-600" />
                     </div>
                   </div>
@@ -200,54 +202,70 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               />
             </Link>
             <Menu>
-              <Menu.Button className="flex h-12 w-full grid-cols-3 items-center gap-3 text-xl hover:bg-neutral-800 hover:text-pink-500 active:bg-neutral-800  active:text-pink-500">
-                <span className="w-1/3" />
-                <div className="flex w-full items-center justify-start gap-2">
-                  <BiChevronDown />{" "}
-                  <span className="hidden md:block">More</span>
-                </div>
-                <span className="w-1" />
-              </Menu.Button>
-              <div className="flex w-full flex-col items-center md:p-2">
-                <Menu.Items className="flex w-full flex-col overflow-hidden rounded-lg bg-neutral-800">
-                  <Link
-                    href="/creator/dashboard/registered-events"
-                    className="flex h-[2.5rem] w-full items-center justify-center font-medium hover:bg-neutral-700 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
-                  >
-                    <Menu.Item>
-                      <div className="flex items-center gap-2 text-xl md:text-sm">
-                        <MdEventAvailable />{" "}
-                        <span className="hidden md:block">
-                          Registered Events
-                        </span>
-                      </div>
-                    </Menu.Item>
-                  </Link>
+              {({ open }) => (
+                <>
+                  <Menu.Button className="flex h-12 w-full grid-cols-3 items-center gap-3 text-xl transition duration-300 hover:bg-neutral-800 hover:text-pink-500 active:bg-neutral-800  active:text-pink-500">
+                    <span className="w-1/3" />
+                    <div className="flex w-full items-center justify-start gap-2 transition duration-300">
+                      {open ? <BsChevronDown /> : <GiHamburgerMenu />}
+                      <span className="hidden md:block">More</span>
+                    </div>
+                    <span className="w-1" />
+                  </Menu.Button>
+                  <div className="flex w-full flex-col items-center md:p-2">
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="flex w-full flex-col overflow-hidden rounded-lg bg-neutral-800 transition-all duration-300">
+                        <Link
+                          href="/creator/dashboard/registered-events"
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <MdEventAvailable />{" "}
+                              <span className="hidden md:block">
+                                Registered Events
+                              </span>
+                            </div>
+                          </Menu.Item>
+                        </Link>
 
-                  <button
-                    onClick={() => void signOut({ callbackUrl: "/" })}
-                    className="flex h-[2.5rem] w-full items-center justify-center font-medium hover:bg-neutral-700 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
-                  >
-                    <Menu.Item>
-                      <div className="flex items-center gap-2 text-xl md:text-sm">
-                        <BiLogOut />{" "}
-                        <span className="hidden md:block">Sign Out</span>{" "}
-                      </div>
-                    </Menu.Item>
-                  </button>
-                  <Link
-                    href={`/${creator?.creatorProfile ?? ""}`}
-                    className="flex h-[2.5rem] w-full items-center justify-center font-medium hover:bg-neutral-700 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
-                  >
-                    <Menu.Item>
-                      <div className="flex items-center gap-2 text-xl md:text-sm">
-                        <RiUserFollowFill />{" "}
-                        <span className="hidden md:block">Public Profile</span>{" "}
-                      </div>
-                    </Menu.Item>
-                  </Link>
-                </Menu.Items>
-              </div>
+                        <button
+                          onClick={() => void signOut({ callbackUrl: "/" })}
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <BiLogOut />{" "}
+                              <span className="hidden md:block">Sign Out</span>{" "}
+                            </div>
+                          </Menu.Item>
+                        </button>
+                        <Link
+                          href={`/${creator?.creatorProfile ?? ""}`}
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <RiUserFollowFill />{" "}
+                              <span className="hidden md:block">
+                                Public Profile
+                              </span>{" "}
+                            </div>
+                          </Menu.Item>
+                        </Link>
+                      </Menu.Items>
+                    </Transition>
+                  </div>
+                </>
+              )}
             </Menu>
           </div>
           <button
