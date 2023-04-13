@@ -61,26 +61,59 @@ model User {
   bio            String?   @db.Text
   topmateUrl     String?
 
-  accounts      Account[]
-  sessions      Session[]
-  socialLinks   SocialLink[]
-  events        Event[]
-  registrations Registration[]
+  accounts        Account[]
+  sessions        Session[]
+  socialLinks     SocialLink[]
+  events          Event[]
+  registrations   Registration[]
+  audienceMembers AudienceMember[]
+  Host            Host[]
 }
 
 model Event {
-  id            String         @id @default(cuid())
-  title         String
-  thumbnail     String?
-  description   String?        @db.Text
-  eventUrl      String?
-  eventType     String?
-  eventLocation String?
-  datetime      DateTime
-  duration      Int?
-  creatorId     String
+  id               String   @id @default(cuid())
+  title            String
+  thumbnail        String?
+  description      String?  @db.Text
+  eventUrl         String?
+  eventType        String?
+  eventLocation    String?
+  datetime         DateTime
+  duration         Int?
+  creatorId        String
+  audienceMemberId String?
+
   creator       User           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   registrations Registration[]
+  hosts         Host[]
+
+  @@index([creatorId])
+}
+
+model Host {
+  id      String @id @default(cuid())
+  eventId String
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Event   Event  @relation(fields: [eventId], references: [id])
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+}
+
+model AudienceMember {
+  id                 String   @id @default(cuid())
+  name               String
+  email              String
+  isPaying           Boolean?
+  revenue            Int?
+  emailOpenRate      Int?
+  emailClickRate     Int?
+  eventsParticipated Int?
+
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   @@index([creatorId])
 }

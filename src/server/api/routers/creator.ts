@@ -158,7 +158,8 @@ export const creatorRouter = createTRPCRouter({
         },
         data: {
           isCreator: true,
-          creatorProfile: creatorProfile,
+          creatorProfile:
+            creatorProfile === "" ? ctx.session.user.email : creatorProfile,
           bio: bio,
           name: name,
           topmateUrl,
@@ -171,8 +172,25 @@ export const creatorRouter = createTRPCRouter({
         },
       });
 
-      // return { ...updatedUser, socialLinks: createdSocialLinks };
       return { ...updatedUser, socialLinks };
+    }),
+
+  makeCreator: protectedProcedure
+    .input(z.object({ creatorProfile: z.string().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const creator = await prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          isCreator: true,
+          creatorProfile: input.creatorProfile ?? ctx.session.user.email,
+        },
+      });
+
+      return creator;
     }),
 
   userNameAvailable: publicProcedure

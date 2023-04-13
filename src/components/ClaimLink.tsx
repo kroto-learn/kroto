@@ -1,17 +1,32 @@
 import Link from "next/link";
 import Image from "next/image";
 import logo from "public/kroto-logo.png";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
 import { useRouter } from "next/router";
+import { signIn, useSession } from "next-auth/react";
+import { api } from "@/utils/api";
+import useToast from "@/hooks/useToast";
 
 export default function ClaimLink({
   variant,
+  profile,
 }: {
   variant: "sm" | "lg" | "md";
+  profile?: string;
 }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [creatorProfile, setCreatorProfile] = useState<string>("");
+
+  const makeCreator = api.creator.makeCreator.useMutation().mutateAsync;
+
+  useEffect(() => {
+    if (profile) {
+      setCreatorProfile(profile);
+    }
+  }, [profile]);
+
   return (
     <div>
       <div className="flex justify-center">
@@ -26,6 +41,7 @@ export default function ClaimLink({
           <input
             type="text"
             id="website-admin"
+            value={creatorProfile}
             onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
               setCreatorProfile(e.target.value)
             }
@@ -42,9 +58,19 @@ export default function ClaimLink({
           />
           {creatorProfile && (
             <button
-              onClick={() => {
+              onClick={async () => {
                 localStorage.setItem("creatorProfile", creatorProfile);
-                void router.push("/creator/login-flow/auth");
+                if (session?.user) {
+                  const creator = await makeCreator({
+                    creatorProfile,
+                  });
+                  if (creator.isCreator)
+                    void router.push(`/creator/dashboard/settings`);
+                } else {
+                  void router.push(
+                    `/auth/sign-in?creatorProfile=${creatorProfile}}`
+                  );
+                }
               }}
               className={`absolute  cursor-pointer rounded-full ${
                 variant === "md"

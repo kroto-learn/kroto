@@ -1,4 +1,4 @@
-import { IoLogoGoogle, IoLogoGithub, IoLogoFacebook } from "react-icons/io";
+import { IoLogoGoogle, IoLogoFacebook } from "react-icons/io";
 import { BsDiscord } from "react-icons/bs";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -12,11 +12,6 @@ const options = [
     name: "Google",
     icon: <IoLogoGoogle />,
   },
-  // {
-  //   id: "github",
-  //   name: "GitHub",
-  //   icon: <IoLogoGithub />,
-  // },
   {
     id: "discord",
     name: "Discord",

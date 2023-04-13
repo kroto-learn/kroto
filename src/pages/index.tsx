@@ -8,6 +8,7 @@ import { FaListAlt, FaMoneyBill } from "react-icons/fa";
 import { AiFillDatabase } from "react-icons/ai";
 import { BiNews } from "react-icons/bi";
 import { MdMarkEmailUnread } from "react-icons/md";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
   return (
@@ -258,33 +259,38 @@ export const Features = () => {
   );
 };
 
-export const ClaimLinkBanner = () => (
-  <div className="relative mt-10 overflow-hidden bg-gradient-to-t from-neutral-950 via-neutral-950 px-0 py-10 md:px-24">
-    <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
-      <div className="">
-        <h2 className="text-center text-2xl font-extrabold leading-8 tracking-tight sm:text-3xl md:text-4xl">
-          Become a{" "}
-          <span className="cursor-none text-pink-500 transition duration-300 hover:text-pink-600">
-            Kreator
-          </span>{" "}
-          now, and claim your kreator proflie
-        </h2>
-        <p className="tex-md mx-auto mt-4 max-w-3xl text-center text-neutral-400 md:text-xl">
-          Monetize your audience like never before, and provide them with value
-          like never before.
-        </p>
+export const ClaimLinkBanner = () => {
+  const router = useRouter();
+  const { creatorProfile } = router.query as { creatorProfile: string };
+  console.log(creatorProfile);
+  return (
+    <div className="relative mt-10 overflow-hidden bg-gradient-to-t from-neutral-950 via-neutral-950 px-0 py-10 md:px-24">
+      <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
+        <div className="">
+          <h2 className="text-center text-2xl font-extrabold leading-8 tracking-tight sm:text-3xl md:text-4xl">
+            Become a{" "}
+            <span className="cursor-none text-pink-500 transition duration-300 hover:text-pink-600">
+              Kreator
+            </span>{" "}
+            now, and claim your kreator proflie
+          </h2>
+          <p className="tex-md mx-auto mt-4 max-w-3xl text-center text-neutral-400 md:text-xl">
+            Monetize your audience like never before, and provide them with
+            value like never before.
+          </p>
 
-        {/* <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-40 translate-y-48 rounded-full bg-pink-600/20 blur-3xl"></div> */}
-      </div>
-
-      <div className="z-10">
-        <div className="hidden lg:block">
-          <ClaimLink variant="lg" />
+          {/* <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-40 translate-y-48 rounded-full bg-pink-600/20 blur-3xl"></div> */}
         </div>
-        <div className="block lg:hidden">
-          <ClaimLink variant="md" />
+
+        <div className="z-10">
+          <div className="hidden lg:block">
+            <ClaimLink profile={creatorProfile} variant="lg" />
+          </div>
+          <div className="block lg:hidden">
+            <ClaimLink profile={creatorProfile} variant="md" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
