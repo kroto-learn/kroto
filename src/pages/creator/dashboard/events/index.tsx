@@ -6,13 +6,19 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { GoPlus } from "react-icons/go";
 import { api } from "@/utils/api";
+import { Loader } from "@/components/Loader";
 
 const UpcomingEvents = () => {
-  const { data: events, isLoading } = api.event.getAll.useQuery();
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  console.log(events);
+  const { data: events, isLoading: isEventsLoading } =
+    api.event.getAll.useQuery();
+
+  if (isEventsLoading)
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+
   return (
     <>
       <Head>
