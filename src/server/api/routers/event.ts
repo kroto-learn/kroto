@@ -170,6 +170,8 @@ export const eventRouter = createTRPCRouter({
     .query(({ ctx, input }) => {
       const { prisma } = ctx;
 
+      if (!ctx.session.user) return null;
+
       const registration = prisma.registration.findFirst({
         where: {
           userId: ctx.session.user.id,
