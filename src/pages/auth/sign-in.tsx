@@ -73,7 +73,7 @@ export default function SignIn() {
               onClick={() =>
                 void signIn(o.id, {
                   callbackUrl: creatorProfile
-                    ? `/?creatorProfile=${creatorProfile}#claim-link`
+                    ? `/creator/login-flow/redirect?creatorProfile=${creatorProfile}`
                     : "/",
                 })
               }

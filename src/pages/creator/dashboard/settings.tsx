@@ -65,7 +65,7 @@ const Settings = () => {
     },
   });
 
-  const { warningToast } = useToast();
+  const { warningToast, errorToast } = useToast();
 
   const { data: creatorProfileAvailable } =
     api.creator.userNameAvailable.useQuery({
@@ -106,13 +106,18 @@ const Settings = () => {
                 values.creatorProfile === creator?.creatorProfile ||
                 creatorProfileAvailable
               )
-                await updateProfile({
-                  name: values.name,
-                  bio: values.bio,
-                  creatorProfile: values.creatorProfile,
-                  socialLink: values.socialLinks,
-                  topmateUrl: values.topmateUrl ?? "",
-                });
+                try {
+                  await updateProfile({
+                    name: values.name,
+                    bio: values.bio,
+                    creatorProfile: values.creatorProfile,
+                    socialLink: values.socialLinks,
+                    topmateUrl: values.topmateUrl ?? "",
+                  });
+                } catch (e) {
+                  console.log(e);
+                  errorToast("Error updating your profile");
+                }
               else warningToast("Username not available.");
             } catch (error) {
               console.log(error);

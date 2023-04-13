@@ -18,13 +18,10 @@ export default function ClaimLink({
   const router = useRouter();
   const { data: session } = useSession();
   const [creatorProfile, setCreatorProfile] = useState<string>("");
-
   const makeCreator = api.creator.makeCreator.useMutation().mutateAsync;
 
   useEffect(() => {
-    if (profile) {
-      setCreatorProfile(profile);
-    }
+    if (profile) setCreatorProfile(profile);
   }, [profile]);
 
   return (

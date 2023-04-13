@@ -261,8 +261,9 @@ export const Features = () => {
 
 export const ClaimLinkBanner = () => {
   const router = useRouter();
-  const { creatorProfile } = router.query as { creatorProfile: string };
-  console.log(creatorProfile);
+  const { creatorProfile } = router.query as {
+    creatorProfile: string;
+  };
   return (
     <div className="relative mt-10 overflow-hidden bg-gradient-to-t from-neutral-950 via-neutral-950 px-0 py-10 md:px-24">
       <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
