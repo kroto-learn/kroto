@@ -165,12 +165,12 @@ export const eventRouter = createTRPCRouter({
       return registration;
     }),
 
-  isRegistered: protectedProcedure
+  isRegistered: publicProcedure
     .input(z.object({ eventId: z.string() }))
     .query(({ ctx, input }) => {
       const { prisma } = ctx;
 
-      if (!ctx.session.user) return null;
+      if (!ctx.session) return null;
 
       const registration = prisma.registration.findFirst({
         where: {
