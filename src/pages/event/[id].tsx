@@ -30,6 +30,7 @@ export default function EventPage({ eventId }: Props) {
   const { data: session } = useSession();
 
   const date = event?.datetime ?? new Date();
+  const ctx = api.useContext();
 
   const endTime = event?.datetime
     ? new Date(event?.datetime.getTime() + 3600000)
@@ -135,6 +136,7 @@ export default function EventPage({ eventId }: Props) {
                       );
                     }
                     await registerMuatioan({ eventId });
+                    void ctx.event.isRegistered.invalidate();
                     setLoading(false);
                   }}
                   className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center text-lg font-medium text-neutral-200 transition-all duration-300`}
