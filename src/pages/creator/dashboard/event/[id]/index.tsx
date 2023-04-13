@@ -30,10 +30,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type RouterInputs, api } from "@/utils/api";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import dynamic from "next/dynamic";
 import useToast from "@/hooks/useToast";
+import { Loader } from "@/components/Loader";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -104,10 +104,9 @@ const EventOverview = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  const { data: event } = api.event.get.useQuery({ id });
-  useEffect(() => {
-    console.log("event", event);
-  }, [event]);
+  const { data: event, isLoading: isEventLoading } = api.event.get.useQuery({
+    id,
+  });
   const [eventInit, setEventInit] = useState(false);
   const { mutateAsync: eventUpdateMutation, isLoading: isUpdateLoading } =
     api.event.update.useMutation();
@@ -155,6 +154,13 @@ const EventOverview = () => {
   }, [event]);
 
   const { errorToast } = useToast();
+
+  if (isEventLoading)
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
 
   if (event)
     return (
