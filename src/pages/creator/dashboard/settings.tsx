@@ -19,10 +19,10 @@ export const creatorEditSchema = object({
   }),
   creatorProfile: string({
     required_error: "Please enter your unique username.",
-  }),
+  }).nonempty(),
   bio: string({
     required_error: "Please enter event description.",
-  }).max(150),
+  }).max(250),
   socialLinks: array(
     object({
       id: string(),
