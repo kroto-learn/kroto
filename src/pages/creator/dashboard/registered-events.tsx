@@ -29,7 +29,7 @@ const RegisteredEvents = () => {
         <h3 className="text-2xl font-medium">Registered Events</h3>
         <div className="flex w-full flex-col items-start gap-4">
           {creator?.registrations.map((event) => (
-            <EventCard key={event?.id ?? ""} manage event={event} />
+            <EventCard key={event?.id ?? ""} event={event} />
           ))}
         </div>
       </div>
