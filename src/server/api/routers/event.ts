@@ -185,6 +185,7 @@ export const eventRouter = createTRPCRouter({
       const audienceMember = await prisma.audienceMember.findFirst({
         where: {
           email: user.email,
+          creatorId: event.creatorId,
         },
       });
 
@@ -207,14 +208,22 @@ export const eventRouter = createTRPCRouter({
 
         // Create audience member for all hosts
         for (const host of hosts) {
-          await prisma.audienceMember.create({
-            data: {
+          const audienceMember = await prisma.audienceMember.findFirst({
+            where: {
               email: user.email,
-              name: user.name,
-              userId: user.id,
               creatorId: host.userId,
             },
           });
+
+          if (!audienceMember)
+            await prisma.audienceMember.create({
+              data: {
+                email: user.email,
+                name: user.name,
+                userId: user.id,
+                creatorId: host.userId,
+              },
+            });
         }
       }
 
