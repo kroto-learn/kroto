@@ -23,7 +23,7 @@ export const creatorEditSchema = object({
   }).nonempty(),
   bio: string({
     required_error: "Please enter event description.",
-  }).max(250),
+  }).max(180),
   socialLinks: array(
     object({
       id: string(),
