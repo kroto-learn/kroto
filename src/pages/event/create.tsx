@@ -29,6 +29,7 @@ import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import dynamic from "next/dynamic";
 import Layout from "@/components/layouts/main";
+import useToast from "@/hooks/useToast";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -112,6 +113,7 @@ const CreateEvent = () => {
     },
   });
   const router = useRouter();
+  const { warningToast, errorToast } = useToast();
 
   const eventMutation = api.event.create.useMutation().mutateAsync;
 
@@ -140,6 +142,9 @@ const CreateEvent = () => {
                     if (!(createdEvent instanceof TRPCError))
                       void router.push(`/event/${createdEvent.id}`);
                   },
+                  onError: () => {
+                    errorToast("Error in creating event.");
+                  },
                 }
               );
             } catch (err) {
@@ -166,11 +171,15 @@ const CreateEvent = () => {
               className="z-2 absolute h-full w-full cursor-pointer opacity-0"
               onChange={(e) => {
                 if (e.currentTarget.files && e.currentTarget.files[0]) {
-                  fileToBase64(e.currentTarget.files[0])
-                    .then((b64) => {
-                      if (b64) methods.setValue("thumbnail", b64);
-                    })
-                    .catch((err) => console.log(err));
+                  if (e.currentTarget.files[0].size <= 5120000) {
+                    fileToBase64(e.currentTarget.files[0])
+                      .then((b64) => {
+                        if (b64) methods.setValue("thumbnail", b64);
+                      })
+                      .catch((err) => console.log(err));
+                  } else {
+                    warningToast("Upload cover image upto 5 MB of size.");
+                  }
                 }
               }}
             />

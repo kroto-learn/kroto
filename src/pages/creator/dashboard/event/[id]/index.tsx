@@ -136,6 +136,8 @@ const EventOverview = () => {
     },
   });
 
+  const { warningToast } = useToast();
+
   useEffect(() => {
     if (!!event && !eventInit) {
       setEventInit(true);
@@ -287,11 +289,15 @@ const EventOverview = () => {
                   className="z-2 absolute h-full w-full cursor-pointer opacity-0"
                   onChange={(e) => {
                     if (e.currentTarget.files && e.currentTarget.files[0]) {
-                      fileToBase64(e.currentTarget.files[0])
-                        .then((b64) => {
-                          if (b64) methods.setValue("thumbnail", b64);
-                        })
-                        .catch((err) => console.log(err));
+                      if (e.currentTarget.files[0].size <= 5120000)
+                        fileToBase64(e.currentTarget.files[0])
+                          .then((b64) => {
+                            if (b64) methods.setValue("thumbnail", b64);
+                          })
+                          .catch((err) => console.log(err));
+                      else {
+                        warningToast("Upload cover image upto 5 MB of size.");
+                      }
                     }
                   }}
                 />

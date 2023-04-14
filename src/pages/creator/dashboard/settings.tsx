@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { IoAdd } from "react-icons/io5";
 import { BiMinus } from "react-icons/bi";
 import useToast from "@/hooks/useToast";
+import fileToBase64 from "@/helpers/file";
 
 export const creatorEditSchema = object({
   name: string({
@@ -32,7 +33,9 @@ export const creatorEditSchema = object({
       }).url(),
     })
   ),
-  image: string().optional(),
+  image: string({
+    required_error: "Please upload your profile image.",
+  }).nonempty(),
   topmateUrl: string().url().optional().or(literal("")),
 });
 
@@ -55,6 +58,7 @@ const Settings = () => {
     api.creator.updateProfile.useMutation();
   const { mutateAsync: deleteSocialLink } =
     api.creator.deleteSocialLink.useMutation();
+  const [creatorinit, setCreatorinit] = useState(false);
 
   const [updating, setUpdating] = useState<boolean>(false);
 
@@ -73,7 +77,8 @@ const Settings = () => {
     });
 
   useEffect(() => {
-    if (creator) {
+    if (creator && !creatorinit) {
+      setCreatorinit(true);
       methods.setValue(
         "socialLinks",
         creator.socialLinks.map((sl) => ({
@@ -82,8 +87,10 @@ const Settings = () => {
           id: sl.id,
         }))
       );
+
+      methods.setValue("image", creator?.image ?? "");
     }
-  }, [creator, methods]);
+  }, [creator, methods, creatorinit]);
 
   if (isLoading)
     return (
@@ -107,16 +114,23 @@ const Settings = () => {
                 creatorProfileAvailable
               )
                 try {
-                  await updateProfile({
-                    name: values.name,
-                    bio: values.bio,
-                    creatorProfile: values.creatorProfile,
-                    socialLink: values.socialLinks,
-                    topmateUrl: values.topmateUrl ?? "",
-                  });
+                  await updateProfile(
+                    {
+                      name: values.name,
+                      bio: values.bio,
+                      creatorProfile: values.creatorProfile,
+                      socialLink: values.socialLinks,
+                      topmateUrl: values?.topmateUrl ?? "",
+                      image: values?.image ?? "",
+                    },
+                    {
+                      onError: () => {
+                        errorToast("Error updating your profile");
+                      },
+                    }
+                  );
                 } catch (e) {
                   console.log(e);
-                  errorToast("Error updating your profile");
                 }
               else warningToast("Username not available.");
             } catch (error) {
@@ -132,13 +146,33 @@ const Settings = () => {
             >
               <Image
                 // src={methods.getValues("image")}
-                src={(creator && creator.image) ?? ""}
+                src={methods.watch().image ?? ""}
                 alt={methods.getValues("name")}
                 fill
               />
             </div>
-            <div className="absolute bottom-4 right-2 z-50 cursor-pointer rounded-full bg-neutral-800 p-2 text-base transition-all duration-300 hover:bg-neutral-700">
-              <BsUpload />
+            <div className="absolute bottom-4 right-2 z-50 cursor-pointer rounded-full bg-neutral-800 text-base transition-all duration-300 hover:bg-neutral-700">
+              <div className="relative cursor-pointer p-2">
+                <BsUpload />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="z-2 absolute top-0 h-full w-full cursor-pointer opacity-0"
+                  onChange={(e) => {
+                    if (e.currentTarget.files && e.currentTarget.files[0]) {
+                      if (e.currentTarget.files[0].size <= 2048000) {
+                        fileToBase64(e.currentTarget.files[0])
+                          .then((b64) => {
+                            if (b64) methods.setValue("image", b64);
+                          })
+                          .catch((err) => console.log(err));
+                      } else {
+                        warningToast("Upload cover image upto 2 MB of size.");
+                      }
+                    }
+                  }}
+                />
+              </div>
             </div>
             {methods.formState.errors.image?.message && (
               <p className="text-red-700">

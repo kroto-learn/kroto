@@ -5,6 +5,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
+import { imageUpload } from "@/server/helpers/base64ToS3";
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
@@ -128,6 +129,7 @@ export const creatorRouter = createTRPCRouter({
           .array()
           .optional(),
         topmateUrl: z.string().url().optional().or(z.literal("")),
+        image: z.string().nonempty(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -152,7 +154,7 @@ export const creatorRouter = createTRPCRouter({
         }
       }
 
-      const updatedUser = await prisma.user.update({
+      const user = await prisma.user.update({
         where: {
           id: ctx.session.user.id,
         },
@@ -169,6 +171,17 @@ export const creatorRouter = createTRPCRouter({
       const socialLinks = await prisma.socialLink.findMany({
         where: {
           creatorId: ctx.session.user.id,
+        },
+      });
+
+      const image = await imageUpload(input.image, user.id, "user");
+
+      const updatedUser = await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          image,
         },
       });
 
