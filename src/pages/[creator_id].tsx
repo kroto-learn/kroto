@@ -77,21 +77,25 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                 ></SocialLink>
               ))}
             </div>
-            <Link
-              href={creator?.topmateUrl ?? ""}
-              target="_blank"
-              className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332] hover:text-neutral-200"
-            >
-              <div className="group relative h-4 w-4">
-                <Image
-                  src="/topmate_logo.png"
-                  alt="topmate"
-                  fill
-                  className="opacity-70 group-hover:opacity-100"
-                />
-              </div>
-              Schedule a 1:1 call
-            </Link>
+            {creator?.topmateUrl && creator?.topmateUrl !== "" ? (
+              <Link
+                href={creator?.topmateUrl ?? ""}
+                target="_blank"
+                className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332] hover:text-neutral-200"
+              >
+                <div className="group relative h-4 w-4">
+                  <Image
+                    src="/topmate_logo.png"
+                    alt="topmate"
+                    fill
+                    className="opacity-70 group-hover:opacity-100"
+                  />
+                </div>
+                Schedule a 1:1 call
+              </Link>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <div className="flex w-full max-w-2xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-neutral-800 p-8">
