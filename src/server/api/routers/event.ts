@@ -174,6 +174,7 @@ export const eventRouter = createTRPCRouter({
           data: {
             email: user.email,
             name: user.name,
+            userId: user.id,
             creatorId: event.creatorId,
           },
         });

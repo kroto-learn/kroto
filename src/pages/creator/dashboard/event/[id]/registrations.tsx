@@ -9,6 +9,7 @@ import Image from "next/image";
 import { RiFileDownloadLine } from "react-icons/ri";
 import getCSV from "@/helpers/downloadCSV";
 import { type Column, useTable } from "react-table";
+import { RxAvatar } from "react-icons/rx";
 
 const EventRegistrations = () => {
   const router = useRouter();
@@ -33,7 +34,8 @@ const EventRegistrations = () => {
   }>[] = React.useMemo(
     () => [
       {
-        Header: "-",
+        id: "img",
+        Header: <RxAvatar />,
         accessor: "col1",
       },
       {
@@ -132,7 +134,7 @@ const EventRegistrations = () => {
                         row.cells.map((cell) => {
                           // Apply the cell props
                           console.log("cell", cell);
-                          if (cell.column.Header === "-")
+                          if (cell.column.id === "img")
                             return (
                               <td className="py-4 pl-6 pr-2">
                                 <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
