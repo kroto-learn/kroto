@@ -81,53 +81,36 @@ export const creatorRouter = createTRPCRouter({
     return audienceMembers;
   }),
 
-  createSocialLink: protectedProcedure
-    .input(z.object({ type: z.string(), url: z.string() }))
-    .mutation(async ({ input, ctx }) => {
+  searchCreators: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
       const { prisma } = ctx;
 
-      const socialLink = await prisma.socialLink.create({
-        data: {
-          type: input.type,
-          url: input.url,
-          creatorId: ctx.session.user.id,
+      const creators = await prisma.user.findMany({
+        where: {
+          creatorProfile: {
+            contains: input,
+          },
+          AND: {
+            isCreator: true,
+          },
         },
       });
 
-      return socialLink;
+      return creators;
     }),
 
-  updateSocialLink: protectedProcedure
-    .input(z.object({ id: z.string(), type: z.string(), url: z.string() }))
-    .mutation(async ({ input, ctx }) => {
+  userNameAvailable: publicProcedure
+    .input(z.object({ creatorProfile: z.string() }))
+    .query(async ({ input, ctx }) => {
       const { prisma } = ctx;
-
-      const socialLink = await prisma.socialLink.update({
+      const { creatorProfile } = input;
+      const user = await prisma.user.findUnique({
         where: {
-          id: input.id,
-        },
-        data: {
-          type: input.type,
-          url: input.url,
-          creatorId: ctx.session.user.id,
+          creatorProfile,
         },
       });
-
-      return socialLink;
-    }),
-
-  deleteSocialLink: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      const { prisma } = ctx;
-
-      const socialLink = await prisma.socialLink.delete({
-        where: {
-          id: input.id,
-        },
-      });
-
-      return socialLink;
+      return user ? false : true;
     }),
 
   updateProfile: protectedProcedure
@@ -210,16 +193,52 @@ export const creatorRouter = createTRPCRouter({
       return creator;
     }),
 
-  userNameAvailable: publicProcedure
-    .input(z.object({ creatorProfile: z.string() }))
-    .query(async ({ input, ctx }) => {
+  updateSocialLink: protectedProcedure
+    .input(z.object({ id: z.string(), type: z.string(), url: z.string() }))
+    .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
-      const { creatorProfile } = input;
-      const user = await prisma.user.findUnique({
+
+      const socialLink = await prisma.socialLink.update({
         where: {
-          creatorProfile,
+          id: input.id,
+        },
+        data: {
+          type: input.type,
+          url: input.url,
+          creatorId: ctx.session.user.id,
         },
       });
-      return user ? false : true;
+
+      return socialLink;
+    }),
+
+  createSocialLink: protectedProcedure
+    .input(z.object({ type: z.string(), url: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const socialLink = await prisma.socialLink.create({
+        data: {
+          type: input.type,
+          url: input.url,
+          creatorId: ctx.session.user.id,
+        },
+      });
+
+      return socialLink;
+    }),
+
+  deleteSocialLink: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const socialLink = await prisma.socialLink.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      return socialLink;
     }),
 });

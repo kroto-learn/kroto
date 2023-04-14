@@ -67,7 +67,7 @@ model User {
   events          Event[]
   registrations   Registration[]
   audienceMembers AudienceMember[]
-  Host            Host[]
+  host            Host[]
 }
 
 model Event {
