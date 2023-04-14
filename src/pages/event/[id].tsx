@@ -12,7 +12,7 @@ import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { type ParsedUrlQuery } from "querystring";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
 import { useState } from "react";

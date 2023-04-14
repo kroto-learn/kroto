@@ -154,6 +154,8 @@ export const creatorRouter = createTRPCRouter({
         }
       }
 
+      const image = await imageUpload(input.image, ctx.session.user.id, "user");
+
       const user = await prisma.user.update({
         where: {
           id: ctx.session.user.id,
@@ -165,6 +167,7 @@ export const creatorRouter = createTRPCRouter({
           bio: bio,
           name: name,
           topmateUrl,
+          image,
         },
       });
 
@@ -174,18 +177,7 @@ export const creatorRouter = createTRPCRouter({
         },
       });
 
-      const image = await imageUpload(input.image, user.id, "user");
-
-      const updatedUser = await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          image,
-        },
-      });
-
-      return { ...updatedUser, socialLinks };
+      return { ...user, socialLinks };
     }),
 
   makeCreator: protectedProcedure
