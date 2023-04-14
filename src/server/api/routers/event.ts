@@ -162,6 +162,23 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
+      /* Adding to audience list */
+      const audienceMember = await prisma.audienceMember.findFirst({
+        where: {
+          email: user.email,
+        },
+      });
+
+      if (!audienceMember) {
+        await prisma.audienceMember.create({
+          data: {
+            email: user.email,
+            name: user.name,
+            creatorId: event.creatorId,
+          },
+        });
+      }
+
       return registration;
     }),
 

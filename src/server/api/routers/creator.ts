@@ -69,6 +69,18 @@ export const creatorRouter = createTRPCRouter({
     return { ...user, registrations, socialLinks: socialLinks };
   }),
 
+  getAudienceMembers: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const audienceMembers = await prisma.audienceMember.findMany({
+      where: {
+        creatorId: ctx.session.user.id,
+      },
+    });
+
+    return audienceMembers;
+  }),
+
   createSocialLink: protectedProcedure
     .input(z.object({ type: z.string(), url: z.string() }))
     .mutation(async ({ input, ctx }) => {

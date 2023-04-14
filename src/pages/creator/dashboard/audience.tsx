@@ -1,7 +1,11 @@
 import Head from "next/head";
 import { DashboardLayout } from ".";
+import { api } from "@/utils/api";
 
 const Audience = () => {
+  const { data: audience } = api.creator.getAudienceMembers.useQuery();
+
+  console.log(audience);
   return (
     <>
       <Head>
