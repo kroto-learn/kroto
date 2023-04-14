@@ -171,14 +171,19 @@ const CreateEvent = () => {
               className="z-2 absolute h-full w-full cursor-pointer opacity-0"
               onChange={(e) => {
                 if (e.currentTarget.files && e.currentTarget.files[0]) {
-                  if (e.currentTarget.files[0].size <= 5120000) {
+                  if (e.currentTarget.files[0].size > 1200000)
+                    warningToast(
+                      "Image is too big, try a smaller (<1MB) image for performance purposes."
+                    );
+
+                  if (e.currentTarget.files[0].size <= 3072000) {
                     fileToBase64(e.currentTarget.files[0])
                       .then((b64) => {
                         if (b64) methods.setValue("thumbnail", b64);
                       })
                       .catch((err) => console.log(err));
                   } else {
-                    warningToast("Upload cover image upto 5 MB of size.");
+                    warningToast("Upload cover image upto 3 MB of size.");
                   }
                 }
               }}

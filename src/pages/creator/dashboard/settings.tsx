@@ -160,14 +160,14 @@ const Settings = () => {
                   className="z-2 absolute top-0 h-full w-full cursor-pointer opacity-0"
                   onChange={(e) => {
                     if (e.currentTarget.files && e.currentTarget.files[0]) {
-                      if (e.currentTarget.files[0].size <= 2048000) {
+                      if (e.currentTarget.files[0].size <= 1024000) {
                         fileToBase64(e.currentTarget.files[0])
                           .then((b64) => {
                             if (b64) methods.setValue("image", b64);
                           })
                           .catch((err) => console.log(err));
                       } else {
-                        warningToast("Upload cover image upto 2 MB of size.");
+                        warningToast("Upload cover image upto 1 MB of size.");
                       }
                     }
                   }}
