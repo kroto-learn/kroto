@@ -56,7 +56,7 @@ export default function EventPage({ eventId }: Props) {
             <Image
               src={(event?.thumbnail as string) ?? ""}
               alt={event?.title ?? ""}
-              className="rounded-xl shadow-md shadow-black"
+              className="rounded-xl object-cover shadow-md"
               fill
             />
           </div>
