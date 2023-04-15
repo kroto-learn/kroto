@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { type Dispatch, Fragment, type SetStateAction } from "react";
 import CalenderBox from "@/components/CalenderBox";
 import React, { type ReactNode, useState } from "react";
-import { AiOutlineUserAdd } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineUserAdd } from "react-icons/ai";
 import { BsGlobe } from "react-icons/bs";
 import { FiEdit2 } from "react-icons/fi";
 import Head from "next/head";
@@ -33,7 +33,7 @@ const EventOverview = () => {
   const [editEvent, setEditEvent] = useState(false);
   const [open, setIsOpen] = useState<boolean>(false);
 
-  const { data: hosts } = api.event.getHosts.useQuery({
+  const { data: hosts, refetch: refetchHosts } = api.event.getHosts.useQuery({
     eventId: event?.id ?? "",
   });
 
@@ -121,24 +121,47 @@ const EventOverview = () => {
         </div>
 
         <div className="w-full">
-          <div className="flex w-full items-center justify-between">
+          <div className="my-5 flex w-full items-center justify-between">
             <h3 className="text-2xl font-medium text-neutral-200">Hosts</h3>
             <button
               onClick={() => setIsOpen(true)}
-              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-sm font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
             >
               <AiOutlineUserAdd /> Add Host
             </button>
           </div>
-          <div>
+          <ul className="w-full divide-y dark:divide-neutral-700">
             {hosts instanceof TRPCError
               ? ""
-              : hosts?.map((host, idx) => (
-                  <pre key={idx}>{JSON.stringify(host, null, 2)}</pre>
+              : hosts?.map((host) => (
+                  <li key={host?.id} className="py-3 sm:py-4">
+                    <div className="flex w-full items-center space-x-4">
+                      <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
+                        <Image
+                          className="rounded-full"
+                          src={host?.image ?? ""}
+                          alt="host img"
+                          fill
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                          {host?.name ?? ""}
+                        </p>
+                        <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                          {host?.email ?? ""}
+                        </p>
+                      </div>
+                      <button className="flex items-center gap-1 rounded-xl border border-pink-700 bg-pink-700 p-1 px-2 text-xs font-medium text-white transition duration-300 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800">
+                        <AiOutlineDelete /> Remove
+                      </button>
+                    </div>
+                  </li>
                 ))}
-          </div>
+          </ul>
         </div>
         <AddHostModel
+          refetch={refetchHosts}
           eventId={event.id ?? ""}
           isOpen={open}
           setIsOpen={setIsOpen}
@@ -171,10 +194,12 @@ export function AddHostModel({
   eventId,
   isOpen,
   setIsOpen,
+  refetch,
 }: {
   eventId: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  refetch: () => void;
 }) {
   const [creatorId, setCreatorId] = useState<string>("");
   const { successToast, errorToast } = useToast();
@@ -186,6 +211,7 @@ export function AddHostModel({
     const data = await addHostMutation({ eventId, creatorId });
     if (data instanceof TRPCError) errorToast("something went wrong");
     else successToast("host added successfully");
+    refetch();
   };
 
   return (
