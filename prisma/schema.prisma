@@ -106,7 +106,7 @@ model AudienceMember {
   id                 String   @id @default(cuid())
   name               String
   email              String
-  userId             String   @unique
+  userId             String
   isPaying           Boolean?
   revenue            Int?
   emailOpenRate      Int?

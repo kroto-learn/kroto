@@ -28,6 +28,7 @@ import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
 import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
 import dayjs from "dayjs";
+import { TRPCError } from "@trpc/server";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -109,6 +110,10 @@ const EventOverview = () => {
 
   const [editEvent, setEditEvent] = useState(false);
   const [open, setIsOpen] = useState<boolean>(false);
+
+  const { data: hosts } = api.event.getHosts.useQuery({
+    eventId: event?.id ?? "",
+  });
 
   const date = event && event.datetime ? new Date(event.datetime) : new Date();
 
@@ -220,9 +225,19 @@ const EventOverview = () => {
               <AiOutlineUserAdd /> Add Host
             </button>
           </div>
-          <div>{/* Render hosts here */}</div>
+          <div>
+            {hosts instanceof TRPCError
+              ? ""
+              : hosts?.map((host) => (
+                  <div key={host?.id}>{host?.name ?? host?.userId}</div>
+                ))}
+          </div>
         </div>
-        <AddHostModel eventId={event.id} isOpen={open} setIsOpen={setIsOpen} />
+        <AddHostModel
+          eventId={event.id ?? ""}
+          isOpen={open}
+          setIsOpen={setIsOpen}
+        />
 
         {/* side edit event drawer */}
 
@@ -643,17 +658,28 @@ export function AddHostModel({
   isOpen,
   setIsOpen,
 }: {
-  eventId?: string;
+  eventId: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const [creatorId, setCreatorId] = useState<string>("");
+  const { successToast, errorToast } = useToast();
+
+  const { mutateAsync: addHostMutation, isLoading } =
+    api.event.addHost.useMutation();
+
+  const handleSubmit = async () => {
+    const data = await addHostMutation({ eventId, creatorId });
+    if (data instanceof TRPCError) errorToast("something went wrong");
+    else successToast("host added successfully");
+  };
+
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="relative z-10"
+          className="relative z-50"
           onClose={() => setIsOpen(false)}
         >
           <Transition.Child
@@ -679,28 +705,35 @@ export function AddHostModel({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
+                    className="text-lg font-medium leading-6 text-neutral-200"
                   >
-                    Payment successful
+                    Add host&apos;s creator id {"(kroto.in/creatorId)"}
                   </Dialog.Title>
                   <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Your payment has been successfully submitted. We’ve sent
-                      you an email with all of the details of your order.
-                    </p>
-                  </div>
-
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Got it, thanks!
-                    </button>
+                    <div className="flex">
+                      <label className="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Your Email
+                      </label>
+                      <div className="relative w-full">
+                        <input
+                          value={creatorId}
+                          onChange={(e) => setCreatorId(e.target.value)}
+                          className="block w-full rounded-xl border border-neutral-800 bg-neutral-900 p-2.5 text-sm placeholder-neutral-400 outline-none ring-transparent transition hover:border-neutral-600 focus:border-neutral-500 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                          placeholder="Enter the creator id"
+                          required
+                        />
+                        <button
+                          onClick={() => handleSubmit()}
+                          className="absolute right-0 top-0 flex items-center gap-1 rounded-r-lg border border-pink-700 bg-pink-700 p-2.5 text-sm font-medium text-white hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
+                        >
+                          {isLoading ? <Loader /> : <AiOutlineUserAdd />} Add
+                          Host
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

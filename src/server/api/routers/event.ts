@@ -182,7 +182,6 @@ export const eventRouter = createTRPCRouter({
 
       /* TODO thid doesn't seem like the proper way to do this hit */
 
-      /* Adding to audience list */
       const audienceMember = await prisma.audienceMember.findFirst({
         where: {
           email: user.email,
@@ -196,6 +195,9 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
+      console.log(hosts);
+
+      /* Adding to audience list */
       if (!audienceMember) {
         // Create audience member for the creator
         await prisma.audienceMember.create({
@@ -211,10 +213,11 @@ export const eventRouter = createTRPCRouter({
         for (const host of hosts) {
           const audienceMember = await prisma.audienceMember.findFirst({
             where: {
-              email: user.email,
               creatorId: host.userId,
             },
           });
+
+          console.log(audienceMember)
 
           if (!audienceMember)
             await prisma.audienceMember.create({
@@ -260,7 +263,7 @@ export const eventRouter = createTRPCRouter({
     }),
 
   addHost: protectedProcedure
-    .input(z.object({ eventId: z.string(), userId: z.string() }))
+    .input(z.object({ eventId: z.string(), creatorId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
@@ -270,21 +273,34 @@ export const eventRouter = createTRPCRouter({
 
       const user = await prisma.user.findUnique({
         where: {
-          id: input.userId,
+          id: input.creatorId,
         },
       });
+
+      console.log("User",  user);
 
       if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
       if (!user.isCreator) return new TRPCError({ code: "BAD_REQUEST" });
 
-      const host = await prisma.host.create({
-        data: {
+      const isHost = await prisma.host.findFirst({
+        where: {
           userId: user.id,
           eventId: event.id,
         },
       });
 
-      return host;
+      console.log(isHost);
+
+      if (!isHost) {
+        const host = await prisma.host.create({
+          data: {
+            userId: user.id,
+            eventId: event.id,
+          },
+        });
+        return host;
+      }
+      return new TRPCError({ code: "BAD_REQUEST" });
     }),
 
   delete: protectedProcedure
