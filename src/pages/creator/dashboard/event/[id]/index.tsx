@@ -2,24 +2,16 @@
 
 import CalenderBox from "@/components/CalenderBox";
 import fileToBase64 from "@/helpers/file";
-import "react-datepicker/dist/react-datepicker.css";
-import {
-  generateTimesArray,
-  giveFirstTimeIdx,
-  updateTime,
-} from "@/helpers/time";
 import Image from "next/image";
 import React, { type ReactNode, useEffect, useState } from "react";
 import { AiOutlineLink } from "react-icons/ai";
-import { BiTime, BiTimeFive } from "react-icons/bi";
-import { BsCalendar3Event, BsGlobe } from "react-icons/bs";
+import { BsGlobe } from "react-icons/bs";
 import { FiEdit2 } from "react-icons/fi";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
 import { RxImage } from "react-icons/rx";
 import { SiGooglemeet } from "react-icons/si";
 import { date, number, object, string, type z } from "zod";
-import DatePicker from "react-datepicker";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
@@ -34,6 +26,8 @@ import { type MDEditorProps } from "@uiw/react-md-editor";
 import dynamic from "next/dynamic";
 import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
+import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
+import dayjs from "dayjs";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -113,21 +107,9 @@ const EventOverview = () => {
   type EventUpdateType = RouterInputs["event"]["update"];
   const ctx = api.useContext();
 
-  const times = generateTimesArray();
-  const minTimeIdx = giveFirstTimeIdx(times);
-
-  const [startTimeIdx, setStartTimeIdx] = useState<number>(
-    giveFirstTimeIdx(times, event ? event?.datetime : new Date())
-  );
-
   const [editEvent, setEditEvent] = useState(false);
 
   const date = event && event.datetime ? new Date(event.datetime) : new Date();
-
-  const endTime =
-    event && event.datetime
-      ? new Date(new Date(event.datetime).getTime() + 3600000)
-      : new Date();
 
   const methods = useZodForm({
     schema: editEventFormSchema,
@@ -146,16 +128,13 @@ const EventOverview = () => {
       methods.setValue("duration", (event?.duration as number) ?? "");
       methods.setValue("eventType", event?.eventType ?? "");
       methods.setValue("description", event?.description ?? "");
-
-      setStartTimeIdx(
-        giveFirstTimeIdx(times, event ? event.datetime : new Date())
-      );
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event]);
 
   const { errorToast } = useToast();
+  const { darkAlgorithm } = theme;
 
   if (isEventLoading)
     return (
@@ -212,7 +191,10 @@ const EventOverview = () => {
                     hour12: true,
                   })}{" "}
                   to{" "}
-                  {endTime?.toLocaleString("en-US", {
+                  {new Date(
+                    (event?.datetime?.getTime() ?? 0) +
+                      (event?.duration ?? 0) * 60000
+                  )?.toLocaleString("en-US", {
                     hour: "numeric",
                     minute: "2-digit",
                     hour12: true,
@@ -324,7 +306,7 @@ const EventOverview = () => {
                 {...methods.register("title")}
                 defaultValue={(event && event.title) ?? ""}
                 placeholder="Event Title"
-                className="w-full rounded-lg bg-neutral-700 px-3 py-2 text-sm font-medium  text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400 sm:text-lg"
+                className="w-full rounded-lg bg-neutral-800 px-3 py-2 text-sm font-medium  text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400 sm:text-lg"
               />
               {methods.formState.errors.title?.message && (
                 <p className="text-red-700">
@@ -333,7 +315,6 @@ const EventOverview = () => {
               )}
             </div>
 
-            {/* TODO: Make it a rich text editor */}
             <div className="flex flex-col gap-3">
               <label
                 htmlFor="description"
@@ -341,12 +322,6 @@ const EventOverview = () => {
               >
                 Description
               </label>
-              {/* <textarea
-                rows={8}
-                {...methods.register("description")}
-                defaultValue={(event && event.description) ?? ""}
-                className="w-full rounded-lg bg-neutral-700 px-3 py-2 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-              /> */}
               <div data-color-mode="dark">
                 <MDEditor
                   height={200}
@@ -380,7 +355,7 @@ const EventOverview = () => {
                   />
                   <label
                     htmlFor="virtual"
-                    className="flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-xs font-medium text-neutral-400 hover:bg-neutral-700 hover:text-neutral-300 peer-checked:border-pink-600 peer-checked:bg-pink-600/20 peer-checked:text-neutral-200"
+                    className="flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-neutral-700 bg-neutral-800 p-3 text-xs font-medium text-neutral-400 hover:bg-neutral-700 hover:text-neutral-300 peer-checked:border-pink-600 peer-checked:bg-pink-600/20 peer-checked:text-neutral-200"
                   >
                     {"💻️ "} Virutal
                   </label>
@@ -418,7 +393,7 @@ const EventOverview = () => {
                     {...methods.register("eventUrl")}
                     defaultValue={(event && event.eventUrl) ?? ""}
                     placeholder="Google Meet or YouTube URL"
-                    className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
+                    className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
                   />
                   <AiOutlineLink className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
                 </div>
@@ -436,7 +411,7 @@ const EventOverview = () => {
                     {...methods.register("eventLocation")}
                     defaultValue={(event && event.eventLocation) ?? ""}
                     placeholder="Your event's address"
-                    className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
+                    className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
                   />
                   <HiOutlineLocationMarker className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
                 </div>
@@ -449,95 +424,157 @@ const EventOverview = () => {
               </div>
             )}
 
-            <div className="flex w-full flex-col gap-3">
+            <div className="flex w-full flex-col items-start gap-3">
               <label
                 htmlFor="og_description"
                 className="text-lg  text-neutral-200"
               >
                 When is event taking place?
               </label>
-              <div className="relative flex max-w-[10rem] items-center">
-                <DatePicker
-                  selected={new Date(methods.getValues("datetime"))}
-                  minDate={new Date(Date.now() + 15 * 60 * 1000)}
-                  dateFormat="E, d MMM"
-                  className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-[2.5rem] text-sm font-medium text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-                  onChange={(newDate) => {
-                    if (newDate) methods.setValue("datetime", newDate);
+
+              <div className="flex flex-col items-start gap-3 rounded-lg border border-neutral-700 bg-neutral-800 p-2">
+                <ConfigProvider
+                  theme={{
+                    algorithm: darkAlgorithm,
+                    token: {
+                      colorPrimary: "#ec4899",
+                    },
                   }}
-                />
-                <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="relative flex max-w-[10rem] items-center">
-                  <select
-                    className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm font-medium text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-                    onChange={(e) => {
-                      methods.setValue(
-                        "datetime",
-                        updateTime(
-                          methods.getValues("datetime") ?? new Date(),
-                          times[parseInt(e.target.value)] as string
-                        )
-                      );
-                      setStartTimeIdx(parseInt(e.target.value));
-                    }}
-                  >
-                    {times
-                      .map((time, idx) => (
-                        <option
-                          selected={idx === startTimeIdx}
-                          key={time}
-                          value={idx}
-                        >
-                          {time}
-                        </option>
-                      ))
-                      .filter((e, idx) => {
-                        return new Date(
-                          methods.getValues("duration")
-                        ).toDateString() === new Date().toDateString()
-                          ? idx >= minTimeIdx
-                          : true;
-                      })}
-                  </select>
-                  <BiTime className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
-                </div>
-
-                {" to "}
-
-                <div className="relative flex max-w-[10rem] items-center">
-                  <select
-                    className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm font-medium text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-                    onChange={(e) => {
-                      methods.setValue(
-                        "duration",
-                        (parseInt(e.target.value) - startTimeIdx) * 15
-                      );
-                    }}
-                  >
-                    {times
-                      .map((time, idx) => (
-                        <option key={time} value={idx}>
-                          {time}
-                        </option>
-                      ))
-                      .filter((e, idx) =>
-                        new Date(
-                          methods.getValues("duration")
-                        ).toDateString() === new Date().toDateString()
-                          ? idx > startTimeIdx
-                          : true
-                      )}
-                    {startTimeIdx === 92 ? (
-                      <option value={1}>12:00 AM</option>
-                    ) : (
-                      <></>
+                >
+                  <DatePicker
+                    autoFocus={false}
+                    format="DD-MM-YYYY"
+                    bordered={false}
+                    disabledDate={(currentDate) =>
+                      currentDate.isBefore(
+                        dayjs(methods.watch()?.datetime),
+                        "day"
+                      )
+                    }
+                    value={dayjs(
+                      methods.watch()?.datetime?.toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      }),
+                      "DD-MM-YYYY"
                     )}
-                  </select>
-                  <BiTimeFive className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
-                </div>
+                    onChange={(selectedDate) => {
+                      const sourceDateObj =
+                        selectedDate?.toDate() ?? new Date();
+                      const targetDateObj =
+                        methods.watch()?.datetime ?? new Date();
+                      targetDateObj.setFullYear(sourceDateObj.getFullYear());
+                      targetDateObj.setMonth(sourceDateObj.getMonth());
+                      targetDateObj.setDate(sourceDateObj.getDate());
+                      methods.setValue("datetime", targetDateObj);
+                    }}
+                  />
+                  <TimePicker.RangePicker
+                    autoFocus={false}
+                    bordered={false}
+                    className=""
+                    value={[
+                      dayjs(
+                        (() => {
+                          const time = methods
+                            .watch()
+                            ?.datetime?.toLocaleTimeString("en-US", {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            });
+                          const timearr = (time ?? "").split(" ");
+                          const hmarr = timearr.join().split(":");
+                          hmarr[1] = (
+                            Math.ceil(parseInt(hmarr[1] ?? "0") / 15) * 15
+                          ).toString();
+
+                          timearr[0] = hmarr.join(":");
+                          console.log(timearr.join(" "));
+
+                          return timearr.join(" ");
+                        })(),
+                        "HH:mm A"
+                      ),
+                      dayjs(
+                        (() => {
+                          const time = methods
+                            .watch()
+                            ?.datetime?.toLocaleTimeString("en-US", {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            });
+                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                          console.log(time);
+                          const timearr = (time ?? "").split(" ");
+                          const hmarr = timearr.join().split(":");
+                          hmarr[1] = (
+                            Math.ceil(parseInt(hmarr[1] ?? "0") / 15) * 15 +
+                            (methods.watch()?.duration ?? 0)
+                          ).toString();
+
+                          timearr[0] = hmarr.join(":");
+                          console.log(timearr.join(" "));
+
+                          return timearr.join(" ");
+                        })(),
+                        "HH:mm A"
+                      ),
+                    ]}
+                    onChange={(selectedTime) => {
+                      const starttime =
+                        (selectedTime && selectedTime[0]) ?? dayjs();
+                      const starttimeD = starttime.toDate() ?? new Date();
+                      const targetDateObj =
+                        methods.watch()?.datetime ?? new Date();
+                      targetDateObj.setHours(starttimeD.getHours());
+                      targetDateObj.setMinutes(starttimeD.getMinutes());
+                      targetDateObj.setSeconds(starttimeD.getSeconds());
+                      targetDateObj.setMilliseconds(
+                        starttimeD.getMilliseconds()
+                      );
+                      methods.setValue("datetime", targetDateObj);
+
+                      const endtime =
+                        (selectedTime && selectedTime[1]) ?? dayjs();
+                      const endtimeD = endtime.toDate();
+
+                      const diffInms =
+                        endtimeD.getTime() - starttimeD.getTime();
+                      const diffInMinutes = diffInms / (1000 * 60);
+                      methods.setValue("duration", diffInMinutes);
+                    }}
+                    format="HH:mm A"
+                    disabledTime={() => {
+                      const now = dayjs();
+                      return {
+                        disabledHours: () => {
+                          if (
+                            dayjs(methods.watch()?.datetime).format(
+                              "DD/MM/YYYY"
+                            ) === dayjs(new Date()).format("DD/MM/YYYY")
+                          )
+                            return [...Array(now.hour()).keys()];
+                          return [];
+                        },
+                        disabledMinutes: (selectedHour) => {
+                          if (now.hour() === selectedHour) {
+                            return [...Array(now.minute()).keys()];
+                          }
+                          return [];
+                        },
+                      };
+                    }}
+                    minuteStep={15}
+                    use12Hours
+                    style={{
+                      color: "#fff",
+                    }}
+                  />
+                </ConfigProvider>
+                {/* <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" /> */}
               </div>
 
               {methods.formState.errors.datetime?.message && (
