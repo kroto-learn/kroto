@@ -208,27 +208,27 @@ export const eventRouter = createTRPCRouter({
             creatorId: event.creatorId,
           },
         });
+      }
+      // Create audience member for all hosts
+      for (const host of hosts) {
+        const audienceMember = await prisma.audienceMember.findFirst({
+          where: {
+            email: user.email,
+            creatorId: host.userId,
+          },
+        });
 
-        // Create audience member for all hosts
-        for (const host of hosts) {
-          const audienceMember = await prisma.audienceMember.findFirst({
-            where: {
+        console.log(audienceMember);
+
+        if (!audienceMember)
+          await prisma.audienceMember.create({
+            data: {
+              email: user.email,
+              name: user.name,
+              userId: user.id,
               creatorId: host.userId,
             },
           });
-
-          console.log(audienceMember)
-
-          if (!audienceMember)
-            await prisma.audienceMember.create({
-              data: {
-                email: user.email,
-                name: user.name,
-                userId: user.id,
-                creatorId: host.userId,
-              },
-            });
-        }
       }
 
       return registration;
@@ -259,7 +259,20 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      return [creator, ...hosts];
+      const hostWithUserData = hosts.map(async (host) => {
+        const user = await prisma.user.findUnique({
+          where: {
+            id: host.userId,
+          },
+        });
+
+        return {
+          ...host,
+          ...user,
+        };
+      });
+
+      return [creator, ...hostWithUserData];
     }),
 
   addHost: protectedProcedure
@@ -273,11 +286,11 @@ export const eventRouter = createTRPCRouter({
 
       const user = await prisma.user.findUnique({
         where: {
-          id: input.creatorId,
+          creatorProfile: input.creatorId,
         },
       });
 
-      console.log("User",  user);
+      console.log("User", user);
 
       if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
       if (!user.isCreator) return new TRPCError({ code: "BAD_REQUEST" });

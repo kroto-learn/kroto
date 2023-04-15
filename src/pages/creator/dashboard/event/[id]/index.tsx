@@ -234,8 +234,8 @@ const EventOverview = () => {
           <div>
             {hosts instanceof TRPCError
               ? ""
-              : hosts?.map((host) => (
-                  <div key={host?.id}>{host?.name ?? host?.userId}</div>
+              : hosts?.map((host, idx) => (
+                  <pre key={idx}>{JSON.stringify(host, null, 2)}</pre>
                 ))}
           </div>
         </div>
