@@ -8,8 +8,8 @@ import { FaListAlt, FaMoneyBill } from "react-icons/fa";
 import { AiFillDatabase } from "react-icons/ai";
 import { BiNews } from "react-icons/bi";
 import { MdMarkEmailUnread } from "react-icons/md";
+import Image from "next/image";
 import { useRouter } from "next/router";
-
 const Home: NextPage = () => {
   return (
     <Layout>
@@ -82,11 +82,15 @@ export function Hero() {
               alt="Hero Image"
             />
           </div> */}
-          <img
-            className="mt-10 min-h-fit object-cover sm:h-1/2 md:h-2/3 xl:h-2/3"
+          {/* <div className=""> */}
+          <Image
             src="/landing/hero_image.png"
             alt="crap"
+            width={1200}
+            height={1200}
+            className="mt-10 min-h-fit object-cover sm:h-1/2 md:h-2/3 xl:h-2/3"
           />
+          {/* </div> */}
         </div>
       </div>
     </div>
@@ -152,7 +156,12 @@ export const Features = () => {
           </dl>
         </div>
         <div className="mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
-          <img src="/landing/courses.png" />
+          <Image
+            src="/landing/courses.png"
+            alt="courses"
+            width={1000}
+            height={1000}
+          />
         </div>
       </div>
       <div className="relative mt-12 sm:mt-16 lg:mt-24">
@@ -204,7 +213,12 @@ export const Features = () => {
             className="relative mt-10 px-4 lg:col-start-1 lg:mt-0 lg:pl-0 lg:pr-8"
             aria-hidden="true"
           >
-            <img src="/landing/audience.png" />
+            <Image
+              src="/landing/audience.png"
+              alt="audience"
+              width={1000}
+              height={1000}
+            />
           </div>
         </div>
       </div>
@@ -252,7 +266,12 @@ export const Features = () => {
           </dl>
         </div>
         <div className="relative mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
-          <img src="/landing/newsletter.png" />
+          <Image
+            src="/landing/newsletter.png"
+            alt="Newsletter"
+            width={1000}
+            height={1000}
+          />
         </div>
       </div>
     </div>

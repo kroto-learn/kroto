@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Image from "next/image";
 
-import HardWorkingCat from "public/CatWorkingHard.png";
 import Layout from "@/components/layouts/main";
 import ClaimLink from "@/components/ClaimLink";
 import { api } from "@/utils/api";
@@ -26,7 +25,10 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
         <div className="my-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-5">
-              <img
+              <Image
+                width={80}
+                height={80}
+                alt={session?.user.name ?? ""}
                 className="aspect-square w-28 rounded-full"
                 src={session?.user.image ?? ""}
               />
@@ -157,8 +159,10 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
                   </h4>
                   <div className="relative aspect-square h-56">
                     <Image
+                      width={80}
+                      height={80}
                       className="h-56"
-                      src={HardWorkingCat}
+                      src="/CatWorkingHard.png"
                       fill
                       alt="hard working cat"
                     />
@@ -194,9 +198,12 @@ export const CreatorCard = ({ creator }: { creator: Creator }) => {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-5">
-          <img
+          <Image
+            width={80}
+            height={80}
             className="aspect-square w-28 rounded-full"
             src={creator?.image_url ?? ""}
+            alt={creator?.name ?? ""}
           />
           <div>
             <h3 className="mb-1 text-3xl font-medium text-neutral-200">
