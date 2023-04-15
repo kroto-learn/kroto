@@ -1,10 +1,10 @@
-"use client";
-
+import { Dialog, Transition } from "@headlessui/react";
+import { Dispatch, Fragment, SetStateAction } from "react";
 import CalenderBox from "@/components/CalenderBox";
 import fileToBase64 from "@/helpers/file";
 import Image from "next/image";
 import React, { type ReactNode, useEffect, useState } from "react";
-import { AiOutlineLink } from "react-icons/ai";
+import { AiOutlineLink, AiOutlineUserAdd } from "react-icons/ai";
 import { BsGlobe } from "react-icons/bs";
 import { FiEdit2 } from "react-icons/fi";
 import { HiOutlineLocationMarker } from "react-icons/hi";
@@ -108,6 +108,7 @@ const EventOverview = () => {
   const ctx = api.useContext();
 
   const [editEvent, setEditEvent] = useState(false);
+  const [open, setIsOpen] = useState<boolean>(false);
 
   const date = event && event.datetime ? new Date(event.datetime) : new Date();
 
@@ -208,6 +209,20 @@ const EventOverview = () => {
             </div>
           </div>
         </div>
+
+        <div className="w-full">
+          <div className="flex w-full items-center justify-between">
+            <h3 className="text-2xl font-medium text-neutral-200">Hosts</h3>
+            <button
+              onClick={() => setIsOpen(true)}
+              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+            >
+              <AiOutlineUserAdd /> Add Host
+            </button>
+          </div>
+          <div>{/* Render hosts here */}</div>
+        </div>
+        <AddHostModel eventId={event.id} isOpen={open} setIsOpen={setIsOpen} />
 
         {/* side edit event drawer */}
 
@@ -622,6 +637,80 @@ const EventOverview = () => {
     );
   else return <></>;
 };
+
+export function AddHostModel({
+  eventId,
+  isOpen,
+  setIsOpen,
+}: {
+  eventId?: string;
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+}) {
+  const [creatorId, setCreatorId] = useState<string>("");
+  return (
+    <>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={() => setIsOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    Payment successful
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">
+                      Your payment has been successfully submitted. We’ve sent
+                      you an email with all of the details of your order.
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Got it, thanks!
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+}
 
 const nestLayout = (
   parent: (page: ReactNode) => JSX.Element,

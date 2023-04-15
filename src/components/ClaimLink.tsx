@@ -42,7 +42,7 @@ export default function ClaimLink({
             onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
               setCreatorProfile(e.target.value)
             }
-            className={`block w-min rounded-none rounded-r-full border border-l-0 border-neutral-800 bg-neutral-900/50  backdrop-blur transition duration-300 group-hover:border-neutral-700 ${
+            className={`block w-min rounded-none rounded-r-full border border-l-0 border-neutral-800 bg-neutral-900/50 fill-neutral-700  backdrop-blur transition duration-300 group-hover:border-neutral-700 ${
               variant === "sm" ? "p-2" : "p-4"
             } pl-1 ${
               variant === "lg"
