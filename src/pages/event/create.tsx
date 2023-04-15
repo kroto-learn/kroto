@@ -120,7 +120,6 @@ const CreateEvent = () => {
       <form
         onSubmit={methods.handleSubmit(async (values) => {
           if (!!values) {
-            console.log(values);
             const mValues = values;
             if (mValues.eventType === "virtual") mValues.eventLocation = "";
             else mValues.eventUrl = "";
@@ -362,8 +361,6 @@ const CreateEvent = () => {
                           minute: "2-digit",
                           hour12: true,
                         });
-                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      console.log(time);
                       const timearr = (time ?? "").split(" ");
                       const hmarr = timearr.join().split(":");
                       hmarr[1] = (
@@ -387,7 +384,6 @@ const CreateEvent = () => {
                           hour12: true,
                         });
                       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      console.log(time);
                       const timearr = (time ?? "").split(" ");
                       const hmarr = timearr.join().split(":");
                       hmarr[1] = (
@@ -396,7 +392,6 @@ const CreateEvent = () => {
                       ).toString();
 
                       timearr[0] = hmarr.join(":");
-                      console.log(timearr.join(" "));
 
                       return timearr.join(" ");
                     })(),

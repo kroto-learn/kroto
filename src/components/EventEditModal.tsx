@@ -124,7 +124,6 @@ const EventEditModal = () => {
       onSubmit={methods.handleSubmit(async (values) => {
         if (!!values) {
           const mValues = values;
-          console.log(mValues?.thumbnail);
           if (mValues.eventType === "virtual") mValues.eventLocation = "";
           else mValues.eventUrl = "";
           try {
@@ -374,7 +373,6 @@ const EventEditModal = () => {
                     ).toString();
 
                     timearr[0] = hmarr.join(":");
-                    console.log(timearr.join(" "));
 
                     return timearr.join(" ");
                   })(),
@@ -390,7 +388,6 @@ const EventEditModal = () => {
                         hour12: true,
                       });
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    console.log(time);
                     const timearr = (time ?? "").split(" ");
                     const hmarr = timearr.join().split(":");
                     hmarr[1] = (
@@ -399,7 +396,6 @@ const EventEditModal = () => {
                     ).toString();
 
                     timearr[0] = hmarr.join(":");
-                    console.log(timearr.join(" "));
 
                     return timearr.join(" ");
                   })(),

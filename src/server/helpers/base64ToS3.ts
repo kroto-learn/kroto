@@ -58,7 +58,6 @@ export const imageUpload = async (
     const { Location, Key } = await s3.upload(params).promise();
     // Save the Location (url) to your database and Key if needs be.
     const response: ImageUploadResponse = { location: Location, key: Key };
-    console.log(response);
     return response.location;
   } catch (error: AWSError | any) {
     console.log(error);

@@ -195,8 +195,6 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      console.log(hosts);
-
       /* Adding to audience list */
       if (!audienceMember) {
         // Create audience member for the creator
@@ -217,8 +215,6 @@ export const eventRouter = createTRPCRouter({
             creatorId: host.userId,
           },
         });
-
-        console.log(audienceMember);
 
         if (!audienceMember)
           await prisma.audienceMember.create({
@@ -265,8 +261,6 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      console.log("<<<<<<<< data:", hostWithUserData, hosts);
-
       return [creator, ...hostWithUserData];
     }),
 
@@ -285,8 +279,6 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      console.log("User", user);
-
       if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
       if (!user.isCreator) return new TRPCError({ code: "BAD_REQUEST" });
 
@@ -296,8 +288,6 @@ export const eventRouter = createTRPCRouter({
           eventId: event.id,
         },
       });
-
-      console.log(isHost);
 
       if (!isHost) {
         const host = await prisma.host.create({

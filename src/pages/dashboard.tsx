@@ -16,14 +16,13 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
   const { data: profile, isLoading } = api.creator.getProfile.useQuery();
-  console.log(profile);
+
   useEffect(() => {
     if (status !== "loading" && !session?.user?.id) {
       void router.push("/");
     }
   }, [router, status, session]);
 
-  console.log(session);
   return (
     <Layout>
       <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">

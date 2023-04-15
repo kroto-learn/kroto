@@ -133,7 +133,6 @@ const EventRegistrations = () => {
                         // Loop over the rows cells
                         row.cells.map((cell) => {
                           // Apply the cell props
-                          console.log("cell", cell);
                           if (cell.column.id === "img")
                             return (
                               <td className="py-4 pl-6 pr-2">
