@@ -13,6 +13,8 @@
     @apply scroll-smooth;
   }
 }
+
+/* md styling */
 .wmde-markdown {
   background-color: #262626 !important;
 }
