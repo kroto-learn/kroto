@@ -259,18 +259,13 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      const hostWithUserData = hosts.map(async (host) => {
-        const user = await prisma.user.findUnique({
-          where: {
-            id: host.userId,
-          },
-        });
-
-        return {
-          ...host,
-          ...user,
-        };
+      const hostWithUserData = await prisma.user.findMany({
+        where: {
+          id: { in: hosts.map((h) => h.userId) },
+        },
       });
+
+      console.log("<<<<<<<< data:", hostWithUserData, hosts);
 
       return [creator, ...hostWithUserData];
     }),
