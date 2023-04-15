@@ -13,6 +13,7 @@ import { IoAdd } from "react-icons/io5";
 import { BiMinus } from "react-icons/bi";
 import useToast from "@/hooks/useToast";
 import fileToBase64 from "@/helpers/file";
+import TextareaCounter from "react-textarea-counter";
 
 export const creatorEditSchema = object({
   name: string({
@@ -350,11 +351,14 @@ const Settings = () => {
                 Bio
               </label>
               <div className="relative mb-6">
-                <textarea
+                <TextareaCounter
+                  showCount
                   {...methods.register("bio")}
-                  className="block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                  countLimit={180}
+                  rows={3}
                   placeholder="I am this, and this and this"
                   defaultValue={(creator && creator.bio) ?? ""}
+                  className="[&>div]:text-neutral-300 [&>textarea]:block [&>textarea]:w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-neutral-700 [&>textarea]:bg-neutral-800 [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:placeholder-neutral-400 [&>textarea]:outline-none [&>textarea]:ring-transparent [&>textarea]:transition [&>textarea]:duration-300 [&>textarea]:hover:border-neutral-500 [&>textarea]:focus:border-neutral-400 [&>textarea]:focus:ring-neutral-500 [&>textarea]:active:outline-none [&>textarea]:active:ring-transparent"
                 />
               </div>
               {methods.formState.errors.bio?.message && (
