@@ -4,7 +4,6 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "public/kroto-logo.png";
 import { useEffect, useState } from "react";
 
 const options = [
@@ -31,7 +30,12 @@ export function KrotoLogo() {
       <Link href="/">
         <div className="flex">
           <div>
-            <Image src={logo} width={512 / 13} height={512 / 13} alt="logo" />
+            <Image
+              src="/kroto-logo.png"
+              width={512 / 13}
+              height={512 / 13}
+              alt="logo"
+            />
           </div>
           <h2 className="-translate-x-1 text-3xl font-medium text-white">
             roto

@@ -5,7 +5,6 @@ import { api } from "@/utils/api";
 const Audience = () => {
   const { data: audience, isLoading } =
     api.creator.getAudienceMembers.useQuery();
-
   if (isLoading) return <p>Loading...</p>;
 
   return (

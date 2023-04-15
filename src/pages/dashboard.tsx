@@ -3,22 +3,27 @@ import { type Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import Layout from "@/components/layouts/main";
 import ClaimLink from "@/components/ClaimLink";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
-
 export default function Dashboard({ creators }: { creators: Creator[] }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
-
   const { data: profile, isLoading } = api.creator.getProfile.useQuery();
   console.log(profile);
+  useEffect(() => {
+    if (status !== "loading" && !session?.user?.id) {
+      void router.push("/");
+    }
+  }, [router, status, session]);
 
+  console.log(session);
   return (
     <Layout>
       <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">

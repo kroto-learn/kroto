@@ -86,8 +86,8 @@ export function Hero() {
           <Image
             src="/landing/hero_image.png"
             alt="crap"
-            width={1200}
-            height={1200}
+            width={1500}
+            height={1500}
             className="mt-10 min-h-fit object-cover sm:h-1/2 md:h-2/3 xl:h-2/3"
           />
           {/* </div> */}

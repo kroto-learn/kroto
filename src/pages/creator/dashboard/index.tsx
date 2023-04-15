@@ -16,11 +16,13 @@ import {
 } from "react-icons/bs";
 import { FiArrowUpRight } from "react-icons/fi";
 import { MdEventAvailable } from "react-icons/md";
+import { useRouter } from "next/router";
 import {
   RiSettings3Line,
   RiSettings3Fill,
   RiUserFollowFill,
 } from "react-icons/ri";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   return <div />;
@@ -30,7 +32,12 @@ Dashboard.getLayout = DashboardLayout;
 
 function DashboardLayoutR({ children }: { children: ReactNode }) {
   const { data: creator } = api.creator.getProfile.useQuery();
-
+  const router = useRouter();
+  useEffect(() => {
+    if (!creator?.isCreator) {
+      void router.push("/");
+    }
+  }, [creator, router]);
   const pathname = usePathname();
 
   return (

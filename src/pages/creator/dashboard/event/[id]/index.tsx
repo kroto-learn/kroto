@@ -138,7 +138,13 @@ const EventOverview = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [event]);
+  const { data: creator } = api.creator.getProfile.useQuery();
 
+  useEffect(() => {
+    if (!creator?.isCreator) {
+      void router.push("/");
+    }
+  }, [creator, router]);
   const { errorToast } = useToast();
   const { darkAlgorithm } = theme;
 
