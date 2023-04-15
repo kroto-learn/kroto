@@ -301,6 +301,20 @@ export const eventRouter = createTRPCRouter({
       return new TRPCError({ code: "BAD_REQUEST" });
     }),
 
+  removeHost: protectedProcedure
+    .input(z.object({ hostId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const host = await prisma.host.delete({
+        where: {
+          id: input.hostId,
+        },
+      });
+
+      return host;
+    }),
+
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {

@@ -37,6 +37,9 @@ const EventOverview = () => {
     eventId: event?.id ?? "",
   });
 
+  const { mutateAsync: removeHost, isLoading: removingHost } =
+    api.event.removeHost.useMutation();
+
   const date = event && event.datetime ? new Date(event.datetime) : new Date();
 
   // const { data: creator } = api.creator.getProfile.useQuery();
@@ -152,8 +155,14 @@ const EventOverview = () => {
                           {host?.email ?? ""}
                         </p>
                       </div>
-                      <button className="flex items-center gap-1 rounded-xl border border-pink-700 bg-pink-700 p-1 px-2 text-xs font-medium text-white transition duration-300 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800">
-                        <AiOutlineDelete /> Remove
+                      <button
+                        onClick={async () => {
+                          // await removeHost({ hostId: host?.id ?? "" });
+                          // void refetchHosts();
+                        }}
+                        className="flex items-center gap-1 rounded-xl border border-pink-700 bg-pink-700 p-1 px-2 text-sm font-medium text-white transition duration-300 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
+                      >
+                        {removingHost ? <Loader /> : <AiOutlineDelete />} Remove
                       </button>
                     </div>
                   </li>
