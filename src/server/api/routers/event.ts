@@ -7,7 +7,8 @@ import {
 } from "@/server/api/trpc";
 import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
-import { imageUpload, isBase64 } from "@/server/helpers/base64ToS3";
+import { imageUpload } from "@/server/helpers/base64ToS3";
+import isBase64 from "is-base64";
 
 export const eventRouter = createTRPCRouter({
   get: publicProcedure
@@ -128,7 +129,7 @@ export const eventRouter = createTRPCRouter({
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
 
       let thumbnail = input.thumbnail;
-      if (isBase64(input.thumbnail))
+      if (isBase64(input.thumbnail, { allowMime: true }))
         thumbnail = await imageUpload(input.thumbnail, input.id, "event");
 
       const event = await prisma.event.update({
@@ -179,7 +180,7 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      /* TODO I don't think this is the proper way to do this */
+      /* TODO thid doesn't seem like the proper way to do this hit */
 
       /* Adding to audience list */
       const audienceMember = await prisma.audienceMember.findFirst({
@@ -228,6 +229,34 @@ export const eventRouter = createTRPCRouter({
       }
 
       return registration;
+    }),
+
+  getHosts: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const event = await prisma.event.findUnique({
+        where: {
+          id: input.eventId,
+        },
+      });
+
+      if (!event) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const creator = await prisma.user.findUnique({
+        where: {
+          id: event?.creatorId,
+        },
+      });
+
+      const hosts = await prisma.host.findMany({
+        where: {
+          eventId: event.id,
+        },
+      });
+
+      return [creator, ...hosts];
     }),
 
   addHost: protectedProcedure
