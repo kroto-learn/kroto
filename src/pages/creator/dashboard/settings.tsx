@@ -23,7 +23,7 @@ export const creatorEditSchema = object({
     required_error: "Please enter your unique username.",
   }).nonempty(),
   bio: string({
-    required_error: "Please enter event description.",
+    required_error: "Please enter your bio.",
   }).max(180),
   socialLinks: array(
     object({
@@ -355,10 +355,10 @@ const Settings = () => {
                   showCount
                   {...methods.register("bio")}
                   countLimit={180}
-                  rows={3}
+                  rows={2}
                   placeholder="I am this, and this and this"
                   defaultValue={(creator && creator.bio) ?? ""}
-                  className="[&>div]:text-neutral-300 [&>textarea]:block [&>textarea]:w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-neutral-700 [&>textarea]:bg-neutral-800 [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:placeholder-neutral-400 [&>textarea]:outline-none [&>textarea]:ring-transparent [&>textarea]:transition [&>textarea]:duration-300 [&>textarea]:hover:border-neutral-500 [&>textarea]:focus:border-neutral-400 [&>textarea]:focus:ring-neutral-500 [&>textarea]:active:outline-none [&>textarea]:active:ring-transparent"
+                  className="[&>div]:!text-neutral-400 [&>textarea]:block [&>textarea]:w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-neutral-700 [&>textarea]:bg-neutral-800 [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:placeholder-neutral-400 [&>textarea]:outline-none [&>textarea]:ring-transparent [&>textarea]:transition [&>textarea]:duration-300 [&>textarea]:hover:border-neutral-500 [&>textarea]:focus:border-neutral-400 [&>textarea]:focus:ring-neutral-500 [&>textarea]:active:outline-none [&>textarea]:active:ring-transparent"
                 />
               </div>
               {methods.formState.errors.bio?.message && (

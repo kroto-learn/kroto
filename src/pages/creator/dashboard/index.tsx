@@ -33,11 +33,11 @@ Dashboard.getLayout = DashboardLayout;
 function DashboardLayoutR({ children }: { children: ReactNode }) {
   const { data: creator } = api.creator.getProfile.useQuery();
   const router = useRouter();
-  useEffect(() => {
-    if (!creator?.isCreator) {
-      void router.push("/");
-    }
-  }, [creator, router]);
+  // useEffect(() => {
+  //   if (!creator?.isCreator) {
+  //     void router.push("/");
+  //   }
+  // }, [creator, router]);
   const pathname = usePathname();
 
   return (
