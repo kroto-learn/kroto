@@ -78,7 +78,13 @@ export const creatorRouter = createTRPCRouter({
       },
     });
 
-    return audienceMembers;
+    const audienceUsers = await prisma.user.findMany({
+      where: {
+        id: { in: audienceMembers.map((a) => a.userId) },
+      },
+    });
+
+    return audienceUsers;
   }),
 
   searchCreators: publicProcedure
