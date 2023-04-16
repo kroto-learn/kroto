@@ -78,6 +78,9 @@ model Event {
   registrations    Registration[]
   hosts            Host[]
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([creatorId])
 }
 
