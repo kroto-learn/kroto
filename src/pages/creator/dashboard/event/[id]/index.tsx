@@ -133,7 +133,7 @@ const EventOverview = () => {
               <AiOutlineUserAdd /> Add Host
             </button>
           </div>
-          <ul className="w-full divide-y dark:divide-neutral-700">
+          <ul className="w-full divide-y divide-neutral-700">
             {hosts instanceof TRPCError
               ? ""
               : hosts?.map((host) => (
@@ -148,10 +148,10 @@ const EventOverview = () => {
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="truncate text-sm font-medium text-neutral-200">
                           {host?.name ?? ""}
                         </p>
-                        <p className="truncate text-sm text-gray-500 dark:text-gray-400">
+                        <p className="truncate text-sm text-neutral-400">
                           {host?.email ?? ""}
                         </p>
                       </div>

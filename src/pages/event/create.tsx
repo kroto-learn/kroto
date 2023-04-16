@@ -211,7 +211,7 @@ const CreateEvent = () => {
           </label>
           <div data-color-mode="dark">
             <MDEditor
-              height={200}
+              height={350}
               value={methods.watch()?.description}
               onChange={(mdtext) => {
                 if (mdtext) methods.setValue("description", mdtext);
