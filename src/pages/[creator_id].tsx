@@ -40,6 +40,9 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
     <>
       <Head>
         <title>{`${creator?.name ?? ""} - Kroto`}</title>
+        <meta property="og:title" content={`${creator?.name} | Kroto` ?? ""} />
+        <meta property="og:description" content={creator?.bio ?? ""} />
+        <meta property="og:image" content={creator?.image ?? ""} />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
         <div className="relative mt-6 flex w-full max-w-2xl flex-col items-center">

@@ -95,18 +95,50 @@ const EventEditModal = () => {
 
   const { darkAlgorithm } = theme;
 
+  const [startTime, setStartTime] = useState(
+    new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+  );
+  const [endTime, setEndTime] = useState(
+    new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+  );
+
   useEffect(() => {
     if (!!event && !eventInit) {
       setEventInit(true);
+      console.log("event init set");
       methods.setValue("thumbnail", (event?.thumbnail as string) ?? "");
-      methods.setValue("datetime", event?.datetime ?? new Date());
-      methods.setValue("duration", (event?.duration as number) ?? "");
       methods.setValue("eventType", event?.eventType ?? "");
       methods.setValue("description", event?.description ?? "");
-    }
+      methods.setValue("datetime", event.datetime ?? new Date());
+      methods.setValue("duration", 0);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event]);
+      console.log("datetime", event.title, event?.datetime ?? new Date());
+      setStartTime(
+        (event.datetime ?? new Date()).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })
+      );
+      const updateddt = event.datetime;
+      updateddt?.setTime(updateddt?.getTime() + (event?.duration ?? 0) * 60000);
+      setEndTime(
+        (updateddt ?? new Date()).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })
+      );
+    }
+  }, [event, setStartTime, setEndTime, eventInit, methods]);
 
   return (
     <form
@@ -116,10 +148,27 @@ const EventEditModal = () => {
           const mValues = values;
           if (mValues.eventType === "virtual") mValues.eventLocation = "";
           else mValues.eventUrl = "";
+          const stime = dayjs(startTime, "hh:mm A").toDate();
+          const updateddt = values.datetime;
+          updateddt.setHours(stime.getHours());
+          updateddt.setMinutes(stime.getMinutes());
+          console.log(startTime, endTime);
+          const etime = dayjs(endTime, "hh:mm A").toDate();
+
+          const duration = (etime.getTime() - stime.getTime()) / 60000;
           try {
             await eventUpdateMutation(
               {
-                ...values,
+                ...{
+                  title: values.title ?? "",
+                  description: values.description ?? "",
+                  thumbnail: values.thumbnail ?? "",
+                  eventType: values.eventType ?? "",
+                  eventLocation: values.eventLocation ?? "",
+                  eventUrl: values.eventUrl ?? "",
+                  datetime: updateddt,
+                  duration,
+                },
                 id: id,
               } as EventUpdateType,
               {
@@ -323,7 +372,7 @@ const EventEditModal = () => {
               format="DD-MM-YYYY"
               bordered={false}
               disabledDate={(currentDate) =>
-                currentDate.isBefore(dayjs(methods.watch()?.datetime), "day")
+                currentDate.isBefore(dayjs(new Date()), "day")
               }
               value={dayjs(
                 methods.watch()?.datetime?.toLocaleDateString("en-GB", {
@@ -347,70 +396,14 @@ const EventEditModal = () => {
               bordered={false}
               className=""
               order={false}
-              value={[
-                dayjs(
-                  (() => {
-                    const time = methods
-                      .watch()
-                      ?.datetime?.toLocaleTimeString("en-US", {
-                        hour: "numeric",
-                        minute: "2-digit",
-                        hour12: true,
-                      });
-                    const timearr = (time ?? "").split(" ");
-                    const hmarr = timearr.join().split(":");
-                    hmarr[1] = (
-                      Math.ceil(parseInt(hmarr[1] ?? "0") / 15) * 15
-                    ).toString();
-
-                    timearr[0] = hmarr.join(":");
-
-                    return timearr.join(" ");
-                  })(),
-                  "HH:mm A"
-                ),
-                dayjs(
-                  (() => {
-                    const time = methods
-                      .watch()
-                      ?.datetime?.toLocaleTimeString("en-US", {
-                        hour: "numeric",
-                        minute: "2-digit",
-                        hour12: true,
-                      });
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const timearr = (time ?? "").split(" ");
-                    const hmarr = timearr.join().split(":");
-                    hmarr[1] = (
-                      Math.ceil(parseInt(hmarr[1] ?? "0") / 15) * 15 +
-                      (methods.watch()?.duration ?? 0)
-                    ).toString();
-
-                    timearr[0] = hmarr.join(":");
-
-                    return timearr.join(" ");
-                  })(),
-                  "HH:mm A"
-                ),
-              ]}
+              value={[dayjs(startTime, "hh:mm A"), dayjs(endTime, "hh:mm A")]}
               onChange={(selectedTime) => {
-                const starttime = (selectedTime && selectedTime[0]) ?? dayjs();
-                const starttimeD = starttime.toDate() ?? new Date();
-                const targetDateObj = methods.watch()?.datetime ?? new Date();
-                targetDateObj.setHours(starttimeD.getHours());
-                targetDateObj.setMinutes(starttimeD.getMinutes());
-                targetDateObj.setSeconds(starttimeD.getSeconds());
-                targetDateObj.setMilliseconds(starttimeD.getMilliseconds());
-                methods.setValue("datetime", targetDateObj);
-
-                const endtime = (selectedTime && selectedTime[1]) ?? dayjs();
-                const endtimeD = endtime.toDate();
-
-                const diffInms = endtimeD.getTime() - starttimeD.getTime();
-                const diffInMinutes = diffInms / (1000 * 60);
-                methods.setValue("duration", diffInMinutes);
+                if (selectedTime) {
+                  setStartTime(dayjs(selectedTime[0]).format("hh:mm A") ?? "");
+                  setEndTime(dayjs(selectedTime[1]).format("hh:mm A"));
+                }
               }}
-              format="HH:mm A"
+              format="hh:mm A"
               disabledTime={() => {
                 const now = dayjs();
                 return {
@@ -423,8 +416,14 @@ const EventEditModal = () => {
                     return [];
                   },
                   disabledMinutes: (selectedHour) => {
-                    if (now.hour() === selectedHour) {
-                      return [...Array(now.minute()).keys()];
+                    if (
+                      dayjs(methods.watch()?.datetime).format("DD/MM/YYYY") ===
+                      dayjs(new Date()).format("DD/MM/YYYY")
+                    ) {
+                      if (now.hour() === selectedHour) {
+                        return [...Array(now.minute()).keys()];
+                      }
+                      return [];
                     }
                     return [];
                   },

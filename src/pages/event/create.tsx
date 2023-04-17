@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { object, string, number, date, literal } from "zod";
 import LinkIcon from "@heroicons/react/20/solid/LinkIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -102,6 +102,20 @@ const CreateEvent = () => {
   }, [methods]);
 
   const { darkAlgorithm } = theme;
+  const [startTime, setStartTime] = useState(
+    new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+  );
+  const [endTime, setEndTime] = useState(
+    new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+  );
 
   return (
     <Layout>
@@ -114,9 +128,27 @@ const CreateEvent = () => {
             const mValues = values;
             if (mValues.eventType === "virtual") mValues.eventLocation = "";
             else mValues.eventUrl = "";
+            const stime = dayjs(startTime, "hh:mm A").toDate();
+            const updateddt = values.datetime;
+            updateddt.setHours(stime.getHours());
+            updateddt.setMinutes(stime.getMinutes());
+            console.log(startTime, endTime);
+            const etime = dayjs(endTime, "hh:mm A").toDate();
+
+            const duration = (etime.getTime() - stime.getTime()) / 60000;
+
             try {
               await eventMutation(
-                { ...values },
+                {
+                  title: values.title ?? "",
+                  description: values.description ?? "",
+                  thumbnail: values.thumbnail ?? "",
+                  eventType: values.eventType ?? "",
+                  eventLocation: values.eventLocation ?? "",
+                  eventUrl: values.eventUrl ?? "",
+                  datetime: updateddt,
+                  duration,
+                },
                 {
                   onSuccess: (createdEvent) => {
                     if (!(createdEvent instanceof TRPCError))
@@ -319,7 +351,7 @@ const CreateEvent = () => {
                 autoFocus={false}
                 bordered={false}
                 disabledDate={(currentDate) =>
-                  currentDate.isBefore(dayjs(methods.watch()?.datetime), "day")
+                  currentDate.isBefore(dayjs(new Date()), "day")
                 }
                 value={dayjs(
                   methods.watch()?.datetime?.toLocaleDateString("en-GB", {
@@ -344,74 +376,16 @@ const CreateEvent = () => {
                 order={false}
                 className=""
                 use12Hours
-                value={[
-                  dayjs(
-                    (() => {
-                      const time = methods
-                        .watch()
-                        ?.datetime?.toLocaleTimeString("en-US", {
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true,
-                        });
-                      console.log(time);
-                      const timearr = (time ?? "").split(" ");
-                      const hmarr = timearr.join().split(":");
-                      hmarr[1] = (
-                        Math.ceil(parseInt(hmarr[1] ?? "0") / 15) * 15
-                      ).toString();
-
-                      timearr[0] = hmarr.join(":");
-                      console.log(timearr.join(" "));
-
-                      console.log(timearr);
-                      return timearr.join(" ");
-                    })(),
-                    "HH:mm A"
-                  ),
-                  dayjs(
-                    (() => {
-                      const time = methods
-                        .watch()
-                        ?.datetime?.toLocaleTimeString("en-US", {
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true,
-                        });
-                      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                      const timearr = (time ?? "").split(" ");
-                      const hmarr = timearr.join().split(":");
-                      hmarr[1] = (
-                        Math.ceil(parseInt(hmarr[1] ?? "0") / 15) * 15 +
-                        (methods.watch()?.duration ?? 0)
-                      ).toString();
-
-                      timearr[0] = hmarr.join(":");
-
-                      return timearr.join(" ");
-                    })(),
-                    "HH:mm A"
-                  ),
-                ]}
+                value={[dayjs(startTime, "hh:mm A"), dayjs(endTime, "hh:mm A")]}
                 onChange={(selectedTime) => {
-                  const starttime =
-                    (selectedTime && selectedTime[0]) ?? dayjs();
-                  const starttimeD = starttime.toDate() ?? new Date();
-                  const targetDateObj = methods.watch()?.datetime ?? new Date();
-                  targetDateObj.setHours(starttimeD.getHours());
-                  targetDateObj.setMinutes(starttimeD.getMinutes());
-                  targetDateObj.setSeconds(starttimeD.getSeconds());
-                  targetDateObj.setMilliseconds(starttimeD.getMilliseconds());
-                  methods.setValue("datetime", targetDateObj);
-
-                  const endtime = (selectedTime && selectedTime[1]) ?? dayjs();
-                  const endtimeD = endtime.toDate();
-
-                  const diffInms = endtimeD.getTime() - starttimeD.getTime();
-                  const diffInMinutes = diffInms / (1000 * 60);
-                  methods.setValue("duration", diffInMinutes);
+                  if (selectedTime) {
+                    setStartTime(
+                      dayjs(selectedTime[0]).format("hh:mm A") ?? ""
+                    );
+                    setEndTime(dayjs(selectedTime[1]).format("hh:mm A"));
+                  }
                 }}
-                format="HH:mm A"
+                format="hh:mm A"
                 disabledTime={() => {
                   const now = dayjs();
                   return {
@@ -425,8 +399,15 @@ const CreateEvent = () => {
                       return [];
                     },
                     disabledMinutes: (selectedHour) => {
-                      if (now.hour() === selectedHour) {
-                        return [...Array(now.minute()).keys()];
+                      if (
+                        dayjs(methods.watch()?.datetime).format(
+                          "DD/MM/YYYY"
+                        ) === dayjs(new Date()).format("DD/MM/YYYY")
+                      ) {
+                        if (now.hour() === selectedHour) {
+                          return [...Array(now.minute()).keys()];
+                        }
+                        return [];
                       }
                       return [];
                     },

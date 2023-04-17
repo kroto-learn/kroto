@@ -12,6 +12,8 @@ import { Loader } from "@/components/Loader";
 import { TRPCError } from "@trpc/server";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { FacebookShareButton, FacebookIcon } from "next-share";
+
 const EventEditModal = dynamic(() => import("@/components/EventEditModal"), {
   ssr: false,
 });
@@ -80,15 +82,30 @@ const EventOverview = () => {
                 className="rounded-xl"
               />
             </div>
-            <button
-              onClick={() => {
-                setEditEvent(true);
-              }}
-              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
-            >
-              <PencilIcon className="w-3" />
-              Edit Event
-            </button>
+
+            <div className="flex w-full items-start justify-between">
+              <button
+                onClick={() => {
+                  setEditEvent(true);
+                }}
+                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+              >
+                <PencilIcon className="w-3" />
+                Edit Event
+              </button>
+
+              <div className="flex items-center gap-2">
+                <p>Share Event</p>
+                <FacebookShareButton
+                  className=""
+                  url={`https://kroto.in/event/${event?.id ?? ""}`}
+                  quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                  hashtag={"#kroto"}
+                >
+                  <FacebookIcon size={32} round />
+                </FacebookShareButton>
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-between">
