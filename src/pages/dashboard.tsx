@@ -10,6 +10,7 @@ import Layout from "@/components/layouts/main";
 import ClaimLink from "@/components/ClaimLink";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
+
 export default function Dashboard({ creators }: { creators: Creator[] }) {
   const { data: session, status } = useSession();
   const router = useRouter();

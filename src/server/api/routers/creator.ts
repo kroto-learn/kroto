@@ -63,10 +63,32 @@ export const creatorRouter = createTRPCRouter({
     const registrations = await prisma.event.findMany({
       where: {
         id: { in: registrationId.map((r) => r.eventId) },
+        datetime: {
+          gte: new Date(),
+        },
       },
     });
 
     return { ...user, registrations, socialLinks: socialLinks };
+  }),
+
+  getPastEvents: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const registrationId = await prisma.registration.findMany({
+      where: { userId: ctx.session.user.id },
+    });
+
+    const pastRegistrations = await prisma.event.findMany({
+      where: {
+        id: { in: registrationId.map((r) => r.eventId) },
+        datetime: {
+          lte: new Date(),
+        },
+      },
+    });
+
+    return pastRegistrations;
   }),
 
   getAudienceMembers: protectedProcedure.query(async ({ ctx }) => {
