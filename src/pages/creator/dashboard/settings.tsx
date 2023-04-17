@@ -325,7 +325,7 @@ const Settings = () => {
                   <input
                     {...methods.register("topmateUrl")}
                     className="block w-full rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-                    placeholder="rosekamallove"
+                    placeholder="https://topmate.io/"
                     defaultValue={(creator && creator.topmateUrl) ?? ""}
                   />
                 </div>

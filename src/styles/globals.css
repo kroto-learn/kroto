@@ -65,23 +65,15 @@ select:-webkit-autofill {
   max-width: 4.5rem;
 }
 
-/* ::-webkit-scrollbar {
-  width: 8px;
-} */
+::-webkit-scrollbar {
+  width: 0;
+  background-color: transparent;
+}
 
-/* Track */
-/* ::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 8px;
-} */
+::-moz-selection {
+  background: #ec489a8b;
+}
 
-/* Handle */
-/* ::-webkit-scrollbar-thumb {
-  background: #db27784f;
-  border-radius: 8px;
-} */
-
-/* Handle on hover */
-/* ::-webkit-scrollbar-thumb:hover {
-  background: #db27787a;
-} */
+::selection {
+  background: #ec489a8b;
+}
