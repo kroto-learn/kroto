@@ -4,13 +4,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function Navbar() {
-  const { data: session } = useSession();
-  const {
-    data: creator,
-    isLoading,
-    isRefetching,
-    isError,
-  } = api.creator.getProfile.useQuery();
+  const { data: session, status } = useSession();
+  const { data: creator } = api.creator.getProfile.useQuery();
 
   return (
     <div className="fixed top-0 z-40 w-full border-b border-neutral-800/50 bg-neutral-950/50 font-medium backdrop-blur-lg">
@@ -41,7 +36,7 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          {session && creator ? (
+          {status === "authenticated" ? (
             <div className="flex gap-5">
               <Link
                 className="transition-all hover:text-neutral-400"
@@ -62,7 +57,7 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              {!isLoading && (
+              {!(status === "loading") && status === "unauthenticated" && (
                 <button
                   className="transition-all hover:text-neutral-400"
                   onClick={() => void signIn()}
