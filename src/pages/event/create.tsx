@@ -28,18 +28,10 @@ const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 });
 
 export const createFormSchema = object({
-  thumbnail: string({
-    required_error: "Please upload a cover",
-  }),
-  title: string({
-    required_error: "Please enter event title.",
-  }),
-  description: string({
-    required_error: "Please enter event description.",
-  }).max(3000),
-  eventType: string({
-    required_error: "Please select the type of event.",
-  }).max(150),
+  thumbnail: string().nonempty("Please upload a cover"),
+  title: string().nonempty("Please enter event title."),
+  description: string().max(3000).nonempty("Please enter event description."),
+  eventType: string().nonempty("Please select the type of event."),
   eventUrl: string().url().optional(),
   eventLocation: string().optional(),
   datetime: date({
@@ -388,7 +380,7 @@ const CreateEvent = () => {
                       const hmarr = timearr.join().split(":");
                       hmarr[1] = (
                         Math.ceil(parseInt(hmarr[1] ?? "0") / 15) * 15 +
-                        15
+                        (methods.watch()?.duration ?? 0)
                       ).toString();
 
                       timearr[0] = hmarr.join(":");

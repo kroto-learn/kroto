@@ -22,18 +22,10 @@ const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 });
 
 const editEventFormSchema = object({
-  thumbnail: string({
-    required_error: "Please upload a cover",
-  }),
-  title: string({
-    required_error: "Please enter event title.",
-  }),
-  description: string({
-    required_error: "Please enter event description.",
-  }).max(3000),
-  eventType: string({
-    required_error: "Please select the type of event.",
-  }).max(150),
+  thumbnail: string().nonempty("Please upload a cover"),
+  title: string().nonempty("Please enter event title."),
+  description: string().max(3000).nonempty("Please enter event description."),
+  eventType: string().nonempty("Please select the type of event."),
   eventUrl: string().url().optional(),
   eventLocation: string().optional(),
   datetime: date({

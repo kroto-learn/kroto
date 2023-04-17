@@ -16,27 +16,17 @@ import fileToBase64 from "@/helpers/file";
 import TextareaCounter from "react-textarea-counter";
 
 export const creatorEditSchema = object({
-  name: string({
-    required_error: "Please enter your name.",
-  }),
-  creatorProfile: string({
-    required_error: "Please enter your unique username.",
-  }).nonempty(),
-  bio: string({
-    required_error: "Please enter your bio.",
-  }).max(180),
+  name: string().nonempty("Please enter your name."),
+  creatorProfile: string().nonempty("Please enter your unique username."),
+  bio: string().max(180).nonempty("Please enter your bio."),
   socialLinks: array(
     object({
       id: string(),
       type: string(),
-      url: string({
-        required_error: "Please enter social link URL.",
-      }).url(),
+      url: string().url().nonempty("Please enter social link URL."),
     })
   ),
-  image: string({
-    required_error: "Please upload your profile image.",
-  }).nonempty(),
+  image: string().nonempty("Please upload your profile image."),
   topmateUrl: string().url().optional().or(literal("")),
 });
 
