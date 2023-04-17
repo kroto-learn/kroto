@@ -342,6 +342,7 @@ const CreateEvent = () => {
               <TimePicker.RangePicker
                 autoFocus={false}
                 bordered={false}
+                order={false}
                 className=""
                 use12Hours
                 value={[
@@ -433,7 +434,6 @@ const CreateEvent = () => {
                   };
                 }}
                 minuteStep={15}
-                use12Hours
                 style={{
                   color: "#fff",
                 }}
