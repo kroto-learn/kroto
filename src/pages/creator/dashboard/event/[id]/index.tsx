@@ -12,7 +12,16 @@ import { Loader } from "@/components/Loader";
 import { TRPCError } from "@trpc/server";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { FacebookShareButton, FacebookIcon } from "next-share";
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  TwitterShareButton,
+  TwitterIcon,
+  WhatsappShareButton,
+  WhatsappIcon,
+  LinkedinShareButton,
+  LinkedinIcon,
+} from "next-share";
 
 const EventEditModal = dynamic(() => import("@/components/EventEditModal"), {
   ssr: false,
@@ -69,85 +78,105 @@ const EventOverview = () => {
         <Head>
           <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
-        <div className="flex w-full max-w-3xl items-start gap-8 rounded-xl bg-neutral-800 p-4">
-          <div className="flex flex-col items-start gap-4">
-            <div
-              className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
-            >
-              <Image
-                src={(event?.thumbnail as string) ?? ""}
-                alt={event?.title ?? ""}
-                fill
-                style={{ objectFit: "cover" }}
-                className="rounded-xl"
-              />
+        <div className="flex w-full max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4">
+          <div className="flex w-full items-start gap-8">
+            <div className="flex flex-col items-start gap-4">
+              <div
+                className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
+              >
+                <Image
+                  src={(event?.thumbnail as string) ?? ""}
+                  alt={event?.title ?? ""}
+                  fill
+                  style={{ objectFit: "cover" }}
+                  className="rounded-xl"
+                />
+              </div>
             </div>
 
-            <div className="flex w-full items-start justify-between">
-              <button
-                onClick={() => {
-                  setEditEvent(true);
-                }}
-                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
-              >
-                <PencilIcon className="w-3" />
-                Edit Event
-              </button>
-
-              <div className="flex items-center gap-2">
-                <p>Share Event</p>
-                <FacebookShareButton
-                  className=""
-                  url={`https://kroto.in/event/${event?.id ?? ""}`}
-                  quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-                  hashtag={"#kroto"}
-                >
-                  <FacebookIcon size={32} round />
-                </FacebookShareButton>
+            <div className="flex justify-between">
+              <div className="flex flex-col gap-3">
+                <h3 className="font-medium text-neutral-200">When & Where</h3>
+                <div className="flex gap-2">
+                  <CalenderBox date={event?.datetime ?? new Date()} />
+                  <p className="text-left text-sm  font-medium text-neutral-300">
+                    {date?.toLocaleString("en-US", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                    })}
+                    <br />
+                    {date?.toLocaleString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}{" "}
+                    to{" "}
+                    {new Date(
+                      (event?.datetime?.getTime() ?? 0) +
+                        (event?.duration ?? 0) * 60000
+                    )?.toLocaleString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-neutral-400">
+                  {event?.eventType === "virtual" ? (
+                    <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                  ) : (
+                    <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                  )}
+                  <p>
+                    {event?.eventType === "virtual"
+                      ? "Google Meet"
+                      : event?.eventLocation}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-3">
-              <h3 className="font-medium text-neutral-200">When & Where</h3>
-              <div className="flex gap-2">
-                <CalenderBox date={event?.datetime ?? new Date()} />
-                <p className="text-left text-sm  font-medium text-neutral-300">
-                  {date?.toLocaleString("en-US", {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                  })}
-                  <br />
-                  {date?.toLocaleString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}{" "}
-                  to{" "}
-                  {new Date(
-                    (event?.datetime?.getTime() ?? 0) +
-                      (event?.duration ?? 0) * 60000
-                  )?.toLocaleString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-neutral-400">
-                {event?.eventType === "virtual" ? (
-                  <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
-                ) : (
-                  <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
-                )}
-                <p>
-                  {event?.eventType === "virtual"
-                    ? "Google Meet"
-                    : event?.eventLocation}
-                </p>
-              </div>
+          <div className="flex w-full items-center justify-between gap-12">
+            <button
+              onClick={() => {
+                setEditEvent(true);
+              }}
+              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+            >
+              <PencilIcon className="w-3" />
+              Edit Event
+            </button>
+
+            <div className="flex items-center gap-2">
+              <p>Share Event</p>
+              <LinkedinShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+              >
+                <LinkedinIcon size={24} round />
+              </LinkedinShareButton>
+              <FacebookShareButton
+                className=""
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+                quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                hashtag={"#kroto"}
+              >
+                <FacebookIcon size={24} round />
+              </FacebookShareButton>
+              <TwitterShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+              >
+                <TwitterIcon size={24} round />
+              </TwitterShareButton>
+              <WhatsappShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                separator=":: "
+              >
+                <WhatsappIcon size={24} round />
+              </WhatsappShareButton>
             </div>
           </div>
         </div>
