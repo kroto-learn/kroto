@@ -37,11 +37,13 @@ const EventSettings = () => {
       </div>
 
       <div
-        className={`fixed left-0 right-0 top-0 z-50 flex h-full max-h-screen w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black/10 p-2 backdrop-blur-sm md:inset-0 ${
-          !deleteModalOpen ? "hidden" : ""
+        className={`fixed left-0 right-0 top-0 z-50 flex h-full max-h-screen w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black/10 p-2 backdrop-blur-sm transition-all duration-300 ease-in-out md:inset-0 ${
+          deleteModalOpen
+            ? "translate-y-0 opacity-100"
+            : "translate-y-full opacity-0"
         }`}
       >
-        <div className="relative max-h-full w-full max-w-lg">
+        <div className="relative max-h-full max-w-lg">
           {/* <!-- Modal content --> */}
           <div className="relative rounded-lg bg-neutral-800 shadow">
             {/* <!-- Modal header --> */}
