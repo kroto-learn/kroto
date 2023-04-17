@@ -18,7 +18,7 @@ import Image from "next/image";
 const EventEditModal = dynamic(() => import("@/components/EventEditModal"), {
   ssr: false,
 });
-import { MdClose } from "react-icons/md";
+import { MdClose, MdLocationOn } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
 import dynamic from "next/dynamic";
 
@@ -91,7 +91,7 @@ const EventOverview = () => {
             <div className="flex flex-col gap-3">
               <h3 className="font-medium text-neutral-200">When & Where</h3>
               <div className="flex gap-2">
-                <CalenderBox date={new Date()} />
+                <CalenderBox date={event?.datetime ?? new Date()} />
                 <p className="text-left text-sm  font-medium text-neutral-300">
                   {date?.toLocaleString("en-US", {
                     weekday: "long",
@@ -116,8 +116,16 @@ const EventOverview = () => {
                 </p>
               </div>
               <div className="flex items-center gap-2 text-sm text-neutral-400">
-                <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />{" "}
-                <p>Google Meet</p>
+                {event?.eventType === "virtual" ? (
+                  <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                ) : (
+                  <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                )}
+                <p>
+                  {event?.eventType === "virtual"
+                    ? "Google Meet"
+                    : event?.eventLocation}
+                </p>
               </div>
             </div>
           </div>
@@ -317,11 +325,11 @@ function EventLayoutR({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <div className="flex w-full items-center justify-between gap-4 px-4">
-        <h1 className="text-2xl text-neutral-200">{event?.title}</h1>
+      <div className="flex w-full items-start justify-between gap-4 px-4">
+        <h1 className="text-xl text-neutral-200">{event?.title}</h1>
         <Link
           href={`/event/${id}`}
-          className="flex items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
+          className="flex min-w-[10rem] items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
         >
           <BsGlobe /> Event Public Page
         </Link>

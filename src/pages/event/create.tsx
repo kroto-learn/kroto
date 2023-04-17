@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { object, string, number, date } from "zod";
+import { object, string, number, date, literal } from "zod";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { AiOutlineLink } from "react-icons/ai";
 import { RxImage } from "react-icons/rx";
@@ -32,8 +32,8 @@ export const createFormSchema = object({
   title: string().nonempty("Please enter event title."),
   description: string().max(3000).nonempty("Please enter event description."),
   eventType: string().nonempty("Please select the type of event."),
-  eventUrl: string().url().optional(),
-  eventLocation: string().optional(),
+  eventUrl: string().url().optional().or(literal("")),
+  eventLocation: string().optional().or(literal("")),
   datetime: date({
     required_error: "Please enter event's date and time.",
   }),

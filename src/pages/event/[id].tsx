@@ -95,7 +95,7 @@ export default function EventPage({ eventId }: Props) {
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex gap-2">
-                <CalenderBox date={new Date()} />
+                <CalenderBox date={event?.datetime ?? new Date()} />
                 <p className="text-left text-sm  font-medium text-neutral-300">
                   {date?.toLocaleString("en-US", {
                     weekday: "long",
