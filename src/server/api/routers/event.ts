@@ -43,26 +43,30 @@ export const eventRouter = createTRPCRouter({
       return { ...event, creator: user, registrations };
     }),
 
-  getEvent: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const { prisma } = ctx;
-
-      const event = await prisma.event.findUnique({
-        where: {
-          id: input.id,
-        },
-      });
-
-      return event;
-    }),
-
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
     const events = await prisma.event.findMany({
       where: {
         creatorId: ctx.session.user.id,
+        datetime: {
+          gte: new Date(),
+        },
+      },
+    });
+
+    return events;
+  }),
+
+  getAllPast: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const events = await prisma.event.findMany({
+      where: {
+        creatorId: ctx.session.user.id,
+        datetime: {
+          lte: new Date(),
+        },
       },
     });
 
