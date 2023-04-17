@@ -83,7 +83,7 @@ export const EventCard = ({
   event,
   manage,
 }: {
-  event: RouterOutputs["event"]["getEvent"];
+  event: RouterOutputs["event"]["get"];
   manage?: boolean;
 }) => {
   const date = event && !!event?.datetime ? event?.datetime : new Date();
