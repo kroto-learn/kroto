@@ -206,7 +206,7 @@ const CreateEvent = () => {
               height={350}
               value={methods.watch()?.description}
               onChange={(mdtext) => {
-                if (mdtext) methods.setValue("description", mdtext);
+                methods.setValue("description", mdtext ?? "");
               }}
             />
           </div>

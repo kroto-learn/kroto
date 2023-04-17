@@ -165,6 +165,7 @@ const EventOverview = () => {
                       </div>
                       <button
                         onClick={async () => {
+                          // TODO: implement remove host
                           // await removeHost({ hostId: host?.id ?? "" });
                           // void refetchHosts();
                         }}
