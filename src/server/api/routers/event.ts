@@ -53,6 +53,9 @@ export const eventRouter = createTRPCRouter({
           gte: new Date(),
         },
       },
+      orderBy: {
+        datetime: "desc",
+      },
     });
 
     return events;
@@ -67,6 +70,9 @@ export const eventRouter = createTRPCRouter({
         datetime: {
           lte: new Date(),
         },
+      },
+      orderBy: {
+        datetime: "desc",
       },
     });
 

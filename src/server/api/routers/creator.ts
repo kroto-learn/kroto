@@ -67,6 +67,9 @@ export const creatorRouter = createTRPCRouter({
           gte: new Date(),
         },
       },
+      orderBy: {
+        datetime: "desc",
+      },
     });
 
     return { ...user, registrations, socialLinks: socialLinks };
@@ -85,6 +88,9 @@ export const creatorRouter = createTRPCRouter({
         datetime: {
           lte: new Date(),
         },
+      },
+      orderBy: {
+        datetime: "desc",
       },
     });
 
