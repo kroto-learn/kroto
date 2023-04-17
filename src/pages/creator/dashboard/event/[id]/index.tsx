@@ -2,9 +2,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { type Dispatch, Fragment, type SetStateAction } from "react";
 import CalenderBox from "@/components/CalenderBox";
 import React, { type ReactNode, useState } from "react";
-import { AiOutlineDelete, AiOutlineUserAdd } from "react-icons/ai";
-import { BsGlobe } from "react-icons/bs";
-import { FiEdit2 } from "react-icons/fi";
 import Head from "next/head";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,9 +15,16 @@ import Image from "next/image";
 const EventEditModal = dynamic(() => import("@/components/EventEditModal"), {
   ssr: false,
 });
-import { MdClose, MdLocationOn } from "react-icons/md";
+import { MdLocationOn } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
 import dynamic from "next/dynamic";
+import {
+  GlobeAltIcon,
+  PencilIcon,
+  TrashIcon,
+  UserPlusIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
 
 const EventOverview = () => {
   const router = useRouter();
@@ -82,7 +86,7 @@ const EventOverview = () => {
               }}
               className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
             >
-              <FiEdit2 className="" />
+              <PencilIcon className="w-3" />
               Edit Event
             </button>
           </div>
@@ -138,7 +142,7 @@ const EventOverview = () => {
               onClick={() => setIsOpen(true)}
               className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-sm font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
             >
-              <AiOutlineUserAdd /> Add Host
+              <UserPlusIcon className="w-4" /> Add Host
             </button>
           </div>
           <ul className="w-full divide-y divide-neutral-700">
@@ -171,7 +175,12 @@ const EventOverview = () => {
                         }}
                         className="flex items-center gap-1 rounded-xl border border-pink-700 bg-pink-700 p-1 px-2 text-sm font-medium text-white transition duration-300 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
                       >
-                        {removingHost ? <Loader /> : <AiOutlineDelete />} Remove
+                        {removingHost ? (
+                          <Loader />
+                        ) : (
+                          <TrashIcon className="w-4" />
+                        )}{" "}
+                        Remove
                       </button>
                     </div>
                   </li>
@@ -198,7 +207,7 @@ const EventOverview = () => {
             }}
             className="self-start rounded-xl border border-neutral-500 p-1 text-xl text-neutral-400"
           >
-            <MdClose />
+            <XMarkIcon className="w-5" />
           </button>
 
           <EventEditModal />
@@ -287,8 +296,12 @@ export function AddHostModel({
                           onClick={() => handleSubmit()}
                           className="absolute right-0 top-0 flex items-center gap-1 rounded-r-lg border border-pink-700 bg-pink-700 p-2.5 text-sm font-medium text-white hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
                         >
-                          {isLoading ? <Loader /> : <AiOutlineUserAdd />} Add
-                          Host
+                          {isLoading ? (
+                            <Loader />
+                          ) : (
+                            <UserPlusIcon className="w-4" />
+                          )}{" "}
+                          Add Host
                         </button>
                       </div>
                     </div>
@@ -332,7 +345,7 @@ function EventLayoutR({ children }: { children: ReactNode }) {
           href={`/event/${id}`}
           className="flex min-w-[10rem] items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
         >
-          <BsGlobe /> Event Public Page
+          <GlobeAltIcon className="w-3" /> Event Public Page
         </Link>
       </div>
       <div className="border-b border-neutral-200 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">

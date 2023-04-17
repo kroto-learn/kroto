@@ -1,19 +1,21 @@
 import { api } from "@/utils/api";
 import Head from "next/head";
 import Image from "next/image";
-import { FaSave } from "react-icons/fa";
 import { Loader } from "@/components/Loader";
 import { DashboardLayout } from ".";
 import { type ChangeEvent, useEffect, useState } from "react";
-import { BsUpload } from "react-icons/bs";
 import { array, object, string, literal, type z } from "zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IoAdd } from "react-icons/io5";
-import { BiMinus } from "react-icons/bi";
 import useToast from "@/hooks/useToast";
 import fileToBase64 from "@/helpers/file";
 import TextareaCounter from "react-textarea-counter";
+import {
+  ArrowUpTrayIcon,
+  MinusIcon,
+  PlusIcon,
+  CloudIcon,
+} from "@heroicons/react/20/solid";
 
 export const creatorEditSchema = object({
   name: string().nonempty("Please enter your name."),
@@ -145,7 +147,7 @@ const Settings = () => {
             </div>
             <div className="absolute bottom-4 right-2 z-50 cursor-pointer rounded-full bg-neutral-800 text-base transition-all duration-300 hover:bg-neutral-700">
               <div className="relative cursor-pointer p-2">
-                <BsUpload />
+                <ArrowUpTrayIcon className="w-5" />
                 <input
                   type="file"
                   accept="image/*"
@@ -271,7 +273,7 @@ const Settings = () => {
                             }
                           }}
                         >
-                          <BiMinus />
+                          <MinusIcon className="w-5" />
                         </button>
                       </div>
                       {methods.formState.errors.socialLinks?.[idx]?.url
@@ -298,7 +300,7 @@ const Settings = () => {
                 }}
                 className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-2 py-1 text-sm font-medium text-pink-600 backdrop-blur-sm transition duration-300 hover:bg-pink-600 hover:text-pink-200 disabled:border-neutral-600 disabled:bg-neutral-600/10 disabled:text-neutral-700"
               >
-                <IoAdd /> Add Link
+                <PlusIcon className="w-5" /> Add Link
               </button>
               {methods.formState.errors.socialLinks?.message && (
                 <p className="text-red-700">
@@ -368,7 +370,8 @@ const Settings = () => {
               type="submit"
               className={`group my-5 inline-flex items-center gap-1 rounded-xl bg-pink-600 px-6 py-2 text-center font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
             >
-              {updating ? <Loader /> : <FaSave />} Save Changes
+              {updating ? <Loader /> : <CloudIcon className="w-5" />} Save
+              Changes
             </button>
           </div>
         </form>

@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { object, string, number, date, literal } from "zod";
-import { HiOutlineLocationMarker } from "react-icons/hi";
-import { AiOutlineLink } from "react-icons/ai";
-import { RxImage } from "react-icons/rx";
+import LinkIcon from "@heroicons/react/20/solid/LinkIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import fileToBase64 from "@/helpers/file";
 import { generateRandomGradientImages } from "@/helpers/randomGradientImages";
@@ -22,6 +20,7 @@ import Layout from "@/components/layouts/main";
 import useToast from "@/hooks/useToast";
 import { TimePicker, DatePicker, ConfigProvider, theme } from "antd";
 import dayjs from "dayjs";
+import { PhotoIcon } from "@heroicons/react/20/solid";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -170,7 +169,7 @@ const CreateEvent = () => {
                 }
               }}
             />
-            <RxImage />
+            <PhotoIcon className="w-4" />
             Upload Cover
           </div>
         </div>
@@ -273,7 +272,7 @@ const CreateEvent = () => {
                 placeholder="Google Meet or YouTube URL"
                 className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8  font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
               />
-              <AiOutlineLink className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
+              <LinkIcon className="absolute ml-2 w-4 text-neutral-400 peer-focus:text-neutral-200" />
             </div>
 
             {methods.formState.errors.eventUrl?.message && (
@@ -291,7 +290,7 @@ const CreateEvent = () => {
                 placeholder="Your event's address"
                 className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8  font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
               />
-              <HiOutlineLocationMarker className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
+              <LinkIcon className="absolute ml-2  text-neutral-400 peer-focus:text-neutral-200" />
             </div>
 
             {methods.formState.errors.eventLocation?.message && (

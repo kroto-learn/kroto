@@ -1,16 +1,14 @@
+import {
+  Bars3Icon,
+  UserGroupIcon,
+  CalendarIcon,
+} from "@heroicons/react/20/solid";
 import { type Creator } from "interfaces/Creator";
 import { getCreatorsClient } from "mock/getCreatorsClient";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, type ReactNode, useState } from "react";
-import {
-  BsCalendarEvent,
-  BsCalendarEventFill,
-  BsPeople,
-  BsPeopleFill,
-} from "react-icons/bs";
-import { RiSettings3Line, RiSettings3Fill } from "react-icons/ri";
 
 type Props = {
   children: ReactNode;
@@ -43,15 +41,15 @@ const DashboardNavWrapper = ({ children }: Props) => {
                   : ""
               }`}
             >
-              <BsCalendarEvent
-                className={` ${
+              <CalendarIcon
+                className={`w-5 ${
                   router.asPath.startsWith("/creator/dashboard/event")
                     ? "hidden"
                     : ""
                 }`}
               />{" "}
-              <BsCalendarEventFill
-                className={`${
+              <CalendarIcon
+                className={` w-5 ${
                   router.asPath.startsWith("/creator/dashboard/event")
                     ? "flex"
                     : "hidden"
@@ -67,15 +65,15 @@ const DashboardNavWrapper = ({ children }: Props) => {
                   : ""
               }`}
             >
-              <BsPeople
-                className={`${
+              <UserGroupIcon
+                className={` w-5 ${
                   router.asPath.startsWith("/creator/dashboard/audience")
                     ? "hidden"
                     : ""
                 }`}
               />{" "}
-              <BsPeopleFill
-                className={`${
+              <UserGroupIcon
+                className={` w-5 ${
                   router.asPath.startsWith("/creator/dashboard/audience")
                     ? "flex"
                     : "hidden"
@@ -91,15 +89,15 @@ const DashboardNavWrapper = ({ children }: Props) => {
                   : ""
               }`}
             >
-              <RiSettings3Line
-                className={`${
+              <Bars3Icon
+                className={` w-5 ${
                   router.asPath.startsWith("/creator/dashboard/settings")
                     ? "hidden"
                     : ""
                 }`}
               />{" "}
-              <RiSettings3Fill
-                className={`${
+              <Bars3Icon
+                className={` w-5 ${
                   router.asPath.startsWith("/creator/dashboard/settings")
                     ? "flex"
                     : "hidden"

@@ -1,10 +1,7 @@
 import CalenderBox from "@/components/CalenderBox";
 import Head from "next/head";
 import Image from "next/image";
-import { HiArrowSmRight } from "react-icons/hi";
 import { SiGooglemeet } from "react-icons/si";
-import { GrTextAlignLeft } from "react-icons/gr";
-import { IoPeopleOutline } from "react-icons/io5";
 import { api } from "@/utils/api";
 import { MdLocationOn } from "react-icons/md";
 import { type GetStaticPropsContext } from "next";
@@ -17,6 +14,8 @@ import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Loader } from "@/components/Loader";
+import { UserGroupIcon } from "@heroicons/react/20/solid";
+import { ArrowRightIcon, Bars3CenterLeftIcon } from "@heroicons/react/20/solid";
 
 type Props = {
   eventId: string;
@@ -148,7 +147,7 @@ export default function EventPage({ eventId }: Props) {
                   ) : (
                     <>
                       <span>Register now</span>
-                      <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
+                      <ArrowRightIcon className="w-5 text-xl duration-300 group-hover:translate-x-1" />
                     </>
                   )}
                 </button>
@@ -160,7 +159,7 @@ export default function EventPage({ eventId }: Props) {
           <div className="flex w-full items-start gap-4">
             <div className="flex w-2/3 flex-col gap-4 rounded-xl bg-neutral-800">
               <div className="flex items-center gap-2 border-b border-neutral-600 px-4 py-3 text-neutral-200">
-                <GrTextAlignLeft />
+                <Bars3CenterLeftIcon className="w-5" />
                 <h2 className="font-medium ">Description</h2>
               </div>
               <div className="prose prose-invert prose-pink px-4 pb-4">
@@ -171,7 +170,7 @@ export default function EventPage({ eventId }: Props) {
             </div>
             <div className="flex w-1/3 flex-col gap-4 rounded-xl bg-neutral-800">
               <div className="flex items-center gap-2 border-b border-neutral-600 px-4 py-3 text-neutral-200">
-                <IoPeopleOutline />
+                <UserGroupIcon className="w-5" />
                 <h2 className="font-medium ">Hosts</h2>
               </div>
               <div className="flex flex-col gap-2 px-4 pb-4">

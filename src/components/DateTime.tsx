@@ -1,5 +1,5 @@
+import { ClockIcon } from "@heroicons/react/20/solid";
 import React from "react";
-import { BiTimeFive } from "react-icons/bi";
 import { IoTodayOutline } from "react-icons/io5";
 
 type Prop = {
@@ -21,7 +21,7 @@ const DateTime = ({ datetime, duration }: Prop) => {
       </span>
       <span className="flex items-center gap-1">
         {" "}
-        <BiTimeFive className="mt-[0.15rem]" />
+        <ClockIcon className="mt-[0.15rem] w-5" />
         {date?.toLocaleString("en-US", {
           hour: "numeric",
           minute: "2-digit",

@@ -2,9 +2,8 @@ import Image from "next/image";
 import React from "react";
 import CalenderBox from "./CalenderBox";
 import Link from "next/link";
-import { BiTimeFive } from "react-icons/bi";
-import { MdToday } from "react-icons/md";
 import { type RouterOutputs, api } from "@/utils/api";
+import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   eventId: string;
@@ -52,7 +51,7 @@ const EventCardId = ({ eventId, manage }: Props) => {
 
         <div className="m-0 flex flex-col items-start gap-1 p-0 text-left text-sm text-neutral-300 xs:text-xs sm:text-sm lg:text-base">
           <span className="flex items-center gap-1 sm:hidden">
-            <MdToday />{" "}
+            <CalendarIcon className="w-5" />{" "}
             {date?.toLocaleString("en-US", {
               weekday: "long",
               day: "numeric",
@@ -60,7 +59,7 @@ const EventCardId = ({ eventId, manage }: Props) => {
             })}
           </span>
           <span className="flex items-center gap-1">
-            <BiTimeFive />
+            <ClockIcon className="w-5" />
             {date?.toLocaleString("en-US", {
               hour: "numeric",
               minute: "2-digit",
@@ -124,7 +123,7 @@ export const EventCard = ({
 
         <div className="m-0 flex flex-col items-start gap-1 p-0 text-left text-sm text-neutral-300 xs:text-xs sm:text-sm lg:text-base">
           <span className="flex items-center gap-1 sm:hidden">
-            <MdToday />{" "}
+            <CalendarIcon className="w-5" />{" "}
             {date?.toLocaleString("en-US", {
               weekday: "long",
               day: "numeric",
@@ -132,7 +131,7 @@ export const EventCard = ({
             })}
           </span>
           <span className="flex items-center gap-1">
-            <BiTimeFive />
+            <ClockIcon className="w-5" />
             {date?.toLocaleString("en-US", {
               hour: "numeric",
               minute: "2-digit",

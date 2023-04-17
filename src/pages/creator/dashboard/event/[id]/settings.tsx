@@ -4,8 +4,7 @@ import React, { useState, type ReactNode } from "react";
 import { DashboardLayout } from "../..";
 import { EventLayout } from ".";
 import { api } from "@/utils/api";
-import { AiOutlineDelete } from "react-icons/ai";
-import { IoMdClose } from "react-icons/io";
+import { TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
 const EventSettings = () => {
   const router = useRouter();
@@ -31,7 +30,7 @@ const EventSettings = () => {
             }}
             className="flex items-center gap-1 rounded-lg border border-red-500 bg-red-500/10 px-3 py-2 text-red-500"
           >
-            <AiOutlineDelete />
+            <TrashIcon className="w-5" />
             Delete Event
           </button>
         </div>
@@ -54,7 +53,7 @@ const EventSettings = () => {
                 type="button"
                 className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
               >
-                <IoMdClose />
+                <XMarkIcon className="w-5" />
               </button>
             </div>
             {/* <!-- Modal body --> */}

@@ -1,15 +1,19 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { HiArrowSmRight } from "react-icons/hi";
 import Layout from "@/components/layouts/main";
 import ClaimLink from "@/components/ClaimLink";
-import { BsCalendarEventFill } from "react-icons/bs";
-import { FaListAlt, FaMoneyBill } from "react-icons/fa";
-import { AiFillDatabase } from "react-icons/ai";
-import { BiNews } from "react-icons/bi";
-import { MdMarkEmailUnread } from "react-icons/md";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import ArrowRightIcon from "@heroicons/react/20/solid/ArrowRightIcon";
+import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
+import {
+  CircleStackIcon,
+  CurrencyDollarIcon,
+  EnvelopeIcon,
+  ListBulletIcon,
+  NewspaperIcon,
+} from "@heroicons/react/20/solid";
+
 const Home: NextPage = () => {
   return (
     <Layout>
@@ -68,7 +72,7 @@ export function Hero() {
                         ? "Go to dashboard"
                         : "Become a Kreator now"} */}
                       Become a Kreator now
-                      <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
+                      <ArrowRightIcon className="w-5 text-xl duration-300 group-hover:translate-x-1" />
                     </a>
                   </div>
                 </div>
@@ -124,7 +128,7 @@ export const Features = () => {
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <BsCalendarEventFill />
+                  <CalenderDaysIcon className="w-5" />
                 </div>
                 <p className="ml-16 text-lg font-medium leading-6">
                   Live events to filter your audience
@@ -138,7 +142,7 @@ export const Features = () => {
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <FaListAlt />
+                  <ListBulletIcon className="w-5" />
                 </div>
                 <p className="ml-16 flex items-center gap-2 text-lg font-medium leading-6">
                   Create courses for a cohort of students{" "}
@@ -179,7 +183,7 @@ export const Features = () => {
               <div className="relative">
                 <dt>
                   <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                    <AiFillDatabase />
+                    <CircleStackIcon className="w-5" />
                   </div>
                   <p className="ml-16 text-lg font-medium leading-6">
                     Database of audience who really care
@@ -195,7 +199,7 @@ export const Features = () => {
               <div className="relative">
                 <dt>
                   <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                    <FaMoneyBill />
+                    <CurrencyDollarIcon className="w-5" />
                   </div>
                   <p className="ml-16 text-lg font-medium leading-6">
                     Paying audience is important
@@ -236,7 +240,7 @@ export const Features = () => {
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <BiNews />
+                  <NewspaperIcon className="w-5" />
                 </div>
                 <p className="ml-16 text-lg font-medium leading-6">
                   Newsletters to target your audience
@@ -251,7 +255,7 @@ export const Features = () => {
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <MdMarkEmailUnread />
+                  <EnvelopeIcon className="w-5" />
                 </div>
                 <p className="ml-16 text-lg font-medium leading-6">
                   Send custom emails to the database we help you build

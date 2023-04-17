@@ -5,25 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment, type ReactNode } from "react";
-import { BiLogOut } from "react-icons/bi";
-import { GiHamburgerMenu } from "react-icons/gi";
-import {
-  BsCalendarEvent,
-  BsCalendarEventFill,
-  BsChevronDown,
-  BsPeople,
-  BsPeopleFill,
-} from "react-icons/bs";
-import { FiArrowUpRight } from "react-icons/fi";
-import { MdEventAvailable } from "react-icons/md";
-// import { useRouter } from "next/router";
-import {
-  RiSettings3Line,
-  RiSettings3Fill,
-  RiUserFollowFill,
-} from "react-icons/ri";
-// import { useEffect } from "react";
+import CalenderIcon from "@heroicons/react/20/solid/CalendarIcon";
+import { CalendarIcon } from "@heroicons/react/24/outline";
+import UserGroupIcon from "@heroicons/react/20/solid/UserGroupIcon";
+import { UserGroupIcon as UserGroupIconO } from "@heroicons/react/24/outline";
 
+import Cog6ToothIcon from "@heroicons/react/20/solid/Cog6ToothIcon";
+import { Cog6ToothIcon as Cog6ToothIconO } from "@heroicons/react/24/outline";
+import Bars3Icon from "@heroicons/react/20/solid/Bars3Icon";
+import ChevronDownIcon from "@heroicons/react/20/solid/ChevronDownIcon";
+import ArrowLeftOnRectangleIcon from "@heroicons/react/20/solid/ArrowLeftOnRectangleIcon";
+import UserPlusIcon from "@heroicons/react/20/solid/UserPlusIcon";
+import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
+import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 export default function Dashboard() {
   return <div />;
 }
@@ -77,7 +71,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                     </p>
                     <div className="flex items-center truncate text-xs font-medium text-neutral-300 decoration-neutral-400">
                       {creator?.creatorProfile}{" "}
-                      <FiArrowUpRight className="text-lg text-pink-600" />
+                      <ArrowUpRightIcon className="w-6 text-pink-600" />
                     </div>
                   </div>
                 </div>
@@ -109,16 +103,16 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               }`}
             >
               <span className="w-1/3" />
-              <div className="flex w-full items-center gap-2">
-                <BsCalendarEvent
-                  className={` ${
+              <div className="flex  w-full items-center gap-2">
+                <CalendarIcon
+                  className={`w-6 ${
                     pathname && pathname.startsWith("/creator/dashboard/event")
                       ? "hidden"
                       : ""
                   }`}
                 />{" "}
-                <BsCalendarEventFill
-                  className={`${
+                <CalenderIcon
+                  className={` w-6 ${
                     pathname && pathname.startsWith("/creator/dashboard/event")
                       ? "flex"
                       : "hidden"
@@ -145,16 +139,16 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               <span className="w-1/3" />
 
               <div className="flex w-full items-center gap-2">
-                <BsPeople
-                  className={`${
+                <UserGroupIconO
+                  className={` w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/audience")
                       ? "hidden"
                       : ""
                   }`}
                 />{" "}
-                <BsPeopleFill
-                  className={`${
+                <UserGroupIcon
+                  className={`w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/audience")
                       ? "flex"
@@ -182,16 +176,16 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               <span className="w-1/3" />
 
               <div className="flex w-full items-center gap-2">
-                <RiSettings3Line
-                  className={`${
+                <Cog6ToothIconO
+                  className={` w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/settings")
                       ? "hidden"
                       : ""
                   }`}
                 />{" "}
-                <RiSettings3Fill
-                  className={`${
+                <Cog6ToothIcon
+                  className={` w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/settings")
                       ? "flex"
@@ -214,7 +208,11 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                   <Menu.Button className="flex h-12 w-full grid-cols-3 items-center gap-3 text-xl transition duration-300 hover:bg-neutral-800 hover:text-pink-500 active:bg-neutral-800  active:text-pink-500">
                     <span className="w-1/3" />
                     <div className="flex w-full items-center justify-start gap-2 transition-transform duration-300">
-                      {open ? <BsChevronDown /> : <GiHamburgerMenu />}
+                      {open ? (
+                        <ChevronDownIcon className="w-6" />
+                      ) : (
+                        <Bars3Icon className="w-6" />
+                      )}
                       <span className="hidden md:block">More</span>
                     </div>
                     <span className="w-1" />
@@ -236,7 +234,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                         >
                           <Menu.Item>
                             <div className="flex items-center gap-2 text-xl md:text-sm">
-                              <MdEventAvailable />{" "}
+                              <CalenderDaysIcon className="w-4" />{" "}
                               <span className="hidden md:block">
                                 Registered Events
                               </span>
@@ -250,7 +248,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                         >
                           <Menu.Item>
                             <div className="flex items-center gap-2 text-xl md:text-sm">
-                              <BiLogOut />{" "}
+                              <ArrowLeftOnRectangleIcon className="w-4" />{" "}
                               <span className="hidden md:block">Sign Out</span>{" "}
                             </div>
                           </Menu.Item>
@@ -261,7 +259,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                         >
                           <Menu.Item>
                             <div className="flex items-center gap-2 text-xl md:text-sm">
-                              <RiUserFollowFill />{" "}
+                              <UserPlusIcon className="w-4" />{" "}
                               <span className="hidden md:block">
                                 Public Profile
                               </span>{" "}

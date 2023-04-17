@@ -2,13 +2,11 @@ import Head from "next/head";
 import { DashboardLayout } from ".";
 import { api } from "@/utils/api";
 import getCSV from "@/helpers/downloadCSV";
-import { RiFileDownloadLine } from "react-icons/ri";
 import React from "react";
 import { useTable, type Column } from "react-table";
-import { RxAvatar } from "react-icons/rx";
 import Image from "next/image";
 import { Loader } from "@/components/Loader";
-
+import { FolderArrowDownIcon, UserIcon } from "@heroicons/react/20/solid";
 const Audience = () => {
   const { data: audience, isLoading } =
     api.creator.getAudienceMembers.useQuery();
@@ -31,7 +29,7 @@ const Audience = () => {
     () => [
       {
         id: "img",
-        Header: <RxAvatar />,
+        Header: <UserIcon className="w-5" />,
         accessor: "col1",
       },
       {
@@ -88,7 +86,7 @@ const Audience = () => {
               );
             }}
           >
-            <RiFileDownloadLine /> Download CSV
+            <FolderArrowDownIcon className="w-5" /> Download CSV
           </button>
         </div>
         {audience && audience.length > 0 ? (

@@ -6,10 +6,9 @@ import { DashboardLayout } from "../..";
 import { EventLayout } from ".";
 import { api } from "@/utils/api";
 import Image from "next/image";
-import { RiFileDownloadLine } from "react-icons/ri";
 import getCSV from "@/helpers/downloadCSV";
 import { type Column, useTable } from "react-table";
-import { RxAvatar } from "react-icons/rx";
+import { FolderArrowDownIcon, UserIcon } from "@heroicons/react/20/solid";
 
 const EventRegistrations = () => {
   const router = useRouter();
@@ -35,7 +34,7 @@ const EventRegistrations = () => {
     () => [
       {
         id: "img",
-        Header: <RxAvatar />,
+        Header: <UserIcon className="w-5" />,
         accessor: "col1",
       },
       {
@@ -85,7 +84,7 @@ const EventRegistrations = () => {
               );
             }}
           >
-            <RiFileDownloadLine /> Download CSV
+            <FolderArrowDownIcon className="w-5" /> Download CSV
           </button>
         </div>
         {event?.registrations && event.registrations.length > 0 ? (

@@ -7,15 +7,13 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
-import { AiOutlineLink } from "react-icons/ai";
-import { RxImage } from "react-icons/rx";
 import { date, number, object, string, type z } from "zod";
 import dayjs from "dayjs";
-import { HiOutlineLocationMarker } from "react-icons/hi";
 import dynamic from "next/dynamic";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
+import { PhotoIcon, LinkIcon } from "@heroicons/react/20/solid";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -172,7 +170,7 @@ const EventEditModal = () => {
               }
             }}
           />
-          <RxImage />
+          <PhotoIcon className="w-4" />
           Upload Cover
         </div>
       </div>
@@ -277,7 +275,7 @@ const EventEditModal = () => {
               placeholder="Google Meet or YouTube URL"
               className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
             />
-            <AiOutlineLink className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
+            <LinkIcon className="absolute ml-2 w-4 text-neutral-400 peer-focus:text-neutral-200" />
           </div>
           {methods.formState.errors.eventUrl?.message && (
             <p className="text-red-700">
@@ -295,7 +293,7 @@ const EventEditModal = () => {
               placeholder="Your event's address"
               className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
             />
-            <HiOutlineLocationMarker className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
+            <LinkIcon className="absolute ml-2 w-4 text-neutral-400 peer-focus:text-neutral-200" />
           </div>
 
           {methods.formState.errors.eventLocation?.message && (

@@ -1,5 +1,5 @@
-import { HiArrowSmRight } from "react-icons/hi";
 import Link from "next/link";
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
 
 export default function Page() {
   return (
@@ -21,7 +21,7 @@ export default function Page() {
             className={`group inline-flex items-center gap-[0.15rem] rounded-xl bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
           >
             Back to Homepage
-            <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
+            <ArrowRightIcon className="w-5 text-xl duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
       </div>

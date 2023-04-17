@@ -8,7 +8,7 @@ import Image from "next/image";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import Link from "next/link";
-import { IoReturnUpForward } from "react-icons/io5";
+import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -29,7 +29,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           href="/"
           className="mt-4 flex items-center gap-2 text-xl font-medium text-pink-500 transition duration-300 hover:text-pink-600"
         >
-          <IoReturnUpForward />
+          <ArrowLeftIcon className="w-6" />
           Go back to home
         </Link>
       </div>

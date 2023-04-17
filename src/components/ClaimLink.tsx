@@ -2,11 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "public/kroto-logo.png";
 import React, { useEffect, useState } from "react";
-import { BsArrowRight } from "react-icons/bs";
 import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import useToast from "@/hooks/useToast";
+import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
 
 export default function ClaimLink({
   variant,
@@ -77,7 +77,7 @@ export default function ClaimLink({
                   : "right-8 translate-y-5 text-3xl "
               } transition-all duration-300 hover:translate-x-1`}
             >
-              <BsArrowRight />
+              <ArrowLongRightIcon className="w-8" />
             </button>
           )}
         </div>
