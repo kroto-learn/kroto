@@ -362,6 +362,7 @@ const CreateEvent = () => {
                       timearr[0] = hmarr.join(":");
                       console.log(timearr.join(" "));
 
+                      console.log(timearr)
                       return timearr.join(" ");
                     })(),
                     "HH:mm A"

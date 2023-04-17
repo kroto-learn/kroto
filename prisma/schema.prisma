@@ -70,8 +70,8 @@ model Event {
   eventUrl         String?
   eventType        String?
   eventLocation    String?
-  datetime         DateTime
-  duration         Int?
+  startTime        DateTime
+  endTime          DateTime
   creatorId        String
   audienceMemberId String?
   creator          User           @relation(fields: [creatorId], references: [id])
