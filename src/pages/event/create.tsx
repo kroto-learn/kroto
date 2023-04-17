@@ -343,6 +343,7 @@ const CreateEvent = () => {
                 autoFocus={false}
                 bordered={false}
                 className=""
+                use12Hours
                 value={[
                   dayjs(
                     (() => {
@@ -353,6 +354,7 @@ const CreateEvent = () => {
                           minute: "2-digit",
                           hour12: true,
                         });
+                      console.log(time);
                       const timearr = (time ?? "").split(" ");
                       const hmarr = timearr.join().split(":");
                       hmarr[1] = (
@@ -362,7 +364,7 @@ const CreateEvent = () => {
                       timearr[0] = hmarr.join(":");
                       console.log(timearr.join(" "));
 
-                      console.log(timearr)
+                      console.log(timearr);
                       return timearr.join(" ");
                     })(),
                     "HH:mm A"
