@@ -43,6 +43,21 @@ export const eventRouter = createTRPCRouter({
       return { ...event, creator: user, registrations };
     }),
 
+  // User for RouterOutputs don't remove.
+  getEvent: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const event = prisma.event.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      return event;
+    }),
+
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
