@@ -105,11 +105,22 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           <h2 className="text-lg font-medium uppercase tracking-wider text-neutral-200">
             Upcoming Events
           </h2>
-          <div className="flex w-full flex-col items-center gap-4">
-            {creator?.events?.map((event) => (
-              <EventCard key={event?.id ?? ""} event={event} />
-            ))}
-          </div>
+          {creator.events && creator.events.length > 0 ? (
+            <div className="flex w-full flex-col items-center gap-4">
+              {creator?.events?.map((event) => (
+                <EventCard key={event?.id ?? ""} event={event} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+              <div className="relative aspect-square w-40 object-contain">
+                <Image src="/empty/event_empty.svg" alt="empty" fill />
+              </div>
+              <p className="mb-2 text-neutral-400">
+                The creater has not created any events.
+              </p>
+            </div>
+          )}
         </div>
       </main>
     </>

@@ -8,7 +8,22 @@ import { api } from "@/utils/api";
 import Image from "next/image";
 import getCSV from "@/helpers/downloadCSV";
 import { type Column, useTable } from "react-table";
-import { FolderArrowDownIcon, UserIcon } from "@heroicons/react/20/solid";
+import {
+  FolderArrowDownIcon,
+  LinkIcon,
+  UserIcon,
+} from "@heroicons/react/20/solid";
+import {
+  LinkedinShareButton,
+  LinkedinIcon,
+  FacebookShareButton,
+  FacebookIcon,
+  TwitterShareButton,
+  TwitterIcon,
+  WhatsappShareButton,
+  WhatsappIcon,
+} from "next-share";
+import useToast from "@/hooks/useToast";
 
 const EventRegistrations = () => {
   const router = useRouter();
@@ -53,6 +68,8 @@ const EventRegistrations = () => {
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance;
+
+  const { successToast } = useToast();
 
   return (
     <>
@@ -165,8 +182,71 @@ const EventRegistrations = () => {
             </tbody>
           </table>
         ) : (
-          <div className="w-full p-4">
-            <p>No registrations yet</p>
+          <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+            <div className="relative aspect-square w-40 object-contain">
+              <Image src="/empty/users_empty.svg" alt="empty" fill />
+            </div>
+            <p className="text-neutral-400">
+              Nobody registered to your event yet.
+            </p>
+            <p className="mb-2 text-neutral-400">
+              Share the event in your community.
+            </p>
+
+            <div className="flex items-center gap-2">
+              <button
+                className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
+                onClick={() => {
+                  void navigator.clipboard.writeText(
+                    `https://kroto.in/event/${event?.id ?? ""}`
+                  );
+                  successToast("Event URL copied to clipboard!");
+                }}
+              >
+                <LinkIcon className="w-3" />
+              </button>
+              <LinkedinShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+              >
+                <LinkedinIcon
+                  size={28}
+                  round
+                  className="grayscale duration-300 hover:grayscale-0"
+                />
+              </LinkedinShareButton>
+              <FacebookShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+                quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                hashtag={"#kroto"}
+              >
+                <FacebookIcon
+                  size={28}
+                  round
+                  className="grayscale duration-300 hover:grayscale-0"
+                />
+              </FacebookShareButton>
+              <TwitterShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+              >
+                <TwitterIcon
+                  size={28}
+                  round
+                  className="grayscale duration-300 hover:grayscale-0"
+                />
+              </TwitterShareButton>
+              <WhatsappShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                separator=": "
+              >
+                <WhatsappIcon
+                  size={28}
+                  round
+                  className="grayscale duration-300 hover:grayscale-0"
+                />
+              </WhatsappShareButton>
+            </div>
           </div>
         )}
       </div>

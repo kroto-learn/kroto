@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState, memo } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
-import { date, number, object, string, type z } from "zod";
+import { date, object, string, type z } from "zod";
 import dayjs from "dayjs";
 import dynamic from "next/dynamic";
 import "@uiw/react-md-editor/markdown-editor.css";
@@ -15,7 +15,6 @@ import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import { PhotoIcon, LinkIcon } from "@heroicons/react/20/solid";
 import { Loader } from "./Loader";
-import { addDurationtoDateTime } from "@/helpers/time";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -31,9 +30,9 @@ const editEventFormSchema = object({
   datetime: date({
     required_error: "Please enter event's date and time.",
   }),
-  duration: number({
-    required_error: "Please enter event's duration.",
-  }).nonnegative(),
+  endTime: date({
+    required_error: "Please enter event's end date and time.",
+  }),
 })
   .optional()
   .refine(
@@ -119,7 +118,7 @@ const EventEditModal = () => {
       methods.setValue("eventType", event?.eventType ?? "");
       methods.setValue("description", event?.description ?? "");
       methods.setValue("datetime", event?.datetime ?? new Date());
-      methods.setValue("duration", 0);
+      methods.setValue("endTime", event?.endTime ?? new Date());
 
       setStartTime(
         (event?.datetime ?? new Date()).toLocaleTimeString("en-US", {
@@ -130,10 +129,7 @@ const EventEditModal = () => {
       );
 
       setEndTime(
-        addDurationtoDateTime(
-          event?.datetime ?? new Date(),
-          event?.duration ?? 0
-        ).toLocaleTimeString("en-US", {
+        (event?.endTime ?? new Date()).toLocaleTimeString("en-US", {
           hour: "numeric",
           minute: "2-digit",
           hour12: true,
@@ -157,7 +153,6 @@ const EventEditModal = () => {
           console.log(startTime, endTime);
           const etime = dayjs(endTime, "hh:mm A").toDate();
 
-          const duration = (etime.getTime() - stime.getTime()) / 60000;
           try {
             await eventUpdateMutation(
               {
@@ -169,7 +164,7 @@ const EventEditModal = () => {
                   eventLocation: values.eventLocation ?? "",
                   eventUrl: values.eventUrl ?? "",
                   datetime: updateddt,
-                  duration,
+                  endTime: etime,
                 },
                 id: id,
               } as EventUpdateType,
@@ -446,9 +441,9 @@ const EventEditModal = () => {
             {methods.formState.errors.datetime?.message}
           </p>
         )}
-        {methods.formState.errors.duration?.message && (
+        {methods.formState.errors.endTime?.message && (
           <p className="text-red-700">
-            {methods.formState.errors.duration?.message}
+            {methods.formState.errors.endTime?.message}
           </p>
         )}
       </div>
@@ -457,7 +452,7 @@ const EventEditModal = () => {
         className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center font-medium text-neutral-200 transition-all duration-300 disabled:bg-neutral-700 disabled:text-neutral-300`}
         type="submit"
       >
-        {isUpdateLoading ? <Loader /> : <></>} Update Event
+        {isUpdateLoading ? <Loader white /> : <></>} Update Event
       </button>
     </form>
   );

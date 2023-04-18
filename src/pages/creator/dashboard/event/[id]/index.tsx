@@ -40,7 +40,6 @@ import {
   RocketLaunchIcon,
   LinkIcon,
 } from "@heroicons/react/20/solid";
-import { addDurationtoDateTime } from "@/helpers/time";
 
 const EventOverview = () => {
   const router = useRouter();
@@ -62,12 +61,9 @@ const EventOverview = () => {
   const { mutateAsync: removeHost, isLoading: removingHost } =
     api.event.removeHost.useMutation();
 
-  const date = event && event.datetime ? new Date(event.datetime) : new Date();
   const [startEventModal, setStartEventModal] = useState(false);
 
   const { successToast } = useToast();
-
-  console.log("helper test", new Date(), addDurationtoDateTime(new Date(), 15));
 
   // const { data: creator } = api.creator.getProfile.useQuery();
 
@@ -91,11 +87,8 @@ const EventOverview = () => {
           <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
         {(event?.datetime?.getTime() as number) <= new Date().getTime() &&
-        addDurationtoDateTime(
-          event?.datetime as Date,
-          event?.duration ?? 0
-        )?.getTime() >= new Date().getTime() ? (
-          <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 p-1 px-3">
+        (event?.endTime?.getTime() as number) >= new Date().getTime() ? (
+          <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2">
             <div className="flex items-center gap-2">
               <span className="relative flex h-3 w-3 items-center justify-center">
                 <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
@@ -141,22 +134,19 @@ const EventOverview = () => {
                 <div className="flex gap-2">
                   <CalenderBox date={event?.datetime ?? new Date()} />
                   <p className="text-left text-sm  font-medium text-neutral-300">
-                    {date?.toLocaleString("en-US", {
+                    {event.datetime?.toLocaleString("en-US", {
                       weekday: "long",
                       day: "numeric",
                       month: "long",
                     })}
                     <br />
-                    {date?.toLocaleString("en-US", {
+                    {event.datetime?.toLocaleString("en-US", {
                       hour: "numeric",
                       minute: "2-digit",
                       hour12: true,
                     })}{" "}
                     to{" "}
-                    {new Date(
-                      (event?.datetime?.getTime() ?? 0) +
-                        (event?.duration ?? 0) * 60000
-                    )?.toLocaleString("en-US", {
+                    {event.endTime?.toLocaleString("en-US", {
                       hour: "numeric",
                       minute: "2-digit",
                       hour12: true,
@@ -442,7 +432,7 @@ export function AddHostModel({
                           className="absolute right-0 top-0 flex items-center gap-1 rounded-r-lg border border-pink-700 bg-pink-700 p-2.5 text-sm font-medium text-white hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
                         >
                           {isLoading ? (
-                            <Loader />
+                            <Loader white />
                           ) : (
                             <UserPlusIcon className="w-4" />
                           )}{" "}

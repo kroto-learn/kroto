@@ -5,6 +5,7 @@ import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
 import Head from "next/head";
 import { EventCard } from "@/components/EventCard";
+import Image from "next/image";
 
 export const metadata = {
   title: "Past Events | Dashboard",
@@ -26,11 +27,22 @@ const PastEvents = () => {
       <Head>
         <title>Events | Dashboard</title>
       </Head>
-      <div className="flex w-full flex-col items-start gap-4">
-        {events?.map((event) => (
-          <EventCard key={event?.id ?? ""} manage event={event} />
-        ))}
-      </div>
+      {events && events.length > 0 ? (
+        <div className="flex w-full flex-col items-start gap-4">
+          {events?.map((event) => (
+            <EventCard key={event?.id ?? ""} manage event={event} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+          <div className="relative aspect-square w-40 object-contain">
+            <Image src="/empty/event_empty.svg" alt="empty" fill />
+          </div>
+          <p className="mb-2 text-neutral-400">
+            You don&apos;t have any past events.
+          </p>
+        </div>
+      )}
     </>
   );
 };

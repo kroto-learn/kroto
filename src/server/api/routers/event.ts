@@ -127,7 +127,7 @@ export const eventRouter = createTRPCRouter({
           eventUrl: input.eventUrl ?? "",
           eventLocation: input.eventLocation ?? "",
           eventType: input.eventType,
-          duration: input.duration,
+          // duration: input.duration,
 
           creatorId: ctx.session.user.id,
         },
@@ -169,8 +169,9 @@ export const eventRouter = createTRPCRouter({
           eventUrl: input.eventUrl ?? "",
           eventLocation: input.eventLocation ?? "",
           eventType: input.eventType,
-          duration: input.duration,
+          // duration: input.duration,
           thumbnail: thumbnail,
+          endTime: input.endTime,
 
           creatorId: ctx.session.user.id,
         },

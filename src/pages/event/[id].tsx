@@ -145,7 +145,7 @@ export default function EventPage({ eventId }: Props) {
                 >
                   {loading ? (
                     <div>
-                      <Loader />
+                      <Loader white />
                     </div>
                   ) : (
                     <>

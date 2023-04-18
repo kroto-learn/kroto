@@ -76,23 +76,36 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
               </div>
             ) : (
               <>
-                <div className="my-2 flex flex-col gap-2">
-                  {(profile?.registrations && profile?.registrations)?.map(
-                    (e) => (
-                      <div key={e.id ?? ""}>
-                        <EventCard event={e} />
-                      </div>
-                    )
-                  )}
-                </div>
-                <div className="mx-5 mb-2 flex justify-between">
-                  <button className="text-pink-500 transition hover:text-pink-600">
-                    View More
-                  </button>
-                  <button className="text-pink-500 transition hover:text-pink-600">
-                    Show past
-                  </button>
-                </div>
+                {profile?.registrations && profile.registrations.length > 0 ? (
+                  <>
+                    <div className="my-2 flex flex-col gap-2">
+                      {(profile?.registrations && profile?.registrations)?.map(
+                        (e) => (
+                          <div key={e.id ?? ""}>
+                            <EventCard event={e} />
+                          </div>
+                        )
+                      )}
+                    </div>
+                    <div className="mx-5 mb-2 flex justify-between">
+                      <button className="text-pink-500 transition hover:text-pink-600">
+                        View More
+                      </button>
+                      <button className="text-pink-500 transition hover:text-pink-600">
+                        Show past
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+                    <div className="relative aspect-square w-40 object-contain">
+                      <Image src="/empty/event_empty.svg" alt="empty" fill />
+                    </div>
+                    <p className="mb-2 text-neutral-400">
+                      You have not registered to any events yet.
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </div>

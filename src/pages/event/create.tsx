@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { object, string, number, date, literal } from "zod";
+import { object, string, date, literal } from "zod";
 import LinkIcon from "@heroicons/react/20/solid/LinkIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
 import fileToBase64 from "@/helpers/file";
@@ -36,9 +36,12 @@ export const createFormSchema = object({
   datetime: date({
     required_error: "Please enter event's date and time.",
   }),
-  duration: number({
-    required_error: "Please enter event's duration.",
-  }).nonnegative(),
+  endTime: date({
+    required_error: "Please enter event's end date and time.",
+  }),
+  // duration: number({
+  //   required_error: "Please enter event's duration.",
+  // }).nonnegative(),
 })
   .optional()
   .refine(
@@ -87,7 +90,8 @@ const CreateEvent = () => {
       eventUrl: "",
       eventLocation: "",
       datetime: new Date(),
-      duration: 15,
+      endTime: new Date(),
+      // duration: 15,
       thumbnail: "",
     },
   });
@@ -132,10 +136,9 @@ const CreateEvent = () => {
             const updateddt = values.datetime;
             updateddt.setHours(stime.getHours());
             updateddt.setMinutes(stime.getMinutes());
-            console.log(startTime, endTime);
             const etime = dayjs(endTime, "hh:mm A").toDate();
 
-            const duration = (etime.getTime() - stime.getTime()) / 60000;
+            // const duration = (etime.getTime() - stime.getTime()) / 60000;
 
             try {
               await eventMutation(
@@ -147,7 +150,7 @@ const CreateEvent = () => {
                   eventLocation: values.eventLocation ?? "",
                   eventUrl: values.eventUrl ?? "",
                   datetime: updateddt,
-                  duration,
+                  endTime: etime,
                 },
                 {
                   onSuccess: (createdEvent) => {
@@ -433,7 +436,7 @@ const CreateEvent = () => {
           className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
           type="submit"
         >
-          {loading && <Loader />}
+          {loading && <Loader white />}
           Create Event
         </button>
       </form>

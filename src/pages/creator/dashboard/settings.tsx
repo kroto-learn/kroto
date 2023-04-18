@@ -370,7 +370,7 @@ const Settings = () => {
               type="submit"
               className={`group my-5 inline-flex items-center gap-1 rounded-xl bg-pink-600 px-6 py-2 text-center font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
             >
-              {updating ? <Loader /> : <CloudIcon className="w-5" />} Save
+              {updating ? <Loader white /> : <CloudIcon className="w-5" />} Save
               Changes
             </button>
           </div>
