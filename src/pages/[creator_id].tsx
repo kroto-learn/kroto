@@ -15,7 +15,7 @@ type CreatorPageProps = {
 };
 
 const Index = ({ creatorProfile }: CreatorPageProps) => {
-  const { data: creator } = api.creator.getPublicProfile.useQuery({
+  const { data: creator, isLoading } = api.creator.getPublicProfile.useQuery({
     creatorProfile,
   });
 
