@@ -30,7 +30,6 @@ const giveFirstTimeIdx: (times: string[], now?: Date) => number = (
   times,
   now = new Date()
 ) => {
-  // console.log("date in", now);
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
 
@@ -46,9 +45,6 @@ const giveFirstTimeIdx: (times: string[], now?: Date) => number = (
             ? 0
             : 12
           : hour + (meridiem === "PM" ? 12 : 0);
-
-      // console.log("current", currentHour, currentMinute);
-      // console.log("currentn", hour24, minute);
 
       if (
         hour24 > currentHour ||
@@ -83,4 +79,14 @@ const updateTime = (date: Date, time: string) => {
   return date;
 };
 
-export { generateTimesArray, giveFirstTimeIdx, updateTime };
+const addDurationtoDateTime = (datetime: Date, durationInMin: number) => {
+  datetime.setTime(datetime.getTime() + durationInMin * 60000);
+  return datetime;
+};
+
+export {
+  generateTimesArray,
+  giveFirstTimeIdx,
+  updateTime,
+  addDurationtoDateTime,
+};

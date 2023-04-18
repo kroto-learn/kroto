@@ -9,7 +9,11 @@ interface ImageUploadResponse {
   key: string;
 }
 
-const imageUpload = async (base64: string, id: string): Promise<string> => {
+export const imageUpload = async (
+  base64: string,
+  id: string,
+  variant: string
+): Promise<string> => {
   // Configure AWS with your access and secret key.
   const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET } = env;
 
@@ -41,7 +45,7 @@ const imageUpload = async (base64: string, id: string): Promise<string> => {
   // This won't be needed if they're uploading their avatar, hence the filename, userAvatar.js.
   const params = {
     Bucket: S3_BUCKET,
-    Key: `${id}.${type ?? ""}`, // type is not required
+    Key: `${variant}_${id}.${type ?? ""}`, // type is not required
     Body: base64Data,
     ACL: "public-read",
     ContentEncoding: "base64", // required
@@ -54,7 +58,6 @@ const imageUpload = async (base64: string, id: string): Promise<string> => {
     const { Location, Key } = await s3.upload(params).promise();
     // Save the Location (url) to your database and Key if needs be.
     const response: ImageUploadResponse = { location: Location, key: Key };
-    console.log(response);
     return response.location;
   } catch (error: AWSError | any) {
     console.log(error);
@@ -62,4 +65,8 @@ const imageUpload = async (base64: string, id: string): Promise<string> => {
   }
 };
 
-export default imageUpload;
+export const isBase64 = (input: string): boolean => {
+  const base64Regex =
+    /^(?:[A-Za-z0-9+/]{4})*?(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+  return base64Regex.test(input);
+};

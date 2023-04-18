@@ -1,17 +1,28 @@
 import Link from "next/link";
 import Image from "next/image";
 import logo from "public/kroto-logo.png";
-import React, { useState } from "react";
-import { BsArrowRight } from "react-icons/bs";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { signIn, useSession } from "next-auth/react";
+import { api } from "@/utils/api";
+import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
 
 export default function ClaimLink({
   variant,
+  profile,
 }: {
   variant: "sm" | "lg" | "md";
+  profile?: string;
 }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [creatorProfile, setCreatorProfile] = useState<string>("");
+  const makeCreator = api.creator.makeCreator.useMutation().mutateAsync;
+
+  useEffect(() => {
+    if (profile) setCreatorProfile(profile);
+  }, [profile]);
+
   return (
     <div>
       <div className="flex justify-center">
@@ -26,10 +37,11 @@ export default function ClaimLink({
           <input
             type="text"
             id="website-admin"
+            value={creatorProfile}
             onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
               setCreatorProfile(e.target.value)
             }
-            className={`block w-min rounded-none rounded-r-full border border-l-0 border-neutral-800 bg-neutral-900/50  backdrop-blur transition duration-300 group-hover:border-neutral-700 ${
+            className={`block w-min rounded-none rounded-r-full border border-l-0 border-neutral-800 bg-neutral-900/50 fill-neutral-700  backdrop-blur transition duration-300 group-hover:border-neutral-700 ${
               variant === "sm" ? "p-2" : "p-4"
             } pl-1 ${
               variant === "lg"
@@ -42,9 +54,19 @@ export default function ClaimLink({
           />
           {creatorProfile && (
             <button
-              onClick={() => {
+              onClick={async () => {
                 localStorage.setItem("creatorProfile", creatorProfile);
-                void router.push("/creator/login-flow/auth");
+                if (session?.user) {
+                  const creator = await makeCreator({
+                    creatorProfile,
+                  });
+                  if (creator.isCreator)
+                    void router.push(`/creator/dashboard/settings`);
+                } else {
+                  void router.push(
+                    `/auth/sign-in?creatorProfile=${creatorProfile}`
+                  );
+                }
               }}
               className={`absolute  cursor-pointer rounded-full ${
                 variant === "md"
@@ -54,7 +76,7 @@ export default function ClaimLink({
                   : "right-8 translate-y-5 text-3xl "
               } transition-all duration-300 hover:translate-x-1`}
             >
-              <BsArrowRight />
+              <ArrowLongRightIcon className="w-8" />
             </button>
           )}
         </div>

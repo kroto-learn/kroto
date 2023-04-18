@@ -6,8 +6,7 @@ import {
   AiOutlineLink,
   AiOutlineTwitter,
 } from "react-icons/ai";
-import { VscGlobe } from "react-icons/vsc";
-
+import { GlobeAltIcon } from "@heroicons/react/20/solid";
 type Props = {
   href: string;
   type: string;
@@ -26,7 +25,7 @@ const Icon = ({ type }: { type: string }) => {
     case "instagram":
       return <AiFillInstagram />;
     case "website":
-      return <VscGlobe />;
+      return <GlobeAltIcon />;
     default:
       return <AiOutlineLink />;
   }

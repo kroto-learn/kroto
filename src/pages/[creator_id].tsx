@@ -1,4 +1,4 @@
-import EventCardId, { EventCard } from "@/components/EventCard";
+import { EventCard } from "@/components/EventCard";
 import SocialLink from "@/components/SocialLink";
 import type { GetStaticPropsContext } from "next";
 import Head from "next/head";
@@ -8,7 +8,7 @@ import Image from "next/image";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import Link from "next/link";
-import { IoReturnUpForward } from "react-icons/io5";
+import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -29,7 +29,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           href="/"
           className="mt-4 flex items-center gap-2 text-xl font-medium text-pink-500 transition duration-300 hover:text-pink-600"
         >
-          <IoReturnUpForward />
+          <ArrowLeftIcon className="w-6" />
           Go back to home
         </Link>
       </div>
@@ -40,6 +40,9 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
     <>
       <Head>
         <title>{`${creator?.name ?? ""} - Kroto`}</title>
+        <meta property="og:title" content={`${creator?.name} | Kroto` ?? ""} />
+        <meta property="og:description" content={creator?.bio ?? ""} />
+        <meta property="og:image" content={creator?.image ?? ""} />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
         <div className="relative mt-6 flex w-full max-w-2xl flex-col items-center">
@@ -77,32 +80,47 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                 ></SocialLink>
               ))}
             </div>
-            <Link
-              href={creator?.topmateUrl ?? ""}
-              target="_blank"
-              className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332] hover:text-neutral-200"
-            >
-              <div className="group relative h-4 w-4">
-                <Image
-                  src="/topmate_logo.png"
-                  alt="topmate"
-                  fill
-                  className="opacity-70 group-hover:opacity-100"
-                />
-              </div>
-              Schedule a 1:1 call
-            </Link>
+            {creator?.topmateUrl && creator?.topmateUrl !== "" ? (
+              <Link
+                href={creator?.topmateUrl ?? ""}
+                target="_blank"
+                className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332] hover:text-neutral-200"
+              >
+                <div className="group relative h-4 w-4">
+                  <Image
+                    src="/topmate_logo.png"
+                    alt="topmate"
+                    fill
+                    className="opacity-70 group-hover:opacity-100"
+                  />
+                </div>
+                Schedule a 1:1 call
+              </Link>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <div className="flex w-full max-w-2xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-neutral-800 p-8">
           <h2 className="text-lg font-medium uppercase tracking-wider text-neutral-200">
             Upcoming Events
           </h2>
-          <div className="flex w-full flex-col items-center gap-4">
-            {creator?.events?.map((event) => (
-              <EventCard key={event?.id ?? ""} event={event} />
-            ))}
-          </div>
+          {creator.events && creator.events.length > 0 ? (
+            <div className="flex w-full flex-col items-center gap-4">
+              {creator?.events?.map((event) => (
+                <EventCard key={event?.id ?? ""} event={event} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+              <div className="relative aspect-square w-40 object-contain">
+                <Image src="/empty/event_empty.svg" alt="empty" fill />
+              </div>
+              <p className="mb-2 text-neutral-400">
+                The creater has not created any events.
+              </p>
+            </div>
+          )}
         </div>
       </main>
     </>

@@ -1,24 +1,27 @@
-import EventCardId, { EventCard } from "@/components/EventCard";
+import { EventCard } from "@/components/EventCard";
 import { type Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-
-import HardWorkingCat from "public/CatWorkingHard.png";
 import Layout from "@/components/layouts/main";
 import ClaimLink from "@/components/ClaimLink";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
-
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 export default function Dashboard({ creators }: { creators: Creator[] }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
-
   const { data: profile, isLoading } = api.creator.getProfile.useQuery();
-  console.log(profile);
+
+  useEffect(() => {
+    if (status !== "loading" && !session?.user?.id) {
+      void router.push("/");
+    }
+  }, [router, status, session]);
 
   return (
     <Layout>
@@ -26,7 +29,10 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
         <div className="my-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-5">
-              <img
+              <Image
+                width={80}
+                height={80}
+                alt={session?.user.name ?? ""}
                 className="aspect-square w-28 rounded-full"
                 src={session?.user.image ?? ""}
               />
@@ -66,27 +72,40 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
           <div className="mb-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
             {isLoading ? (
               <div className="flex h-full items-center justify-center">
-                <Loader />
+                <Loader size="lg" />
               </div>
             ) : (
               <>
-                <div className="my-2 flex flex-col gap-2">
-                  {(profile?.registrations && profile?.registrations)?.map(
-                    (e) => (
-                      <div key={e.id ?? ""}>
-                        <EventCard event={e} />
-                      </div>
-                    )
-                  )}
-                </div>
-                <div className="mx-5 mb-2 flex justify-between">
-                  <button className="text-pink-500 transition hover:text-pink-600">
-                    View More
-                  </button>
-                  <button className="text-pink-500 transition hover:text-pink-600">
-                    Show past
-                  </button>
-                </div>
+                {profile?.registrations && profile.registrations.length > 0 ? (
+                  <>
+                    <div className="my-2 flex flex-col gap-2">
+                      {(profile?.registrations && profile?.registrations)?.map(
+                        (e) => (
+                          <div key={e.id ?? ""}>
+                            <EventCard event={e} />
+                          </div>
+                        )
+                      )}
+                    </div>
+                    <div className="mx-5 mb-2 flex justify-between">
+                      <button className="text-pink-500 transition hover:text-pink-600">
+                        View More
+                      </button>
+                      <button className="text-pink-500 transition hover:text-pink-600">
+                        Show past
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+                    <div className="relative aspect-square w-40 object-contain">
+                      <Image src="/empty/event_empty.svg" alt="empty" fill />
+                    </div>
+                    <p className="mb-2 text-neutral-400">
+                      You have not registered to any events yet.
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -116,21 +135,7 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
               </label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <svg
-                    aria-hidden="true"
-                    className="h-5 w-5 text-neutral-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
+                  <MagnifyingGlassIcon className="w-5" />
                 </div>
                 <input
                   type="search"
@@ -157,8 +162,10 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
                   </h4>
                   <div className="relative aspect-square h-56">
                     <Image
+                      width={80}
+                      height={80}
                       className="h-56"
-                      src={HardWorkingCat}
+                      src="/CatWorkingHard.png"
                       fill
                       alt="hard working cat"
                     />
@@ -194,9 +201,12 @@ export const CreatorCard = ({ creator }: { creator: Creator }) => {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-5">
-          <img
+          <Image
+            width={80}
+            height={80}
             className="aspect-square w-28 rounded-full"
             src={creator?.image_url ?? ""}
+            alt={creator?.name ?? ""}
           />
           <div>
             <h3 className="mb-1 text-3xl font-medium text-neutral-200">

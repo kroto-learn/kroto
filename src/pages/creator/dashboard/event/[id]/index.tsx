@@ -1,214 +1,320 @@
-"use client";
-
+import { Dialog, Transition } from "@headlessui/react";
+import { type Dispatch, Fragment, type SetStateAction } from "react";
 import CalenderBox from "@/components/CalenderBox";
-import fileToBase64 from "@/helpers/file";
-import "react-datepicker/dist/react-datepicker.css";
-import {
-  generateTimesArray,
-  giveFirstTimeIdx,
-  updateTime,
-} from "@/helpers/time";
-import { type CourseEvent } from "interfaces/CourseEvent";
-import { getEventsClient } from "mock/getEventsClient";
-import Image from "next/image";
-import React, { type ReactNode, useEffect, useState } from "react";
-import { AiOutlineLink } from "react-icons/ai";
-import { BiTime, BiTimeFive } from "react-icons/bi";
-import { BsCalendar3Event, BsGlobe } from "react-icons/bs";
-import { FiEdit2 } from "react-icons/fi";
-import { HiOutlineLocationMarker } from "react-icons/hi";
-import { MdClose } from "react-icons/md";
-import { RxImage } from "react-icons/rx";
-import { SiGooglemeet } from "react-icons/si";
-import { date, number, object, string, type z } from "zod";
-import DatePicker from "react-datepicker";
-import { useRouter } from "next/router";
+import React, { type ReactNode, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DashboardLayout } from "../..";
-import { type UseFormProps, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { type RouterInputs, api } from "@/utils/api";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
+import { type RouterOutputs, api } from "@/utils/api";
+import useToast from "@/hooks/useToast";
+import { Loader } from "@/components/Loader";
+import { TRPCError } from "@trpc/server";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import {
+  FacebookShareButton,
+  FacebookIcon,
+  TwitterShareButton,
+  TwitterIcon,
+  WhatsappShareButton,
+  WhatsappIcon,
+  LinkedinShareButton,
+  LinkedinIcon,
+} from "next-share";
 
-import { type MDEditorProps } from "@uiw/react-md-editor";
-import dynamic from "next/dynamic";
+// import EventEditModal from "@/components/EventEditModal";
 
-const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
+const EventEditModal = dynamic(() => import("@/components/EventEditModal"), {
   ssr: false,
 });
-
-// FIXME: time logic fix
-
-const editEventFormSchema = object({
-  thumbnail: string({
-    required_error: "Please upload a cover",
-  }),
-  title: string({
-    required_error: "Please enter event title.",
-  }),
-  description: string({
-    required_error: "Please enter event description.",
-  }).max(3000),
-  eventType: string({
-    required_error: "Please select the type of event.",
-  }).max(150),
-  eventUrl: string().url().optional(),
-  eventLocation: string().optional(),
-  datetime: date({
-    required_error: "Please enter event's date and time.",
-  }),
-  duration: number({
-    required_error: "Please enter event's duration.",
-  }).nonnegative(),
-})
-  .optional()
-  .refine(
-    (data) => {
-      if (data)
-        return data.eventType === "virtual"
-          ? data.eventUrl !== undefined && data.eventUrl !== ""
-          : data.eventLocation !== undefined && data.eventLocation !== "";
-      else return false;
-    },
-    (data) => {
-      if (data)
-        return {
-          message:
-            data && data.eventType === "virtual"
-              ? "Please enter the event URL."
-              : "Please enter the event location.",
-        };
-      else
-        return {
-          message: "",
-        };
-    }
-  );
-
-function useZodForm<TSchema extends z.ZodType>(
-  props: Omit<UseFormProps<TSchema["_input"]>, "resolver"> & {
-    schema: TSchema;
-  }
-) {
-  const form = useForm<TSchema["_input"]>({
-    ...props,
-    resolver: zodResolver(props.schema, undefined),
-  });
-
-  return form;
-}
+import { MdLocationOn } from "react-icons/md";
+import { SiGooglemeet } from "react-icons/si";
+import dynamic from "next/dynamic";
+import {
+  GlobeAltIcon,
+  PencilIcon,
+  TrashIcon,
+  UserPlusIcon,
+  XMarkIcon,
+  RocketLaunchIcon,
+  LinkIcon,
+} from "@heroicons/react/20/solid";
 
 const EventOverview = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  const { data: event } = api.event.get.useQuery({ id });
-  const eventUpdateMutation = api.event.update.useMutation().mutateAsync;
-  type EventUpdateType = RouterInputs["event"]["update"];
-
-  const times = generateTimesArray();
-  const minTimeIdx = giveFirstTimeIdx(times);
-
-  const [startTimeIdx, setStartTimeIdx] = useState<number>(
-    giveFirstTimeIdx(times, event ? event?.datetime : new Date())
-  );
-
-  const [editEvent, setEditEvent] = useState(false);
-
-  const date = event && event.datetime ? new Date(event.datetime) : new Date();
-
-  const endTime =
-    event && event.datetime
-      ? new Date(new Date(event.datetime).getTime() + 3600000)
-      : new Date();
-
-  const methods = useZodForm({
-    schema: editEventFormSchema,
-    defaultValues: {
-      datetime: new Date(),
-    },
+  const { data: event, isLoading: isEventLoading } = api.event.get.useQuery({
+    id,
   });
 
-  useEffect(() => {
-    if (!!event) {
-      methods.setValue("thumbnail", (event?.thumbnail as string) ?? "");
-      methods.setValue("datetime", event?.datetime ?? new Date());
-      methods.setValue("duration", (event?.duration as number) ?? "");
-      methods.setValue("eventType", event?.eventType ?? "");
+  console.log(isEventLoading);
 
-      setStartTimeIdx(
-        giveFirstTimeIdx(times, event ? event.datetime : new Date())
-      );
-    }
+  const [editEvent, setEditEvent] = useState(false);
+  const [open, setIsOpen] = useState<boolean>(false);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event]);
+  const { data: hosts, refetch: refetchHosts } = api.event.getHosts.useQuery({
+    eventId: event?.id ?? "",
+  });
+
+  const { mutateAsync: removeHost, isLoading: removingHost } =
+    api.event.removeHost.useMutation();
+
+  const [startEventModal, setStartEventModal] = useState(false);
+
+  const { successToast } = useToast();
+
+  // const { data: creator } = api.creator.getProfile.useQuery();
+
+  // useEffect(() => {
+  //   if (!creator?.isCreator) {
+  //     void router.push("/");
+  //   }
+  // }, [creator, router]);
+
+  if (isEventLoading)
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        <Loader size="lg" />
+      </div>
+    );
 
   if (event)
     return (
       <>
         <Head>
-          <title>{`${event?.title ?? ""} | Overview`}</title>
+          <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
-        <div className="flex w-full max-w-3xl items-start gap-8 rounded-xl bg-neutral-800 p-4">
-          <div className="flex flex-col items-start gap-4">
-            <div
-              className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
-            >
-              <Image
-                src={(event?.thumbnail as string) ?? ""}
-                alt={event?.title ?? ""}
-                fill
-                style={{ objectFit: "cover" }}
-                className="rounded-xl"
-              />
+        {(event?.datetime?.getTime() as number) <= new Date().getTime() &&
+        (event?.endTime?.getTime() as number) >= new Date().getTime() ? (
+          <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-3 w-3 items-center justify-center">
+                <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
+                <span className="h-4/5 w-4/5 rounded-full bg-pink-500"></span>
+              </span>
+              The Event is Live Now.
             </div>
-            <button
-              onClick={() => {
-                setEditEvent(true);
-              }}
-              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
-            >
-              <FiEdit2 className="" />
-              Edit Event
-            </button>
+            {event.eventType === "virtual" ? (
+              <button
+                onClick={() => {
+                  setStartEventModal(true);
+                }}
+                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600 transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
+              >
+                Join Event
+              </button>
+            ) : (
+              <></>
+            )}
+          </div>
+        ) : (
+          <></>
+        )}
+        <div className="flex w-full max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4">
+          <div className="flex w-full items-start gap-8">
+            <div className="flex flex-col items-start gap-4">
+              <div
+                className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
+              >
+                <Image
+                  src={(event?.thumbnail as string) ?? ""}
+                  alt={event?.title ?? ""}
+                  fill
+                  style={{ objectFit: "cover" }}
+                  className="rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between">
+              <div className="flex flex-col gap-3">
+                <h3 className="font-medium text-neutral-200">When & Where</h3>
+                <div className="flex gap-2">
+                  <CalenderBox date={event?.datetime ?? new Date()} />
+                  <p className="text-left text-sm  font-medium text-neutral-300">
+                    {event.datetime?.toLocaleString("en-US", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                    })}
+                    <br />
+                    {event.datetime?.toLocaleString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}{" "}
+                    to{" "}
+                    {event.endTime?.toLocaleString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-neutral-400">
+                  {event?.eventType === "virtual" ? (
+                    <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                  ) : (
+                    <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                  )}
+                  <p>
+                    {event?.eventType === "virtual"
+                      ? "Google Meet"
+                      : event?.eventLocation}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-3">
-              <h3 className="font-medium text-neutral-200">When & Where</h3>
-              <div className="flex gap-2">
-                <CalenderBox date={new Date()} />
-                <p className="text-left text-sm  font-medium text-neutral-300">
-                  {date?.toLocaleString("en-US", {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                  })}
-                  <br />
-                  {date?.toLocaleString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}{" "}
-                  to{" "}
-                  {endTime?.toLocaleString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true,
-                  })}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-neutral-400">
-                <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />{" "}
-                <p>Google Meet</p>
-              </div>
+          <div className="flex w-full items-center gap-12">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => {
+                  setEditEvent(true);
+                  // router.push(`${router.asPath}/edit`)
+                }}
+                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+              >
+                <PencilIcon className="w-3" />
+                Edit Event
+              </button>
+
+              <button
+                onClick={() => {
+                  setStartEventModal(true);
+                }}
+                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600  transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
+              >
+                <RocketLaunchIcon className="w-3" />
+                Start Event
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
+                onClick={() => {
+                  void navigator.clipboard.writeText(
+                    `https://kroto.in/event/${event?.id ?? ""}`
+                  );
+                  successToast("Event URL copied to clipboard!");
+                }}
+              >
+                <LinkIcon className="w-3" />
+              </button>
+              <LinkedinShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+              >
+                <LinkedinIcon
+                  size={28}
+                  round
+                  className="grayscale duration-300 hover:grayscale-0"
+                />
+              </LinkedinShareButton>
+              <FacebookShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+                quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                hashtag={"#kroto"}
+              >
+                <FacebookIcon
+                  size={28}
+                  round
+                  className="grayscale duration-300 hover:grayscale-0"
+                />
+              </FacebookShareButton>
+              <TwitterShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+              >
+                <TwitterIcon
+                  size={28}
+                  round
+                  className="grayscale duration-300 hover:grayscale-0"
+                />
+              </TwitterShareButton>
+              <WhatsappShareButton
+                url={`https://kroto.in/event/${event?.id ?? ""}`}
+                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                separator=": "
+              >
+                <WhatsappIcon
+                  size={28}
+                  round
+                  className="grayscale duration-300 hover:grayscale-0"
+                />
+              </WhatsappShareButton>
             </div>
           </div>
         </div>
+
+        {/* start event confirmation modal */}
+        <StartEventModal
+          isOpen={startEventModal}
+          setIsOpen={setStartEventModal}
+          event={event}
+        />
+
+        <div className="w-full">
+          <div className="my-5 flex w-full items-center justify-between">
+            <h3 className="text-2xl font-medium text-neutral-200">Hosts</h3>
+            <button
+              onClick={() => setIsOpen(true)}
+              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-sm font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+            >
+              <UserPlusIcon className="w-4" /> Add Host
+            </button>
+          </div>
+          <ul className="w-full divide-y divide-neutral-700">
+            {hosts instanceof TRPCError
+              ? ""
+              : hosts?.map((host) => (
+                  <li key={host?.id} className="py-3 sm:py-4">
+                    <div className="flex w-full items-center space-x-4">
+                      <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
+                        <Image
+                          className="rounded-full"
+                          src={host?.image ?? ""}
+                          alt="host img"
+                          fill
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-neutral-200">
+                          {host?.name ?? ""}
+                        </p>
+                        <p className="truncate text-sm text-neutral-400">
+                          {host?.email ?? ""}
+                        </p>
+                      </div>
+                      <button
+                        onClick={async () => {
+                          // TODO: implement remove host
+                          // await removeHost({ hostId: host?.id ?? "" });
+                          // void refetchHosts();
+                        }}
+                        className="flex items-center gap-1 rounded-xl border border-pink-700 bg-pink-700 p-1 px-2 text-sm font-medium text-white transition duration-300 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
+                      >
+                        {removingHost ? (
+                          <Loader size="lg" />
+                        ) : (
+                          <TrashIcon className="w-4" />
+                        )}{" "}
+                        Remove
+                      </button>
+                    </div>
+                  </li>
+                ))}
+          </ul>
+        </div>
+        <AddHostModel
+          refetch={refetchHosts}
+          eventId={event.id ?? ""}
+          isOpen={open}
+          setIsOpen={setIsOpen}
+        />
 
         {/* side edit event drawer */}
 
@@ -223,310 +329,248 @@ const EventOverview = () => {
             }}
             className="self-start rounded-xl border border-neutral-500 p-1 text-xl text-neutral-400"
           >
-            <MdClose />
+            <XMarkIcon className="w-5" />
           </button>
 
-          <form
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            onSubmit={methods.handleSubmit(async (values) => {
-              if (!!values) {
-                const mValues = values;
-                if (mValues.eventType === "virtual") mValues.eventLocation = "";
-                else mValues.eventUrl = "";
-                try {
-                  await eventUpdateMutation({
-                    ...values,
-                    id: id,
-                  } as EventUpdateType);
-                } catch (err) {
-                  console.log(err);
-                }
-              }
-            })}
-            className="mx-auto my-4 flex w-full max-w-2xl flex-col gap-8"
-          >
-            <div className="relative flex aspect-[18/9] w-full items-end justify-start overflow-hidden rounded-xl bg-neutral-700 text-sm">
-              {!!methods.getValues("thumbnail") && (
-                <Image
-                  src={methods.getValues("thumbnail")}
-                  alt="thumbnail"
-                  fill
-                  className="object-cover"
-                />
-              )}
-              <div className="relative m-2 flex w-auto cursor-pointer items-center gap-2 rounded-xl border border-neutral-500 bg-neutral-800/80 p-3 text-sm font-medium duration-300 hover:border-neutral-400">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="z-2 absolute h-full w-full cursor-pointer opacity-0"
-                  onChange={(e) => {
-                    if (e.currentTarget.files && e.currentTarget.files[0]) {
-                      fileToBase64(e.currentTarget.files[0])
-                        .then((b64) => {
-                          if (b64) methods.setValue("thumbnail", b64);
-                        })
-                        .catch((err) => console.log(err));
-                    }
-                  }}
-                />
-                <RxImage />
-                Upload Cover
-              </div>
-            </div>
-
-            {methods.formState.errors.thumbnail?.message && (
-              <p className="text-red-700">
-                {methods.formState.errors.thumbnail?.message}
-              </p>
-            )}
-
-            <div className="flex flex-col gap-3">
-              <label htmlFor="title" className="text-lg  text-neutral-200">
-                Event Title
-              </label>
-              <input
-                {...methods.register("title")}
-                defaultValue={(event && event.title) ?? ""}
-                placeholder="Event Title"
-                className="w-full rounded-lg bg-neutral-700 px-3 py-2 text-sm font-medium  text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400 sm:text-lg"
-              />
-              {methods.formState.errors.title?.message && (
-                <p className="text-red-700">
-                  {methods.formState.errors.title?.message}
-                </p>
-              )}
-            </div>
-
-            {/* TODO: Make it a rich text editor */}
-            <div className="flex flex-col gap-3">
-              <label
-                htmlFor="description"
-                className="text-lg  text-neutral-200"
-              >
-                Description
-              </label>
-              {/* <textarea
-                rows={8}
-                {...methods.register("description")}
-                defaultValue={(event && event.description) ?? ""}
-                className="w-full rounded-lg bg-neutral-700 px-3 py-2 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-              /> */}
-              <div data-color-mode="dark">
-                <MDEditor
-                  height={200}
-                  value={methods.watch()?.description}
-                  onChange={(mdtext) => {
-                    if (mdtext) methods.setValue("description", mdtext);
-                  }}
-                />
-              </div>
-              {methods.formState.errors.description?.message && (
-                <p className="text-red-700">
-                  {methods.formState.errors.description?.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <label htmlFor="eventType" className="text-lg  text-neutral-200">
-                Where is event taking place?
-              </label>
-
-              <ul className="flex items-center gap-2">
-                <li>
-                  <input
-                    type="radio"
-                    value="virtual"
-                    id="virtual"
-                    className="peer hidden"
-                    {...methods.register("eventType")}
-                    name="eventType"
-                  />
-                  <label
-                    htmlFor="virtual"
-                    className="flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-xs font-medium text-neutral-400 hover:bg-neutral-700 hover:text-neutral-300 peer-checked:border-pink-600 peer-checked:bg-pink-600/20 peer-checked:text-neutral-200"
-                  >
-                    {"💻️ "} Virutal
-                  </label>
-                </li>
-                <li>
-                  <input
-                    type="radio"
-                    value="in_person"
-                    id="in_person"
-                    className="peer hidden"
-                    {...methods.register("eventType")}
-                    name="eventType"
-                  />
-                  <label
-                    htmlFor="in_person"
-                    className="flex cursor-pointer items-center justify-between gap-2 rounded-lg border border-neutral-700 bg-neutral-700 p-3 text-xs font-medium text-neutral-400 hover:bg-neutral-700 hover:text-neutral-300 peer-checked:border-pink-600 peer-checked:bg-pink-600/20 peer-checked:text-neutral-200"
-                  >
-                    {"🌎️ "} In Person
-                  </label>
-                </li>
-              </ul>
-
-              {methods.formState.errors.eventType?.message && (
-                <p className="text-red-700">
-                  {methods.formState.errors.eventType?.message}
-                </p>
-              )}
-            </div>
-
-            {methods.watch()?.eventType === "virtual" ? (
-              <div className="flex flex-col gap-3">
-                <div className="relative flex items-center">
-                  <input
-                    key="eventUrl"
-                    {...methods.register("eventUrl")}
-                    defaultValue={(event && event.eventUrl) ?? ""}
-                    placeholder="Google Meet or YouTube URL"
-                    className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-                  />
-                  <AiOutlineLink className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
-                </div>
-                {methods.formState.errors.eventUrl?.message && (
-                  <p className="text-red-700">
-                    {methods.formState.errors.eventUrl?.message}
-                  </p>
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <div className="relative flex items-center">
-                  <input
-                    key="eventLocation"
-                    {...methods.register("eventLocation")}
-                    defaultValue={(event && event.eventLocation) ?? ""}
-                    placeholder="Your event's address"
-                    className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-                  />
-                  <HiOutlineLocationMarker className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
-                </div>
-
-                {methods.formState.errors.eventLocation?.message && (
-                  <p className="text-red-700">
-                    {methods.formState.errors.eventLocation?.message}
-                  </p>
-                )}
-              </div>
-            )}
-
-            <div className="flex w-full flex-col gap-3">
-              <label
-                htmlFor="og_description"
-                className="text-lg  text-neutral-200"
-              >
-                When is event taking place?
-              </label>
-              <div className="relative flex max-w-[10rem] items-center">
-                <DatePicker
-                  selected={new Date(methods.getValues("datetime"))}
-                  minDate={new Date(Date.now() + 15 * 60 * 1000)}
-                  dateFormat="E, d MMM"
-                  className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-[2.5rem] text-sm font-medium text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-                  onChange={(newDate) => {
-                    if (newDate) methods.setValue("datetime", newDate);
-                  }}
-                />
-                <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="relative flex max-w-[10rem] items-center">
-                  <select
-                    className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm font-medium text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-                    onChange={(e) => {
-                      methods.setValue(
-                        "datetime",
-                        updateTime(
-                          methods.getValues("datetime") ?? new Date(),
-                          times[parseInt(e.target.value)] as string
-                        )
-                      );
-                      setStartTimeIdx(parseInt(e.target.value));
-                    }}
-                  >
-                    {times
-                      .map((time, idx) => (
-                        <option
-                          selected={idx === startTimeIdx}
-                          key={time}
-                          value={idx}
-                        >
-                          {time}
-                        </option>
-                      ))
-                      .filter((e, idx) => {
-                        return new Date(
-                          methods.getValues("duration")
-                        ).toDateString() === new Date().toDateString()
-                          ? idx >= minTimeIdx
-                          : true;
-                      })}
-                  </select>
-                  <BiTime className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
-                </div>
-
-                {" to "}
-
-                <div className="relative flex max-w-[10rem] items-center">
-                  <select
-                    className="w-full rounded-lg bg-neutral-700 px-3 py-2 pl-8 text-sm font-medium text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
-                    onChange={(e) => {
-                      methods.setValue(
-                        "duration",
-                        (parseInt(e.target.value) - startTimeIdx) * 15
-                      );
-                    }}
-                  >
-                    {times
-                      .map((time, idx) => (
-                        <option key={time} value={idx}>
-                          {time}
-                        </option>
-                      ))
-                      .filter((e, idx) =>
-                        new Date(
-                          methods.getValues("duration")
-                        ).toDateString() === new Date().toDateString()
-                          ? idx > startTimeIdx
-                          : true
-                      )}
-                    {startTimeIdx === 92 ? (
-                      <option value={1}>12:00 AM</option>
-                    ) : (
-                      <></>
-                    )}
-                  </select>
-                  <BiTimeFive className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
-                </div>
-              </div>
-
-              {methods.formState.errors.datetime?.message && (
-                <p className="text-red-700">
-                  {methods.formState.errors.datetime?.message}
-                </p>
-              )}
-              {methods.formState.errors.duration?.message && (
-                <p className="text-red-700">
-                  {methods.formState.errors.duration?.message}
-                </p>
-              )}
-            </div>
-
-            <button
-              className={`group inline-flex max-w-[10rem] items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center font-medium text-neutral-200 transition-all duration-300 disabled:bg-neutral-700 disabled:text-neutral-300`}
-              type="submit"
-            >
-              Update Event
-            </button>
-          </form>
+          <EventEditModal />
         </div>
       </>
     );
   else return <></>;
+};
+
+export function AddHostModel({
+  eventId,
+  isOpen,
+  setIsOpen,
+  refetch,
+}: {
+  eventId: string;
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  refetch: () => void;
+}) {
+  const [creatorId, setCreatorId] = useState<string>("");
+  const { successToast, errorToast } = useToast();
+
+  const { mutateAsync: addHostMutation, isLoading } =
+    api.event.addHost.useMutation();
+
+  const handleSubmit = async () => {
+    const data = await addHostMutation({ eventId, creatorId });
+    if (data instanceof TRPCError) errorToast("something went wrong");
+    else successToast("host added successfully");
+    refetch();
+  };
+
+  return (
+    <>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => setIsOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-6 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 p-4 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="div" className="flex w-full flex-col gap-4">
+                    <div className="flex w-full justify-between">
+                      <h3 className="ml-2 text-xl font-medium text-neutral-200">
+                        Add Host
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setIsOpen(false);
+                        }}
+                        type="button"
+                        className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
+                      >
+                        <XMarkIcon className="w-5" />
+                      </button>
+                    </div>
+                  </Dialog.Title>
+                  <div className="flex flex-col gap-4 p-6">
+                    <p className="text-neutral-300">
+                      Add host&apos;s creator id {"(kroto.in/creatorId)"}
+                    </p>
+                    <div className="flex">
+                      <label className="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        Your Email
+                      </label>
+                      <div className="relative w-full">
+                        <input
+                          value={creatorId}
+                          onChange={(e) => setCreatorId(e.target.value)}
+                          className="block w-full rounded-xl border border-neutral-800 bg-neutral-900 p-2.5 text-sm placeholder-neutral-400 outline-none ring-transparent transition hover:border-neutral-600 focus:border-neutral-500 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                          placeholder="Enter the creator id"
+                          required
+                        />
+                        <button
+                          onClick={() => handleSubmit()}
+                          className="absolute right-0 top-0 flex items-center gap-1 rounded-r-lg border border-pink-700 bg-pink-700 p-2.5 text-sm font-medium text-white hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
+                        >
+                          {isLoading ? (
+                            <Loader white />
+                          ) : (
+                            <UserPlusIcon className="w-4" />
+                          )}{" "}
+                          Add Host
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+}
+
+type SEProps = {
+  isOpen: boolean;
+  setIsOpen: (value: SetStateAction<boolean>) => void;
+  event: RouterOutputs["event"]["get"];
+};
+
+const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
+  return (
+    <>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => setIsOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-6 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 p-4 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="div" className="flex w-full flex-col gap-4">
+                    <div className="flex w-full justify-between">
+                      <h3 className="ml-2 text-xl font-medium text-neutral-200">
+                        Start Event
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setIsOpen(false);
+                        }}
+                        type="button"
+                        className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
+                      >
+                        <XMarkIcon className="w-5" />
+                      </button>
+                    </div>
+                  </Dialog.Title>
+                  <div className="flex flex-col gap-1">
+                    <p className="px-4 py-2 text-base leading-relaxed text-neutral-300">
+                      Are you sure you want to start the{" "}
+                      <span className="font-medium">
+                        &quot;{event?.title ?? ""}
+                        &quot;
+                      </span>{" "}
+                      event now?
+                    </p>
+                    <br />
+                    <p className="px-4 text-base leading-relaxed text-neutral-300">
+                      A notification will be send to all the registered users.
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
+                    <Link
+                      href={
+                        event?.eventType === "virtual"
+                          ? event?.eventUrl ?? ""
+                          : ":"
+                      }
+                      onClick={() => {
+                        setIsOpen(false);
+                      }}
+                      target="_blank"
+                      type="button"
+                      className="rounded-lg bg-pink-500/50 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-pink-500 hover:text-neutral-200"
+                    >
+                      Start Event
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOpen(false);
+                      }}
+                      className="rounded-lg bg-neutral-600 px-5 py-2.5 text-center text-sm font-medium text-neutral-400 duration-300 hover:text-neutral-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* <div className="relative max-h-full max-w-lg">
+        <div className="relative rounded-lg bg-neutral-800 shadow">
+          <div className="flex items-start justify-end rounded-t p-2">
+            <button
+              onClick={() => {
+                setIsOpen(false);
+              }}
+              type="button"
+              className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
+            >
+              <XMarkIcon className="w-5" />
+            </button>
+          </div>
+          
+        </div>
+      </div> */}
+    </>
+  );
 };
 
 const nestLayout = (
@@ -543,30 +587,22 @@ EventOverview.getLayout = EventNestedLayout;
 export default EventOverview;
 
 function EventLayoutR({ children }: { children: ReactNode }) {
-  const [event, setEvent] = useState<CourseEvent | undefined>(undefined);
-
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  useEffect(() => {
-    const loadEvent = async () => {
-      const events = await getEventsClient();
-      const mEvent = events.find((e) => e.id === id);
-      if (mEvent) setEvent(mEvent);
-    };
-    void loadEvent();
-  }, [id]);
+  const { data: event } = api.event.get.useQuery({ id });
+
   const pathname = usePathname();
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <div className="flex w-full items-center justify-between gap-4 px-4">
-        <h1 className="text-2xl text-neutral-200">{event?.title}</h1>
+      <div className="flex w-full items-start justify-between gap-4 px-4">
+        <h1 className="text-xl text-neutral-200">{event?.title}</h1>
         <Link
           href={`/event/${id}`}
-          className="flex items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
+          className="flex min-w-[10rem] items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
         >
-          <BsGlobe /> Event Public Page
+          <GlobeAltIcon className="w-3" /> Event Public Page
         </Link>
       </div>
       <div className="border-b border-neutral-200 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">

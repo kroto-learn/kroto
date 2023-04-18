@@ -2,9 +2,8 @@ import Image from "next/image";
 import React from "react";
 import CalenderBox from "./CalenderBox";
 import Link from "next/link";
-import { BiTimeFive } from "react-icons/bi";
-import { MdToday } from "react-icons/md";
-import { RouterOutputs, api } from "@/utils/api";
+import { type RouterOutputs, api } from "@/utils/api";
+import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   eventId: string;
@@ -13,12 +12,6 @@ type Props = {
 
 const EventCardId = ({ eventId, manage }: Props) => {
   const { data: event } = api.event.get.useQuery({ id: eventId });
-  const date = event?.datetime ? new Date(event?.datetime) : new Date();
-  const endTime = event?.datetime
-    ? new Date(
-        new Date(event?.datetime).getTime() + (event?.duration ?? 0) * 60000
-      )
-    : new Date();
 
   return (
     <Link
@@ -52,22 +45,22 @@ const EventCardId = ({ eventId, manage }: Props) => {
 
         <div className="m-0 flex flex-col items-start gap-1 p-0 text-left text-sm text-neutral-300 xs:text-xs sm:text-sm lg:text-base">
           <span className="flex items-center gap-1 sm:hidden">
-            <MdToday />{" "}
-            {date?.toLocaleString("en-US", {
+            <CalendarIcon className="w-5" />{" "}
+            {event?.datetime?.toLocaleString("en-US", {
               weekday: "long",
               day: "numeric",
               month: "short",
             })}
           </span>
           <span className="flex items-center gap-1">
-            <BiTimeFive />
-            {date?.toLocaleString("en-US", {
+            <ClockIcon className="w-5" />
+            {event?.datetime?.toLocaleString("en-US", {
               hour: "numeric",
               minute: "2-digit",
               hour12: true,
             })}{" "}
             to{" "}
-            {endTime?.toLocaleString("en-US", {
+            {event?.endTime?.toLocaleString("en-US", {
               hour: "numeric",
               minute: "2-digit",
               hour12: true,
@@ -86,13 +79,6 @@ export const EventCard = ({
   event: RouterOutputs["event"]["getEvent"];
   manage?: boolean;
 }) => {
-  const date = event?.datetime ? new Date(event?.datetime) : new Date();
-  const endTime = event?.datetime
-    ? new Date(
-        new Date(event?.datetime).getTime() + (event?.duration ?? 0) * 60000
-      )
-    : new Date();
-
   return (
     <Link
       href={
@@ -100,8 +86,24 @@ export const EventCard = ({
           ? `/creator/dashboard/event/${event?.id ?? ""}`
           : `/event/${event?.id ?? ""}`
       }
-      className={`flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 backdrop-blur transition-all hover:bg-neutral-700/50 xs:flex-row xs:items-center`}
+      className={`relative flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 backdrop-blur transition-all duration-300 hover:bg-neutral-700/50 xs:flex-row xs:items-center ${
+        (event?.datetime?.getTime() as number) <= new Date().getTime() &&
+        (event?.endTime?.getTime() as number) >= new Date().getTime()
+          ? "bg-pink-600/10 hover:bg-pink-600/20"
+          : ""
+      }`}
     >
+      {(event?.datetime?.getTime() as number) <= new Date().getTime() &&
+      (event?.endTime?.getTime() as number) >= new Date().getTime() ? (
+        <div className="absolute -right-1 -top-1">
+          <span className="relative flex h-4 w-4 items-center justify-center">
+            <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
+            <span className="h-full w-full rounded-full bg-pink-500"></span>
+          </span>
+        </div>
+      ) : (
+        <></>
+      )}
       {event?.datetime && (
         <div className="hidden sm:block">
           <CalenderBox date={event?.datetime} />
@@ -125,22 +127,22 @@ export const EventCard = ({
 
         <div className="m-0 flex flex-col items-start gap-1 p-0 text-left text-sm text-neutral-300 xs:text-xs sm:text-sm lg:text-base">
           <span className="flex items-center gap-1 sm:hidden">
-            <MdToday />{" "}
-            {date?.toLocaleString("en-US", {
+            <CalendarIcon className="w-5" />{" "}
+            {event?.datetime?.toLocaleString("en-US", {
               weekday: "long",
               day: "numeric",
               month: "short",
             })}
           </span>
           <span className="flex items-center gap-1">
-            <BiTimeFive />
-            {date?.toLocaleString("en-US", {
+            <ClockIcon className="w-5" />
+            {event?.datetime?.toLocaleString("en-US", {
               hour: "numeric",
               minute: "2-digit",
               hour12: true,
             })}{" "}
             to{" "}
-            {endTime?.toLocaleString("en-US", {
+            {event?.endTime?.toLocaleString("en-US", {
               hour: "numeric",
               minute: "2-digit",
               hour12: true,

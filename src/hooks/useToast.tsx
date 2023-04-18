@@ -5,6 +5,7 @@ const successToast = (message: string) => {
     style: {
       borderRadius: "10px",
       background: "rgba(56, 56, 56,0.4)",
+      backdropFilter: "blur(4px)",
       color: "#fff",
       border: "1px solid rgba(165, 180, 252,0.2)",
     },
@@ -20,6 +21,7 @@ const errorToast = (message: string) => {
     style: {
       borderRadius: "10px",
       background: "rgba(56, 56, 56,0.4)",
+      backdropFilter: "blur(4px)",
       color: "#fff",
       border: "1px solid rgba(165, 180, 252,0.2)",
     },
@@ -35,6 +37,7 @@ const warningToast = (message: string) => {
     style: {
       borderRadius: "10px",
       background: "rgba(56, 56, 56,0.4)",
+      backdropFilter: "blur(4px)",
       color: "#fff",
       border: "1px solid rgba(165, 180, 252,0.2)",
     },

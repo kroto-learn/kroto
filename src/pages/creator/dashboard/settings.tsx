@@ -1,38 +1,34 @@
 import { api } from "@/utils/api";
 import Head from "next/head";
 import Image from "next/image";
-import { FaSave } from "react-icons/fa";
 import { Loader } from "@/components/Loader";
 import { DashboardLayout } from ".";
-import { useEffect, useState } from "react";
-import { BsUpload } from "react-icons/bs";
+import { type ChangeEvent, useEffect, useState } from "react";
 import { array, object, string, literal, type z } from "zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IoAdd } from "react-icons/io5";
-import { BiMinus } from "react-icons/bi";
 import useToast from "@/hooks/useToast";
+import fileToBase64 from "@/helpers/file";
+import TextareaCounter from "react-textarea-counter";
+import {
+  ArrowUpTrayIcon,
+  MinusIcon,
+  PlusIcon,
+  CloudIcon,
+} from "@heroicons/react/20/solid";
 
 export const creatorEditSchema = object({
-  name: string({
-    required_error: "Please enter your name.",
-  }),
-  creatorProfile: string({
-    required_error: "Please enter your unique username.",
-  }),
-  bio: string({
-    required_error: "Please enter event description.",
-  }).max(150),
+  name: string().nonempty("Please enter your name."),
+  creatorProfile: string().nonempty("Please enter your unique username."),
+  bio: string().max(180).nonempty("Please enter your bio."),
   socialLinks: array(
     object({
       id: string(),
       type: string(),
-      url: string({
-        required_error: "Please enter social link URL.",
-      }).url(),
+      url: string().url().nonempty("Please enter social link URL."),
     })
   ),
-  image: string().optional(),
+  image: string().nonempty("Please upload your profile image."),
   topmateUrl: string().url().optional().or(literal("")),
 });
 
@@ -55,6 +51,7 @@ const Settings = () => {
     api.creator.updateProfile.useMutation();
   const { mutateAsync: deleteSocialLink } =
     api.creator.deleteSocialLink.useMutation();
+  const [creatorinit, setCreatorinit] = useState(false);
 
   const [updating, setUpdating] = useState<boolean>(false);
 
@@ -65,7 +62,7 @@ const Settings = () => {
     },
   });
 
-  const { warningToast } = useToast();
+  const { warningToast, errorToast } = useToast();
 
   const { data: creatorProfileAvailable } =
     api.creator.userNameAvailable.useQuery({
@@ -73,7 +70,8 @@ const Settings = () => {
     });
 
   useEffect(() => {
-    if (creator) {
+    if (creator && !creatorinit) {
+      setCreatorinit(true);
       methods.setValue(
         "socialLinks",
         creator.socialLinks.map((sl) => ({
@@ -82,13 +80,16 @@ const Settings = () => {
           id: sl.id,
         }))
       );
+
+      methods.setValue("image", creator?.image ?? "");
+      methods.setValue("bio", creator?.bio ?? "");
     }
-  }, [creator, methods]);
+  }, [creator, methods, creatorinit]);
 
   if (isLoading)
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader />
+        <Loader size="lg" />
       </div>
     );
 
@@ -106,13 +107,25 @@ const Settings = () => {
                 values.creatorProfile === creator?.creatorProfile ||
                 creatorProfileAvailable
               )
-                await updateProfile({
-                  name: values.name,
-                  bio: values.bio,
-                  creatorProfile: values.creatorProfile,
-                  socialLink: values.socialLinks,
-                  topmateUrl: values.topmateUrl ?? "",
-                });
+                try {
+                  await updateProfile(
+                    {
+                      name: values.name,
+                      bio: values.bio,
+                      creatorProfile: values.creatorProfile,
+                      socialLink: values.socialLinks,
+                      topmateUrl: values?.topmateUrl ?? "",
+                      image: values?.image ?? "",
+                    },
+                    {
+                      onError: () => {
+                        errorToast("Error updating your profile");
+                      },
+                    }
+                  );
+                } catch (e) {
+                  console.log(e);
+                }
               else warningToast("Username not available.");
             } catch (error) {
               console.log(error);
@@ -127,13 +140,33 @@ const Settings = () => {
             >
               <Image
                 // src={methods.getValues("image")}
-                src={(creator && creator.image) ?? ""}
+                src={methods.watch().image ?? ""}
                 alt={methods.getValues("name")}
                 fill
               />
             </div>
-            <div className="absolute bottom-4 right-2 z-50 cursor-pointer rounded-full bg-neutral-800 p-2 text-base transition-all duration-300 hover:bg-neutral-700">
-              <BsUpload />
+            <div className="absolute bottom-4 right-2 z-50 cursor-pointer rounded-full bg-neutral-800 text-base transition-all duration-300 hover:bg-neutral-700">
+              <div className="relative cursor-pointer p-2">
+                <ArrowUpTrayIcon className="w-5" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="z-2 absolute top-0 h-full w-full cursor-pointer opacity-0"
+                  onChange={(e) => {
+                    if (e.currentTarget.files && e.currentTarget.files[0]) {
+                      if (e.currentTarget.files[0].size <= 1024000) {
+                        fileToBase64(e.currentTarget.files[0])
+                          .then((b64) => {
+                            if (b64) methods.setValue("image", b64);
+                          })
+                          .catch((err) => console.log(err));
+                      } else {
+                        warningToast("Upload cover image upto 1 MB of size.");
+                      }
+                    }
+                  }}
+                />
+              </div>
             </div>
             {methods.formState.errors.image?.message && (
               <p className="text-red-700">
@@ -240,7 +273,7 @@ const Settings = () => {
                             }
                           }}
                         >
-                          <BiMinus />
+                          <MinusIcon className="w-5" />
                         </button>
                       </div>
                       {methods.formState.errors.socialLinks?.[idx]?.url
@@ -267,7 +300,7 @@ const Settings = () => {
                 }}
                 className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-2 py-1 text-sm font-medium text-pink-600 backdrop-blur-sm transition duration-300 hover:bg-pink-600 hover:text-pink-200 disabled:border-neutral-600 disabled:bg-neutral-600/10 disabled:text-neutral-700"
               >
-                <IoAdd /> Add Link
+                <PlusIcon className="w-5" /> Add Link
               </button>
               {methods.formState.errors.socialLinks?.message && (
                 <p className="text-red-700">
@@ -294,7 +327,7 @@ const Settings = () => {
                   <input
                     {...methods.register("topmateUrl")}
                     className="block w-full rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-                    placeholder="rosekamallove"
+                    placeholder="https://topmate.io/"
                     defaultValue={(creator && creator.topmateUrl) ?? ""}
                   />
                 </div>
@@ -311,11 +344,17 @@ const Settings = () => {
                 Bio
               </label>
               <div className="relative mb-6">
-                <textarea
-                  {...methods.register("bio")}
-                  className="block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                <TextareaCounter
+                  showCount
+                  countLimit={180}
+                  rows={2}
+                  value={methods.watch().bio}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    methods.setValue("bio", e.target?.value);
+                  }}
                   placeholder="I am this, and this and this"
                   defaultValue={(creator && creator.bio) ?? ""}
+                  className="[&>div]:!text-neutral-400 [&>textarea]:block [&>textarea]:w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-neutral-700 [&>textarea]:bg-neutral-800 [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:placeholder-neutral-400 [&>textarea]:outline-none [&>textarea]:ring-transparent [&>textarea]:transition [&>textarea]:duration-300 [&>textarea]:hover:border-neutral-500 [&>textarea]:focus:border-neutral-400 [&>textarea]:focus:ring-neutral-500 [&>textarea]:active:outline-none [&>textarea]:active:ring-transparent"
                 />
               </div>
               {methods.formState.errors.bio?.message && (
@@ -331,7 +370,8 @@ const Settings = () => {
               type="submit"
               className={`group my-5 inline-flex items-center gap-1 rounded-xl bg-pink-600 px-6 py-2 text-center font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
             >
-              {updating ? <Loader /> : <FaSave />} Save Changes
+              {updating ? <Loader white /> : <CloudIcon className="w-5" />} Save
+              Changes
             </button>
           </div>
         </form>

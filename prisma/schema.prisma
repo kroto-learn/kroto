@@ -1,15 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider     = "mysql"
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
@@ -20,7 +14,6 @@ model Example {
   updatedAt DateTime @updatedAt
 }
 
-// Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -51,36 +44,71 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  name           String?
-  email          String?   @unique
-  emailVerified  DateTime?
-  image          String?
-  creatorProfile String?   @unique
-  isCreator      Boolean   @default(false)
-  bio            String?   @db.Text
-  topmateUrl     String?
-
-  accounts      Account[]
-  sessions      Session[]
-  socialLinks   SocialLink[]
-  events        Event[]
-  registrations Registration[]
+  id              String           @id @default(cuid())
+  name            String
+  email           String           @unique
+  emailVerified   DateTime?
+  image           String?
+  creatorProfile  String?          @unique
+  isCreator       Boolean          @default(false)
+  bio             String?          @db.Text
+  topmateUrl      String?
+  accounts        Account[]
+  sessions        Session[]
+  socialLinks     SocialLink[]
+  events          Event[]
+  registrations   Registration[]
+  audienceMembers AudienceMember[]
+  host            Host[]
 }
 
 model Event {
-  id            String         @id @default(cuid())
-  title         String
-  thumbnail     String?
-  description   String?        @db.Text
-  eventUrl      String?
-  eventType     String?
-  eventLocation String?
-  datetime      DateTime
-  duration      Int?
-  creatorId     String
-  creator       User           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  registrations Registration[]
+  id               String         @id @default(cuid())
+  title            String
+  thumbnail        String?
+  description      String?        @db.Text
+  eventUrl         String?
+  eventType        String?
+  eventLocation    String?
+  datetime         DateTime
+  endTime          DateTime
+  duration         Int?
+  creatorId        String
+  audienceMemberId String?
+  creator          User           @relation(fields: [creatorId], references: [id])
+  registrations    Registration[]
+  hosts            Host[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([creatorId])
+}
+
+model Host {
+  id      String @id @default(cuid())
+  eventId String
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Event   Event  @relation(fields: [eventId], references: [id])
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+}
+
+model AudienceMember {
+  id                 String   @id @default(cuid())
+  name               String
+  email              String
+  userId             String
+  isPaying           Boolean?
+  revenue            Int?
+  emailOpenRate      Int?
+  emailClickRate     Int?
+  eventsParticipated Int?
+  creatorId          String
+  creator            User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   @@index([creatorId])
 }

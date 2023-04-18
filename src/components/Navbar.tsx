@@ -1,13 +1,10 @@
 import { KrotoLogo } from "@/pages/auth/sign-in";
 import { api } from "@/utils/api";
-import { Menu } from "@headlessui/react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 export default function Navbar() {
-  const { data: session } = useSession();
-  const router = useRouter();
+  const { data: session, status } = useSession();
   const { data: creator } = api.creator.getProfile.useQuery();
 
   return (
@@ -39,7 +36,7 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          {session && creator ? (
+          {status === "authenticated" ? (
             <div className="flex gap-5">
               <Link
                 className="transition-all hover:text-neutral-400"
@@ -59,12 +56,16 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <button
-              className="transition-all hover:text-neutral-400"
-              onClick={() => void signIn()}
-            >
-              Sign In
-            </button>
+            <>
+              {!(status === "loading") && status === "unauthenticated" && (
+                <button
+                  className="transition-all hover:text-neutral-400"
+                  onClick={() => void signIn()}
+                >
+                  Sign In
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>

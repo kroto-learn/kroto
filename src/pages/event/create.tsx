@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { object, string, number, date } from "zod";
-import { HiOutlineLocationMarker } from "react-icons/hi";
-import { AiOutlineLink } from "react-icons/ai";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { BsCalendar3Event } from "react-icons/bs";
-import { BiTime, BiTimeFive } from "react-icons/bi";
-import { RxImage } from "react-icons/rx";
+import { object, string, date, literal } from "zod";
+import LinkIcon from "@heroicons/react/20/solid/LinkIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  generateTimesArray,
-  giveFirstTimeIdx,
-  updateTime,
-} from "@/helpers/time";
 import fileToBase64 from "@/helpers/file";
 import { generateRandomGradientImages } from "@/helpers/randomGradientImages";
 import Image from "next/image";
@@ -25,35 +14,34 @@ import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import dynamic from "next/dynamic";
+import Layout from "@/components/layouts/main";
+import useToast from "@/hooks/useToast";
+import { TimePicker, DatePicker, ConfigProvider, theme } from "antd";
+import dayjs from "dayjs";
+import { PhotoIcon } from "@heroicons/react/20/solid";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
 });
 
 export const createFormSchema = object({
-  thumbnail: string({
-    required_error: "Please upload a cover",
-  }),
-  title: string({
-    required_error: "Please enter event title.",
-  }),
-  description: string({
-    required_error: "Please enter event description.",
-  }).max(3000),
-  eventType: string({
-    required_error: "Please select the type of event.",
-  }).max(150),
-  eventUrl: string().url().optional(),
-  eventLocation: string().optional(),
+  thumbnail: string().nonempty("Please upload a cover"),
+  title: string().nonempty("Please enter event title."),
+  description: string().max(3000).nonempty("Please enter event description."),
+  eventType: string().nonempty("Please select the type of event."),
+  eventUrl: string().url().optional().or(literal("")),
+  eventLocation: string().optional().or(literal("")),
   datetime: date({
     required_error: "Please enter event's date and time.",
   }),
-  duration: number({
-    required_error: "Please enter event's duration.",
-  }).nonnegative(),
+  endTime: date({
+    required_error: "Please enter event's end date and time.",
+  }),
+  // duration: number({
+  //   required_error: "Please enter event's duration.",
+  // }).nonnegative(),
 })
   .optional()
   .refine(
@@ -93,10 +81,6 @@ function useZodForm<TSchema extends z.ZodType>(
 }
 
 const CreateEvent = () => {
-  const times = generateTimesArray();
-  const minTimeIdx = giveFirstTimeIdx(times);
-  const [startTimeIdx, setStartTimeIdx] = useState<number>(minTimeIdx);
-  const [loading, setLoading] = useState<boolean>(false);
   const methods = useZodForm({
     schema: createFormSchema,
     defaultValues: {
@@ -106,45 +90,83 @@ const CreateEvent = () => {
       eventUrl: "",
       eventLocation: "",
       datetime: new Date(),
-      duration: 15,
+      endTime: new Date(),
+      // duration: 15,
       thumbnail: "",
     },
   });
   const router = useRouter();
+  const { warningToast, errorToast } = useToast();
 
-  const eventMutation = api.event.create.useMutation().mutateAsync;
+  const { mutateAsync: eventMutation, isLoading: loading } =
+    api.event.create.useMutation();
 
   useEffect(() => {
     methods.setValue("thumbnail", generateRandomGradientImages());
   }, [methods]);
 
+  const { darkAlgorithm } = theme;
+  const [startTime, setStartTime] = useState(
+    new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+  );
+  const [endTime, setEndTime] = useState(
+    new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })
+  );
+
   return (
-    <>
+    <Layout>
       <Head>
         <title>Create Event</title>
       </Head>
       <form
         onSubmit={methods.handleSubmit(async (values) => {
           if (!!values) {
-            console.log(values);
             const mValues = values;
             if (mValues.eventType === "virtual") mValues.eventLocation = "";
             else mValues.eventUrl = "";
-            setLoading(true);
+            const stime = dayjs(startTime, "hh:mm A").toDate();
+            const updateddt = values.datetime;
+            updateddt.setHours(stime.getHours());
+            updateddt.setMinutes(stime.getMinutes());
+            const etime = dayjs(endTime, "hh:mm A").toDate();
+
+            // const duration = (etime.getTime() - stime.getTime()) / 60000;
+
             try {
               await eventMutation(
-                { ...values },
+                {
+                  title: values.title ?? "",
+                  description: values.description ?? "",
+                  thumbnail: values.thumbnail ?? "",
+                  eventType: values.eventType ?? "",
+                  eventLocation: values.eventLocation ?? "",
+                  eventUrl: values.eventUrl ?? "",
+                  datetime: updateddt,
+                  endTime: etime,
+                },
                 {
                   onSuccess: (createdEvent) => {
                     if (!(createdEvent instanceof TRPCError))
-                      void router.push(`/event/${createdEvent.id}`);
+                      void router.push(
+                        `/creator/dashboard/event/${createdEvent.id}`
+                      );
+                  },
+                  onError: () => {
+                    errorToast("Error in creating event.");
                   },
                 }
               );
             } catch (err) {
               console.log(err);
             }
-            setLoading(false);
           }
         })}
         className="mx-auto my-12 flex w-full max-w-2xl flex-col gap-8"
@@ -165,15 +187,24 @@ const CreateEvent = () => {
               className="z-2 absolute h-full w-full cursor-pointer opacity-0"
               onChange={(e) => {
                 if (e.currentTarget.files && e.currentTarget.files[0]) {
-                  fileToBase64(e.currentTarget.files[0])
-                    .then((b64) => {
-                      if (b64) methods.setValue("thumbnail", b64);
-                    })
-                    .catch((err) => console.log(err));
+                  if (e.currentTarget.files[0].size > 1200000)
+                    warningToast(
+                      "Image is too big, try a smaller (<1MB) image for performance purposes."
+                    );
+
+                  if (e.currentTarget.files[0].size <= 3072000) {
+                    fileToBase64(e.currentTarget.files[0])
+                      .then((b64) => {
+                        if (b64) methods.setValue("thumbnail", b64);
+                      })
+                      .catch((err) => console.log(err));
+                  } else {
+                    warningToast("Upload cover image upto 3 MB of size.");
+                  }
                 }
               }}
             />
-            <RxImage />
+            <PhotoIcon className="w-4" />
             Upload Cover
           </div>
         </div>
@@ -200,22 +231,16 @@ const CreateEvent = () => {
           )}
         </div>
 
-        {/* TODO: Make it a rich text editor */}
         <div className="flex flex-col gap-3">
           <label htmlFor="description" className="text-lg  text-neutral-200">
             Description
           </label>
-          {/* <textarea
-            rows={8}
-            {...methods.register("description")}
-            className="w-full rounded-lg bg-neutral-800 px-3 py-2  font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
-          /> */}
           <div data-color-mode="dark">
             <MDEditor
-              height={200}
+              height={350}
               value={methods.watch()?.description}
               onChange={(mdtext) => {
-                if (mdtext) methods.setValue("description", mdtext);
+                methods.setValue("description", mdtext ?? "");
               }}
             />
           </div>
@@ -282,7 +307,7 @@ const CreateEvent = () => {
                 placeholder="Google Meet or YouTube URL"
                 className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8  font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
               />
-              <AiOutlineLink className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
+              <LinkIcon className="absolute ml-2 w-4 text-neutral-400 peer-focus:text-neutral-200" />
             </div>
 
             {methods.formState.errors.eventUrl?.message && (
@@ -300,7 +325,7 @@ const CreateEvent = () => {
                 placeholder="Your event's address"
                 className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8  font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
               />
-              <HiOutlineLocationMarker className="absolute ml-2 text-neutral-400 peer-focus:text-neutral-200" />
+              <LinkIcon className="absolute ml-2  text-neutral-400 peer-focus:text-neutral-200" />
             </div>
 
             {methods.formState.errors.eventLocation?.message && (
@@ -311,92 +336,95 @@ const CreateEvent = () => {
           </div>
         )}
 
-        <div className="flex w-full flex-col gap-3">
+        <div className="flex w-full flex-col items-start gap-3">
           <label htmlFor="og_description" className="text-lg  text-neutral-200">
             When is event taking place?
           </label>
-          <div className="relative flex max-w-[10rem] items-center">
-            <DatePicker
-              selected={new Date(methods.getValues("datetime"))}
-              minDate={new Date(Date.now() + 15 * 60 * 1000)}
-              dateFormat="E, d MMM"
-              className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-[2.5rem] font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
-              onChange={(newDate) => {
-                if (newDate) methods.setValue("datetime", newDate);
+          <div className="flex flex-col items-start gap-3 rounded-lg border border-neutral-700 bg-neutral-800 p-2">
+            <ConfigProvider
+              theme={{
+                algorithm: darkAlgorithm,
+                token: {
+                  colorPrimary: "#ec4899",
+                },
               }}
-            />
-            <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="relative flex max-w-[10rem] items-center">
-              <select
-                className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8 font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
-                onChange={(e) => {
-                  methods.setValue(
-                    "datetime",
-                    updateTime(
-                      methods.getValues("datetime") ?? new Date(),
-                      times[parseInt(e.target.value)] as string
-                    )
-                  );
-                  setStartTimeIdx(parseInt(e.target.value));
-                }}
-              >
-                {times
-                  .map((time, idx) => (
-                    <option
-                      selected={idx === startTimeIdx}
-                      key={time}
-                      value={idx}
-                    >
-                      {time}
-                    </option>
-                  ))
-                  .filter((e, idx) => {
-                    return new Date(
-                      methods.getValues("datetime")
-                    ).toDateString() === new Date().toDateString()
-                      ? idx >= minTimeIdx
-                      : true;
-                  })}
-              </select>
-              <BiTime className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
-            </div>
-
-            {" to "}
-
-            <div className="relative flex max-w-[10rem] items-center">
-              <select
-                className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8 font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
-                onChange={(e) => {
-                  methods.setValue(
-                    "duration",
-                    (parseInt(e.target.value) - startTimeIdx) * 15
-                  );
-                }}
-              >
-                {times
-                  .map((time, idx) => (
-                    <option key={time} value={idx}>
-                      {time}
-                    </option>
-                  ))
-                  .filter((e, idx) =>
-                    new Date(methods.getValues("datetime")).toDateString() ===
-                    new Date().toDateString()
-                      ? idx > startTimeIdx
-                      : true
-                  )}
-                {startTimeIdx === 92 ? (
-                  <option value={1}>12:00 AM</option>
-                ) : (
-                  <></>
+            >
+              <DatePicker
+                format="DD-MM-YYYY"
+                autoFocus={false}
+                bordered={false}
+                disabledDate={(currentDate) =>
+                  currentDate.isBefore(dayjs(new Date()), "day")
+                }
+                value={dayjs(
+                  methods.watch()?.datetime?.toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  }),
+                  "DD-MM-YYYY"
                 )}
-              </select>
-              <BiTimeFive className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" />
-            </div>
+                onChange={(selectedDate) => {
+                  const sourceDateObj = selectedDate?.toDate() ?? new Date();
+                  const targetDateObj = methods.watch()?.datetime ?? new Date();
+                  targetDateObj.setFullYear(sourceDateObj.getFullYear());
+                  targetDateObj.setMonth(sourceDateObj.getMonth());
+                  targetDateObj.setDate(sourceDateObj.getDate());
+                  methods.setValue("datetime", targetDateObj);
+                }}
+              />
+              <TimePicker.RangePicker
+                autoFocus={false}
+                bordered={false}
+                order={false}
+                className=""
+                use12Hours
+                value={[dayjs(startTime, "hh:mm A"), dayjs(endTime, "hh:mm A")]}
+                onChange={(selectedTime) => {
+                  if (selectedTime) {
+                    setStartTime(
+                      dayjs(selectedTime[0]).format("hh:mm A") ?? ""
+                    );
+                    setEndTime(dayjs(selectedTime[1]).format("hh:mm A"));
+                  }
+                }}
+                format="hh:mm A"
+                disabledTime={() => {
+                  const now = dayjs();
+                  return {
+                    disabledHours: () => {
+                      if (
+                        dayjs(methods.watch()?.datetime).format(
+                          "DD/MM/YYYY"
+                        ) === dayjs(new Date()).format("DD/MM/YYYY")
+                      )
+                        return [...Array(now.hour()).keys()];
+                      return [];
+                    },
+                    disabledMinutes: (selectedHour) => {
+                      if (
+                        dayjs(methods.watch()?.datetime).format(
+                          "DD/MM/YYYY"
+                        ) === dayjs(new Date()).format("DD/MM/YYYY")
+                      ) {
+                        if (now.hour() === selectedHour) {
+                          return [...Array(now.minute()).keys()];
+                        }
+                        return [];
+                      }
+                      return [];
+                    },
+                  };
+                }}
+                minuteStep={15}
+                style={{
+                  color: "#fff",
+                }}
+              />
+            </ConfigProvider>
+            {/* <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" /> */}
           </div>
+
           {methods.formState.errors.datetime?.message && (
             <p className="text-red-700">
               {methods.formState.errors.datetime?.message}
@@ -408,14 +436,11 @@ const CreateEvent = () => {
           className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
           type="submit"
         >
-          {loading && <Loader />}
+          {loading && <Loader white />}
           Create Event
         </button>
       </form>
-      {/* );
-      }} */}
-      {/* </Formik> */}
-    </>
+    </Layout>
   );
 };
 

@@ -13,6 +13,8 @@
     @apply scroll-smooth;
   }
 }
+
+/* md styling */
 .wmde-markdown {
   background-color: #262626 !important;
 }
@@ -23,4 +25,55 @@
 
 .w-md-editor {
   background-color: #262626 !important;
+}
+
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #262626 inset !important;
+  -webkit-text-fill-color: white !important;
+}
+
+.ant-picker-dropdown ::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+.ant-picker-dropdown ::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+/* Handle */
+.ant-picker-dropdown ::-webkit-scrollbar-thumb {
+  background: #db277855;
+  border-radius: 3px;
+}
+
+/* Handle on hover */
+.ant-picker-dropdown ::-webkit-scrollbar-thumb:hover {
+  background: #db277889;
+}
+
+.ant-picker-input {
+  font-family: "Nunito", system-ui, sans-serif;
+  font-weight: 500;
+  max-width: 6.5rem;
+}
+
+.ant-picker-range .ant-picker-input {
+  max-width: 4.5rem;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  background-color: transparent;
+}
+
+::-moz-selection {
+  background: #ec489a8b;
+}
+
+::selection {
+  background: #ec489a8b;
 }

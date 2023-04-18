@@ -1,13 +1,18 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { HiArrowSmRight } from "react-icons/hi";
 import Layout from "@/components/layouts/main";
 import ClaimLink from "@/components/ClaimLink";
-import { BsCalendarEventFill } from "react-icons/bs";
-import { FaListAlt, FaMoneyBill } from "react-icons/fa";
-import { AiFillDatabase } from "react-icons/ai";
-import { BiNews } from "react-icons/bi";
-import { MdMarkEmailUnread } from "react-icons/md";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import ArrowRightIcon from "@heroicons/react/20/solid/ArrowRightIcon";
+import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
+import {
+  CircleStackIcon,
+  CurrencyDollarIcon,
+  EnvelopeIcon,
+  ListBulletIcon,
+  NewspaperIcon,
+} from "@heroicons/react/20/solid";
 
 const Home: NextPage = () => {
   return (
@@ -67,7 +72,7 @@ export function Hero() {
                         ? "Go to dashboard"
                         : "Become a Kreator now"} */}
                       Become a Kreator now
-                      <HiArrowSmRight className="text-xl duration-300 group-hover:translate-x-1" />
+                      <ArrowRightIcon className="w-5 text-xl duration-300 group-hover:translate-x-1" />
                     </a>
                   </div>
                 </div>
@@ -81,11 +86,15 @@ export function Hero() {
               alt="Hero Image"
             />
           </div> */}
-          <img
-            className="mt-10 min-h-fit object-cover sm:h-1/2 md:h-2/3 xl:h-2/3"
+          {/* <div className=""> */}
+          <Image
             src="/landing/hero_image.png"
             alt="crap"
+            width={1500}
+            height={1500}
+            className="mt-10 min-h-fit object-cover sm:h-1/2 md:h-2/3 xl:h-2/3"
           />
+          {/* </div> */}
         </div>
       </div>
     </div>
@@ -119,7 +128,7 @@ export const Features = () => {
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <BsCalendarEventFill />
+                  <CalenderDaysIcon className="w-5" />
                 </div>
                 <p className="ml-16 text-lg font-medium leading-6">
                   Live events to filter your audience
@@ -133,7 +142,7 @@ export const Features = () => {
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <FaListAlt />
+                  <ListBulletIcon className="w-5" />
                 </div>
                 <p className="ml-16 flex items-center gap-2 text-lg font-medium leading-6">
                   Create courses for a cohort of students{" "}
@@ -151,7 +160,12 @@ export const Features = () => {
           </dl>
         </div>
         <div className="mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
-          <img src="/landing/courses.png" />
+          <Image
+            src="/landing/courses.png"
+            alt="courses"
+            width={1000}
+            height={1000}
+          />
         </div>
       </div>
       <div className="relative mt-12 sm:mt-16 lg:mt-24">
@@ -169,7 +183,7 @@ export const Features = () => {
               <div className="relative">
                 <dt>
                   <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                    <AiFillDatabase />
+                    <CircleStackIcon className="w-5" />
                   </div>
                   <p className="ml-16 text-lg font-medium leading-6">
                     Database of audience who really care
@@ -185,7 +199,7 @@ export const Features = () => {
               <div className="relative">
                 <dt>
                   <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                    <FaMoneyBill />
+                    <CurrencyDollarIcon className="w-5" />
                   </div>
                   <p className="ml-16 text-lg font-medium leading-6">
                     Paying audience is important
@@ -203,7 +217,12 @@ export const Features = () => {
             className="relative mt-10 px-4 lg:col-start-1 lg:mt-0 lg:pl-0 lg:pr-8"
             aria-hidden="true"
           >
-            <img src="/landing/audience.png" />
+            <Image
+              src="/landing/audience.png"
+              alt="audience"
+              width={1000}
+              height={1000}
+            />
           </div>
         </div>
       </div>
@@ -221,7 +240,7 @@ export const Features = () => {
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <BiNews />
+                  <NewspaperIcon className="w-5" />
                 </div>
                 <p className="ml-16 text-lg font-medium leading-6">
                   Newsletters to target your audience
@@ -236,7 +255,7 @@ export const Features = () => {
             <div className="relative">
               <dt>
                 <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-pink-500 text-white">
-                  <MdMarkEmailUnread />
+                  <EnvelopeIcon className="w-5" />
                 </div>
                 <p className="ml-16 text-lg font-medium leading-6">
                   Send custom emails to the database we help you build
@@ -251,40 +270,51 @@ export const Features = () => {
           </dl>
         </div>
         <div className="relative mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
-          <img src="/landing/newsletter.png" />
+          <Image
+            src="/landing/newsletter.png"
+            alt="Newsletter"
+            width={1000}
+            height={1000}
+          />
         </div>
       </div>
     </div>
   );
 };
 
-export const ClaimLinkBanner = () => (
-  <div className="relative mt-10 overflow-hidden bg-gradient-to-t from-neutral-950 via-neutral-950 px-0 py-10 md:px-24">
-    <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
-      <div className="">
-        <h2 className="text-center text-2xl font-extrabold leading-8 tracking-tight sm:text-3xl md:text-4xl">
-          Become a{" "}
-          <span className="cursor-none text-pink-500 transition duration-300 hover:text-pink-600">
-            Kreator
-          </span>{" "}
-          now, and claim your kreator proflie
-        </h2>
-        <p className="tex-md mx-auto mt-4 max-w-3xl text-center text-neutral-400 md:text-xl">
-          Monetize your audience like never before, and provide them with value
-          like never before.
-        </p>
+export const ClaimLinkBanner = () => {
+  const router = useRouter();
+  const { creatorProfile } = router.query as {
+    creatorProfile: string;
+  };
+  return (
+    <div className="relative mt-10 overflow-hidden bg-gradient-to-t from-neutral-950 via-neutral-950 px-0 py-10 md:px-24">
+      <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
+        <div className="">
+          <h2 className="text-center text-2xl font-extrabold leading-8 tracking-tight sm:text-3xl md:text-4xl">
+            Become a{" "}
+            <span className="cursor-none text-pink-500 transition duration-300 hover:text-pink-600">
+              Kreator
+            </span>{" "}
+            now, and claim your kreator proflie
+          </h2>
+          <p className="tex-md mx-auto mt-4 max-w-3xl text-center text-neutral-400 md:text-xl">
+            Monetize your audience like never before, and provide them with
+            value like never before.
+          </p>
 
-        {/* <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-40 translate-y-48 rounded-full bg-pink-600/20 blur-3xl"></div> */}
-      </div>
-
-      <div className="z-10">
-        <div className="hidden lg:block">
-          <ClaimLink variant="lg" />
+          {/* <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-40 translate-y-48 rounded-full bg-pink-600/20 blur-3xl"></div> */}
         </div>
-        <div className="block lg:hidden">
-          <ClaimLink variant="md" />
+
+        <div className="z-10">
+          <div className="hidden lg:block">
+            <ClaimLink profile={creatorProfile} variant="lg" />
+          </div>
+          <div className="block lg:hidden">
+            <ClaimLink profile={creatorProfile} variant="md" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
