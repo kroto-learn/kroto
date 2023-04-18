@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
 import { api } from "@/utils/api";
-import useToast from "@/hooks/useToast";
 import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
 
 export default function ClaimLink({
@@ -65,7 +64,7 @@ export default function ClaimLink({
                     void router.push(`/creator/dashboard/settings`);
                 } else {
                   void router.push(
-                    `/auth/sign-in?creatorProfile=${creatorProfile}}`
+                    `/auth/sign-in?creatorProfile=${creatorProfile}`
                   );
                 }
               }}
