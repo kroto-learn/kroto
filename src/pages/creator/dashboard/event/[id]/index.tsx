@@ -6,7 +6,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DashboardLayout } from "../..";
-import { api } from "@/utils/api";
+import { RouterOutputs, api } from "@/utils/api";
 import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
 import { TRPCError } from "@trpc/server";
@@ -40,6 +40,7 @@ import {
   RocketLaunchIcon,
   LinkIcon,
 } from "@heroicons/react/20/solid";
+import { addDurationtoDateTime } from "@/helpers/time";
 
 const EventOverview = () => {
   const router = useRouter();
@@ -66,6 +67,8 @@ const EventOverview = () => {
 
   const { successToast } = useToast();
 
+  console.log("helper test", new Date(), addDurationtoDateTime(new Date(), 15));
+
   // const { data: creator } = api.creator.getProfile.useQuery();
 
   // useEffect(() => {
@@ -87,25 +90,35 @@ const EventOverview = () => {
         <Head>
           <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
-        <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 p-1 px-3">
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-3 w-3 items-center justify-center">
-              <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
-              <span className="h-4/5 w-4/5 rounded-full bg-pink-500"></span>
-            </span>
-            The Event is Live Now.
+        {(event?.datetime?.getTime() as number) <= new Date().getTime() &&
+        addDurationtoDateTime(
+          event?.datetime as Date,
+          event?.duration ?? 0
+        )?.getTime() >= new Date().getTime() ? (
+          <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 p-1 px-3">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-3 w-3 items-center justify-center">
+                <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
+                <span className="h-4/5 w-4/5 rounded-full bg-pink-500"></span>
+              </span>
+              The Event is Live Now.
+            </div>
+            {event.eventType === "virtual" ? (
+              <button
+                onClick={() => {
+                  setStartEventModal(true);
+                }}
+                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600 transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
+              >
+                Join Event
+              </button>
+            ) : (
+              <></>
+            )}
           </div>
-          {event.eventType === "virtual" ? (
-            <Link
-              href={event?.eventUrl ?? ""}
-              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600 transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
-            >
-              Join Event
-            </Link>
-          ) : (
-            <></>
-          )}
-        </div>
+        ) : (
+          <></>
+        )}
         <div className="flex w-full max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4">
           <div className="flex w-full items-start gap-8">
             <div className="flex flex-col items-start gap-4">
@@ -248,71 +261,11 @@ const EventOverview = () => {
         </div>
 
         {/* start event confirmation modal */}
-        <div
-          className={`fixed left-0 right-0 top-0 z-50 flex h-full max-h-screen w-full items-center justify-center overflow-y-auto overflow-x-hidden bg-black/10 p-2 backdrop-blur-sm transition-all duration-300 ease-in-out md:inset-0 ${
-            startEventModal
-              ? "translate-y-0 opacity-100"
-              : "translate-y-full opacity-0"
-          }`}
-        >
-          <div className="relative max-h-full max-w-lg">
-            {/* <!-- Modal content --> */}
-            <div className="relative rounded-lg bg-neutral-800 shadow">
-              {/* <!-- Modal header --> */}
-              <div className="flex items-start justify-end rounded-t p-2">
-                <button
-                  onClick={() => {
-                    setStartEventModal(false);
-                  }}
-                  type="button"
-                  className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
-                >
-                  <XMarkIcon className="w-5" />
-                </button>
-              </div>
-              {/* <!-- Modal body --> */}
-              <div className="space-y-1 p-2">
-                <p className="px-4 text-base leading-relaxed text-neutral-300">
-                  Are you sure you want to start the{" "}
-                  <span className="font-medium">
-                    &quot;{event?.title ?? ""}
-                    &quot;
-                  </span>{" "}
-                  event now?
-                </p>
-                <br />
-                <p className="px-4 text-base leading-relaxed text-neutral-300">
-                  A notification will be send to all the registered users.
-                </p>
-              </div>
-              {/* <!-- Modal footer --> */}
-              <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
-                <Link
-                  href={
-                    event?.eventType === "virtual" ? event?.eventUrl ?? "" : ":"
-                  }
-                  onClick={() => {
-                    setStartEventModal(false);
-                  }}
-                  target="_blank"
-                  type="button"
-                  className="rounded-lg bg-pink-500/50 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-pink-500 hover:text-neutral-200"
-                >
-                  Start Event
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStartEventModal(false);
-                  }}
-                  className="rounded-lg bg-neutral-600 px-5 py-2.5 text-center text-sm font-medium text-neutral-400 duration-300 hover:text-neutral-200"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <StartEventModal
+          isOpen={startEventModal}
+          setIsOpen={setStartEventModal}
+          event={event}
+        />
 
         <div className="w-full">
           <div className="my-5 flex w-full items-center justify-between">
@@ -437,11 +390,11 @@ export function AddHostModel({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
+            <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <div className="flex min-h-full items-center justify-center p-6 text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -451,14 +404,27 @@ export function AddHostModel({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-neutral-800 p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-neutral-200"
-                  >
-                    Add host&apos;s creator id {"(kroto.in/creatorId)"}
+                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 p-4 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="div" className="flex w-full flex-col gap-4">
+                    <div className="flex w-full justify-between">
+                      <h3 className="ml-2 text-xl font-medium text-neutral-200">
+                        Add Host
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setIsOpen(false);
+                        }}
+                        type="button"
+                        className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
+                      >
+                        <XMarkIcon className="w-5" />
+                      </button>
+                    </div>
                   </Dialog.Title>
-                  <div className="mt-2">
+                  <div className="flex flex-col gap-4 p-6">
+                    <p className="text-neutral-300">
+                      Add host&apos;s creator id {"(kroto.in/creatorId)"}
+                    </p>
                     <div className="flex">
                       <label className="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Your Email
@@ -494,6 +460,128 @@ export function AddHostModel({
     </>
   );
 }
+
+type SEProps = {
+  isOpen: boolean;
+  setIsOpen: (value: SetStateAction<boolean>) => void;
+  event: RouterOutputs["event"]["get"];
+};
+
+const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
+  return (
+    <>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => setIsOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-6 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 p-4 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="div" className="flex w-full flex-col gap-4">
+                    <div className="flex w-full justify-between">
+                      <h3 className="ml-2 text-xl font-medium text-neutral-200">
+                        Start Event
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setIsOpen(false);
+                        }}
+                        type="button"
+                        className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
+                      >
+                        <XMarkIcon className="w-5" />
+                      </button>
+                    </div>
+                  </Dialog.Title>
+                  <div className="flex flex-col gap-1">
+                    <p className="px-4 py-2 text-base leading-relaxed text-neutral-300">
+                      Are you sure you want to start the{" "}
+                      <span className="font-medium">
+                        &quot;{event?.title ?? ""}
+                        &quot;
+                      </span>{" "}
+                      event now?
+                    </p>
+                    <br />
+                    <p className="px-4 text-base leading-relaxed text-neutral-300">
+                      A notification will be send to all the registered users.
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
+                    <Link
+                      href={
+                        event?.eventType === "virtual"
+                          ? event?.eventUrl ?? ""
+                          : ":"
+                      }
+                      onClick={() => {
+                        setIsOpen(false);
+                      }}
+                      target="_blank"
+                      type="button"
+                      className="rounded-lg bg-pink-500/50 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-pink-500 hover:text-neutral-200"
+                    >
+                      Start Event
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOpen(false);
+                      }}
+                      className="rounded-lg bg-neutral-600 px-5 py-2.5 text-center text-sm font-medium text-neutral-400 duration-300 hover:text-neutral-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* <div className="relative max-h-full max-w-lg">
+        <div className="relative rounded-lg bg-neutral-800 shadow">
+          <div className="flex items-start justify-end rounded-t p-2">
+            <button
+              onClick={() => {
+                setIsOpen(false);
+              }}
+              type="button"
+              className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
+            >
+              <XMarkIcon className="w-5" />
+            </button>
+          </div>
+          
+        </div>
+      </div> */}
+    </>
+  );
+};
 
 const nestLayout = (
   parent: (page: ReactNode) => JSX.Element,
