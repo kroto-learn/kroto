@@ -80,8 +80,8 @@ const updateTime = (date: Date, time: string) => {
 };
 
 const addDurationtoDateTime = (datetime: Date, durationInMin: number) => {
-  const newDT = datetime.setTime(datetime.getTime() + durationInMin * 60000);
-  return newDT;
+  datetime.setTime(datetime.getTime() + durationInMin * 60000);
+  return datetime;
 };
 
 export {
