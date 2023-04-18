@@ -15,6 +15,7 @@ import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import { PhotoIcon, LinkIcon } from "@heroicons/react/20/solid";
 import { Loader } from "./Loader";
+import { addDurationtoDateTime } from "@/helpers/time";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -81,7 +82,7 @@ const EventEditModal = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  const { data: event, isLoading } = api.event.get.useQuery({
+  const { data: event } = api.event.get.useQuery({
     id,
   });
 
@@ -112,32 +113,34 @@ const EventEditModal = () => {
   );
 
   useEffect(() => {
-    setEventInit(true);
-    console.log("event init set");
-    methods.setValue("thumbnail", (event?.thumbnail as string) ?? "");
-    methods.setValue("eventType", event?.eventType ?? "");
-    methods.setValue("description", event?.description ?? "");
-    methods.setValue("datetime", event?.datetime ?? new Date());
-    methods.setValue("duration", 0);
+    if (event && !eventInit) {
+      setEventInit(true);
+      methods.setValue("thumbnail", (event?.thumbnail as string) ?? "");
+      methods.setValue("eventType", event?.eventType ?? "");
+      methods.setValue("description", event?.description ?? "");
+      methods.setValue("datetime", event?.datetime ?? new Date());
+      methods.setValue("duration", 0);
 
-    console.log("datetime", event?.title, event?.datetime ?? new Date());
-    setStartTime(
-      (event?.datetime ?? new Date()).toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })
-    );
-    const updateddt = event?.datetime;
-    updateddt?.setTime(updateddt?.getTime() + (event?.duration ?? 0) * 60000);
-    setEndTime(
-      (updateddt ?? new Date()).toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })
-    );
-  }, []);
+      setStartTime(
+        (event?.datetime ?? new Date()).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })
+      );
+
+      setEndTime(
+        addDurationtoDateTime(
+          event?.datetime ?? new Date(),
+          event?.duration ?? 0
+        ).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })
+      );
+    }
+  }, [event, eventInit, methods]);
 
   return (
     <form

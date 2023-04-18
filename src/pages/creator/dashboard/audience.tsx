@@ -6,7 +6,12 @@ import React from "react";
 import { useTable, type Column } from "react-table";
 import Image from "next/image";
 import { Loader } from "@/components/Loader";
-import { FolderArrowDownIcon, UserIcon } from "@heroicons/react/20/solid";
+import {
+  FolderArrowDownIcon,
+  PlusIcon,
+  UserIcon,
+} from "@heroicons/react/20/solid";
+import Link from "next/link";
 const Audience = () => {
   const { data: audience, isLoading } =
     api.creator.getAudienceMembers.useQuery();
@@ -169,8 +174,18 @@ const Audience = () => {
             </tbody>
           </table>
         ) : (
-          <div className="w-full p-4">
-            <p>No audience yet</p>
+          <div className="flex w-full flex-col items-center justify-center gap-4 p-4">
+            <div className="relative aspect-square w-40 object-contain">
+              <Image src="/empty/users_empty.svg" alt="empty" fill />
+            </div>
+            <p>You don&apos;t have any audience yet.</p>
+            <p>Do events to gather audience data.</p>
+            <Link
+              href="/event/create"
+              className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
+            >
+              <PlusIcon className="w-5" /> Create Event
+            </Link>
           </div>
         )}
       </div>

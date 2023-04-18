@@ -143,7 +143,7 @@ export function DeleteEventModal({
                           console.log(err);
                         }
                       }}
-                      className="rounded-lg bg-red-700 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-red-500 hover:text-neutral-200"
+                      className="flex items-center gap-2 rounded-lg bg-red-700 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-red-500 hover:text-neutral-200"
                     >
                       {isLoading ? <Loader /> : <></>} Delete Event
                     </button>
