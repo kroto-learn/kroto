@@ -5,7 +5,8 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { imageUpload, isBase64 } from "@/server/helpers/base64ToS3";
+import { imageUpload } from "@/server/helpers/base64ToS3";
+import isBase64 from "is-base64";
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
@@ -183,9 +184,9 @@ export const creatorRouter = createTRPCRouter({
         }
       }
 
-      const image = isBase64(input.image)
-        ? await imageUpload(input.image, ctx.session.user.id, "user")
-        : input.image;
+      let image = input.image;
+      if (isBase64(input.image, { allowMime: true }))
+        image = await imageUpload(input.image, ctx.session.user.id, "event");
 
       const user = await prisma.user.update({
         where: {

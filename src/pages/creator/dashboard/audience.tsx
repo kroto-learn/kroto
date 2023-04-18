@@ -70,9 +70,6 @@ const Audience = () => {
         <h3 className="mb-1 text-2xl font-medium">Audience</h3>
         <div className="mb-2 flex w-full items-start justify-between">
           <div className="flex flex-col items-start">
-            <label className="text-xs font-medium uppercase tracking-wider text-neutral-300">
-              Total Audience
-            </label>
             <p className="text-3xl text-neutral-200">
               {audience?.length ?? "-"}
             </p>

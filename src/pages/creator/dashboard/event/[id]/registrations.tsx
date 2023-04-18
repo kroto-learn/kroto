@@ -80,9 +80,6 @@ const EventRegistrations = () => {
         <h3 className="mb-1 text-2xl font-medium">Registrations</h3>
         <div className="mb-2 flex w-full items-start justify-between">
           <div className="flex flex-col items-start">
-            <label className="text-xs font-medium uppercase tracking-wider text-neutral-300">
-              Total Registrations
-            </label>
             <p className="text-3xl text-neutral-200">
               {event?.registrations.length ?? "-"}
             </p>
