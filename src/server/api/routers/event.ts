@@ -9,6 +9,7 @@ import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
 import { imageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
+import { addDurationtoDateTime } from "@/helpers/time";
 
 export const eventRouter = createTRPCRouter({
   get: publicProcedure
@@ -64,7 +65,7 @@ export const eventRouter = createTRPCRouter({
     const events = await prisma.event.findMany({
       where: {
         creatorId: ctx.session.user.id,
-        datetime: {
+        endTime: {
           gte: new Date(),
         },
       },
@@ -82,7 +83,7 @@ export const eventRouter = createTRPCRouter({
     const events = await prisma.event.findMany({
       where: {
         creatorId: ctx.session.user.id,
-        datetime: {
+        endTime: {
           lte: new Date(),
         },
       },
@@ -123,6 +124,7 @@ export const eventRouter = createTRPCRouter({
           title: input.title,
           description: input.description,
           datetime: input.datetime,
+          endTime: addDurationtoDateTime(input.datetime, input.duration),
           eventUrl: input.eventUrl ?? "",
           eventLocation: input.eventLocation ?? "",
           eventType: input.eventType,

@@ -71,6 +71,7 @@ model Event {
   eventType        String?
   eventLocation    String?
   datetime         DateTime
+  endTime          DateTime
   duration         Int?
   creatorId        String
   audienceMemberId String?

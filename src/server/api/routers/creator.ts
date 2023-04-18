@@ -63,7 +63,7 @@ export const creatorRouter = createTRPCRouter({
     const registrations = await prisma.event.findMany({
       where: {
         id: { in: registrationId.map((r) => r.eventId) },
-        datetime: {
+        endTime: {
           gte: new Date(),
         },
       },
@@ -85,7 +85,7 @@ export const creatorRouter = createTRPCRouter({
     const pastRegistrations = await prisma.event.findMany({
       where: {
         id: { in: registrationId.map((r) => r.eventId) },
-        datetime: {
+        endTime: {
           lte: new Date(),
         },
       },
