@@ -79,4 +79,14 @@ const updateTime = (date: Date, time: string) => {
   return date;
 };
 
-export { generateTimesArray, giveFirstTimeIdx, updateTime };
+const addDurationtoDateTime = (datetime: Date, durationInMin: number) => {
+  const newDT = datetime.setTime(datetime.getTime() + durationInMin * 60000);
+  return newDT;
+};
+
+export {
+  generateTimesArray,
+  giveFirstTimeIdx,
+  updateTime,
+  addDurationtoDateTime,
+};
