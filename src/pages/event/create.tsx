@@ -137,6 +137,9 @@ const CreateEvent = () => {
             updateddt.setHours(stime.getHours());
             updateddt.setMinutes(stime.getMinutes());
             const etime = dayjs(endTime, "hh:mm A").toDate();
+            const updatedet = values.datetime;
+            updatedet.setHours(etime.getHours());
+            updatedet.setMinutes(etime.getMinutes());
 
             // const duration = (etime.getTime() - stime.getTime()) / 60000;
 
@@ -150,7 +153,7 @@ const CreateEvent = () => {
                   eventLocation: values.eventLocation ?? "",
                   eventUrl: values.eventUrl ?? "",
                   datetime: updateddt,
-                  endTime: etime,
+                  endTime: updatedet,
                 },
                 {
                   onSuccess: (createdEvent) => {

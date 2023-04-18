@@ -79,6 +79,7 @@ export const EventCard = ({
   event: RouterOutputs["event"]["getEvent"];
   manage?: boolean;
 }) => {
+  console.log("dt", event);
   return (
     <Link
       href={

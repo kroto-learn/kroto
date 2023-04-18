@@ -40,6 +40,7 @@ import {
   RocketLaunchIcon,
   LinkIcon,
 } from "@heroicons/react/20/solid";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 const EventOverview = () => {
   const router = useRouter();
@@ -355,9 +356,17 @@ export function AddHostModel({
 
   const { mutateAsync: addHostMutation, isLoading } =
     api.event.addHost.useMutation();
+  const revalidate = useRevalidateSSG();
 
   const handleSubmit = async () => {
-    const data = await addHostMutation({ eventId, creatorId });
+    const data = await addHostMutation(
+      { eventId, creatorId },
+      {
+        onSuccess: () => {
+          void revalidate(`/event/${eventId}`);
+        },
+      }
+    );
     if (data instanceof TRPCError) errorToast("something went wrong");
     else successToast("host added successfully");
     refetch();

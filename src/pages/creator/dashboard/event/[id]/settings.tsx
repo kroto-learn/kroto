@@ -13,6 +13,7 @@ import { api } from "@/utils/api";
 import { TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { Transition, Dialog } from "@headlessui/react";
 import { Loader } from "@/components/Loader";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 const EventSettings = () => {
   const router = useRouter();
@@ -47,6 +48,7 @@ const EventSettings = () => {
         isOpen={deleteModalOpen}
         setIsOpen={setDeleteModalOpen}
         eventTitle={event?.title ?? ""}
+        eventId={event?.id ?? ""}
       />
     </>
   );
@@ -56,15 +58,19 @@ export function DeleteEventModal({
   isOpen,
   setIsOpen,
   eventTitle,
+  eventId,
 }: {
   eventTitle: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  eventId: string;
 }) {
   const { mutateAsync: deleteEventMutation, isLoading } =
     api.event.delete.useMutation();
   const router = useRouter();
   const { id } = router.query as { id: string };
+  const ctx = api.useContext();
+  const revalidate = useRevalidateSSG();
 
   return (
     <>
@@ -133,9 +139,12 @@ export function DeleteEventModal({
                             { id },
                             {
                               onSuccess: () => {
+                                void ctx.event.getAll.invalidate();
+                                void ctx.event.get.invalidate();
                                 void router.replace(
                                   "/creator/dashboard/events"
                                 );
+                                void revalidate(`/event/${eventId}`);
                               },
                             }
                           );

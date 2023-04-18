@@ -15,6 +15,7 @@ import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import { PhotoIcon, LinkIcon } from "@heroicons/react/20/solid";
 import { Loader } from "@/components/Loader";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -138,6 +139,8 @@ const EventEditModal = () => {
     }
   }, [isLoading, event, methods, eventInit]);
 
+  const revalidate = useRevalidateSSG();
+
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -158,8 +161,10 @@ const EventEditModal = () => {
           const updateddt = values.datetime;
           updateddt.setHours(stime.getHours());
           updateddt.setMinutes(stime.getMinutes());
-          console.log(startTime, endTime);
           const etime = dayjs(endTime, "hh:mm A").toDate();
+          const updatedet = values.datetime;
+          updatedet.setHours(etime.getHours());
+          updatedet.setMinutes(etime.getMinutes());
 
           try {
             await eventUpdateMutation(
@@ -172,13 +177,14 @@ const EventEditModal = () => {
                   eventLocation: values.eventLocation ?? "",
                   eventUrl: values.eventUrl ?? "",
                   datetime: updateddt,
-                  endTime: etime,
+                  endTime: updatedet,
                 },
                 id: id,
               } as EventUpdateType,
               {
                 onSuccess: () => {
                   void ctx.event.get.invalidate();
+                  void revalidate(`/event/${event?.id ?? ""}`);
                 },
                 onError: () => {
                   errorToast("Error in updating the event.");

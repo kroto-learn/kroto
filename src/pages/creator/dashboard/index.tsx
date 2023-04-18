@@ -71,7 +71,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                     </p>
                     <div className="flex items-center truncate text-xs font-medium text-neutral-300 decoration-neutral-400">
                       {creator?.creatorProfile}{" "}
-                      <ArrowUpRightIcon className="w-6 text-pink-600" />
+                      <ArrowUpRightIcon className="w-4 text-pink-600" />
                     </div>
                   </div>
                 </div>
