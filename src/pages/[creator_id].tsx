@@ -9,6 +9,7 @@ import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
+import { Loader } from "@/components/Loader";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -105,7 +106,9 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           <h2 className="text-lg font-medium uppercase tracking-wider text-neutral-200">
             Upcoming Events
           </h2>
-          {creator.events && creator.events.length > 0 ? (
+          {isLoading ? (
+            <Loader size="lg" />
+          ) : creator.events && creator.events.length > 0 ? (
             <div className="flex w-full flex-col items-center gap-4">
               {creator?.events?.map((event) => (
                 <EventCard key={event?.id ?? ""} event={event} />
