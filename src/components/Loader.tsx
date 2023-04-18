@@ -1,8 +1,10 @@
-export const Loader = () => (
+export const Loader = ({ size }: { size?: "md" | "lg" }) => (
   <div role="status">
     <svg
       aria-hidden="true"
-      className="mr-2 h-5 w-5 animate-spin fill-pink-400 text-pink-50"
+      className={`mr-2 aspect-square animate-spin fill-pink-400 text-pink-400/10 ${
+        size === "lg" ? "h-8" : size === "md" ? "h-6" : "h-4"
+      }`}
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

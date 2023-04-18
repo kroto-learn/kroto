@@ -151,10 +151,10 @@ const CreateEvent = () => {
                 },
                 {
                   onSuccess: (createdEvent) => {
-                    if (!(createdEvent instanceof TRPCError))
-                      void router.push(
-                        `/creator/dashboard/event/${createdEvent.id}`
-                      );
+                    // if (!(createdEvent instanceof TRPCError))
+                    // void router.push(
+                    //   `/creator/dashboard/event/${createdEvent.id}`
+                    // );
                   },
                   onError: () => {
                     errorToast("Error in creating event.");

@@ -119,11 +119,14 @@ export const eventRouter = createTRPCRouter({
 
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
 
+      console.log("input dt", input.datetime);
+      console.log("input dur", input);
+
       const event = await prisma.event.create({
         data: {
           title: input.title,
           description: input.description,
-          datetime: input.datetime,
+          datetime: new Date(input.datetime),
           endTime: addDurationtoDateTime(input.datetime, input.duration),
           eventUrl: input.eventUrl ?? "",
           eventLocation: input.eventLocation ?? "",

@@ -52,7 +52,7 @@ const Audience = () => {
   if (isLoading)
     return (
       <div className="my-12 flex h-[50vh] w-full items-center justify-center">
-        <Loader />
+        <Loader size="lg" />
       </div>
     );
 

@@ -17,7 +17,7 @@ const PastEvents = () => {
   if (isEventsLoading)
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">
-        <Loader />
+        <Loader size="lg" />
       </div>
     );
 

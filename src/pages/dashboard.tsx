@@ -72,7 +72,7 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
           <div className="mb-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
             {isLoading ? (
               <div className="flex h-full items-center justify-center">
-                <Loader />
+                <Loader size="lg" />
               </div>
             ) : (
               <>

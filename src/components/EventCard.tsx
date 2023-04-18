@@ -4,6 +4,7 @@ import CalenderBox from "./CalenderBox";
 import Link from "next/link";
 import { type RouterOutputs, api } from "@/utils/api";
 import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
+import { addDurationtoDateTime } from "@/helpers/time";
 
 type Props = {
   eventId: string;
@@ -98,14 +99,30 @@ export const EventCard = ({
           ? `/creator/dashboard/event/${event?.id ?? ""}`
           : `/event/${event?.id ?? ""}`
       }
-      className={`relative flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 backdrop-blur transition-all duration-300 hover:bg-neutral-700/50 xs:flex-row xs:items-center ${"bg-pink-600/10 hover:bg-pink-600/20"}`}
+      className={`relative flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 backdrop-blur transition-all duration-300 hover:bg-neutral-700/50 xs:flex-row xs:items-center ${
+        (event?.datetime?.getTime() as number) <= new Date().getTime() &&
+        addDurationtoDateTime(
+          event?.datetime as Date,
+          event?.duration ?? 0
+        )?.getTime() >= new Date().getTime()
+          ? "bg-pink-600/10 hover:bg-pink-600/20"
+          : ""
+      }`}
     >
-      <div className="absolute -right-1 -top-1">
-        <span className="relative flex h-4 w-4 items-center justify-center">
-          <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
-          <span className="h-full w-full rounded-full bg-pink-500"></span>
-        </span>
-      </div>
+      {(event?.datetime?.getTime() as number) <= new Date().getTime() &&
+      addDurationtoDateTime(
+        event?.datetime as Date,
+        event?.duration ?? 0
+      )?.getTime() >= new Date().getTime() ? (
+        <div className="absolute -right-1 -top-1">
+          <span className="relative flex h-4 w-4 items-center justify-center">
+            <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
+            <span className="h-full w-full rounded-full bg-pink-500"></span>
+          </span>
+        </div>
+      ) : (
+        <></>
+      )}
       {event?.datetime && (
         <div className="hidden sm:block">
           <CalenderBox date={event?.datetime} />

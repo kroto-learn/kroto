@@ -6,7 +6,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DashboardLayout } from "../..";
-import { RouterOutputs, api } from "@/utils/api";
+import { type RouterOutputs, api } from "@/utils/api";
 import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
 import { TRPCError } from "@trpc/server";
@@ -80,7 +80,7 @@ const EventOverview = () => {
   if (isEventLoading)
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">
-        <Loader />
+        <Loader size="lg" />
       </div>
     );
 
@@ -308,7 +308,7 @@ const EventOverview = () => {
                         className="flex items-center gap-1 rounded-xl border border-pink-700 bg-pink-700 p-1 px-2 text-sm font-medium text-white transition duration-300 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
                       >
                         {removingHost ? (
-                          <Loader />
+                          <Loader size="lg" />
                         ) : (
                           <TrashIcon className="w-4" />
                         )}{" "}

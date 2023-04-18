@@ -89,7 +89,7 @@ const Settings = () => {
   if (isLoading)
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader />
+        <Loader size="lg" />
       </div>
     );
 
