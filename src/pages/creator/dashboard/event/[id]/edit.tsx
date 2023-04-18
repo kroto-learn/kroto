@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState, memo } from "react";
+import React, { useEffect, useState, memo, ReactNode } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { date, number, object, string, type z } from "zod";
 import dayjs from "dayjs";
@@ -14,6 +14,10 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import { PhotoIcon, LinkIcon } from "@heroicons/react/20/solid";
+import { Loader } from "@/components/Loader";
+import { DashboardLayout } from "../..";
+import { EventLayout } from ".";
+import EventRegistrations from "./registrations";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -136,7 +140,15 @@ const EventEditModal = () => {
         hour12: true,
       })
     );
-  }, []);
+  }, [isLoading, event]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <form
