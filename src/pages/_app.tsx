@@ -7,6 +7,7 @@ import NextNProgress from "nextjs-progressbar";
 import { type ReactNode } from "react";
 import { type NextComponentType } from "next";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/react";
 
 import "@/styles/globals.css";
 
@@ -22,6 +23,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         color="#db2777"
       />
       <Toaster />
+      <Analytics />
       <Layout
         Component={
           Component as NextComponentType & {
