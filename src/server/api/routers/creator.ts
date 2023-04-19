@@ -32,7 +32,12 @@ export const creatorRouter = createTRPCRouter({
       });
 
       const events = await prisma.event.findMany({
-        where: { creatorId: creator?.id },
+        where: {
+          creatorId: creator?.id,
+          endTime: {
+            gte: new Date(),
+          },
+        },
       });
 
       const output = {
