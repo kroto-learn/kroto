@@ -133,10 +133,13 @@ const CreateEvent = () => {
             if (mValues.eventType === "virtual") mValues.eventLocation = "";
             else mValues.eventUrl = "";
             const stime = dayjs(startTime, "hh:mm A").toDate();
-            const updateddt = values.datetime;
+            const updateddt = new Date(values.datetime);
             updateddt.setHours(stime.getHours());
             updateddt.setMinutes(stime.getMinutes());
             const etime = dayjs(endTime, "hh:mm A").toDate();
+            const updatedet = new Date(values.datetime);
+            updatedet.setHours(etime.getHours());
+            updatedet.setMinutes(etime.getMinutes());
 
             // const duration = (etime.getTime() - stime.getTime()) / 60000;
 
@@ -150,7 +153,7 @@ const CreateEvent = () => {
                   eventLocation: values.eventLocation ?? "",
                   eventUrl: values.eventUrl ?? "",
                   datetime: updateddt,
-                  endTime: etime,
+                  endTime: updatedet,
                 },
                 {
                   onSuccess: (createdEvent) => {

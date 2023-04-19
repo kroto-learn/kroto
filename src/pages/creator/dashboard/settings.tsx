@@ -16,6 +16,7 @@ import {
   PlusIcon,
   CloudIcon,
 } from "@heroicons/react/20/solid";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 export const creatorEditSchema = object({
   name: string().nonempty("Please enter your name."),
@@ -86,6 +87,8 @@ const Settings = () => {
     }
   }, [creator, methods, creatorinit]);
 
+  const revalidate = useRevalidateSSG();
+
   if (isLoading)
     return (
       <div className="flex h-screen items-center justify-center">
@@ -118,6 +121,9 @@ const Settings = () => {
                       image: values?.image ?? "",
                     },
                     {
+                      onSuccess: () => {
+                        void revalidate(`/${creator?.id ?? ""}`);
+                      },
                       onError: () => {
                         errorToast("Error updating your profile");
                       },
@@ -265,9 +271,16 @@ const Settings = () => {
                             );
                             try {
                               if ((deleteId as string) !== "")
-                                await deleteSocialLink({
-                                  id: deleteId as string,
-                                });
+                                await deleteSocialLink(
+                                  {
+                                    id: deleteId as string,
+                                  },
+                                  {
+                                    onSuccess: () => {
+                                      void revalidate(`/${creator?.id ?? ""}`);
+                                    },
+                                  }
+                                );
                             } catch (err) {
                               console.log(err);
                             }

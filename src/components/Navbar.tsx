@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
-  const { data: creator } = api.creator.getProfile.useQuery();
+  const { data: creator, isLoading } = api.creator.getProfile.useQuery();
 
   return (
     <div className="fixed top-0 z-40 w-full border-b border-neutral-800/50 bg-neutral-950/50 font-medium backdrop-blur-lg">
@@ -36,7 +36,7 @@ export default function Navbar() {
               </div>
             )}
           </div>
-          {status === "authenticated" ? (
+          {status === "authenticated" && !isLoading ? (
             <div className="flex gap-5">
               <Link
                 className="transition-all hover:text-neutral-400"

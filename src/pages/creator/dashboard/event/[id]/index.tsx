@@ -32,14 +32,17 @@ import { MdLocationOn } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
 import dynamic from "next/dynamic";
 import {
-  GlobeAltIcon,
   PencilIcon,
   TrashIcon,
   UserPlusIcon,
   XMarkIcon,
   RocketLaunchIcon,
   LinkIcon,
+  ArrowUpRightIcon,
 } from "@heroicons/react/20/solid";
+import { GlobeAltIcon } from "@heroicons/react/24/outline";
+
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 const EventOverview = () => {
   const router = useRouter();
@@ -48,8 +51,6 @@ const EventOverview = () => {
   const { data: event, isLoading: isEventLoading } = api.event.get.useQuery({
     id,
   });
-
-  console.log(isEventLoading);
 
   const [editEvent, setEditEvent] = useState(false);
   const [open, setIsOpen] = useState<boolean>(false);
@@ -101,9 +102,9 @@ const EventOverview = () => {
                 onClick={() => {
                   setStartEventModal(true);
                 }}
-                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600 transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
+                className={`group inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600 transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
               >
-                Join Event
+                Join Event <ArrowUpRightIcon className="w-4" />
               </button>
             ) : (
               <></>
@@ -355,9 +356,17 @@ export function AddHostModel({
 
   const { mutateAsync: addHostMutation, isLoading } =
     api.event.addHost.useMutation();
+  const revalidate = useRevalidateSSG();
 
   const handleSubmit = async () => {
-    const data = await addHostMutation({ eventId, creatorId });
+    const data = await addHostMutation(
+      { eventId, creatorId },
+      {
+        onSuccess: () => {
+          void revalidate(`/event/${eventId}`);
+        },
+      }
+    );
     if (data instanceof TRPCError) errorToast("something went wrong");
     else successToast("host added successfully");
     refetch();
@@ -602,7 +611,7 @@ function EventLayoutR({ children }: { children: ReactNode }) {
           href={`/event/${id}`}
           className="flex min-w-[10rem] items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
         >
-          <GlobeAltIcon className="w-3" /> Event Public Page
+          <GlobeAltIcon className="w-4" /> Event Public Page
         </Link>
       </div>
       <div className="border-b border-neutral-200 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">

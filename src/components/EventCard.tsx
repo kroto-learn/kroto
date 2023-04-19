@@ -89,7 +89,7 @@ export const EventCard = ({
       className={`relative flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 backdrop-blur transition-all duration-300 hover:bg-neutral-700/50 xs:flex-row xs:items-center ${
         (event?.datetime?.getTime() as number) <= new Date().getTime() &&
         (event?.endTime?.getTime() as number) >= new Date().getTime()
-          ? "bg-pink-600/10 hover:bg-pink-600/20"
+          ? "bg-gradient-to-bl from-pink-700/20 via-neutral-950 border border-pink-800/20 hover:bg-neutral-900/50"
           : ""
       }`}
     >

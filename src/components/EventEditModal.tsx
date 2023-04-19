@@ -15,6 +15,7 @@ import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import { PhotoIcon, LinkIcon } from "@heroicons/react/20/solid";
 import { Loader } from "./Loader";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -138,6 +139,8 @@ const EventEditModal = () => {
     }
   }, [event, eventInit, methods]);
 
+  const revalidate = useRevalidateSSG();
+
   return (
     <form
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -147,11 +150,13 @@ const EventEditModal = () => {
           if (mValues.eventType === "virtual") mValues.eventLocation = "";
           else mValues.eventUrl = "";
           const stime = dayjs(startTime, "hh:mm A").toDate();
-          const updateddt = values.datetime;
+          const updateddt = new Date(values.datetime);
           updateddt.setHours(stime.getHours());
           updateddt.setMinutes(stime.getMinutes());
-          console.log(startTime, endTime);
           const etime = dayjs(endTime, "hh:mm A").toDate();
+          const updatedet = new Date(values.datetime);
+          updatedet.setHours(etime.getHours());
+          updatedet.setMinutes(etime.getMinutes());
 
           try {
             await eventUpdateMutation(
@@ -164,13 +169,14 @@ const EventEditModal = () => {
                   eventLocation: values.eventLocation ?? "",
                   eventUrl: values.eventUrl ?? "",
                   datetime: updateddt,
-                  endTime: etime,
+                  endTime: updatedet,
                 },
                 id: id,
               } as EventUpdateType,
               {
                 onSuccess: () => {
                   void ctx.event.get.invalidate();
+                  void revalidate(`/event/${event?.id ?? ""}`);
                 },
                 onError: () => {
                   errorToast("Error in updating the event.");
