@@ -70,7 +70,15 @@ export default function EventPage({ eventId }: Props) {
         <title>{event?.title}</title>
         <meta property="og:title" content={event?.title ?? ""} />
         <meta property="og:description" content={event?.description ?? ""} />
-        <meta property="og:image" content={event?.thumbnail ?? ""} />
+        <meta
+          property="og:image"
+          itemProp="image"
+          content={event?.thumbnail ?? ""}
+        />
+        <meta
+          property="og:url"
+          content={`https://kroto.in/event/${event?.id}`}
+        />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
         <div className="flex w-11/12 max-w-3xl flex-col gap-4 rounded-xl bg-neutral-800 p-4">
