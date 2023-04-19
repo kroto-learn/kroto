@@ -107,6 +107,7 @@ model AudienceMember {
   emailOpenRate      Int?
   emailClickRate     Int?
   eventsParticipated Int?
+  eventId            String?
   creatorId          String
   creator            User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
