@@ -73,7 +73,7 @@ export default function EventPage({ eventId }: Props) {
         <meta property="og:image" content={event?.thumbnail ?? ""} />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
-        <div className="flex w-full max-w-3xl flex-col gap-4 rounded-xl bg-neutral-800 p-4">
+        <div className="flex w-11/12 max-w-3xl flex-col gap-4 rounded-xl bg-neutral-800 p-4">
           <div className="relative h-[25rem] w-full">
             <Image
               src={(event?.thumbnail as string) ?? ""}
@@ -82,12 +82,11 @@ export default function EventPage({ eventId }: Props) {
               fill
             />
           </div>
-          <div className="flex justify-between">
+          <h1 className="mb-5 text-2xl font-medium text-neutral-200">
+            {event?.title}
+          </h1>
+          <div className="flex flex-row justify-between">
             <div className="flex flex-col gap-4">
-              <h1 className="text-2xl font-medium text-neutral-200">
-                {event?.title}
-              </h1>
-
               <div className="flex items-center gap-2">
                 <div
                   className={`relative aspect-square w-[1.3rem] overflow-hidden rounded-full`}
@@ -98,7 +97,7 @@ export default function EventPage({ eventId }: Props) {
                     fill
                   />
                 </div>
-                <p className={`text-sm text-neutral-300 transition-all`}>
+                <p className={`text-base text-neutral-300 transition-all`}>
                   Hosted by {event?.creator?.name ?? ""}
                 </p>
               </div>
@@ -213,9 +212,9 @@ export default function EventPage({ eventId }: Props) {
             </div>
           </div>
         </div>
-        <div className="flex w-full max-w-3xl">
-          <div className="flex w-full items-start gap-4">
-            <div className="flex w-2/3 flex-col gap-4 rounded-xl bg-neutral-800">
+        <div className="flex w-full max-w-3xl ">
+          <div className="flex w-full flex-col-reverse items-start gap-4 md:flex-row">
+            <div className="mx-auto flex w-11/12 flex-col gap-4 rounded-xl bg-neutral-800 md:w-2/3">
               <div className="flex items-center gap-2 border-b border-neutral-600 px-4 py-3 text-neutral-200">
                 <Bars3CenterLeftIcon className="w-5" />
                 <h2 className="font-medium ">Description</h2>
@@ -226,7 +225,7 @@ export default function EventPage({ eventId }: Props) {
                 </ReactMarkdown>
               </div>
             </div>
-            <div className="flex w-1/3 flex-col gap-4 rounded-xl bg-neutral-800">
+            <div className="mx-auto flex w-11/12 flex-col gap-4 rounded-xl bg-neutral-800 md:w-1/3">
               <div className="flex items-center gap-2 border-b border-neutral-600 px-4 py-3 text-neutral-200">
                 <UserGroupIcon className="w-5" />
                 <h2 className="font-medium ">Hosts</h2>

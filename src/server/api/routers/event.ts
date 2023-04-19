@@ -213,6 +213,7 @@ export const eventRouter = createTRPCRouter({
         where: {
           email: user.email,
           creatorId: event.creatorId,
+          eventId: event.id,
         },
       });
 
@@ -231,6 +232,7 @@ export const eventRouter = createTRPCRouter({
             name: user.name,
             userId: user.id,
             creatorId: event.creatorId,
+            eventId: event.id,
           },
         });
       }
@@ -250,6 +252,7 @@ export const eventRouter = createTRPCRouter({
               name: user.name,
               userId: user.id,
               creatorId: host.userId,
+              eventId: event.id,
             },
           });
       }
