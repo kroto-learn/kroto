@@ -133,11 +133,11 @@ const CreateEvent = () => {
             if (mValues.eventType === "virtual") mValues.eventLocation = "";
             else mValues.eventUrl = "";
             const stime = dayjs(startTime, "hh:mm A").toDate();
-            const updateddt = values.datetime;
+            const updateddt = new Date(values.datetime);
             updateddt.setHours(stime.getHours());
             updateddt.setMinutes(stime.getMinutes());
             const etime = dayjs(endTime, "hh:mm A").toDate();
-            const updatedet = values.datetime;
+            const updatedet = new Date(values.datetime);
             updatedet.setHours(etime.getHours());
             updatedet.setMinutes(etime.getMinutes());
 

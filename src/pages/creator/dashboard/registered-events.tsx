@@ -10,10 +10,6 @@ const RegisteredEvents = () => {
   const { data: creator, isLoading: isCreatorLoading } =
     api.creator.getProfile.useQuery();
 
-  useEffect(() => {
-    console.log(creator);
-  }, [creator]);
-
   if (isCreatorLoading)
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">

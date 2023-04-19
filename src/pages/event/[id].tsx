@@ -15,7 +15,13 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { Loader } from "@/components/Loader";
 import { UserGroupIcon } from "@heroicons/react/20/solid";
-import { ArrowRightIcon, Bars3CenterLeftIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowRightIcon,
+  Bars3CenterLeftIcon,
+  ArrowUpRightIcon,
+} from "@heroicons/react/20/solid";
+import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 type Props = {
   eventId: string;
@@ -43,6 +49,20 @@ export default function EventPage({ eventId }: Props) {
   const { errorToast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const isEventOver =
+    (event?.endTime ?? new Date()).getTime() < new Date().getTime();
+
+  const isEventNow =
+    (event?.datetime ?? new Date())?.getTime() <= new Date().getTime() &&
+    (event?.endTime ?? new Date()).getTime() >= new Date().getTime();
+
+  const isEventInAnHour =
+    (event?.datetime ?? new Date()).getTime() <=
+      new Date().getTime() + 3600000 &&
+    (event?.endTime ?? new Date()).getTime() >= new Date().getTime();
+
+  const isYourEvent = event?.creatorId === session?.user?.id;
 
   return (
     <>
@@ -119,14 +139,49 @@ export default function EventPage({ eventId }: Props) {
                 </p>
               </div>
 
-              {isLoading ? (
+              {isYourEvent ? (
+                <Link
+                  href={`/creator/dashboard/event/${event?.id ?? ""}`}
+                  target="_blank"
+                  className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600 transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
+                >
+                  <AdjustmentsHorizontalIcon className="w-4" /> Manage Event
+                </Link>
+              ) : isLoading ? (
                 <div className="flex items-center justify-center">
                   <Loader />
                 </div>
-              ) : isRegistered ? (
+              ) : isEventOver ? (
                 <div className="flex items-center justify-center font-bold">
-                  You are already registered!
+                  The event has ended.
                 </div>
+              ) : isRegistered ? (
+                event?.eventType === "virtual" ? (
+                  isEventNow ? (
+                    <div className="flex items-center justify-center gap-2 font-bold">
+                      The event is live!{" "}
+                      <Link
+                        href={event?.eventUrl ?? ""}
+                        target="_blank"
+                        className={`group inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600 transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
+                      >
+                        Join Now <ArrowUpRightIcon className="w-4" />
+                      </Link>
+                    </div>
+                  ) : isEventInAnHour ? (
+                    <div className="flex items-center justify-center font-bold">
+                      The event is going to start soon, stay tuned!
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center font-bold">
+                      You are already registered!
+                    </div>
+                  )
+                ) : (
+                  <div className="flex items-center justify-center font-bold">
+                    You are already registered!
+                  </div>
+                )
               ) : (
                 <button
                   onClick={async () => {

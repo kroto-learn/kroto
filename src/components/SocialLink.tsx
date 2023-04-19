@@ -3,10 +3,9 @@ import {
   AiFillInstagram,
   AiFillLinkedin,
   AiFillYoutube,
-  AiOutlineLink,
   AiOutlineTwitter,
 } from "react-icons/ai";
-import { GlobeAltIcon } from "@heroicons/react/20/solid";
+import { GlobeAltIcon, LinkIcon } from "@heroicons/react/24/outline";
 type Props = {
   href: string;
   type: string;
@@ -25,9 +24,9 @@ const Icon = ({ type }: { type: string }) => {
     case "instagram":
       return <AiFillInstagram />;
     case "website":
-      return <GlobeAltIcon />;
+      return <GlobeAltIcon className="w-4" />;
     default:
-      return <AiOutlineLink />;
+      return <LinkIcon className="w-4" />;
   }
 };
 
