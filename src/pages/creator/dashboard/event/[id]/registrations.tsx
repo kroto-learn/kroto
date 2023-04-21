@@ -24,12 +24,13 @@ import {
   WhatsappIcon,
 } from "next-share";
 import useToast from "@/hooks/useToast";
+import { Loader } from "@/components/Loader";
 
 const EventRegistrations = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  const { data: event } = api.event.get.useQuery({ id });
+  const { data: event, isLoading } = api.event.get.useQuery({ id });
 
   const tableData = React.useMemo(() => {
     if (event && event?.registrations)
@@ -70,6 +71,14 @@ const EventRegistrations = () => {
     tableInstance;
 
   const { successToast } = useToast();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader size="lg" />
+      </div>
+    );
+  }
 
   return (
     <>
