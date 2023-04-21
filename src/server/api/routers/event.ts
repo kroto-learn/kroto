@@ -34,13 +34,25 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
+      const hostsIds = await prisma.host.findMany({
+        where: {
+          eventId: event?.id,
+        },
+      });
+
+      const hosts = await prisma.user.findMany({
+        where: {
+          id: { in: hostsIds.map((h) => h.userId) },
+        },
+      });
+
       const registrations = await prisma.user.findMany({
         where: {
           id: { in: registrationsIds.map((r) => r.userId) },
         },
       });
 
-      return { ...event, creator: user, registrations };
+      return { ...event, creator: user, registrations, hosts: [...hosts, user ]};
     }),
 
   // User for RouterOutputs don't remove.

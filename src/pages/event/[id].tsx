@@ -77,7 +77,7 @@ export default function EventPage({ eventId }: Props) {
         />
         <meta
           property="og:url"
-          content={`https://kroto.in/event/${event?.id}`}
+          content={`https://kroto.in/event/${event?.id ?? ""}`}
         />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
@@ -238,21 +238,23 @@ export default function EventPage({ eventId }: Props) {
                 <UserGroupIcon className="w-5" />
                 <h2 className="font-medium ">Hosts</h2>
               </div>
-              <div className="flex flex-col gap-2 px-4 pb-4">
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`relative aspect-square w-[1.7rem] overflow-hidden rounded-full`}
-                  >
-                    <Image
-                      src={event?.creator?.image ?? ""}
-                      alt={event?.creator?.name ?? ""}
-                      fill
-                    />
+              <div className="flex flex-wrap gap-5 px-4 pb-4">
+                {event?.hosts.map((host) => (
+                  <div key={host?.id} className="flex items-center gap-2">
+                    <div
+                      className={`relative aspect-square w-[1.7rem] overflow-hidden rounded-full`}
+                    >
+                      <Image
+                        src={host?.image ?? ""}
+                        alt={host?.name ?? ""}
+                        fill
+                      />
+                    </div>
+                    <p className={`text-neutral-300 transition-all`}>
+                      {host?.name ?? ""}
+                    </p>
                   </div>
-                  <p className={`text-neutral-300 transition-all`}>
-                    {event?.creator?.name ?? ""}
-                  </p>
-                </div>
+                ))}
               </div>
             </div>
           </div>

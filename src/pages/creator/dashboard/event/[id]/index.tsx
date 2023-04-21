@@ -313,6 +313,7 @@ const EventOverview = () => {
         <AddHostModel
           refetch={refetchHosts}
           eventId={event.id ?? ""}
+          hosts={hosts ?? []}
           isOpen={open}
           setIsOpen={setIsOpen}
         />
@@ -344,11 +345,13 @@ export function AddHostModel({
   eventId,
   isOpen,
   setIsOpen,
+  hosts,
   refetch,
 }: {
   eventId: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  hosts: RouterOutputs["event"]["getHosts"];
   refetch: () => void;
 }) {
   const [creatorId, setCreatorId] = useState<string>("");
@@ -448,6 +451,30 @@ export function AddHostModel({
                           Add Host
                         </button>
                       </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex flex-wrap gap-5 px-4 pb-4">
+                      {!(hosts instanceof TRPCError) &&
+                        hosts?.map((host) => (
+                          <div
+                            key={host?.id}
+                            className="flex items-center gap-2"
+                          >
+                            <div
+                              className={`relative aspect-square w-[1.7rem] overflow-hidden rounded-full`}
+                            >
+                              <Image
+                                src={host?.image ?? ""}
+                                alt={host?.name ?? ""}
+                                fill
+                              />
+                            </div>
+                            <p className={`text-neutral-300 transition-all`}>
+                              {host?.name ?? ""}
+                            </p>
+                          </div>
+                        ))}
                     </div>
                   </div>
                 </Dialog.Panel>
