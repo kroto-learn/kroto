@@ -869,10 +869,22 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.31.tgz#31b7ca6407128a3d2bbc27fe2d21b345397f6197"
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
+"@types/node@*":
+  version "18.15.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.13.tgz#f64277c341150c979e42b00e4ac289290c9df469"
+  integrity sha512-N+0kuo9KgrUQ1Sn/ifDXsvg0TTleP7rIy4zOBGECxAljqvqfqpTfzx0Q1NUedOixRMBfe2Whhb056a42cWs26Q==
+
 "@types/node@^18.15.5":
   version "18.15.11"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.15.11.tgz#b3b790f09cb1696cffcec605de025b088fa4225f"
   integrity sha512-E5Kwq2n4SbMzQOn6wnmBjuK9ouqlURrcZDVfbo9ftDDTFt3nk7ZKK4GMOzoYgnpQJKcxwQw+lGaBvvlMo0qN/Q==
+
+"@types/nodemailer@^6.4.7":
+  version "6.4.7"
+  resolved "https://registry.yarnpkg.com/@types/nodemailer/-/nodemailer-6.4.7.tgz#658f4bca47c1a895b1d7e054b3b54030a5e1f5e0"
+  integrity sha512-f5qCBGAn/f0qtRcd4SEn88c8Fp3Swct1731X4ryPKqS61/A3LmmzN8zaEz7hneJvpjFbUUgY7lru/B/7ODTazg==
+  dependencies:
+    "@types/node" "*"
 
 "@types/nprogress@^0.2.0":
   version "0.2.0"
@@ -2769,6 +2781,13 @@ html-void-elements@^2.0.0:
   resolved "https://registry.yarnpkg.com/html-void-elements/-/html-void-elements-2.0.1.tgz#29459b8b05c200b6c5ee98743c41b979d577549f"
   integrity sha512-0quDb7s97CfemeJAnW9wC0hw78MtW7NU3hqtCD75g2vFlDLt36llsYD7uB7SUzojLMP24N5IatXf7ylGXiGG9A==
 
+ical-generator@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/ical-generator/-/ical-generator-4.0.0.tgz#638ae9d9c054ddc04d702377b00e36c510f88326"
+  integrity sha512-zDjku0O3z/nj/XwgWvhj8vcGwZj/09097VelHLIpUJzjfPdUBNnYkYjSsjrHiwc0HodpSA0U4hiJgz8XerHGXw==
+  dependencies:
+    uuid-random "^1.3.2"
+
 ieee754@1.1.13:
   version "1.1.13"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.13.tgz#ec168558e95aa181fd87d37f55c32bbcb6708b84"
@@ -3910,6 +3929,11 @@ node-releases@^2.0.8:
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.10.tgz#c311ebae3b6a148c89b1813fd7c4d3c024ef537f"
   integrity sha512-5GFldHPXVG/YZmFzJvKK2zDSzPKhEp0+ZR5SVaoSag9fsL5YgHbUHDfnG5494ISANDcK4KwPXAx2xqVEydmd7w==
+
+nodemailer@^6.9.1:
+  version "6.9.1"
+  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-6.9.1.tgz#8249d928a43ed85fec17b13d2870c8f758a126ed"
+  integrity sha512-qHw7dOiU5UKNnQpXktdgQ1d3OFgRAekuvbJLcdG5dnEo/GtcTHRYM7+UfJARdOFU9WUQO8OiIamgWPmiSFHYAA==
 
 normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"
@@ -5924,6 +5948,11 @@ util@^0.12.4:
     is-generator-function "^1.0.7"
     is-typed-array "^1.1.3"
     which-typed-array "^1.1.2"
+
+uuid-random@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/uuid-random/-/uuid-random-1.3.2.tgz#96715edbaef4e84b1dcf5024b00d16f30220e2d0"
+  integrity sha512-UOzej0Le/UgkbWEO8flm+0y+G+ljUon1QWTEZOq1rnMAsxo2+SckbiZdKzAHHlVh6gJqI1TjC/xwgR50MuCrBQ==
 
 uuid@8.0.0:
   version "8.0.0"
