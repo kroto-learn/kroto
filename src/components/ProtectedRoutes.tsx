@@ -17,9 +17,8 @@ const ProtectedRoutes = () => {
     ];
 
     if (publicRoutes.includes(router.pathname)) return;
-    if (status === "loading") return;
 
-    if (!session) void router.push("/");
+    if (status === "unauthenticated") void router.push("/");
   }, [status, router, session]);
 
   return <></>;
