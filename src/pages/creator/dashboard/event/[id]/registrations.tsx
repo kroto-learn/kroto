@@ -76,9 +76,9 @@ const EventRegistrations = () => {
       <Head>
         <title>{(event?.title ?? "Event") + " | Registrations"}</title>
       </Head>
-      <div className="flex min-h-[80%] w-full flex-col items-start justify-start gap-4 rounded-xl bg-neutral-900 p-6">
-        <h3 className="mb-1 text-2xl font-medium">Registrations</h3>
-        <div className="mb-2 flex w-full items-start justify-between">
+      <div className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6">
+        <h3 className="mb-4 text-2xl font-medium">Registrations</h3>
+        <div className="mb-4 flex w-full items-start justify-between">
           <div className="flex flex-col items-start">
             <p className="text-3xl text-neutral-200">
               {event?.registrations.length ?? "-"}
@@ -104,7 +104,7 @@ const EventRegistrations = () => {
         {event?.registrations && event.registrations.length > 0 ? (
           <table
             {...getTableProps()}
-            className="w-full overflow-hidden rounded-lg text-left text-sm text-neutral-300"
+            className="block h-[80%] w-full border-collapse overflow-auto text-left text-sm text-neutral-300"
           >
             <thead className="rounded-t-lg border border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400">
               {
@@ -140,7 +140,7 @@ const EventRegistrations = () => {
                   return (
                     // Apply the row props
                     <tr
-                      className="border-t border-neutral-700 bg-neutral-800"
+                      className="border border-neutral-800 bg-neutral-900 even:bg-neutral-800"
                       {...row.getRowProps()}
                     >
                       {

@@ -94,24 +94,24 @@ const Audience = () => {
         {audience && audience.length > 0 ? (
           <table
             {...getTableProps()}
-            className="block overflow-x-auto text-left text-sm text-neutral-300 xs:table xs:w-full xs:overflow-hidden xs:rounded-lg"
+            className="block h-[80%] border-collapse overflow-auto text-left text-sm text-neutral-300"
           >
-            <thead className="border border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400">
+            <thead>
               {
                 // Loop over the header rows
                 headerGroups.map((headerGroup) => (
                   // Apply the header row props
                   // eslint-disable-next-line react/jsx-key
-                  <tr {...headerGroup.getHeaderGroupProps()}>
+                  <tr
+                    className="border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400"
+                    {...headerGroup.getHeaderGroupProps()}
+                  >
                     {
                       // Loop over the headers in each row
                       headerGroup.headers.map((column) => (
                         // Apply the header cell props
                         // eslint-disable-next-line react/jsx-key
-                        <th
-                          className="px-2 py-3 sm:px-6"
-                          {...column.getHeaderProps()}
-                        >
+                        <th className="px-6 py-3" {...column.getHeaderProps()}>
                           {
                             // Render the header
                             column.render("Header")
@@ -134,7 +134,7 @@ const Audience = () => {
                     // Apply the row props
                     // eslint-disable-next-line react/jsx-key
                     <tr
-                      className="border-t border-neutral-700 bg-neutral-800"
+                      className="border border-neutral-800 bg-neutral-900 even:bg-neutral-800"
                       {...row.getRowProps()}
                     >
                       {
@@ -143,7 +143,7 @@ const Audience = () => {
                           // Apply the cell props
                           if (cell.column.id === "img")
                             return (
-                              <td className="py-4 pl-2 pr-2 sm:pl-6">
+                              <td className="py-4 pl-6 pr-2">
                                 <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
                                   <Image
                                     fill
@@ -156,7 +156,7 @@ const Audience = () => {
                           return (
                             // eslint-disable-next-line react/jsx-key
                             <td
-                              className="whitespace-nowrap  px-2 py-4 font-medium text-neutral-200 sm:px-6"
+                              className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
                               {...cell.getCellProps()}
                             >
                               {
@@ -187,7 +187,7 @@ const Audience = () => {
             <br />
             <Link
               href="/event/create"
-              className="flex items-center gap-1 rounded-xl border border-pink-600 px-2  py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:px-4"
+              className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
             >
               <PlusIcon className="w-5" /> Create Event
             </Link>

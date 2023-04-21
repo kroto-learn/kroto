@@ -273,7 +273,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
             className="flex items-center gap-1 text-sm text-neutral-200 transition duration-300 hover:text-neutral-400"
           ></button>
         </div>
-        <div className="ml-12 w-full md:ml-[15rem]">{children}</div>
+        <div className="ml-12 w-[90%] md:ml-[15rem]">{children}</div>
       </div>
     </main>
   );
