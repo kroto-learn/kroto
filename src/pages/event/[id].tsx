@@ -82,7 +82,7 @@ export default function EventPage({ eventId }: Props) {
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
         <div className="flex w-11/12 max-w-3xl flex-col gap-4 rounded-xl bg-neutral-800 p-4">
-          <div className="relative h-[25rem] w-full">
+          <div className="relative aspect-[18/9] w-full">
             <Image
               src={(event?.thumbnail as string) ?? ""}
               alt={event?.title ?? ""}
@@ -93,7 +93,7 @@ export default function EventPage({ eventId }: Props) {
           <h1 className="mb-5 text-2xl font-medium text-neutral-200">
             {event?.title}
           </h1>
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row justify-between gap-1">
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
                 <div
@@ -105,7 +105,9 @@ export default function EventPage({ eventId }: Props) {
                     fill
                   />
                 </div>
-                <p className={`text-base text-neutral-300 transition-all`}>
+                <p
+                  className={`text-xs text-neutral-300 transition-all sm:text-base`}
+                >
                   Hosted by {event?.creator?.name ?? ""}
                 </p>
               </div>
@@ -125,7 +127,7 @@ export default function EventPage({ eventId }: Props) {
             <div className="flex flex-col gap-4">
               <div className="flex gap-2">
                 <CalenderBox date={event?.datetime ?? new Date()} />
-                <p className="text-left text-sm  font-medium text-neutral-300">
+                <p className="text-left text-xs font-medium  text-neutral-300 sm:text-sm">
                   {date?.toLocaleString("en-US", {
                     weekday: "long",
                     day: "numeric",

@@ -88,6 +88,7 @@ const Settings = () => {
   }, [creator, methods, creatorinit]);
 
   const revalidate = useRevalidateSSG();
+  const ctx = api.useContext();
 
   if (isLoading)
     return (
@@ -101,7 +102,7 @@ const Settings = () => {
       <Head>
         <title>Settings | Dashboard</title>
       </Head>
-      <div className="mx-5 my-10 w-full">
+      <div className="my-10 w-full px-2">
         <form
           onSubmit={methods.handleSubmit(async (values) => {
             setUpdating(true);
@@ -122,6 +123,7 @@ const Settings = () => {
                     },
                     {
                       onSuccess: () => {
+                        void ctx.creator.getProfile.invalidate();
                         void revalidate(`/${creator?.id ?? ""}`);
                       },
                       onError: () => {
@@ -180,16 +182,16 @@ const Settings = () => {
               </p>
             )}
           </div>
-          <div>
-            <div className="flex flex-col gap-5 md:flex-row">
-              <div>
+          <div className="w-full">
+            <div className="flex w-full flex-col gap-5 sm:flex-row">
+              <div className="w-full">
                 <label className="mb-2 block font-medium text-neutral-400">
                   Name
                 </label>
-                <div className="relative mb-6">
+                <div className="relative">
                   <input
                     {...methods.register("name")}
-                    className="block min-w-[20rem] rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                    className="block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
                     placeholder="Your Name, not your mom's"
                     defaultValue={(creator && creator.name) ?? ""}
                   />
@@ -200,17 +202,17 @@ const Settings = () => {
                   </p>
                 )}
               </div>
-              <div>
+              <div className="mb-5 w-full">
                 <label className="mb-2 block font-medium text-neutral-400">
                   Kreator Profile
                 </label>
-                <div className="flex">
+                <div className="flex w-full">
                   <span className="inline-flex items-center rounded-l-xl border border-r-0 border-neutral-600 bg-neutral-700 px-3 font-medium text-neutral-400">
                     kroto.in/
                   </span>
                   <input
                     {...methods.register("creatorProfile")}
-                    className="block min-w-[14rem] rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                    className="block w-[calc(100%-4rem)] rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent xl:w-full"
                     placeholder="rosekamallove"
                     defaultValue={(creator && creator.creatorProfile) ?? ""}
                   />
@@ -376,12 +378,9 @@ const Settings = () => {
                 </p>
               )}
             </div>
-          </div>
-
-          <div className="flex w-full px-6">
             <button
               type="submit"
-              className={`group my-5 inline-flex items-center gap-1 rounded-xl bg-pink-600 px-6 py-2 text-center font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
+              className={`group inline-flex items-center gap-1 rounded-xl bg-pink-600 px-6 py-2 text-center font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
             >
               {updating ? <Loader white /> : <CloudIcon className="w-5" />} Save
               Changes

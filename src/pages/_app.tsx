@@ -10,6 +10,7 @@ import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
 
 import "@/styles/globals.css";
+import ProtectedRoutes from "@/components/ProtectedRoutes";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -24,6 +25,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       />
       <Toaster />
       <Analytics />
+      <ProtectedRoutes/>
       <Layout
         Component={
           Component as NextComponentType & {
