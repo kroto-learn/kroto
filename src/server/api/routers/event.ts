@@ -213,7 +213,6 @@ export const eventRouter = createTRPCRouter({
         where: {
           email: user.email,
           creatorId: event.creatorId,
-          eventId: event.id,
         },
       });
 
