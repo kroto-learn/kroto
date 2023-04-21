@@ -66,14 +66,6 @@ const EventOverview = () => {
 
   const { successToast } = useToast();
 
-  // const { data: creator } = api.creator.getProfile.useQuery();
-
-  // useEffect(() => {
-  //   if (!creator?.isCreator) {
-  //     void router.push("/");
-  //   }
-  // }, [creator, router]);
-
   if (isEventLoading)
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">

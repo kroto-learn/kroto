@@ -17,12 +17,6 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
   const [inputValue, setInputValue] = useState("");
   const { data: profile, isLoading } = api.creator.getProfile.useQuery();
 
-  useEffect(() => {
-    if (status !== "loading" && !session?.user?.id) {
-      void router.push("/");
-    }
-  }, [router, status, session]);
-
   return (
     <Layout>
       <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">

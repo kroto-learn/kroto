@@ -26,18 +26,13 @@ Dashboard.getLayout = DashboardLayout;
 
 function DashboardLayoutR({ children }: { children: ReactNode }) {
   const { data: creator } = api.creator.getProfile.useQuery();
-  // const router = useRouter();
-  // useEffect(() => {
-  //   if (!creator?.isCreator) {
-  //     void router.push("/");
-  //   }
-  // }, [creator, router]);
+
   const pathname = usePathname();
 
   return (
     <main className="flex h-screen w-full justify-center overflow-x-hidden">
       <div className="flex h-full w-full max-w-4xl items-start">
-        <div className="fixed z-20 mt-5 flex h-[96%] flex-col items-center justify-start gap-8 rounded-xl bg-neutral-900 pb-12 pt-8 text-neutral-400 md:w-60">
+        <div className="fixed z-20 flex h-full flex-col items-center justify-start gap-8 bg-neutral-900 pb-12 pt-8 text-neutral-400 sm:mt-5 sm:h-[96%] sm:rounded-xl md:w-60">
           {creator ? (
             <div className="flex w-full justify-center p-0 md:p-4">
               <Link

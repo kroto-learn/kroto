@@ -66,9 +66,9 @@ const Audience = () => {
       <Head>
         <title>Audience | Dashboard</title>
       </Head>
-      <div className="my-8 flex min-h-[80%] w-full flex-col items-start justify-start gap-4 px-6">
-        <h3 className="mb-1 text-2xl font-medium">Audience</h3>
-        <div className="mb-2 flex w-full items-start justify-between">
+      <div className="my-8 min-h-[80%] w-full items-start justify-start gap-4 px-6">
+        <h3 className="mb-4 text-2xl font-medium">Audience</h3>
+        <div className="mb-6 flex w-full items-start justify-between">
           <div className="flex flex-col items-start">
             <p className="text-3xl text-neutral-200">
               {audience?.length ?? "-"}
@@ -94,9 +94,9 @@ const Audience = () => {
         {audience && audience.length > 0 ? (
           <table
             {...getTableProps()}
-            className="w-full overflow-hidden rounded-lg text-left text-sm text-neutral-300"
+            className="block overflow-x-auto text-left text-sm text-neutral-300 xs:table xs:w-full xs:overflow-hidden xs:rounded-lg"
           >
-            <thead className="rounded-t-lg border border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400">
+            <thead className="border border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400">
               {
                 // Loop over the header rows
                 headerGroups.map((headerGroup) => (
@@ -108,7 +108,10 @@ const Audience = () => {
                       headerGroup.headers.map((column) => (
                         // Apply the header cell props
                         // eslint-disable-next-line react/jsx-key
-                        <th className="px-6 py-3" {...column.getHeaderProps()}>
+                        <th
+                          className="px-2 py-3 sm:px-6"
+                          {...column.getHeaderProps()}
+                        >
                           {
                             // Render the header
                             column.render("Header")
@@ -140,7 +143,7 @@ const Audience = () => {
                           // Apply the cell props
                           if (cell.column.id === "img")
                             return (
-                              <td className="py-4 pl-6 pr-2">
+                              <td className="py-4 pl-2 pr-2 sm:pl-6">
                                 <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
                                   <Image
                                     fill
@@ -153,7 +156,7 @@ const Audience = () => {
                           return (
                             // eslint-disable-next-line react/jsx-key
                             <td
-                              className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
+                              className="whitespace-nowrap  px-2 py-4 font-medium text-neutral-200 sm:px-6"
                               {...cell.getCellProps()}
                             >
                               {
@@ -184,7 +187,7 @@ const Audience = () => {
             <br />
             <Link
               href="/event/create"
-              className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
+              className="flex items-center gap-1 rounded-xl border border-pink-600 px-2  py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:px-4"
             >
               <PlusIcon className="w-5" /> Create Event
             </Link>
