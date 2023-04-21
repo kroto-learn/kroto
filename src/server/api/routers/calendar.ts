@@ -62,15 +62,15 @@ const mailOptionsBuilder = (
     end: event?.endTime,
     summary: event?.title,
     description: event?.description,
-    organizer: `${creator?.name} <${creator?.email}>`,
+    organizer: `${creator?.name ?? ""} <${creator?.email ?? ""}>`,
     location: event?.eventUrl ?? event?.eventLocation,
-    url: `https://kroto.in/event/${event?.id}`,
+    url: `https://kroto.in/event/${event?.id ?? ""}`,
   });
 
   return {
     from: "kamal@kroto.in", // sender email
     to: recipientEmail, // recipient email
-    subject: `Calendar Invite for ${event?.title}`,
+    subject: `Calendar Invite for ${event?.title ?? "Event"}`,
     text: "To add invites to the calendar of your preferrence, please open any of the following attachment and it will redirect you to the calendar invite page for your calendar app \n \n \n Thank your so much for registering to this event :)",
     icalEvent: {
       method: "REQUEST",
