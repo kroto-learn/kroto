@@ -64,6 +64,9 @@ export default function EventPage({ eventId }: Props) {
 
   const isYourEvent = event?.creatorId === session?.user?.id;
 
+  const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
+    api.calendar.addUserEvent.useMutation();
+
   return (
     <>
       <Head>
@@ -182,8 +185,20 @@ export default function EventPage({ eventId }: Props) {
                       The event is going to start soon, stay tuned!
                     </div>
                   ) : (
-                    <div className="flex items-center justify-center font-bold">
-                      You are already registered!
+                    <div className="prose prose-invert prose-pink flex items-center justify-center font-bold">
+                      <button
+                        onClick={async () => {
+                          await addToCalendarMutation({
+                            eventId: event?.id ?? "",
+                          });
+                        }}
+                      >
+                        {addingToCalendar ? (
+                          <a>Sending...</a>
+                        ) : (
+                          <a>Send a calendar invite</a>
+                        )}
+                      </button>
                     </div>
                   )
                 ) : (
