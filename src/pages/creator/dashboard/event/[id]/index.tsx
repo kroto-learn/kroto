@@ -105,9 +105,9 @@ const EventOverview = () => {
         ) : (
           <></>
         )}
-        <div className="flex w-full max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4">
-          <div className="flex w-full items-start gap-8">
-            <div className="flex flex-col items-start gap-4">
+        <div className="flex w-[98%] max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4">
+          <div className="flex w-full flex-col items-start gap-8 sm:flex-row">
+            <div className="flex w-full flex-col items-start gap-4">
               <div
                 className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
               >
@@ -121,48 +121,46 @@ const EventOverview = () => {
               </div>
             </div>
 
-            <div className="flex justify-between">
-              <div className="flex flex-col gap-3">
-                <h3 className="font-medium text-neutral-200">When & Where</h3>
-                <div className="flex gap-2">
-                  <CalenderBox date={event?.datetime ?? new Date()} />
-                  <p className="text-left text-sm  font-medium text-neutral-300">
-                    {event.datetime?.toLocaleString("en-US", {
-                      weekday: "long",
-                      day: "numeric",
-                      month: "long",
-                    })}
-                    <br />
-                    {event.datetime?.toLocaleString("en-US", {
-                      hour: "numeric",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}{" "}
-                    to{" "}
-                    {event.endTime?.toLocaleString("en-US", {
-                      hour: "numeric",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-neutral-400">
-                  {event?.eventType === "virtual" ? (
-                    <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
-                  ) : (
-                    <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
-                  )}
-                  <p>
-                    {event?.eventType === "virtual"
-                      ? "Google Meet"
-                      : event?.eventLocation}
-                  </p>
-                </div>
+            <div className="flex w-full flex-col gap-3">
+              <h3 className="font-medium text-neutral-200">When & Where</h3>
+              <div className="flex gap-2">
+                <CalenderBox date={event?.datetime ?? new Date()} />
+                <p className="text-left text-sm  font-medium text-neutral-300">
+                  {event.datetime?.toLocaleString("en-US", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                  })}
+                  <br />
+                  {event.datetime?.toLocaleString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}{" "}
+                  to{" "}
+                  {event.endTime?.toLocaleString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-neutral-400">
+                {event?.eventType === "virtual" ? (
+                  <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                ) : (
+                  <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                )}
+                <p>
+                  {event?.eventType === "virtual"
+                    ? "Google Meet"
+                    : event?.eventLocation}
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="flex w-full items-center gap-12">
+          <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:gap-12">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => {
@@ -660,7 +658,7 @@ function EventLayoutR({ children }: { children: ReactNode }) {
               Registrations
             </Link>
           </li>
-          <li className="mr-2">
+          <li>
             <Link
               href={`/creator/dashboard/event/${id}/settings`}
               className={`inline-block rounded-t-lg p-4 ${
