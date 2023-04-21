@@ -244,7 +244,7 @@ const Settings = () => {
                           value={
                             methods.watch().socialLinks[idx]?.type ?? "youtube"
                           }
-                          className="z-10 items-center rounded-l-lg border border-neutral-700 bg-neutral-800 px-2 py-2.5 text-center font-medium text-neutral-200 outline-0"
+                          className="z-10 items-center rounded-l-lg border border-neutral-700 bg-neutral-800 px-2 py-2 text-center font-medium text-neutral-200 outline-0"
                         >
                           <option value="youtube">YouTube</option>
                           <option value="twitter">Twitter</option>
@@ -255,7 +255,7 @@ const Settings = () => {
                         </select>
                         <input
                           {...methods.register(`socialLinks.${idx}.url`)}
-                          className="w-full rounded-r-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-neutral-200 outline-0 placeholder:text-neutral-400"
+                          className="w-full rounded-r-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
                           placeholder="https://"
                         />
                         <button
