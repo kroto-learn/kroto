@@ -10,6 +10,7 @@ import ClaimLink from "@/components/ClaimLink";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { ClaimLinkBanner } from ".";
 export default function Dashboard({ creators }: { creators: Creator[] }) {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -104,7 +105,7 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
             )}
           </div>
         </div>
-        <div className="my-10 flex flex-col items-center justify-center gap-5 rounded-xl border border-neutral-800 bg-neutral-900 p-5 transition duration-300 hover:border-neutral-700">
+        {/* <div className="my-10 flex flex-col items-center justify-center gap-5 rounded-xl border border-neutral-800 bg-neutral-900 p-5 transition duration-300 hover:border-neutral-700">
           <div>
             <h3 className="max-w-lg text-center text-2xl">
               Become a Kreator and schedule events of your own, claim your link
@@ -112,7 +113,8 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
             </h3>
           </div>
           <ClaimLink variant="sm" />
-        </div>
+        </div> */}
+        <ClaimLinkBanner />
         <div>
           <h3 className="mb-5 text-2xl font-medium text-neutral-300">
             Discover Creators
