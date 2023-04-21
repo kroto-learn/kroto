@@ -16,6 +16,7 @@ import { type MDEditorProps } from "@uiw/react-md-editor";
 import { PhotoIcon, LinkIcon } from "@heroicons/react/20/solid";
 import { Loader } from "./Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -345,7 +346,7 @@ const EventEditModal = () => {
               placeholder="Your event's address"
               className="w-full rounded-lg bg-neutral-800 px-3 py-2 pl-8 text-sm text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400"
             />
-            <LinkIcon className="absolute ml-2 w-4 text-neutral-400 peer-focus:text-neutral-200" />
+            <MapPinIcon className="absolute ml-2 w-4 text-neutral-400 peer-focus:text-neutral-200" />
           </div>
 
           {methods.formState.errors.eventLocation?.message && (
