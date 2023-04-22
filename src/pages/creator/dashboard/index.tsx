@@ -76,16 +76,12 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
             </div>
           ) : (
             <>
-              <div className="h-16 w-16 p-4 md:hidden">
-                <div className={`h-full w-full rounded-full bg-neutral-800`} />
-              </div>
-              <div className="hidden w-full flex-col items-center gap-3 rounded-full px-4 duration-300 hover:border-neutral-600 md:flex">
-                <div
-                  className={`relative aspect-square w-24 overflow-hidden rounded-full  bg-neutral-800`}
-                />
-                <div className="flex flex-col items-center gap-1">
-                  <div className="my-1 h-4 w-32 rounded-lg bg-neutral-800" />
-                  <div className="my-1 h-4 w-40 rounded-lg  bg-neutral-800" />
+              <div className="flex w-full justify-center p-0 md:p-4">
+                <div className="flex w-full justify-center rounded-xl p-0 duration-300 md:bg-neutral-800 md:p-2">
+                  <div className="h-16 w-16 overflow-hidden  p-2 md:hidden">
+                    <div className="h-full w-full rounded-full bg-neutral-800"></div>
+                  </div>
+                  <div className="h-[2.5rem]"></div>
                 </div>
               </div>
             </>
