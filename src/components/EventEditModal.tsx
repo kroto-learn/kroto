@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState, memo } from "react";
+import React, { useEffect, useState, memo, type ChangeEvent } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { date, object, string, type z } from "zod";
 import dayjs from "dayjs";
@@ -22,9 +22,11 @@ const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
 });
 
+const titleLimit = 100;
+
 const editEventFormSchema = object({
   thumbnail: string().nonempty("Please upload a cover"),
-  title: string().nonempty("Please enter event title."),
+  title: string().max(titleLimit).nonempty("Please enter event title."),
   description: string().max(3000).nonempty("Please enter event description."),
   eventType: string().nonempty("Please select the type of event."),
   eventUrl: string().url().optional(),
@@ -116,6 +118,7 @@ const EventEditModal = () => {
   useEffect(() => {
     if (event && !eventInit) {
       setEventInit(true);
+      methods.setValue("title", (event?.title as string) ?? "");
       methods.setValue("thumbnail", (event?.thumbnail as string) ?? "");
       methods.setValue("eventType", event?.eventType ?? "");
       methods.setValue("description", event?.description ?? "");
@@ -239,11 +242,18 @@ const EventEditModal = () => {
           Event Title
         </label>
         <input
-          {...methods.register("title")}
-          defaultValue={(event && event.title) ?? ""}
+          value={methods.watch()?.title}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            methods.setValue("title", e.target?.value.substring(0, titleLimit));
+          }}
           placeholder="Event Title"
           className="w-full rounded-lg bg-neutral-800 px-3 py-2 text-sm font-medium  text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400 sm:text-lg"
         />
+        {
+          <p className="text-end text-neutral-400">
+            {methods.watch()?.title?.length}/{titleLimit}
+          </p>
+        }
         {methods.formState.errors.title?.message && (
           <p className="text-red-700">
             {methods.formState.errors.title?.message}

@@ -5010,11 +5010,6 @@ react-table@^7.8.0:
   resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.8.0.tgz#07858c01c1718c09f7f1aed7034fcfd7bda907d2"
   integrity sha512-hNaz4ygkZO4bESeFfnfOft73iBUj8K5oKi1EcSHPAibEydfsX2MyU6Z8KCr3mv3C9Kqqh71U+DhZkFvibbnPbA==
 
-react-textarea-counter@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/react-textarea-counter/-/react-textarea-counter-1.0.3.tgz#60da7311ef09f293301c32378b9742733a8c377e"
-  integrity sha512-mm1XjxQ2xckQttfrK9RB9NTtHir1RW61D3IKuniL9DlhtBeZN3hAUC86nBfmyhz46sE3XclKvLs5pRTCSCsBSA==
-
 react@^18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"

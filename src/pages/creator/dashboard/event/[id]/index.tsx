@@ -262,7 +262,11 @@ const EventOverview = () => {
             {hosts instanceof TRPCError
               ? ""
               : hosts?.map((host) => (
-                  <li key={host?.id} className="py-3 sm:py-4">
+                  <Link
+                    href={`/${host?.creatorProfile ?? ""}`}
+                    key={host?.id}
+                    className="py-3 sm:py-4"
+                  >
                     <div className="flex w-full items-center space-x-4">
                       <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
                         <Image
@@ -296,7 +300,7 @@ const EventOverview = () => {
                         Remove
                       </button>
                     </div>
-                  </li>
+                  </Link>
                 ))}
           </ul>
         </div>

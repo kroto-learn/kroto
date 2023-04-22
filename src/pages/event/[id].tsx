@@ -84,7 +84,7 @@ export default function EventPage({ eventId }: Props) {
           content={`https://kroto.in/event/${event?.id ?? ""}`}
         />
       </Head>
-      <main className="flex -mt-10 h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
+      <main className="-mt-10 flex h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
         <div className="flex w-11/12 max-w-4xl flex-col gap-4 rounded-xl bg-neutral-800 p-4">
           <div className="relative aspect-[18/9] w-full">
             <Image
@@ -112,7 +112,10 @@ export default function EventPage({ eventId }: Props) {
                 <p
                   className={`text-xs text-neutral-300 transition-all sm:text-base`}
                 >
-                  Hosted by {event?.creator?.name ?? ""}
+                  Hosted by{" "}
+                  <Link href={`/${event?.creator?.creatorProfile ?? ""}`}>
+                    {event?.creator?.name ?? ""}
+                  </Link>
                 </p>
               </div>
               <div className="flex items-center gap-2 text-sm text-neutral-400">
@@ -258,7 +261,11 @@ export default function EventPage({ eventId }: Props) {
               </div>
               <div className="flex flex-wrap gap-5 px-4 pb-4">
                 {event?.hosts.map((host) => (
-                  <div key={host?.id} className="flex items-center gap-2">
+                  <Link
+                    href={`/${host?.creatorProfile ?? ""}`}
+                    key={host?.id}
+                    className="flex items-center gap-2"
+                  >
                     <div
                       className={`relative aspect-square w-[1.7rem] overflow-hidden rounded-full`}
                     >
@@ -271,7 +278,7 @@ export default function EventPage({ eventId }: Props) {
                     <p className={`text-neutral-300 transition-all`}>
                       {host?.name ?? ""}
                     </p>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
