@@ -11,14 +11,11 @@ export default function RedirectToSettings() {
     api.creator.makeCreator.useMutation();
 
   useEffect(() => {
-    const func = async () => {
-      void makeProfile({ creatorProfile });
-      if (!isLoading) {
-        void router.push("/creator/dashboard/settings");
-      }
-    };
-    func();
-  }, [creatorProfile, isLoading]);
+    void makeProfile({ creatorProfile });
+    if (!isLoading) {
+      void router.push("/creator/dashboard/settings");
+    }
+  }, [creatorProfile, isLoading, makeProfile, router]);
 
   return (
     <div className="flex h-screen scale-150 items-center justify-center">
