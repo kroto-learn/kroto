@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Layout from "@/components/layouts/main";
-import ClaimLink from "@/components/ClaimLink";
+import ClaimLink, { ClaimLinkNew } from "@/components/ClaimLink";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import ArrowRightIcon from "@heroicons/react/20/solid/ArrowRightIcon";
@@ -326,7 +326,7 @@ export const ClaimLinkBannerNew = () => {
   };
 
   return (
-    <div className="relative mx-auto my-8 flex w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-[3rem] bg-gradient-to-l from-neutral-900 to-neutral-800 p-10 px-12">
+    <div className="relative mx-auto my-8 flex w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-10 px-12">
       <h3 className="text-2xl font-medium">
         Become a <span className="text-pink-600">Kreator</span> now, and claim
         your proflie
@@ -336,7 +336,7 @@ export const ClaimLinkBannerNew = () => {
       </p>
       <span className="mb-2" />
 
-      <ClaimLink variant="lg" profile={creatorProfile} />
+      <ClaimLinkNew profile={creatorProfile} />
       <div className="absolute bottom-0 right-0">
         <div className="relative">
           <Image

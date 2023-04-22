@@ -12,7 +12,7 @@ export default function RedirectToSettings() {
 
   useEffect(() => {
     const func = async () => {
-      await makeProfile({ creatorProfile });
+      void makeProfile({ creatorProfile });
       if (!isLoading) {
         void router.push("/creator/dashboard/settings");
       }

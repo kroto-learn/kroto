@@ -51,7 +51,7 @@ export function ClaimLinkNew({ profile }: { profile?: string }) {
       />
       <button
         type="submit"
-        className="group absolute right-1 flex items-center gap-1 rounded-full bg-pink-600 p-2 px-4 text-xs font-bold text-neutral-200 duration-300 hover:bg-pink-600/20 hover:text-pink-600"
+        className="group absolute right-1 flex items-center gap-1 rounded-full bg-pink-600 p-2 px-4 text-xs font-bold text-neutral-200 duration-300 hover:bg-pink-700"
       >
         Claim Now
         <ChevronRightIcon className="w-5 transition-transform duration-300 group-hover:translate-x-1" />
