@@ -7,17 +7,15 @@ export default function RedirectToSettings() {
   const router = useRouter();
   const { creatorProfile } = router.query as { creatorProfile: string };
 
-  const { mutateAsync: makeProfile } = api.creator.makeCreator.useMutation();
+  const { mutateAsync: makeProfile, isLoading } =
+    api.creator.makeCreator.useMutation();
 
   useEffect(() => {
-    void makeProfile({ creatorProfile })
-      .then(() => {
-        void router.push("/creator/dashboard/settings");
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, [creatorProfile, makeProfile, router]);
+    void makeProfile({ creatorProfile });
+    if (!isLoading) {
+      void router.push("/creator/dashboard/settings");
+    }
+  }, [creatorProfile, isLoading, makeProfile, router]);
 
   return (
     <div className="flex h-screen scale-150 items-center justify-center">

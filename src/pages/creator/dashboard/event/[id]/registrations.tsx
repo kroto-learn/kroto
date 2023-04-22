@@ -24,12 +24,13 @@ import {
   WhatsappIcon,
 } from "next-share";
 import useToast from "@/hooks/useToast";
+import { Loader } from "@/components/Loader";
 
 const EventRegistrations = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  const { data: event } = api.event.get.useQuery({ id });
+  const { data: event, isLoading } = api.event.get.useQuery({ id });
 
   const tableData = React.useMemo(() => {
     if (event && event?.registrations)
@@ -71,6 +72,14 @@ const EventRegistrations = () => {
 
   const { successToast } = useToast();
 
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex h-screen items-center justify-center">
+  //       <Loader size="lg" />
+  //     </div>
+  //   );
+  // }
+
   return (
     <>
       <Head>
@@ -101,7 +110,9 @@ const EventRegistrations = () => {
             <FolderArrowDownIcon className="w-5" /> Download CSV
           </button>
         </div>
-        {event?.registrations && event.registrations.length > 0 ? (
+        {event?.registrations &&
+        event.registrations.length > 0 &&
+        !isLoading ? (
           <table
             {...getTableProps()}
             className="block h-[80%] w-full border-collapse overflow-auto text-left text-sm text-neutral-300"
@@ -180,9 +191,15 @@ const EventRegistrations = () => {
           </table>
         ) : (
           <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
-            <div className="relative aspect-square w-40 object-contain">
-              <Image src="/empty/users_empty.svg" alt="empty" fill />
-            </div>
+            {isLoading ? (
+              <div className="my-10">
+                <Loader size="lg" />
+              </div>
+            ) : (
+              <div className="relative aspect-square w-40 object-contain">
+                <Image src="/empty/users_empty.svg" alt="empty" fill />
+              </div>
+            )}
             <p className="text-neutral-400">
               Nobody registered to your event yet.
             </p>

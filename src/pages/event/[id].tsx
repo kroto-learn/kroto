@@ -22,6 +22,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import Layout from "@/components/layouts/main";
 
 type Props = {
   eventId: string;
@@ -68,7 +69,7 @@ export default function EventPage({ eventId }: Props) {
     api.calendar.addUserEvent.useMutation();
 
   return (
-    <>
+    <Layout>
       <Head>
         <title>{event?.title}</title>
         <meta property="og:title" content={event?.title ?? ""} />
@@ -83,8 +84,8 @@ export default function EventPage({ eventId }: Props) {
           content={`https://kroto.in/event/${event?.id ?? ""}`}
         />
       </Head>
-      <main className="flex h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
-        <div className="flex w-11/12 max-w-3xl flex-col gap-4 rounded-xl bg-neutral-800 p-4">
+      <main className="flex -mt-10 h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
+        <div className="flex w-11/12 max-w-4xl flex-col gap-4 rounded-xl bg-neutral-800 p-4">
           <div className="relative aspect-[18/9] w-full">
             <Image
               src={(event?.thumbnail as string) ?? ""}
@@ -116,9 +117,9 @@ export default function EventPage({ eventId }: Props) {
               </div>
               <div className="flex items-center gap-2 text-sm text-neutral-400">
                 {event?.eventType === "virtual" ? (
-                  <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                  <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-4xl text-neutral-400" />
                 ) : (
-                  <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                  <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-4xl text-neutral-400" />
                 )}
                 <p>
                   {event?.eventType === "virtual"
@@ -237,7 +238,7 @@ export default function EventPage({ eventId }: Props) {
             </div>
           </div>
         </div>
-        <div className="flex w-full max-w-3xl ">
+        <div className="flex w-full max-w-4xl ">
           <div className="flex w-full flex-col-reverse items-start gap-4 md:flex-row">
             <div className="mx-auto flex w-11/12 flex-col gap-4 rounded-xl bg-neutral-800 md:w-2/3">
               <div className="flex items-center gap-2 border-b border-neutral-600 px-4 py-3 text-neutral-200">
@@ -277,7 +278,7 @@ export default function EventPage({ eventId }: Props) {
           </div>
         </div>
       </main>
-    </>
+    </Layout>
   );
 }
 

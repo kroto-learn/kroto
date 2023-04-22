@@ -61,11 +61,13 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                     />
                   </div>
                   <div className="flex flex-col items-start gap-1">
-                    <p className="text-sm font-medium text-neutral-200">
+                    <p className="max-w-[8rem] truncate text-sm font-medium text-neutral-200">
                       {creator.name}
                     </p>
-                    <div className="flex items-center truncate text-xs font-medium text-neutral-300 decoration-neutral-400">
-                      {creator?.creatorProfile}{" "}
+                    <div className="flex items-center text-xs font-medium text-neutral-300 decoration-neutral-400">
+                      <span className="max-w-[7.5rem] truncate">
+                        {creator?.creatorProfile}
+                      </span>{" "}
                       <ArrowUpRightIcon className="w-4 text-pink-600" />
                     </div>
                   </div>

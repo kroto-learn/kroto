@@ -1,11 +1,12 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Layout from "@/components/layouts/main";
-import ClaimLink from "@/components/ClaimLink";
+import ClaimLink, { ClaimLinkNew } from "@/components/ClaimLink";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import ArrowRightIcon from "@heroicons/react/20/solid/ArrowRightIcon";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
+import creatorPageImage from "public/creator-page.png";
 import {
   CircleStackIcon,
   CurrencyDollarIcon,
@@ -313,6 +314,37 @@ export const ClaimLinkBanner = () => {
           <div className="block lg:hidden">
             <ClaimLink profile={creatorProfile} variant="md" />
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+export const ClaimLinkBannerNew = () => {
+  const router = useRouter();
+  const { creatorProfile } = router.query as {
+    creatorProfile: string;
+  };
+
+  return (
+    <div className="relative mx-auto my-8 flex w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-10 px-12">
+      <h3 className="text-2xl font-medium">
+        Become a <span className="text-pink-600">Kreator</span> now, and claim
+        your proflie
+      </h3>
+      <p className="max-w-[60%] text-base text-neutral-300">
+        Monetize your audience and provide them with value like never before.
+      </p>
+      <span className="mb-2" />
+
+      <ClaimLinkNew profile={creatorProfile} />
+      <div className="absolute bottom-0 right-0">
+        <div className="relative">
+          <Image
+            src={creatorPageImage}
+            width={1024 / 5}
+            height={1024 / 6}
+            alt="creator-page"
+          />
         </div>
       </div>
     </div>
