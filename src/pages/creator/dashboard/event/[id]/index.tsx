@@ -622,7 +622,7 @@ function EventLayoutR({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <div className="flex w-full items-start justify-between gap-4 px-4">
+      <div className="flex w-full flex-col items-start justify-between gap-4 px-4 md:flex-row">
         <h1 className="truncate text-xl text-neutral-200">{event?.title}</h1>
         <Link
           href={`/event/${id}`}
