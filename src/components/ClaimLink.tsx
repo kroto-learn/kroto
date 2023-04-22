@@ -1,21 +1,26 @@
 import Image from "next/image";
 import logo from "public/kroto-logo.png";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
-export default function ClaimLink() {
+export default function ClaimLink({ profile }: { profile?: string }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [creatorProfile, setCreatorProfile] = useState<string>("");
   const makeCreator = api.creator.makeCreator.useMutation().mutateAsync;
 
+  useEffect(() => {
+    if (profile) setCreatorProfile(profile);
+  }, [profile]);
+
   return (
     <form
-      onSubmit={async () => {
+      onSubmit={async (e) => {
+        e.preventDefault();
         localStorage.setItem("creatorProfile", creatorProfile);
         if (session?.user) {
           const creator = await makeCreator({

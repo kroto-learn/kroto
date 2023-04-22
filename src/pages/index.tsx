@@ -284,10 +284,11 @@ export const Features = () => {
 };
 
 export const ClaimLinkBanner = () => {
-  // const router = useRouter();
-  // const { creatorProfile } = router.query as {
-  //   creatorProfile: string;
-  // };
+  const router = useRouter();
+  const { creatorProfile } = router.query as {
+    creatorProfile: string;
+  };
+
   return (
     <div className="relative mx-auto my-8 flex w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-[3rem] bg-gradient-to-l from-neutral-900 to-neutral-800 p-10 px-12">
       <h3 className="text-2xl font-medium">
@@ -299,7 +300,7 @@ export const ClaimLinkBanner = () => {
       </p>
       <span className="mb-2" />
 
-      <ClaimLink />
+      <ClaimLink profile={creatorProfile} />
       <div className="absolute bottom-0 right-0">
         <div className="relative">
           <Image
