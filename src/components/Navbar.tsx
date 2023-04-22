@@ -37,9 +37,9 @@ export default function Navbar() {
             )}
           </div>
           {status === "authenticated" && !isLoading ? (
-            <div className="flex gap-5">
+            <div className="flex  gap-5">
               <Link
-                className="transition-all hover:text-neutral-400"
+                className="transition-all duration-300 hover:text-neutral-400"
                 href={
                   creator?.isCreator
                     ? "/creator/dashboard/events"
@@ -49,7 +49,7 @@ export default function Navbar() {
                 Dashboard
               </Link>
               <button
-                className="transition-all hover:text-neutral-400"
+                className="transition-all duration-300 hover:text-neutral-400"
                 onClick={() => void signOut({ callbackUrl: "/" })}
               >
                 Sign Out
@@ -59,7 +59,7 @@ export default function Navbar() {
             <>
               {!(status === "loading") && status === "unauthenticated" && (
                 <button
-                  className="transition-all hover:text-neutral-400"
+                  className="transition-all duration-300 hover:text-neutral-400"
                   onClick={() => void signIn()}
                 >
                   Sign In

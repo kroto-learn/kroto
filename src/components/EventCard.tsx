@@ -86,10 +86,10 @@ export const EventCard = ({
           ? `/creator/dashboard/event/${event?.id ?? ""}`
           : `/event/${event?.id ?? ""}`
       }
-      className={`relative flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 backdrop-blur transition-all duration-300 hover:bg-neutral-700/50 xs:flex-row xs:items-center ${
+      className={`relative flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl border border-neutral-700/50 bg-neutral-800 p-3 backdrop-blur transition-all duration-300 hover:border-pink-500/80 hover:bg-neutral-700/20 xs:flex-row xs:items-center ${
         (event?.datetime?.getTime() as number) <= new Date().getTime() &&
         (event?.endTime?.getTime() as number) >= new Date().getTime()
-          ? "border-neutral-700 border-2 hover:bg-neutral-900/50"
+          ? "border-2 border-neutral-700 hover:bg-neutral-900/50"
           : ""
       }`}
     >
