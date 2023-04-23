@@ -66,7 +66,7 @@ const Audience = () => {
       <Head>
         <title>Audience | Dashboard</title>
       </Head>
-      <div className="my-8 min-h-[80%] w-full items-start justify-start gap-4 px-6">
+      <div className="mx-2 my-8 min-h-[80%] w-full items-start justify-start gap-4 px-6">
         <h3 className="mb-4 text-2xl font-medium">Audience</h3>
         <div className="mb-6 flex w-full items-start justify-between">
           <div className="flex flex-col items-start">
@@ -94,7 +94,7 @@ const Audience = () => {
         {audience && audience.length > 0 ? (
           <table
             {...getTableProps()}
-            className="block h-[80%] border-collapse overflow-auto text-left text-sm text-neutral-300"
+            className="block h-[80%] w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
           >
             <thead>
               {

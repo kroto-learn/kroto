@@ -115,7 +115,7 @@ const EventRegistrations = () => {
         !isLoading ? (
           <table
             {...getTableProps()}
-            className="block h-[80%] w-full border-collapse overflow-auto text-left text-sm text-neutral-300"
+            className="block h-[80%] w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
           >
             <thead className="rounded-t-lg border border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400">
               {

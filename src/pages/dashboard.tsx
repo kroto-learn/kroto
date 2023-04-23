@@ -3,31 +3,27 @@ import { type Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Layout from "@/components/layouts/main";
-import { ClaimLinkNew } from "@/components/ClaimLink";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+// import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { ClaimLinkBannerNew } from ".";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+
 export default function Dashboard({ creators }: { creators: Creator[] }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
   const { data: profile, isLoading } = api.creator.getProfile.useQuery();
+  const { data: pastRegisteredEvents, isLoading: isPastLoading } =
+    api.creator.getPastEvents.useQuery();
 
-  const pathname = usePathname();
   const isPastTab = router.query.events === "past";
-  const upcomingEvents = profile?.registrations.filter(
-    (e) => e.endTime.getTime() >= new Date().getTime()
-  );
-  const pastEvents = profile?.registrations.filter(
-    (e) => e.endTime.getTime() < new Date().getTime()
-  );
+  const upcomingEvents = profile?.registrations;
+  const pastEvents = pastRegisteredEvents;
   const events = isPastTab ? pastEvents : upcomingEvents;
 
   return (
@@ -72,38 +68,40 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
           </div>
         </div>
         <div className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8">
-          <h1 className="text-2xl text-neutral-200">Registered Events</h1>
-          <div className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
-            <ul className="-mb-px flex flex-wrap">
-              <li className="mr-2">
-                <Link
-                  href="/dashboard"
-                  className={`inline-block rounded-t-lg p-4 ${
-                    !isPastTab
-                      ? "border-b-2 border-pink-500 text-pink-500 transition"
-                      : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
-                  }`}
-                >
-                  Upcoming
-                </Link>
-              </li>
-              <li className="/creator/dashboard/events">
-                <Link
-                  href="/dashboard?events=past"
-                  className={`inline-block rounded-t-lg p-4 transition ${
-                    isPastTab
-                      ? "border-b-2 border-pink-500 text-pink-500"
-                      : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
-                  }`}
-                  aria-current="page"
-                >
-                  Past
-                </Link>
-              </li>
-            </ul>
+          <div className="flex w-full items-center justify-between">
+            <h1 className="text-2xl text-neutral-200">Registered Events</h1>
+            <div className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
+              <ul className="-mb-px flex flex-wrap">
+                <li className="mr-2">
+                  <Link
+                    href="/dashboard"
+                    className={`inline-block rounded-t-lg p-4 ${
+                      !isPastTab
+                        ? "border-b-2 border-pink-500 text-pink-500 transition"
+                        : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
+                    }`}
+                  >
+                    Upcoming
+                  </Link>
+                </li>
+                <li className="/creator/dashboard/events">
+                  <Link
+                    href="/dashboard?events=past"
+                    className={`inline-block rounded-t-lg p-4 transition ${
+                      isPastTab
+                        ? "border-b-2 border-pink-500 text-pink-500"
+                        : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
+                    }`}
+                    aria-current="page"
+                  >
+                    Past
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          {isLoading ? (
+          {(isPastTab ? isPastLoading : isLoading) ? (
             <div className="flex h-full items-center justify-center">
               <Loader size="lg" />
             </div>

@@ -1647,6 +1647,11 @@ commondir@^1.0.1:
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
   integrity sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==
 
+compress-base64@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/compress-base64/-/compress-base64-1.0.2.tgz#d141c8c63167fd2947a6f7a10c8b793b009d1361"
+  integrity sha512-Sp8/Sa5XEZse+4hz4KkfFrFJiMZ7t6ACFkGU5uypfRF/puqclWGpaK8whjYXUQCq0yYJ9ca3ZcZHDGCFDoPe8w==
+
 compute-scroll-into-view@^3.0.2:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/compute-scroll-into-view/-/compute-scroll-into-view-3.0.3.tgz#c418900a5c56e2b04b885b54995df164535962b1"
