@@ -263,7 +263,6 @@ const EventOverview = () => {
               ? ""
               : hosts?.map((host) => (
                   <li key={host?.id} className="py-3 sm:py-4">
-                  <li key={host?.id} className="py-3 sm:py-4">
                     <div className="flex w-full items-center space-x-4">
                       <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
                         <Image
@@ -276,9 +275,9 @@ const EventOverview = () => {
                       <div className="min-w-0 flex-1">
                         <Link href={`/${host?.creatorProfile ?? ""}`}>
                           <Link
-                          href={`/${host?.creatorProfile ?? ""}`}
-                          className="truncate text-sm font-medium text-neutral-200 hover:underline"
-                        >
+                            href={`/${host?.creatorProfile ?? ""}`}
+                            className="truncate text-sm font-medium text-neutral-200 hover:underline"
+                          >
                             {host?.name ?? ""}
                           </Link>
                           <p className="truncate text-sm text-neutral-400">
@@ -297,7 +296,7 @@ const EventOverview = () => {
                         className="flex items-center gap-1 rounded-xl border border-pink-700 bg-pink-700 p-1 px-2 text-sm font-medium text-white transition duration-300 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
                       >
                         {removingHost ? (
-                          <Loader size="lg" />
+                          <Loader />
                         ) : (
                           <TrashIcon className="w-4" />
                         )}{" "}

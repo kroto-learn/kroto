@@ -361,18 +361,6 @@ export const eventRouter = createTRPCRouter({
           },
         },
       });
-
-      // Update the Event table to remove the host
-      await prisma.event.update({
-        where: { id: eventId },
-        data: {
-          hosts: {
-            disconnect: {
-              id: hostId,
-            },
-          },
-        },
-      });
     }),
 
   delete: protectedProcedure
