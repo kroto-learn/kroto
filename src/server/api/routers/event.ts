@@ -52,7 +52,12 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      return { ...event, creator: user, registrations, hosts: [...hosts, user ]};
+      return {
+        ...event,
+        creator: user,
+        registrations,
+        hosts: [...hosts, user],
+      };
     }),
 
   // User for RouterOutputs don't remove.
@@ -343,17 +348,31 @@ export const eventRouter = createTRPCRouter({
     }),
 
   removeHost: protectedProcedure
-    .input(z.object({ hostId: z.string() }))
+    .input(z.object({ hostId: z.string(), eventId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
+      const { hostId, eventId } = input;
 
-      const host = await prisma.host.delete({
+      await prisma.host.delete({
         where: {
-          id: input.hostId,
+          eventId_userId: {
+            eventId,
+            userId: hostId,
+          },
         },
       });
 
-      return host;
+      // Update the Event table to remove the host
+      await prisma.event.update({
+        where: { id: eventId },
+        data: {
+          hosts: {
+            disconnect: {
+              id: hostId,
+            },
+          },
+        },
+      });
     }),
 
   delete: protectedProcedure
