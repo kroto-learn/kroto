@@ -4,7 +4,7 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment, type ReactNode } from "react";
+import { Fragment, useEffect, type ReactNode } from "react";
 import CalenderIcon from "@heroicons/react/20/solid/CalendarIcon";
 import { CalendarIcon } from "@heroicons/react/24/outline";
 import UserGroupIcon from "@heroicons/react/20/solid/UserGroupIcon";
@@ -18,6 +18,7 @@ import ArrowLeftOnRectangleIcon from "@heroicons/react/20/solid/ArrowLeftOnRecta
 import UserPlusIcon from "@heroicons/react/20/solid/UserPlusIcon";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
+import { useRouter } from "next/router";
 export default function Dashboard() {
   return <div />;
 }
@@ -26,8 +27,13 @@ Dashboard.getLayout = DashboardLayout;
 
 function DashboardLayoutR({ children }: { children: ReactNode }) {
   const { data: creator } = api.creator.getProfile.useQuery();
+  const router = useRouter();
 
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (creator && !creator?.isCreator) void router.push("/dashboard");
+  }, [creator, router]);
 
   return (
     <main className="flex h-screen w-full justify-center overflow-x-hidden">
@@ -76,16 +82,12 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
             </div>
           ) : (
             <>
-              <div className="h-16 w-16 p-4 md:hidden">
-                <div className={`h-full w-full rounded-full bg-neutral-800`} />
-              </div>
-              <div className="hidden w-full flex-col items-center gap-3 rounded-full px-4 duration-300 hover:border-neutral-600 md:flex">
-                <div
-                  className={`relative aspect-square w-24 overflow-hidden rounded-full  bg-neutral-800`}
-                />
-                <div className="flex flex-col items-center gap-1">
-                  <div className="my-1 h-4 w-32 rounded-lg bg-neutral-800" />
-                  <div className="my-1 h-4 w-40 rounded-lg  bg-neutral-800" />
+              <div className="flex w-full justify-center p-0 md:p-4">
+                <div className="flex w-full justify-center rounded-xl p-0 duration-300 md:bg-neutral-800 md:p-2">
+                  <div className="h-16 w-16 overflow-hidden  p-2 md:hidden">
+                    <div className="h-full w-full rounded-full bg-neutral-800"></div>
+                  </div>
+                  <div className="h-[2.5rem]"></div>
                 </div>
               </div>
             </>

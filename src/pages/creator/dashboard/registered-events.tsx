@@ -1,6 +1,6 @@
 import { EventCard } from "@/components/EventCard";
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React from "react";
 import { Loader } from "@/components/Loader";
 import { api } from "@/utils/api";
 import { DashboardLayout } from ".";

@@ -3,20 +3,25 @@ import { type Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Layout from "@/components/layouts/main";
-import { ClaimLinkNew } from "@/components/ClaimLink";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { ClaimLinkBannerNew } from ".";
-export default function Dashboard({ creators }: { creators: Creator[] }) {
-  const { data: session, status } = useSession();
+// import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { ClaimLinkBanner } from ".";
+import Link from "next/link";
+
+export default function Dashboard() {
+  const { data: session } = useSession();
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [inputValue, setInputValue] = useState("");
   const { data: profile, isLoading } = api.creator.getProfile.useQuery();
+  const { data: pastRegisteredEvents, isLoading: isPastLoading } =
+    api.creator.getPastEvents.useQuery();
+
+  const isPastTab = router.query.events === "past";
+  const upcomingEvents = profile?.registrations;
+  const pastEvents = pastRegisteredEvents;
+  const events = isPastTab ? pastEvents : upcomingEvents;
 
   return (
     <Layout>
@@ -59,62 +64,80 @@ export default function Dashboard({ creators }: { creators: Creator[] }) {
             </div> */}
           </div>
         </div>
+        <div className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8">
+          <div className="flex w-full items-center justify-between">
+            <h1 className="text-2xl text-neutral-200">Registered Events</h1>
+            <div className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
+              <ul className="-mb-px flex flex-wrap">
+                <li className="mr-2">
+                  <Link
+                    href="/dashboard"
+                    className={`inline-block rounded-t-lg p-4 ${
+                      !isPastTab
+                        ? "border-b-2 border-pink-500 text-pink-500 transition"
+                        : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
+                    }`}
+                  >
+                    Upcoming
+                  </Link>
+                </li>
+                <li className="/creator/dashboard/events">
+                  <Link
+                    href="/dashboard?events=past"
+                    className={`inline-block rounded-t-lg p-4 transition ${
+                      isPastTab
+                        ? "border-b-2 border-pink-500 text-pink-500"
+                        : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
+                    }`}
+                    aria-current="page"
+                  >
+                    Past
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
 
-        <div>
-          <h3 className="mb-5 text-2xl font-medium text-neutral-300">
-            Upcoming Events
-          </h3>
-          <div className="mb-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
-            {isLoading ? (
-              <div className="flex h-full items-center justify-center">
-                <Loader size="lg" />
-              </div>
-            ) : (
-              <>
-                {profile?.registrations && profile.registrations.length > 0 ? (
-                  <>
-                    <div className="my-2 flex flex-col gap-2">
-                      {(profile?.registrations && profile?.registrations)?.map(
-                        (e) => (
-                          <div key={e.id ?? ""}>
-                            <EventCard event={e} />
-                          </div>
-                        )
-                      )}
-                    </div>
-                    <div className="mx-5 mb-2 flex justify-between">
-                      <button className="text-pink-500 transition hover:text-pink-600">
-                        View More
-                      </button>
-                      <button className="text-pink-500 transition hover:text-pink-600">
-                        Show past
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
-                    <div className="relative aspect-square w-40 object-contain">
-                      <Image src="/empty/event_empty.svg" alt="empty" fill />
-                    </div>
-                    <p className="mb-2 text-neutral-400">
-                      You have not registered to any events yet.
-                    </p>
+          {(isPastTab ? isPastLoading : isLoading) ? (
+            <div className="flex h-full items-center justify-center">
+              <Loader size="lg" />
+            </div>
+          ) : (
+            <>
+              {events && events.length > 0 ? (
+                <>
+                  <div className="my-2 flex flex-col gap-2">
+                    {events?.map((e) => (
+                      <div key={e.id ?? ""}>
+                        <EventCard event={e} />
+                      </div>
+                    ))}
                   </div>
-                )}
-              </>
-            )}
-          </div>
+                  {/* <div className="mx-5 mb-2 flex justify-between">
+                    <button className="text-pink-500 transition hover:text-pink-600">
+                      View More
+                    </button>
+                    <button className="text-pink-500 transition hover:text-pink-600">
+                      Show past
+                    </button>
+                  </div> */}
+                </>
+              ) : (
+                <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+                  <div className="relative aspect-square w-40 object-contain">
+                    <Image src="/empty/event_empty.svg" alt="empty" fill />
+                  </div>
+                  <p className="mb-2 text-neutral-400">
+                    {isPastTab
+                      ? "You don't have any past registered events."
+                      : "You don't have any upcoming registered events."}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
         </div>
-        {/* <div className="my-10 flex flex-col items-center justify-center gap-5 rounded-xl border border-neutral-800 bg-neutral-900 p-5 transition duration-300 hover:border-neutral-700">
-          <div>
-            <h3 className="max-w-lg text-center text-2xl">
-              Become a Kreator and schedule events of your own, claim your link
-              now.
-            </h3>
-          </div>
-          <ClaimLink variant="sm" />
-        </div> */}
-        <ClaimLinkBannerNew />
+        <ClaimLinkBanner />
         {/* <div> */}
         {/*   <h3 className="mb-5 text-2xl font-medium text-neutral-300"> */}
         {/*     Discover Creators */}

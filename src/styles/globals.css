@@ -17,6 +17,7 @@ select {
     @apply transition duration-300 ease-in-out;
     @apply bg-neutral-900;
     @apply scroll-smooth;
+    @apply box-border;
   }
 }
 
@@ -71,15 +72,28 @@ select:-webkit-autofill {
   max-width: 4.5rem;
 }
 
-::-webkit-scrollbar :not(table) {
-  width: 0;
-  background-color: transparent;
-}
-
 ::-moz-selection {
   background: #ec489a8b;
 }
 
 ::selection {
   background: #ec489a8b;
+}
+
+/* Global Scrollbar */
+
+*:not(table)::-webkit-scrollbar {
+  width: 10px;
+}
+
+*:not(table)::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*:not(table)::-webkit-scrollbar-thumb {
+  background: #ffffff55;
+}
+
+*:not(table)::-webkit-scrollbar-thumb:hover {
+  background: #ffffff89;
 }

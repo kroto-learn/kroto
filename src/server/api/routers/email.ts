@@ -15,8 +15,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const calendarRouter = createTRPCRouter({
-  addUserEvent: protectedProcedure
+export const emailRouter = createTRPCRouter({
+  sendCalendarInvite: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;

@@ -79,6 +79,10 @@ export const EventCard = ({
   event: RouterOutputs["event"]["getEvent"];
   manage?: boolean;
 }) => {
+  const isEventNow =
+    (event?.datetime?.getTime() as number) <= new Date().getTime() &&
+    (event?.endTime?.getTime() as number) >= new Date().getTime();
+
   return (
     <Link
       href={
@@ -86,15 +90,11 @@ export const EventCard = ({
           ? `/creator/dashboard/event/${event?.id ?? ""}`
           : `/event/${event?.id ?? ""}`
       }
-      className={`relative flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 backdrop-blur transition-all duration-300 hover:bg-neutral-700/50 xs:flex-row xs:items-center ${
-        (event?.datetime?.getTime() as number) <= new Date().getTime() &&
-        (event?.endTime?.getTime() as number) >= new Date().getTime()
-          ? "border-neutral-700 border-2 hover:bg-neutral-900/50"
-          : ""
+      className={`relative flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 backdrop-blur-sm transition-all duration-300 hover:bg-neutral-700/60 xs:flex-row xs:items-center ${
+        isEventNow ? "border-2 border-pink-600/10 hover:bg-neutral-900/50" : ""
       }`}
     >
-      {(event?.datetime?.getTime() as number) <= new Date().getTime() &&
-      (event?.endTime?.getTime() as number) >= new Date().getTime() ? (
+      {isEventNow ? (
         <div className="absolute -right-1 -top-1">
           <span className="relative flex h-4 w-4 items-center justify-center">
             <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>

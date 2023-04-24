@@ -1647,6 +1647,11 @@ commondir@^1.0.1:
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
   integrity sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==
 
+compress-base64@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/compress-base64/-/compress-base64-1.0.2.tgz#d141c8c63167fd2947a6f7a10c8b793b009d1361"
+  integrity sha512-Sp8/Sa5XEZse+4hz4KkfFrFJiMZ7t6ACFkGU5uypfRF/puqclWGpaK8whjYXUQCq0yYJ9ca3ZcZHDGCFDoPe8w==
+
 compute-scroll-into-view@^3.0.2:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/compute-scroll-into-view/-/compute-scroll-into-view-3.0.3.tgz#c418900a5c56e2b04b885b54995df164535962b1"
@@ -5009,11 +5014,6 @@ react-table@^7.8.0:
   version "7.8.0"
   resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.8.0.tgz#07858c01c1718c09f7f1aed7034fcfd7bda907d2"
   integrity sha512-hNaz4ygkZO4bESeFfnfOft73iBUj8K5oKi1EcSHPAibEydfsX2MyU6Z8KCr3mv3C9Kqqh71U+DhZkFvibbnPbA==
-
-react-textarea-counter@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/react-textarea-counter/-/react-textarea-counter-1.0.3.tgz#60da7311ef09f293301c32378b9742733a8c377e"
-  integrity sha512-mm1XjxQ2xckQttfrK9RB9NTtHir1RW61D3IKuniL9DlhtBeZN3hAUC86nBfmyhz46sE3XclKvLs5pRTCSCsBSA==
 
 react@^18.2.0:
   version "18.2.0"
