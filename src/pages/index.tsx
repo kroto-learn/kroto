@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Layout from "@/components/layouts/main";
-import ClaimLink, { ClaimLinkNew } from "@/components/ClaimLink";
+import { ClaimLink, ClaimLinkLanding } from "@/components/ClaimLink";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import ArrowRightIcon from "@heroicons/react/20/solid/ArrowRightIcon";
@@ -31,7 +31,7 @@ const Home: NextPage = () => {
         <Features />
       </div>
       <div id="claim-link">
-        <ClaimLinkBanner />
+        <ClaimLinkBannerLanding />
       </div>
     </Layout>
   );
@@ -283,13 +283,13 @@ export const Features = () => {
   );
 };
 
-export const ClaimLinkBanner = () => {
+export const ClaimLinkBannerLanding = () => {
   const router = useRouter();
   const { creatorProfile } = router.query as {
     creatorProfile: string;
   };
   return (
-    <div className="relative mt-10 overflow-hidden bg-gradient-to-t from-neutral-950 via-neutral-950 px-0 py-10 md:px-24">
+    <div className="relative mt-10 overflow-hidden bg-gradient-to-t from-neutral-950 via-neutral-950 px-4 py-10 md:px-24">
       <div className="mx-auto flex w-full flex-col items-center justify-between gap-10 text-center md:max-w-7xl lg:text-left">
         <div className="">
           <h2 className="text-center text-2xl font-extrabold leading-8 tracking-tight sm:text-3xl md:text-4xl">
@@ -300,44 +300,37 @@ export const ClaimLinkBanner = () => {
             now, and claim your kreator proflie
           </h2>
           <p className="tex-md mx-auto mt-4 max-w-3xl text-center text-neutral-400 md:text-xl">
-            Monetize your audience like never before, and provide them with
-            value like never before.
+            Monetize your audience, and provide them with value like never
+            before.
           </p>
 
           {/* <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-40 translate-y-48 rounded-full bg-pink-600/20 blur-3xl"></div> */}
         </div>
 
-        <div className="z-10">
-          <div className="hidden lg:block">
-            <ClaimLink profile={creatorProfile} variant="lg" />
-          </div>
-          <div className="block lg:hidden">
-            <ClaimLink profile={creatorProfile} variant="md" />
-          </div>
-        </div>
+        <ClaimLinkLanding profile={creatorProfile} />
       </div>
     </div>
   );
 };
-export const ClaimLinkBannerNew = () => {
+export const ClaimLinkBanner = () => {
   const router = useRouter();
   const { creatorProfile } = router.query as {
     creatorProfile: string;
   };
 
   return (
-    <div className="relative mx-auto my-8 flex w-full max-w-3xl flex-col gap-4 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-10 px-12">
-      <h3 className="text-2xl font-medium">
+    <div className="relative mx-auto my-8 flex w-full max-w-3xl flex-col items-center gap-4 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-6 px-8 md:items-start md:p-10 md:px-12">
+      <h3 className="text-center text-2xl font-medium md:text-left">
         Become a <span className="text-pink-600">Kreator</span> now, and claim
         your proflie
       </h3>
-      <p className="max-w-[60%] text-base text-neutral-300">
+      <p className="text-center text-base text-neutral-300 md:max-w-[60%] md:text-left">
         Monetize your audience and provide them with value like never before.
       </p>
       <span className="mb-2" />
 
-      <ClaimLinkNew profile={creatorProfile} />
-      <div className="absolute bottom-0 right-0">
+      <ClaimLink profile={creatorProfile} />
+      <div className="absolute bottom-0 right-0 hidden xl:block">
         <div className="relative">
           <Image
             src={creatorPageImage}

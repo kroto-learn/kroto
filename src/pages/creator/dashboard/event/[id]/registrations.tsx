@@ -86,7 +86,7 @@ const EventRegistrations = () => {
         <title>{(event?.title ?? "Event") + " | Registrations"}</title>
       </Head>
       <div className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6">
-        <h3 className="mb-4 text-2xl font-medium">Registrations</h3>
+        <h3 className="mb-4 text-lg font-medium  sm:text-2xl">Registrations</h3>
         <div className="mb-4 flex w-full items-start justify-between">
           <div className="flex flex-col items-start">
             <p className="text-3xl text-neutral-200">
@@ -196,71 +196,72 @@ const EventRegistrations = () => {
                 <Loader size="lg" />
               </div>
             ) : (
-              <div className="relative aspect-square w-40 object-contain">
-                <Image src="/empty/users_empty.svg" alt="empty" fill />
-              </div>
+              <>
+                <div className="relative aspect-square w-40 object-contain">
+                  <Image src="/empty/users_empty.svg" alt="empty" fill />
+                </div>
+                <p className="text-neutral-400">
+                  Nobody registered to your event yet.
+                </p>
+                <p className="mb-2 text-neutral-400">
+                  Share the event in your community.
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
+                    onClick={() => {
+                      void navigator.clipboard.writeText(
+                        `https://kroto.in/event/${event?.id ?? ""}`
+                      );
+                      successToast("Event URL copied to clipboard!");
+                    }}
+                  >
+                    <LinkIcon className="w-3" />
+                  </button>
+                  <LinkedinShareButton
+                    url={`https://kroto.in/event/${event?.id ?? ""}`}
+                  >
+                    <LinkedinIcon
+                      size={28}
+                      round
+                      className="grayscale duration-300 hover:grayscale-0"
+                    />
+                  </LinkedinShareButton>
+                  <FacebookShareButton
+                    url={`https://kroto.in/event/${event?.id ?? ""}`}
+                    quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                    hashtag={"#kroto"}
+                  >
+                    <FacebookIcon
+                      size={28}
+                      round
+                      className="grayscale duration-300 hover:grayscale-0"
+                    />
+                  </FacebookShareButton>
+                  <TwitterShareButton
+                    url={`https://kroto.in/event/${event?.id ?? ""}`}
+                    title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                  >
+                    <TwitterIcon
+                      size={28}
+                      round
+                      className="grayscale duration-300 hover:grayscale-0"
+                    />
+                  </TwitterShareButton>
+                  <WhatsappShareButton
+                    url={`https://kroto.in/event/${event?.id ?? ""}`}
+                    title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                    separator=": "
+                  >
+                    <WhatsappIcon
+                      size={28}
+                      round
+                      className="grayscale duration-300 hover:grayscale-0"
+                    />
+                  </WhatsappShareButton>
+                </div>
+              </>
             )}
-            <p className="text-neutral-400">
-              Nobody registered to your event yet.
-            </p>
-            <p className="mb-2 text-neutral-400">
-              Share the event in your community.
-            </p>
-
-            <div className="flex items-center gap-2">
-              <button
-                className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
-                onClick={() => {
-                  void navigator.clipboard.writeText(
-                    `https://kroto.in/event/${event?.id ?? ""}`
-                  );
-                  successToast("Event URL copied to clipboard!");
-                }}
-              >
-                <LinkIcon className="w-3" />
-              </button>
-              <LinkedinShareButton
-                url={`https://kroto.in/event/${event?.id ?? ""}`}
-              >
-                <LinkedinIcon
-                  size={28}
-                  round
-                  className="grayscale duration-300 hover:grayscale-0"
-                />
-              </LinkedinShareButton>
-              <FacebookShareButton
-                url={`https://kroto.in/event/${event?.id ?? ""}`}
-                quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-                hashtag={"#kroto"}
-              >
-                <FacebookIcon
-                  size={28}
-                  round
-                  className="grayscale duration-300 hover:grayscale-0"
-                />
-              </FacebookShareButton>
-              <TwitterShareButton
-                url={`https://kroto.in/event/${event?.id ?? ""}`}
-                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-              >
-                <TwitterIcon
-                  size={28}
-                  round
-                  className="grayscale duration-300 hover:grayscale-0"
-                />
-              </TwitterShareButton>
-              <WhatsappShareButton
-                url={`https://kroto.in/event/${event?.id ?? ""}`}
-                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-                separator=": "
-              >
-                <WhatsappIcon
-                  size={28}
-                  round
-                  className="grayscale duration-300 hover:grayscale-0"
-                />
-              </WhatsappShareButton>
-            </div>
           </div>
         )}
       </div>

@@ -8,7 +8,7 @@ import Layout from "@/components/layouts/main";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
 // import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { ClaimLinkBannerNew } from ".";
+import { ClaimLinkBanner } from ".";
 import Link from "next/link";
 
 export default function Dashboard() {
@@ -137,7 +137,7 @@ export default function Dashboard() {
             </>
           )}
         </div>
-        <ClaimLinkBannerNew />
+        <ClaimLinkBanner />
         {/* <div> */}
         {/*   <h3 className="mb-5 text-2xl font-medium text-neutral-300"> */}
         {/*     Discover Creators */}
