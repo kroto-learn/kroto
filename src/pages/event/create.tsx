@@ -166,7 +166,7 @@ const CreateEvent = () => {
                       );
                   },
                   onError: () => {
-                    errorToast("Error in creating event.");
+                    errorToast("Error in creating event!");
                   },
                 }
               );

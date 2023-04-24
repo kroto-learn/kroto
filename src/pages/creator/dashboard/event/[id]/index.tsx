@@ -64,7 +64,7 @@ const EventOverview = () => {
 
   const [startEventModal, setStartEventModal] = useState(false);
 
-  const { successToast } = useToast();
+  const { successToast, errorToast } = useToast();
 
   if (isEventLoading)
     return (
@@ -287,10 +287,17 @@ const EventOverview = () => {
                       </div>
                       <button
                         onClick={async () => {
-                          await removeHost({
-                            hostId: host?.id ?? "",
-                            eventId: event?.id ?? "",
-                          });
+                          await removeHost(
+                            {
+                              hostId: host?.id ?? "",
+                              eventId: event?.id ?? "",
+                            },
+                            {
+                              onError: () => {
+                                errorToast("Error in removing host!");
+                              },
+                            }
+                          );
                           void refetchHosts();
                         }}
                         className="flex items-center gap-1 rounded-xl border border-pink-700 bg-pink-700 p-1 px-2 text-sm font-medium text-white transition duration-300 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
@@ -363,12 +370,14 @@ export function AddHostModel({
       { eventId, creatorId },
       {
         onSuccess: () => {
+          successToast("Host added successfully!");
           void revalidate(`/event/${eventId}`);
+        },
+        onError: () => {
+          errorToast("Error in adding host!");
         },
       }
     );
-    if (data instanceof TRPCError) errorToast("something went wrong");
-    else successToast("host added successfully");
     refetch();
   };
 

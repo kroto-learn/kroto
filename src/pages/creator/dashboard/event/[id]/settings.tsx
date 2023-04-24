@@ -14,6 +14,7 @@ import { TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { Transition, Dialog } from "@headlessui/react";
 import { Loader } from "@/components/Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
+import useToast from "@/hooks/useToast";
 
 const EventSettings = () => {
   const router = useRouter();
@@ -71,6 +72,7 @@ export function DeleteEventModal({
   const { id } = router.query as { id: string };
   const ctx = api.useContext();
   const revalidate = useRevalidateSSG();
+  const { errorToast } = useToast();
 
   return (
     <>
@@ -145,6 +147,9 @@ export function DeleteEventModal({
                                   "/creator/dashboard/events"
                                 );
                                 void revalidate(`/event/${eventId}`);
+                              },
+                              onError: () => {
+                                errorToast("Error in deleting event!");
                               },
                             }
                           );
