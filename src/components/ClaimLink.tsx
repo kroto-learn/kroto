@@ -113,7 +113,7 @@ export function ClaimLinkLanding({ profile }: { profile?: string }) {
             setCreatorProfile(e.target.value);
           }}
           placeholder="yourname"
-          className="w-full rounded-2xl border border-pink-500 bg-neutral-700/30 p-3 px-6 pl-32 text-lg shadow-[-2px_3px_0px_0px] shadow-pink-500 outline-none duration-300 placeholder:text-neutral-500 focus:shadow-[-8px_12px_0px_0px] focus:shadow-pink-500 sm:pl-40 md:text-2xl"
+          className="w-full rounded-2xl border border-pink-500 bg-neutral-700/30 p-3 px-6 pl-32 text-lg shadow-[-2px_3px_0px_0px] shadow-pink-500 outline-none duration-300 placeholder:text-neutral-500 focus:shadow-[-4px_8px_0px_0px] focus:shadow-pink-500 sm:pl-40 md:text-2xl"
         />
       </div>
       <button
