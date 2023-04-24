@@ -11,7 +11,7 @@ import { imageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
 
 export const eventRouter = createTRPCRouter({
-  get: publicProcedure
+  get: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const { prisma } = ctx;
@@ -170,6 +170,24 @@ export const eventRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const checkIsCreator = await prisma.event.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!checkIsCreator)
+        return new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Event doesn't exist",
+        });
+
+      if (checkIsCreator.creatorId !== ctx.session.user.id)
+        return new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You didn't create this event",
+        });
 
       let thumbnail = input.thumbnail;
       if (isBase64(input.thumbnail, { allowMime: true }))
