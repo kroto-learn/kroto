@@ -10,7 +10,6 @@ import { api } from "@/utils/api";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { Loader } from "@/components/Loader";
-import Layout from "@/components/layouts/main";
 
 type CreatorPageProps = {
   creatorProfile: string;

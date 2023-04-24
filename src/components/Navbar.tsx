@@ -4,7 +4,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export default function Navbar() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const { data: creator, isLoading } = api.creator.getProfile.useQuery();
 
   return (

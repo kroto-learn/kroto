@@ -1,7 +1,5 @@
 import AWS from "aws-sdk";
 import { Buffer } from "buffer";
-import { AWSError } from "aws-sdk/lib/error";
-import { PutObjectOutput } from "aws-sdk/clients/s3";
 import { env } from "@/env.mjs";
 
 interface ImageUploadResponse {
@@ -59,14 +57,8 @@ export const imageUpload = async (
     // Save the Location (url) to your database and Key if needs be.
     const response: ImageUploadResponse = { location: Location, key: Key };
     return response.location;
-  } catch (error: AWSError | any) {
+  } catch (error) {
     console.log(error);
     throw new Error("Image upload failed");
   }
-};
-
-export const isBase64 = (input: string): boolean => {
-  const base64Regex =
-    /^(?:[A-Za-z0-9+/]{4})*?(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
-  return base64Regex.test(input);
 };

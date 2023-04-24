@@ -3,7 +3,6 @@ import { type Creator } from "interfaces/Creator";
 import { getCreators } from "mock/getCreators";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import Image from "next/image";
 import Layout from "@/components/layouts/main";
 import { api } from "@/utils/api";
@@ -12,11 +11,9 @@ import { Loader } from "@/components/Loader";
 import { ClaimLinkBannerNew } from ".";
 import Link from "next/link";
 
-export default function Dashboard({ creators }: { creators: Creator[] }) {
-  const { data: session, status } = useSession();
+export default function Dashboard() {
+  const { data: session } = useSession();
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [inputValue, setInputValue] = useState("");
   const { data: profile, isLoading } = api.creator.getProfile.useQuery();
   const { data: pastRegisteredEvents, isLoading: isPastLoading } =
     api.creator.getPastEvents.useQuery();
