@@ -124,7 +124,7 @@ export function ClaimLinkLanding({ profile }: { profile?: string }) {
       <button
         type="submit"
         disabled={!creatorProfile || creatorProfile === ""}
-        className="group flex h-[512/14px] items-center rounded-2xl bg-pink-500 px-6 py-2 font-bold text-neutral-200 shadow-[-2px_3px_0px_0px] shadow-pink-500/60 duration-300 hover:shadow-[-4px_7px_0px_0px] hover:shadow-pink-500/60 active:shadow-[-2px_3px_0px_0px] active:shadow-pink-500/60 disabled:cursor-not-allowed disabled:bg-pink-500/50 disabled:text-neutral-200/70 disabled:hover:shadow-[-2px_3px_0px_0px] disabled:hover:shadow-pink-500/60"
+        className="group flex h-[512/14px] items-center rounded-2xl border border-pink-500 bg-pink-500 px-6 py-2 font-bold text-neutral-200 shadow-[-2px_3px_0px_0px] shadow-pink-500/60 duration-300 hover:shadow-[-4px_7px_0px_0px] hover:shadow-pink-500/60 active:shadow-[-2px_3px_0px_0px] active:shadow-pink-500/60 disabled:cursor-not-allowed disabled:border-pink-500/80 disabled:bg-pink-500/50 disabled:text-neutral-200/70 disabled:hover:shadow-[-2px_3px_0px_0px] disabled:hover:shadow-pink-500/60"
       >
         <span className="hidden md:block">Claim Now</span>
         <ChevronRightIcon className="w-6 transition-transform duration-300 group-hover:translate-x-1 group-disabled:group-hover:translate-x-0 sm:w-8" />

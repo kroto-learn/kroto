@@ -366,7 +366,7 @@ export function AddHostModel({
   const revalidate = useRevalidateSSG();
 
   const handleSubmit = async () => {
-    const data = await addHostMutation(
+    await addHostMutation(
       { eventId, creatorId },
       {
         onSuccess: () => {
