@@ -5,8 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
-import { ArrowRightIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import Link from "next/link";
+import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 export function ClaimLink({ profile }: { profile?: string }) {
   const router = useRouter();
