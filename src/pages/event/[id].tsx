@@ -66,7 +66,7 @@ export default function EventPage({ eventId }: Props) {
   const isYourEvent = event?.creatorId === session?.user?.id;
 
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
-    api.email.addUserEvent.useMutation();
+    api.email.sendCalendarInvite.useMutation();
 
   return (
     <Layout>
