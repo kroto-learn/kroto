@@ -4,7 +4,23 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
 import nodemailer from "nodemailer";
 import ical from "ical-generator";
+import fs from "fs";
+import tailwindcss from "tailwindcss";
 import type { RouterOutputs } from "@/utils/api";
+import { TRPCError } from "@trpc/server";
+import postcss from "postcss";
+import handlebars from "handlebars";
+
+import tailwindConfig from "../../../../tailwind.config.cjs";
+const tailwind = postcss(tailwindcss({ config: tailwindConfig })).process(
+  ""
+).css;
+
+const templateSource = fs.readFileSync(
+  `${process.cwd()}/templates/base.hbs`,
+  "utf8"
+);
+const template = handlebars.compile(templateSource);
 
 const transporter = nodemailer.createTransport({
   host: "smtpout.secureserver.net",
@@ -34,7 +50,7 @@ export const emailRouter = createTRPCRouter({
 
       if (!event || !creator) throw new Error("Event or creator not found");
 
-      const mailOptions = mailOptionsBuilder(
+      const mailOptions = calendarInviteOptions(
         event,
         { ...creator, events: [], socialLinks: [] },
         ctx.session.user.email ?? ""
@@ -43,12 +59,16 @@ export const emailRouter = createTRPCRouter({
       try {
         await transporter.sendMail(mailOptions);
       } catch (err) {
-        return err;
+        if (err instanceof Error)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: err.message,
+          });
       }
     }),
 });
 
-const mailOptionsBuilder = (
+const calendarInviteOptions = (
   event: RouterOutputs["event"]["getEvent"],
   creator: RouterOutputs["creator"]["getPublicProfile"],
   recipientEmail: string
@@ -56,6 +76,8 @@ const mailOptionsBuilder = (
   const calendar = ical({
     name: "Kroto Event Calendar",
   });
+
+  console.log(tailwind);
 
   calendar.createEvent({
     start: event?.datetime,
@@ -67,11 +89,23 @@ const mailOptionsBuilder = (
     url: `https://kroto.in/event/${event?.id ?? ""}`,
   });
 
+  const data = {
+    title: event?.title ?? "",
+    heading: `Calendar invite for ${event?.title ?? "Event"}`,
+    content: `To add invites to the calendar of your preferrence, please open any of the <b>following attachment</b> 
+      and it will redirect you to the calendar invite page for your calendar app \n \n \n 
+      Thank your so much for registering to <a href=https://kroto.in/event/${
+        event?.id ?? ""
+      }>${event?.title ?? "this event"}</a> :)`,
+    tailwind,
+  };
+  const html = template(data);
+
   return {
     from: "kamal@kroto.in", // sender email
     to: recipientEmail, // recipient email
     subject: `Calendar Invite for ${event?.title ?? "Event"}`,
-    text: "To add invites to the calendar of your preferrence, please open any of the following attachment and it will redirect you to the calendar invite page for your calendar app \n \n \n Thank your so much for registering to this event :)",
+    html: html,
     icalEvent: {
       method: "REQUEST",
       content: calendar.toString(),
