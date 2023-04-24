@@ -1,10 +1,10 @@
 import { api } from "@/utils/api";
 import { Menu, Transition } from "@headlessui/react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment, type ReactNode } from "react";
+import { Fragment, useEffect, type ReactNode } from "react";
 import CalenderIcon from "@heroicons/react/20/solid/CalendarIcon";
 import { CalendarIcon } from "@heroicons/react/24/outline";
 import UserGroupIcon from "@heroicons/react/20/solid/UserGroupIcon";
@@ -18,6 +18,7 @@ import ArrowLeftOnRectangleIcon from "@heroicons/react/20/solid/ArrowLeftOnRecta
 import UserPlusIcon from "@heroicons/react/20/solid/UserPlusIcon";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
+import { useRouter } from "next/router";
 export default function Dashboard() {
   return <div />;
 }
@@ -26,8 +27,13 @@ Dashboard.getLayout = DashboardLayout;
 
 function DashboardLayoutR({ children }: { children: ReactNode }) {
   const { data: creator } = api.creator.getProfile.useQuery();
+  const router = useRouter();
 
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (creator && !creator?.isCreator) void router.push("/dashboard");
+  }, [creator, router]);
 
   return (
     <main className="flex h-screen w-full justify-center overflow-x-hidden">
