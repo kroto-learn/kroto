@@ -29,7 +29,7 @@ type Props = {
 };
 
 export default function EventPage({ eventId }: Props) {
-  const { data: event } = api.event.get.useQuery({
+  const { data: event } = api.event.getEvent.useQuery({
     id: eventId,
   });
 
@@ -323,7 +323,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
 
   if (typeof eventId !== "string") throw new Error("no slug");
 
-  await ssg.event.get.prefetch({ id: eventId });
+  await ssg.event.getEvent.prefetch({ id: eventId });
 
   return {
     props: {

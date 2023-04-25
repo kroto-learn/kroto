@@ -2,8 +2,9 @@ import Image from "next/image";
 import React from "react";
 import CalenderBox from "./CalenderBox";
 import Link from "next/link";
-import { type RouterOutputs, api } from "@/utils/api";
+import { api } from "@/utils/api";
 import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
+import { type Event } from "@prisma/client";
 
 type Props = {
   eventId: string;
@@ -76,12 +77,12 @@ export const EventCard = ({
   event,
   manage,
 }: {
-  event: RouterOutputs["event"]["getEvent"];
+  event: Event;
   manage?: boolean;
 }) => {
   const isEventNow =
-    (event?.datetime?.getTime() as number) <= new Date().getTime() &&
-    (event?.endTime?.getTime() as number) >= new Date().getTime();
+    event?.datetime?.getTime() <= new Date().getTime() &&
+    event?.endTime?.getTime() >= new Date().getTime();
 
   return (
     <Link

@@ -8,6 +8,7 @@ import fs from "fs";
 import type { RouterOutputs } from "@/utils/api";
 import { TRPCError } from "@trpc/server";
 import handlebars from "handlebars";
+import { type Event } from "@prisma/client";
 
 const templateSource = fs.readFileSync(
   `${process.cwd()}/templates/base.hbs`,
@@ -92,7 +93,7 @@ export const emailRouter = createTRPCRouter({
 });
 
 export const sendEventStarted = async (
-  event: RouterOutputs["event"]["getEvent"],
+  event: Event,
   email: string,
   name: string
 ) => {
@@ -130,7 +131,7 @@ export const sendEventStarted = async (
 };
 
 export const sendRegistrationConfirmation = async (
-  event: RouterOutputs["event"]["getEvent"],
+  event: Event,
   creator: RouterOutputs["creator"]["getProfileNoLinks"],
   email: string,
   name: string
@@ -166,7 +167,7 @@ export const sendRegistrationConfirmation = async (
 };
 
 const sendCalendarInvite = async (
-  event: RouterOutputs["event"]["getEvent"],
+  event: Event,
   creator: RouterOutputs["creator"]["getProfileNoLinks"],
   email: string
 ) => {
