@@ -9,6 +9,7 @@ import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
 import { imageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
+import { sendRegistrationConfirmation } from "./email";
 
 export const eventRouter = createTRPCRouter({
   get: protectedProcedure
@@ -291,6 +292,13 @@ export const eventRouter = createTRPCRouter({
           });
       }
 
+      const creator = await prisma.user.findUnique({
+        where: {
+          id: event.creatorId,
+        },
+      });
+
+      await sendRegistrationConfirmation(event, creator, user.email, user.name);
       return registration;
     }),
 

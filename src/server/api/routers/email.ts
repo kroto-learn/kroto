@@ -5,21 +5,19 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import nodemailer from "nodemailer";
 import ical from "ical-generator";
 import fs from "fs";
-import tailwindcss from "tailwindcss";
 import type { RouterOutputs } from "@/utils/api";
 import { TRPCError } from "@trpc/server";
-import postcss from "postcss";
 import handlebars from "handlebars";
-
-import tailwindConfig from "../../../../tailwind.config.cjs";
-const tailwind = postcss(tailwindcss({ config: tailwindConfig })).process(
-  ""
-).css;
 
 const templateSource = fs.readFileSync(
   `${process.cwd()}/templates/base.hbs`,
   "utf8"
 );
+const registrationSource = fs.readFileSync(
+  `${process.cwd()}/templates/base.hbs`,
+  "utf8"
+);
+const registration = handlebars.compile(registrationSource);
 const template = handlebars.compile(templateSource);
 
 const transporter = nodemailer.createTransport({
@@ -50,34 +48,54 @@ export const emailRouter = createTRPCRouter({
 
       if (!event || !creator) throw new Error("Event or creator not found");
 
-      const mailOptions = calendarInviteOptions(
-        event,
-        { ...creator, events: [], socialLinks: [] },
-        ctx.session.user.email ?? ""
-      );
-
-      try {
-        await transporter.sendMail(mailOptions);
-      } catch (err) {
-        if (err instanceof Error)
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: err.message,
-          });
-      }
+      await sendCalendarInvite(event, creator, ctx.session.user.email ?? "");
     }),
 });
 
-const calendarInviteOptions = (
+export const sendRegistrationConfirmation = async (
   event: RouterOutputs["event"]["getEvent"],
-  creator: RouterOutputs["creator"]["getPublicProfile"],
-  recipientEmail: string
+  creator: RouterOutputs["creator"]["getProfileNoLinks"],
+  email: string,
+  name: string
+) => {
+  const data = {
+    title: event?.title ?? "",
+    eventTitle: event?.title ?? "",
+    eventUrl: `https://kroto.in/event/${event?.id ?? ""}`,
+    creator: creator?.name ?? "",
+    creatorProfile: `https://kroto.in/${creator?.id ?? ""}`,
+    date: new Date(event?.datetime ?? ""),
+    name: name,
+  };
+
+  const html = registration(data);
+
+  const mailOptions = {
+    from: "kamal@kroto.in", // sender email
+    to: email, // recipient email
+    subject: `Registration confirmation for ${event?.title ?? "Event"}`,
+    html: html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (err) {
+    if (err instanceof Error)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+  }
+};
+
+const sendCalendarInvite = async (
+  event: RouterOutputs["event"]["getEvent"],
+  creator: RouterOutputs["creator"]["getProfileNoLinks"],
+  email: string
 ) => {
   const calendar = ical({
     name: "Kroto Event Calendar",
   });
-
-  console.log(tailwind);
 
   calendar.createEvent({
     start: event?.datetime,
@@ -97,13 +115,13 @@ const calendarInviteOptions = (
       Thank your so much for registering to <a href=https://kroto.in/event/${
         event?.id ?? ""
       }>${event?.title ?? "this event"}</a> :)`,
-    tailwind,
   };
+
   const html = template(data);
 
-  return {
+  const mailOptions = {
     from: "kamal@kroto.in", // sender email
-    to: recipientEmail, // recipient email
+    to: email, // recipient email
     subject: `Calendar Invite for ${event?.title ?? "Event"}`,
     html: html,
     icalEvent: {
@@ -111,4 +129,14 @@ const calendarInviteOptions = (
       content: calendar.toString(),
     },
   };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (err) {
+    if (err instanceof Error)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+  }
 };

@@ -31,12 +31,39 @@
       <img height="40" src="../public/kroto-f.png" />
     </div>
     <div class="header">
-      {{{headerSvg}}}
-      <h2>{{title}}</h2>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="white"
+        height="80"
+        width="80"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
+        />
+      </svg>
+      <h2>Congratulations 🎉 you registered to "{{eventTitle}}" event</h2>
     </div>
 
     <div class="body">
-      {{{body}}}
+      <p>Hello {{name}},</p>
+      <p>
+        You have registered for the
+        <a href={{eventUrl}}>{{eventTitle}}</a>
+        event hosted by
+        <a href={{creatorProfile}}>{{creator}}</a>
+        on
+        <b>{{date}}.</b>
+      </p>
+
+      <p>
+        You will get the event joining link when the event is about to start.
+      </p>
+      <p>Share the event among your friends.</p>
     </div>
 
     <div class="footer">
@@ -72,8 +99,8 @@
       <div class="footer-links">
         <p>Created by <b>The Kreator Labs</b></p>
         <div class="privacy-links">
-          <a>Terms of Service</a>
-          <a>Privacy Policy</a>
+          <a href="https://kroto.in/">Terms of Service</a>
+          <a href="https://kroto.in/privacy">Privacy Policy</a>
         </div>
       </div>
       <div class="copyright">© 2023 The Kreator Labs, All rights reserved.</div>
