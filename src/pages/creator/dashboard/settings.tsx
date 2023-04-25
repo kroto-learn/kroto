@@ -128,7 +128,7 @@ const Settings = () => {
                         void revalidate(`/${creator?.id ?? ""}`);
                       },
                       onError: () => {
-                        errorToast("Error updating your profile");
+                        errorToast("Error updating your profile!");
                       },
                     }
                   );
@@ -281,6 +281,11 @@ const Settings = () => {
                                   {
                                     onSuccess: () => {
                                       void revalidate(`/${creator?.id ?? ""}`);
+                                    },
+                                    onError: () => {
+                                      errorToast(
+                                        "Error in deleting Social Link!"
+                                      );
                                     },
                                   }
                                 );

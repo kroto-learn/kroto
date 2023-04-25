@@ -187,7 +187,7 @@ const EventEditModal = () => {
                   void revalidate(`/event/${event?.id ?? ""}`);
                 },
                 onError: () => {
-                  errorToast("Error in updating the event.");
+                  errorToast("Error in updating the event!");
                 },
               }
             );

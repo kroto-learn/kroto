@@ -192,9 +192,16 @@ export default function EventPage({ eventId }: Props) {
                     <div className="prose prose-invert prose-pink flex items-center justify-center font-bold">
                       <button
                         onClick={async () => {
-                          await addToCalendarMutation({
-                            eventId: event?.id ?? "",
-                          });
+                          await addToCalendarMutation(
+                            {
+                              eventId: event?.id ?? "",
+                            },
+                            {
+                              onError: () => {
+                                errorToast("Error in sending calendar invite!");
+                              },
+                            }
+                          );
                         }}
                       >
                         {addingToCalendar ? (
@@ -215,12 +222,19 @@ export default function EventPage({ eventId }: Props) {
                   onClick={async () => {
                     setLoading(true);
                     if (!session) {
-                      errorToast("You're not logged in");
+                      errorToast("You're not logged in!");
                       void router.push(
                         `/auth/sign-in/?redirect=/event/${eventId}`
                       );
                     }
-                    await registerMuatioan({ eventId });
+                    await registerMuatioan(
+                      { eventId },
+                      {
+                        onError: () => {
+                          errorToast("Error in registering for event!");
+                        },
+                      }
+                    );
                     void ctx.event.isRegistered.invalidate();
                     setLoading(false);
                   }}
