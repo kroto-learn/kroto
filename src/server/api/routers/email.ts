@@ -14,7 +14,7 @@ const templateSource = fs.readFileSync(
   "utf8"
 );
 const registrationSource = fs.readFileSync(
-  `${process.cwd()}/templates/base.hbs`,
+  `${process.cwd()}/templates/registration.hbs`,
   "utf8"
 );
 const registration = handlebars.compile(registrationSource);
@@ -48,7 +48,13 @@ export const emailRouter = createTRPCRouter({
 
       if (!event || !creator) throw new Error("Event or creator not found");
 
-      await sendCalendarInvite(event, creator, ctx.session.user.email ?? "");
+      // await sendCalendarInvite(event, creator, ctx.session.user.email ?? "");
+      await sendRegistrationConfirmation(
+        event,
+        creator,
+        ctx.session.user.email ?? "",
+        ctx.session.user.name ?? ""
+      );
     }),
 });
 
