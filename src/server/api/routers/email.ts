@@ -50,7 +50,82 @@ export const emailRouter = createTRPCRouter({
 
       await sendCalendarInvite(event, creator, ctx.session.user.email ?? "");
     }),
+
+  eventStarting: protectedProcedure
+    .input(z.object({ eventId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const event = await prisma.event.findUnique({
+        where: {
+          id: input.eventId,
+        },
+      });
+      const creator = await prisma.user.findUnique({
+        where: {
+          id: event?.creatorId,
+        },
+      });
+
+      if (!event || !creator) throw new Error("Event or creator not found");
+
+      const registrationsIds = await prisma.registration.findMany({
+        where: {
+          eventId: input.eventId,
+        },
+      });
+
+      const registrations = await prisma.user.findMany({
+        where: {
+          id: { in: registrationsIds.map((id) => id.userId) },
+        },
+      });
+
+      await Promise.all(
+        registrations.map(async (registration) => {
+          await sendEventStarted(event, registration.email, registration.name);
+        })
+      );
+    }),
 });
+
+export const sendEventStarted = async (
+  event: RouterOutputs["event"]["getEvent"],
+  email: string,
+  name: string
+) => {
+  const data = {
+    title: event?.title ?? "",
+    heading: `${event?.title ?? "Event"} has started 🥳`,
+    content: `
+  <p>Hi ${name},</p>
+<p>Thank you for registering to <a href=https://kroto.in/event/${
+      event?.id ?? ""
+    }>${event?.title ?? "this event"}</a>. We are glad to have you here. </p>
+<p>Then event has started. Please join the event by clicking on the link below</p>
+<a href=https://kroto.in/event/${event?.eventUrl ?? ""}>Join Event</a>
+`,
+  };
+
+  const html = template(data);
+
+  const mailOptions = {
+    from: "kamal@kroto.in", // sender email
+    to: email, // recipient email
+    subject: `${event?.title ?? "Event"} has started 🥳`,
+    html: html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (err) {
+    if (err instanceof Error)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+  }
+};
 
 export const sendRegistrationConfirmation = async (
   event: RouterOutputs["event"]["getEvent"],
