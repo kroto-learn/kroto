@@ -76,8 +76,11 @@ export default function EventPage({ eventId }: Props) {
         <meta property="og:description" content={event?.description ?? ""} />
         <meta
           property="og:image"
-          itemProp="image"
-          content={event?.thumbnail ?? ""}
+          content={`https://kroto.in/api/og/event?title=${
+            event?.title ?? ""
+          }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
+            event?.creator?.name ?? ""
+          }`}
         />
         <meta
           property="og:url"

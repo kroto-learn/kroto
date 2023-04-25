@@ -81,11 +81,13 @@ export const emailRouter = createTRPCRouter({
         },
       });
 
-      await Promise.all(
-        registrations.map(async (registration) => {
+      for (const registration of registrations) {
+        try {
           await sendEventStarted(event, registration.email, registration.name);
-        })
-      );
+        } catch (e) {
+          console.log(e);
+        }
+      }
     }),
 });
 

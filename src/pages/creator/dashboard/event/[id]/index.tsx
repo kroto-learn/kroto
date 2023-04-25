@@ -28,6 +28,9 @@ import {
 const EventEditModal = dynamic(() => import("@/components/EventEditModal"), {
   ssr: false,
 });
+const SendUpdateModal = dynamic(() => import("@/components/SendUpdateModal"), {
+  ssr: false,
+});
 import { MdLocationOn } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
 import dynamic from "next/dynamic";
@@ -39,6 +42,7 @@ import {
   RocketLaunchIcon,
   LinkIcon,
   ArrowUpRightIcon,
+  EnvelopeIcon,
 } from "@heroicons/react/20/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 
@@ -53,6 +57,8 @@ const EventOverview = () => {
   });
 
   const [editEvent, setEditEvent] = useState(false);
+  const [sendUpdate, setSendUpdate] = useState(false);
+
   const [open, setIsOpen] = useState<boolean>(false);
 
   const { data: hosts, refetch: refetchHosts } = api.event.getHosts.useQuery({
@@ -248,6 +254,16 @@ const EventOverview = () => {
           event={event}
         />
 
+        <button
+          onClick={() => {
+            setSendUpdate(true);
+          }}
+          className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+        >
+          <EnvelopeIcon className="w-3" />
+          Send email update
+        </button>
+
         <div className="w-full">
           <div className="my-5 flex w-full items-center justify-between">
             <h3 className="text-2xl font-medium text-neutral-200">Hosts</h3>
@@ -339,6 +355,25 @@ const EventOverview = () => {
           </button>
 
           <EventEditModal />
+        </div>
+
+        {/* send update email drawer */}
+
+        <div
+          className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-xl flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
+            sendUpdate ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <button
+            onClick={() => {
+              setSendUpdate(false);
+            }}
+            className="self-start rounded-xl border border-neutral-500 p-1 text-xl text-neutral-400"
+          >
+            <XMarkIcon className="w-5" />
+          </button>
+
+          <SendUpdateModal />
         </div>
       </>
     );
