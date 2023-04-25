@@ -81,15 +81,11 @@ export const emailRouter = createTRPCRouter({
         },
       });
 
-      try {
-        await Promise.all(
-          registrations.map((registration) => {
-            sendEventStarted(event, registration.email, registration.name);
-          })
-        );
-      } catch (e) {
-        console.log(e);
-      }
+      await Promise.all(
+        registrations.map(async (registration) => {
+          await sendEventStarted(event, registration.email, registration.name);
+        })
+      );
     }),
 });
 
@@ -107,9 +103,7 @@ export const sendEventStarted = async (
       event?.id ?? ""
     }>${event?.title ?? "this event"}</a>. We are glad to have you here. </p>
 <p>Then event has started. Please join the event by clicking on the link below</p>
-<button><a href=https://kroto.in/event/${
-      event?.eventUrl ?? ""
-    }>Join Event</a></button>
+<a href=https://kroto.in/event/${event?.eventUrl ?? ""}>Join Event</a>
 `,
   };
 
@@ -118,7 +112,7 @@ export const sendEventStarted = async (
   const mailOptions = {
     from: "kamal@kroto.in", // sender email
     to: email, // recipient email
-    subject: `Registration confirmation for ${event?.title ?? "Event"}`,
+    subject: `${event?.title ?? "Event"} has started 🥳`,
     html: html,
   };
 
