@@ -48,13 +48,7 @@ export const emailRouter = createTRPCRouter({
 
       if (!event || !creator) throw new Error("Event or creator not found");
 
-      // await sendCalendarInvite(event, creator, ctx.session.user.email ?? "");
-      await sendRegistrationConfirmation(
-        event,
-        creator,
-        ctx.session.user.email ?? "",
-        ctx.session.user.name ?? ""
-      );
+      await sendCalendarInvite(event, creator, ctx.session.user.email ?? "");
     }),
 });
 
