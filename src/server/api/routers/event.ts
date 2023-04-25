@@ -298,7 +298,17 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      await sendRegistrationConfirmation(event, creator, user.email, user.name);
+      try {
+        await sendRegistrationConfirmation(
+          event,
+          creator,
+          user.email,
+          user.name
+        );
+      } catch (e) {
+        console.log(e);
+      }
+
       return registration;
     }),
 

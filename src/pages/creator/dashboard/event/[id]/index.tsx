@@ -500,6 +500,8 @@ type SEProps = {
 };
 
 const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
+  const { mutateAsync: sendNotification, isLoading } =
+    api.email.eventStarting.useMutation();
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -563,21 +565,23 @@ const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
                     </p>
                   </div>
                   <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
-                    <Link
-                      href={
-                        event?.eventType === "virtual"
-                          ? event?.eventUrl ?? ""
-                          : ":"
-                      }
-                      onClick={() => {
+                    <button
+                      onClick={async () => {
+                        await sendNotification({ eventId: event.id ?? "" });
+                        // if (!isLoading) {
+                        //   const newWindow = window.open(
+                        //     event.eventUrl ?? "",
+                        //      "_blank",
+                        //     "noopener,noreferrer"
+                        //   );
+                        //   if (newWindow) newWindow.opener = null;
+                        // }
                         setIsOpen(false);
                       }}
-                      target="_blank"
-                      type="button"
                       className="rounded-lg bg-pink-500/50 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-pink-500 hover:text-neutral-200"
                     >
-                      Start Event
-                    </Link>
+                      {isLoading ? <Loader /> : "Start Event"}
+                    </button>
                     <button
                       type="button"
                       onClick={() => {
