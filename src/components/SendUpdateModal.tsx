@@ -49,7 +49,7 @@ const SendUpdateModal = ({ eventId }: { eventId: string }) => {
     <form
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       onSubmit={methods.handleSubmit(async (values) => {
-        sendUpdate({ ...values, eventId });
+        await sendUpdate({ ...values, eventId });
       })}
       className="mx-auto my-4 flex w-full max-w-2xl flex-col gap-8"
     >
