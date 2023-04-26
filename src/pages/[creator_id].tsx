@@ -43,7 +43,26 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         <title>{`${creator?.name ?? ""} - Kroto`}</title>
         <meta property="og:title" content={`${creator?.name} | Kroto` ?? ""} />
         <meta property="og:description" content={creator?.bio ?? ""} />
-        <meta property="og:image" content={creator?.image ?? ""} />
+        <meta
+          property="og:image"
+          content={`https://kroto.in/api/og/creator?name=${
+            creator?.name ?? ""
+          }&image=${creator?.image ?? ""}&creatorProfile=${
+            creator?.creatorProfile ?? ""
+          }`}
+        />
+        <meta
+          property="image"
+          content={`https://kroto.in/api/og/creator?name=${
+            creator?.name ?? ""
+          }&image=${creator?.image ?? ""}&creatorProfile=${
+            creator?.creatorProfile ?? ""
+          }`}
+        />
+        <meta
+          property="og:url"
+          content={`https://kroto.in/${creator?.creatorProfile ?? ""}`}
+        />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
         <div className="relative mt-6 flex w-full max-w-2xl flex-col items-center">
