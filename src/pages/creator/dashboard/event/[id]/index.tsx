@@ -373,7 +373,7 @@ const EventOverview = () => {
             <XMarkIcon className="w-5" />
           </button>
 
-          <SendUpdateModal />
+          <SendUpdateModal eventId={event?.id ?? ""} />
         </div>
       </>
     );
