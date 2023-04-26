@@ -41,6 +41,20 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
     <>
       <Head>
         <title>{`${creator?.name ?? ""} - Kroto`}</title>
+        <meta name="description" content={creator?.bio ?? ""} />
+
+        {/* Google SEO */}
+        <meta itemProp="name" content={creator?.name ?? ""} />
+        <meta itemProp="description" content={creator?.bio ?? ""} />
+        <meta
+          itemProp="image"
+          content={`https://kroto.in/api/og/creator?name=${
+            creator?.name ?? ""
+          }&image=${creator?.image ?? ""}&creatorProfile=${
+            creator?.creatorProfile ?? ""
+          }`}
+        />
+        {/* facebook meta */}
         <meta property="og:title" content={`${creator?.name} | Kroto` ?? ""} />
         <meta property="og:description" content={creator?.bio ?? ""} />
         <meta
@@ -63,6 +77,20 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           property="og:url"
           content={`https://kroto.in/${creator?.creatorProfile ?? ""}`}
         />
+        <meta property="og:type" content="website" />
+
+        {/* twitter meta */}
+        <meta name="twitter:title" content={creator?.name ?? ""} />
+        <meta name="twitter:description" content={creator?.bio ?? ""} />
+        <meta
+          name="twitter:image"
+          content={`https://kroto.in/api/og/creator?name=${
+            creator?.name ?? ""
+          }&image=${creator?.image ?? ""}&creatorProfile=${
+            creator?.creatorProfile ?? ""
+          }`}
+        />
+        <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
         <div className="relative mt-6 flex w-full max-w-2xl flex-col items-center">
