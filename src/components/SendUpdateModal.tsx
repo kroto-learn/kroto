@@ -7,6 +7,8 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
+import { api } from "@/utils/api";
+import { Loader } from "./Loader";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -32,16 +34,22 @@ function useZodForm<TSchema extends z.ZodType>(
   return form;
 }
 
-const SendUpdateModal = () => {
+const SendUpdateModal = ({ eventId }: { eventId: string }) => {
   const methods = useZodForm({
     schema: sendUpdateFormSchema,
   });
 
+  const { mutateAsync: sendUpdate, isLoading: sendingUpdate } =
+    api.email.sendUpdate.useMutation();
+
+  const { mutateAsync: sendPreview, isLoading: sendingUpdatePreview } =
+    api.email.sendUpdatePreview.useMutation();
+
   return (
     <form
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      onSubmit={methods.handleSubmit((values) => {
-        console.log(values);
+      onSubmit={methods.handleSubmit(async (values) => {
+        await sendUpdate({ ...values, eventId });
       })}
       className="mx-auto my-4 flex w-full max-w-2xl flex-col gap-8"
     >
@@ -81,12 +89,24 @@ const SendUpdateModal = () => {
         )}
       </div>
 
-      <button
-        className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem]  py-2 text-center font-medium text-neutral-200 transition-all duration-300 disabled:bg-neutral-700 disabled:text-neutral-300`}
-        type="submit"
-      >
-        Send email update <PaperAirplaneIcon className="ml-1 w-5" />
-      </button>
+      <div className="flex w-full flex-col md:flex-row">
+        <button
+          className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
+          type="submit"
+        >
+          {sendingUpdate && <Loader size="md" />}Send email update{" "}
+          <PaperAirplaneIcon className="ml-1 w-5" />
+        </button>
+        <button
+          onClick={async () => {
+            await sendPreview({ ...methods.getValues() });
+          }}
+          className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl px-[1.5rem]  py-2  text-center font-medium text-neutral-200 transition-all duration-300 hover:underline disabled:text-neutral-300`}
+          type="submit"
+        >
+          {sendingUpdatePreview && <Loader size="md" />} Send preview
+        </button>
+      </div>
     </form>
   );
 };

@@ -9,6 +9,7 @@ import type { RouterOutputs } from "@/utils/api";
 import { TRPCError } from "@trpc/server";
 import handlebars from "handlebars";
 import { type Event } from "@prisma/client";
+import showdown from "showdown";
 
 const templateSource = fs.readFileSync(
   `${process.cwd()}/templates/base.hbs`,
@@ -90,7 +91,118 @@ export const emailRouter = createTRPCRouter({
         }
       }
     }),
+
+  sendUpdate: protectedProcedure
+    .input(
+      z.object({ eventId: z.string(), body: z.string(), subject: z.string() })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const event = await prisma.event.findUnique({
+        where: {
+          id: input.eventId,
+        },
+      });
+      if (!event || event.creatorId !== ctx.session.user.id)
+        throw new TRPCError({ code: "BAD_REQUEST" });
+
+      const registrationsIds = await prisma.registration.findMany({
+        where: {
+          eventId: input.eventId,
+        },
+      });
+
+      const registrations = await prisma.user.findMany({
+        where: {
+          id: { in: registrationsIds.map((id) => id.userId) },
+        },
+      });
+
+      await sendEventUpdate(
+        input.subject,
+        input.body,
+        registrations.map((r) => r.email)
+      );
+    }),
+
+  sendUpdatePreview: protectedProcedure
+    .input(z.object({ body: z.string(), subject: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await sendUpdatePreview(
+        input.subject,
+        input.body,
+        ctx.session.user.email ?? ""
+      );
+    }),
 });
+
+export const sendUpdatePreview = async (
+  subject: string,
+  body: string,
+  email: string
+) => {
+  const converter = new showdown.Converter();
+  const bodyHtml = converter.makeHtml(body);
+
+  const data = {
+    title: subject,
+    heading: `${subject}`,
+    content: bodyHtml,
+  };
+
+  const html = template(data);
+
+  const mailOptions = {
+    from: "kamal@kroto.in", // sender email
+    to: email, // recipient email
+    subject: subject,
+    html: html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (err) {
+    if (err instanceof Error)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+  }
+};
+
+export const sendEventUpdate = async (
+  subject: string,
+  body: string,
+  email: string[]
+) => {
+  const converter = new showdown.Converter();
+  const bodyHtml = converter.makeHtml(body);
+
+  const data = {
+    title: subject,
+    heading: `${subject}`,
+    content: bodyHtml,
+  };
+
+  const html = template(data);
+
+  const mailOptions = {
+    from: "rosekamallove@gmail.com", // sender email
+    to: email, // recipient email
+    subject: subject,
+    html: html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (err) {
+    if (err instanceof Error)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+  }
+};
 
 export const sendEventStarted = async (
   event: Event,
