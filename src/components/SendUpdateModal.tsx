@@ -14,10 +14,10 @@ const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
 });
 
-const titleLimit = 100;
+const subjectLimit = 100;
 
 const sendUpdateFormSchema = object({
-  subject: string().max(titleLimit).nonempty("Please enter event title."),
+  subject: string().max(subjectLimit).nonempty("Please enter event title."),
   body: string().max(3000).nonempty("Please enter event description."),
 });
 
