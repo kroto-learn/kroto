@@ -283,21 +283,21 @@ const EventOverview = () => {
                       <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
                         <Image
                           className="rounded-full"
-                          src={host?.image ?? ""}
+                          src={host?.user?.image ?? ""}
                           alt="host img"
                           fill
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <Link href={`/${host?.creatorProfile ?? ""}`}>
+                        <Link href={`/${host?.user?.creatorProfile ?? ""}`}>
                           <Link
-                            href={`/${host?.creatorProfile ?? ""}`}
+                            href={`/${host?.user?.creatorProfile ?? ""}`}
                             className="truncate text-sm font-medium text-neutral-200 hover:underline"
                           >
-                            {host?.name ?? ""}
+                            {host?.user?.name ?? ""}
                           </Link>
                           <p className="truncate text-sm text-neutral-400">
-                            {host?.email ?? ""}
+                            {host?.user?.email ?? ""}
                           </p>
                         </Link>
                       </div>
@@ -506,13 +506,13 @@ export function AddHostModel({
                               className={`relative aspect-square w-[1.7rem] overflow-hidden rounded-full`}
                             >
                               <Image
-                                src={host?.image ?? ""}
-                                alt={host?.name ?? ""}
+                                src={host?.user?.image ?? ""}
+                                alt={host?.user?.name ?? ""}
                                 fill
                               />
                             </div>
                             <p className={`text-neutral-300 transition-all`}>
-                              {host?.name ?? ""}
+                              {host?.user?.name ?? ""}
                             </p>
                           </div>
                         ))}

@@ -353,6 +353,9 @@ export const eventRouter = createTRPCRouter({
         where: {
           eventId: event.id,
         },
+        include: {
+          user: true,
+        },
       });
 
       const hostWithUserData = await prisma.user.findMany({
@@ -361,7 +364,7 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      return [creator, ...hostWithUserData];
+      return [{ id: creator?.id, user: creator }, ...hosts];
     }),
 
   addHost: protectedProcedure
