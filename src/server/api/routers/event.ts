@@ -502,6 +502,9 @@ export const eventRouter = createTRPCRouter({
         where: {
           eventId: event.id,
         },
+        include: {
+          user: true,
+        },
       });
 
       if (!feedbacks) return new TRPCError({ code: "BAD_REQUEST" });
