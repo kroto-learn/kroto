@@ -1,4 +1,4 @@
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 import { type Dispatch, Fragment, type SetStateAction } from "react";
 import CalenderBox from "@/components/CalenderBox";
 import React, { type ReactNode, useState } from "react";
@@ -43,6 +43,8 @@ import {
   LinkIcon,
   ArrowUpRightIcon,
   EnvelopeIcon,
+  Bars3Icon,
+  ChevronDownIcon,
 } from "@heroicons/react/20/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 
@@ -85,8 +87,8 @@ const EventOverview = () => {
         <Head>
           <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
-        {(event?.datetime?.getTime() as number) <= new Date().getTime() &&
-        (event?.endTime?.getTime() as number) >= new Date().getTime() ? (
+        {event?.datetime?.getTime() <= new Date().getTime() &&
+        event?.endTime?.getTime() >= new Date().getTime() ? (
           <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2">
             <div className="flex items-center gap-2">
               <span className="relative flex h-3 w-3 items-center justify-center">
@@ -677,7 +679,7 @@ function EventLayoutR({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
+    <div className="relative flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
       <div className="flex w-full flex-col items-start justify-between gap-4 px-4 md:flex-row">
         <h1 className="truncate text-xl text-neutral-200">{event?.title}</h1>
         <Link
@@ -687,7 +689,7 @@ function EventLayoutR({ children }: { children: ReactNode }) {
           <GlobeAltIcon className="w-4" /> Event Public Page
         </Link>
       </div>
-      <div className="border-b border-neutral-700 text-center text-sm font-medium text-neutral-400">
+      <div className="hidden border-b border-neutral-700 text-center text-sm font-medium text-neutral-400 sm:block">
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-1 sm:mr-2">
             <Link
@@ -714,6 +716,19 @@ function EventLayoutR({ children }: { children: ReactNode }) {
               Registrations
             </Link>
           </li>
+          <li className="mr-1 sm:mr-2">
+            <Link
+              href={`/creator/dashboard/event/${id}/feedbacks`}
+              className={`inline-block rounded-t-lg px-2 py-4 text-xs sm:p-4 sm:text-base ${
+                pathname === `/creator/dashboard/event/${id}/feedbacks`
+                  ? "border-b-2 border-pink-600 text-pink-600"
+                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
+              }`}
+              aria-current="page"
+            >
+              Feedbacks
+            </Link>
+          </li>
           <li>
             <Link
               href={`/creator/dashboard/event/${id}/settings`}
@@ -728,6 +743,72 @@ function EventLayoutR({ children }: { children: ReactNode }) {
             </Link>
           </li>
         </ul>
+      </div>
+      <div className="absolute right-8 z-20 flex flex-col items-end sm:hidden">
+        <Menu>
+          {({ open }) => (
+            <>
+              <Menu.Button>
+                {open ? (
+                  <ChevronDownIcon className="w-6" />
+                ) : (
+                  <Bars3Icon className="w-6" />
+                )}
+              </Menu.Button>
+              <Menu.Items className="flex flex-col overflow-hidden rounded-xl bg-neutral-800/50 backdrop-blur-sm">
+                <Menu.Item>
+                  <Link
+                    className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium  active:text-pink-600 ${
+                      pathname === `/creator/dashboard/event/${id}`
+                        ? "bg-pink-600/20 text-pink-600"
+                        : "hover:text-pink-600"
+                    }`}
+                    href={`/creator/dashboard/event/${id}`}
+                  >
+                    Overview
+                  </Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link
+                    className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium active:text-pink-600 ${
+                      pathname ===
+                      `/creator/dashboard/event/${id}/registrations`
+                        ? "bg-pink-600/20 text-pink-600"
+                        : "hover:text-pink-600"
+                    }`}
+                    href={`/creator/dashboard/event/${id}/registrations`}
+                  >
+                    Registrations
+                  </Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link
+                    className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium active:text-pink-600 ${
+                      pathname === `/creator/dashboard/event/${id}/feedbacks`
+                        ? "bg-pink-600/20 text-pink-600"
+                        : "hover:text-pink-600"
+                    }`}
+                    href={`/creator/dashboard/event/${id}/feedbacks`}
+                  >
+                    Feedbacks
+                  </Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link
+                    className={`w-full px-6 py-2 font-medium active:text-pink-600 ${
+                      pathname === `/creator/dashboard/event/${id}/settings`
+                        ? "bg-pink-600/20 text-pink-600"
+                        : "hover:text-pink-600"
+                    }`}
+                    href={`/creator/dashboard/event/${id}/settings`}
+                  >
+                    Settings
+                  </Link>
+                </Menu.Item>
+              </Menu.Items>
+            </>
+          )}
+        </Menu>
       </div>
       {children}
     </div>

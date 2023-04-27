@@ -4,9 +4,10 @@ import { DashboardLayout } from "../..";
 import { EventLayout } from ".";
 import { ChevronDownIcon, StarIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { RouterOutputs, api } from "@/utils/api";
+import { api } from "@/utils/api";
 import { useRouter } from "next/router";
-import { Feedback } from "@prisma/client";
+import { type Feedback, type User } from "@prisma/client";
+import { Loader } from "@/components/Loader";
 
 const Index = () => {
   const router = useRouter();
@@ -17,11 +18,22 @@ const Index = () => {
 
   return (
     <div className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6">
-      <h3 className="mb-4 text-lg font-medium  sm:text-2xl">Feedbacks</h3>
+      <h3 className="mb-6 text-lg font-medium  sm:text-2xl">Feedbacks</h3>
       {feedbacksLoading ? (
-        <></>
-      ) : feedbacks && (feedbacks as Feedback[]).length !== 0 ? (
-        (feedbacks as Feedback[])?.map((feedback) => (
+        <div className="flex h-64 w-full items-center justify-center">
+          <Loader size="lg" />
+        </div>
+      ) : feedbacks &&
+        (
+          feedbacks as (Feedback & {
+            user: User;
+          })[]
+        ).length !== 0 ? (
+        (
+          feedbacks as (Feedback & {
+            user: User;
+          })[]
+        )?.map((feedback) => (
           <Disclosure key={feedback?.id ?? ""}>
             {({ open }) => (
               <>
@@ -31,20 +43,22 @@ const Index = () => {
                       {feedback?.rating}
                       <StarIcon className="w-4 text-yellow-500" />
                     </span>
-                    {/* <Image
-                  src={}
-                  height={50}
-                  width={50}
-                  alt="Rose"
-                  className="aspect-square rounded-full object-cover"
-                /> */}
-                    <p>Yuvraj Singh</p>
+                    <Image
+                      src={feedback.user.image ?? ""}
+                      height={25}
+                      width={25}
+                      alt="Rose"
+                      className="aspect-square rounded-full object-cover"
+                    />
+                    <p className="max-w-[8rem] overflow-hidden truncate text-ellipsis">
+                      {feedback.user.name}
+                    </p>
                   </div>
                   <ChevronDownIcon
                     className={`${open ? "rotate-180 duration-150" : ""} w-5`}
                   />
                 </Disclosure.Button>
-                <Disclosure.Panel className="z-0 -translate-y-3 rounded-b-xl bg-neutral-800 px-4 py-4 pt-8 text-gray-300">
+                <Disclosure.Panel className="z-0 -translate-y-2 rounded-b-xl bg-neutral-800 px-4 py-4 text-gray-300">
                   {feedback?.comment}
                 </Disclosure.Panel>
               </>
