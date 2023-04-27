@@ -35,9 +35,9 @@ const EventRegistrations = () => {
   const tableData = React.useMemo(() => {
     if (event && event?.registrations)
       return event.registrations.map((r) => ({
-        col1: r.image ?? "",
-        col2: r.name ?? "",
-        col3: r.email ?? "",
+        col1: r.user?.image ?? "",
+        col2: r.user?.name ?? "",
+        col3: r.user?.email ?? "",
       }));
     return [];
   }, [event]);
@@ -100,9 +100,9 @@ const EventRegistrations = () => {
             onClick={() => {
               getCSV(
                 event?.registrations?.map((r) => ({
-                  name: r.name,
-                  email: r.email,
-                  image: r.image,
+                  name: r.user?.name,
+                  email: r.user?.email,
+                  image: r.user?.image,
                 })) ?? []
               );
             }}

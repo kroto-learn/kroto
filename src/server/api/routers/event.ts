@@ -23,7 +23,11 @@ export const eventRouter = createTRPCRouter({
         },
         include: {
           creator: true,
-          registrations: true,
+          registrations: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
 
@@ -42,7 +46,6 @@ export const eventRouter = createTRPCRouter({
         },
         include: {
           creator: true,
-          registrations: true,
           hosts: {
             include: {
               user: true,

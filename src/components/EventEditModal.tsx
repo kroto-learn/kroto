@@ -118,8 +118,8 @@ const EventEditModal = () => {
   useEffect(() => {
     if (event && !eventInit) {
       setEventInit(true);
-      methods.setValue("title", (event?.title as string) ?? "");
-      methods.setValue("thumbnail", (event?.thumbnail as string) ?? "");
+      methods.setValue("title", event?.title ?? "");
+      methods.setValue("thumbnail", event?.thumbnail ?? "");
       methods.setValue("eventType", event?.eventType ?? "");
       methods.setValue("description", event?.description ?? "");
       methods.setValue("datetime", event?.datetime ?? new Date());
