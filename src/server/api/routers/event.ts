@@ -21,44 +21,13 @@ export const eventRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-      });
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id: event?.creatorId,
+        include: {
+          creator: true,
+          registrations: true,
         },
       });
 
-      const registrationsIds = await prisma.registration.findMany({
-        where: {
-          eventId: event?.id,
-        },
-      });
-
-      const hostsIds = await prisma.host.findMany({
-        where: {
-          eventId: event?.id,
-        },
-      });
-
-      const hosts = await prisma.user.findMany({
-        where: {
-          id: { in: hostsIds.map((h) => h.userId) },
-        },
-      });
-
-      const registrations = await prisma.user.findMany({
-        where: {
-          id: { in: registrationsIds.map((r) => r.userId) },
-        },
-      });
-
-      return {
-        ...event,
-        creator: user,
-        registrations,
-        hosts: [...hosts, user],
-      };
+      return event;
     }),
 
   // User for RouterOutputs don't remove.
@@ -71,27 +40,27 @@ export const eventRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-      });
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id: event?.creatorId,
+        include: {
+          creator: true,
+          registrations: true,
+          hosts: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
 
-      const hostsIds = await prisma.host.findMany({
-        where: {
-          eventId: event?.id,
-        },
-      });
+      const eventHosts = event?.hosts ?? [];
+      const hosts = [
+        ...eventHosts,
+        { id: event?.creator.id, user: event?.creator },
+      ];
 
-      const hosts = await prisma.user.findMany({
-        where: {
-          id: { in: hostsIds.map((h) => h.userId) },
-        },
-      });
-
-      return { ...event, creator: user, hosts: [...hosts, user] };
+      return {
+        ...event,
+        hosts: hosts,
+      };
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -355,12 +324,6 @@ export const eventRouter = createTRPCRouter({
         },
         include: {
           user: true,
-        },
-      });
-
-      const hostWithUserData = await prisma.user.findMany({
-        where: {
-          id: { in: hosts.map((h) => h.userId) },
         },
       });
 

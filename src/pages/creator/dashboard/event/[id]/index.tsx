@@ -602,10 +602,10 @@ const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
                   <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
                     <button
                       onClick={async () => {
-                        await sendNotification({ eventId: event.id ?? "" });
+                        await sendNotification({ eventId: event?.id ?? "" });
                         if (!isLoading) {
                           const newWindow = window.open(
-                            event.eventUrl ?? "",
+                            event?.eventUrl ?? "",
                             "_blank",
                             "noopener,noreferrer"
                           );
