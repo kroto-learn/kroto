@@ -59,6 +59,21 @@ export const testimonialRouter = createTRPCRouter({
     return testimonials;
   }),
 
+  getOne: protectedProcedure
+    .input(z.object({ creatorProfile: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const testie = await prisma.testimonial.findUnique({
+        where: {
+          userId_creatorProfile: {
+            userId: ctx.session.user.id,
+            creatorProfile: input.creatorProfile,
+          },
+        },
+      });
+      return testie;
+    }),
+
   getAllCreator: publicProcedure
     .input(z.object({ creatorProfile: z.string() }))
     .query(async ({ ctx, input }) => {
