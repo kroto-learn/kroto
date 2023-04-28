@@ -29,7 +29,7 @@ export const testimonialRouter = createTRPCRouter({
 
   update: protectedProcedure
     .input(z.object({ id: z.string(), content: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
       const testimonial = await prisma.testimonial.update({

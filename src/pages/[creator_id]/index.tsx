@@ -9,6 +9,8 @@ import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
+import { ChatBubbleBottomCenterIcon } from "@heroicons/react/24/outline";
+
 import { Loader } from "@/components/Loader";
 
 type CreatorPageProps = {
@@ -143,6 +145,17 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                   />
                 </div>
                 Schedule a 1:1 call
+              </Link>
+            ) : (
+              <></>
+            )}
+            {creator?.topmateUrl && creator?.topmateUrl !== "" ? (
+              <Link
+                href={`/${creator?.creatorProfile ?? ""}/testimonial`}
+                className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-pink-500 hover:text-neutral-200"
+              >
+                <ChatBubbleBottomCenterIcon className="w-6" />
+                Write a Testimonial for me
               </Link>
             ) : (
               <></>
