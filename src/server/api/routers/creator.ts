@@ -23,30 +23,20 @@ export const creatorRouter = createTRPCRouter({
         where: {
           creatorProfile: creatorProfile,
         },
-      });
-
-      if (!creator) return null;
-
-      const socialLinks = await prisma.socialLink.findMany({
-        where: { creatorId: creator?.id },
-      });
-
-      const events = await prisma.event.findMany({
-        where: {
-          creatorId: creator?.id,
-          endTime: {
-            gte: new Date(),
+        include: {
+          socialLinks: true,
+          testimonials: true,
+          events: {
+            where: {
+              endTime: {
+                gte: new Date(),
+              },
+            },
           },
         },
       });
 
-      const output = {
-        ...creator,
-        events: events,
-        socialLinks: socialLinks,
-      };
-
-      return output;
+      return creator;
     }),
 
   getProfile: protectedProcedure.query(async ({ ctx }) => {
