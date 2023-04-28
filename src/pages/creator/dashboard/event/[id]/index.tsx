@@ -272,8 +272,8 @@ const EventOverview = () => {
           </button>
 
           <button
-            onClick={() => {
-              addToCalendarMutation({ eventId: event?.id ?? "" });
+            onClick={async () => {
+              await addToCalendarMutation({ eventId: event?.id ?? "" });
             }}
             className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
           >
