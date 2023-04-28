@@ -80,6 +80,7 @@ const Index = () => {
     if (testimonialExists) {
       methods.setValue("content", testimonial?.content ?? "");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [testimonial, testimonialExists]);
 
   return (

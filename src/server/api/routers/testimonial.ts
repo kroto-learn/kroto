@@ -91,4 +91,28 @@ export const testimonialRouter = createTRPCRouter({
 
       return testimonials;
     }),
+
+  getAllCreatorProtected: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: ctx.session.user.id,
+      },
+    });
+
+    if (!user || !user.isCreator || !user.creatorProfile)
+      throw new TRPCError({ code: "BAD_REQUEST" });
+
+    const testimonials = await prisma.testimonial.findMany({
+      where: {
+        creatorProfile: user.creatorProfile,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return testimonials;
+  }),
 });
