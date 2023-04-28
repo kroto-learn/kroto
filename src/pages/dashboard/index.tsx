@@ -8,7 +8,7 @@ import Layout from "@/components/layouts/main";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
 // import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { ClaimLinkBanner } from ".";
+import { ClaimLinkBanner } from "..";
 import Link from "next/link";
 
 export default function Dashboard() {

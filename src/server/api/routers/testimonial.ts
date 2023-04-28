@@ -29,7 +29,7 @@ export const testimonialRouter = createTRPCRouter({
 
   update: protectedProcedure
     .input(z.object({ id: z.string(), content: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
       const testimonial = await prisma.testimonial.update({
@@ -59,6 +59,21 @@ export const testimonialRouter = createTRPCRouter({
     return testimonials;
   }),
 
+  getOne: protectedProcedure
+    .input(z.object({ creatorProfile: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const testie = await prisma.testimonial.findUnique({
+        where: {
+          userId_creatorProfile: {
+            userId: ctx.session.user.id,
+            creatorProfile: input.creatorProfile,
+          },
+        },
+      });
+      return testie;
+    }),
+
   getAllCreator: publicProcedure
     .input(z.object({ creatorProfile: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -76,4 +91,28 @@ export const testimonialRouter = createTRPCRouter({
 
       return testimonials;
     }),
+
+  getAllCreatorProtected: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: ctx.session.user.id,
+      },
+    });
+
+    if (!user || !user.isCreator || !user.creatorProfile)
+      throw new TRPCError({ code: "BAD_REQUEST" });
+
+    const testimonials = await prisma.testimonial.findMany({
+      where: {
+        creatorProfile: user.creatorProfile,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return testimonials;
+  }),
 });

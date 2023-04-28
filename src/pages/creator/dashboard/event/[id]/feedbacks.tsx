@@ -36,7 +36,7 @@ const Index = () => {
         )?.map((feedback) => (
           <Disclosure key={feedback?.id ?? ""}>
             {({ open }) => (
-              <>
+              <div className="mb-4 w-full">
                 <Disclosure.Button className="z-2 flex w-full items-center justify-between rounded-xl bg-neutral-800 px-4 py-2">
                   <div className="flex items-center gap-2">
                     <span className="flex items-center">
@@ -47,7 +47,7 @@ const Index = () => {
                       src={feedback.user.image ?? ""}
                       height={25}
                       width={25}
-                      alt="Rose"
+                      alt={feedback.user.name ?? ""}
                       className="aspect-square rounded-full object-cover"
                     />
                     <p className="max-w-[8rem] overflow-hidden truncate text-ellipsis">
@@ -58,10 +58,10 @@ const Index = () => {
                     className={`${open ? "rotate-180 duration-150" : ""} w-5`}
                   />
                 </Disclosure.Button>
-                <Disclosure.Panel className="z-0 -translate-y-2 rounded-b-xl bg-neutral-800 px-4 py-4 text-gray-300">
+                <Disclosure.Panel className="z-0 w-full -translate-y-2 rounded-b-xl bg-neutral-800 px-4 py-4 text-gray-300">
                   {feedback?.comment}
                 </Disclosure.Panel>
-              </>
+              </div>
             )}
           </Disclosure>
         ))
