@@ -44,6 +44,7 @@ import {
   ArrowUpRightIcon,
   EnvelopeIcon,
   Bars3Icon,
+  CalendarIcon,
   ChevronDownIcon,
 } from "@heroicons/react/20/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
@@ -73,6 +74,9 @@ const EventOverview = () => {
   const [startEventModal, setStartEventModal] = useState(false);
 
   const { successToast, errorToast } = useToast();
+
+  const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
+    api.email.sendCalendarInvite.useMutation();
 
   if (isEventLoading)
     return (
@@ -256,15 +260,27 @@ const EventOverview = () => {
           event={event}
         />
 
-        <button
-          onClick={() => {
-            setSendUpdate(true);
-          }}
-          className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
-        >
-          <EnvelopeIcon className="w-3" />
-          Send email update
-        </button>
+        <div className="flex w-full gap-2">
+          <button
+            onClick={() => {
+              setSendUpdate(true);
+            }}
+            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+          >
+            <EnvelopeIcon className="w-3" />
+            Send email update
+          </button>
+
+          <button
+            onClick={() => {
+              addToCalendarMutation({ eventId: event?.id ?? "" });
+            }}
+            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+          >
+            {addingToCalendar ? <Loader /> : <CalendarIcon className="w-3" />}
+            Send calendar invite
+          </button>
+        </div>
 
         <div className="w-full">
           <div className="my-5 flex w-full items-center justify-between">
