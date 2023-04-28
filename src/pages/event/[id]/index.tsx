@@ -314,7 +314,7 @@ export default function EventPage({ eventId }: Props) {
               <div className="flex flex-wrap gap-5 px-4 pb-4">
                 {event?.hosts.map((host) => (
                   <Link
-                    href={`/${host?.creatorProfile ?? ""}`}
+                    href={`/${host?.user?.creatorProfile ?? ""}`}
                     key={host?.id}
                     className="flex items-center gap-2"
                   >
@@ -322,13 +322,13 @@ export default function EventPage({ eventId }: Props) {
                       className={`relative aspect-square w-[1.7rem] overflow-hidden rounded-full`}
                     >
                       <Image
-                        src={host?.image ?? ""}
-                        alt={host?.name ?? ""}
+                        src={host?.user?.image ?? ""}
+                        alt={host?.user?.name ?? ""}
                         fill
                       />
                     </div>
                     <p className={`text-neutral-300 transition-all`}>
-                      {host?.name ?? ""}
+                      {host?.user?.name ?? ""}
                     </p>
                   </Link>
                 ))}

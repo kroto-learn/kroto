@@ -23,30 +23,20 @@ export const creatorRouter = createTRPCRouter({
         where: {
           creatorProfile: creatorProfile,
         },
-      });
-
-      if (!creator) return null;
-
-      const socialLinks = await prisma.socialLink.findMany({
-        where: { creatorId: creator?.id },
-      });
-
-      const events = await prisma.event.findMany({
-        where: {
-          creatorId: creator?.id,
-          endTime: {
-            gte: new Date(),
+        include: {
+          socialLinks: true,
+          testimonials: true,
+          events: {
+            where: {
+              endTime: {
+                gte: new Date(),
+              },
+            },
           },
         },
       });
 
-      const output = {
-        ...creator,
-        events: events,
-        socialLinks: socialLinks,
-      };
-
-      return output;
+      return creator;
     }),
 
   getProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -54,21 +44,16 @@ export const creatorRouter = createTRPCRouter({
 
     const user = await prisma.user.findUnique({
       where: { id: ctx.session.user.id },
-    });
-
-    const socialLinks = await prisma.socialLink.findMany({
-      where: {
-        creatorId: ctx.session.user.id,
+      include: {
+        socialLinks: true,
+        testimonials: true,
+        registrations: true,
       },
-    });
-
-    const registrationId = await prisma.registration.findMany({
-      where: { userId: ctx.session.user.id },
     });
 
     const registrations = await prisma.event.findMany({
       where: {
-        id: { in: registrationId.map((r) => r.eventId) },
+        id: { in: user?.registrations.map((r) => r.eventId) },
         endTime: {
           gte: new Date(),
         },
@@ -78,7 +63,7 @@ export const creatorRouter = createTRPCRouter({
       },
     });
 
-    return { ...user, registrations, socialLinks: socialLinks };
+    return { ...user, registrations };
   }),
 
   getProfileNoLinks: publicProcedure

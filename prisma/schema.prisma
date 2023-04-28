@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["jsonProtocol"]
 }
 
@@ -61,6 +61,8 @@ model User {
   registrations   Registration[]
   audienceMembers AudienceMember[]
   host            Host[]
+  feedbacks       Feedback[]
+  testimonials    Testimonial[]
 }
 
 model Event {
@@ -79,6 +81,7 @@ model Event {
   creator          User           @relation(fields: [creatorId], references: [id])
   registrations    Registration[]
   hosts            Host[]
+  feedbacks        Feedback[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -144,4 +147,29 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Feedback {
+  id      String @id @default(cuid())
+  rating  Int
+  comment String
+  eventId String
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Event   Event  @relation(fields: [eventId], references: [id])
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+}
+
+model Testimonial {
+  id             String @id @default(cuid())
+  content        String
+  creatorProfile String
+  userId         String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, creatorProfile])
+  @@index([userId])
 }

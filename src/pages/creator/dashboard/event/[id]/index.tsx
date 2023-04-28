@@ -1,4 +1,4 @@
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 import { type Dispatch, Fragment, type SetStateAction } from "react";
 import CalenderBox from "@/components/CalenderBox";
 import React, { type ReactNode, useState } from "react";
@@ -43,6 +43,9 @@ import {
   LinkIcon,
   ArrowUpRightIcon,
   EnvelopeIcon,
+  Bars3Icon,
+  CalendarIcon,
+  ChevronDownIcon,
 } from "@heroicons/react/20/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 
@@ -72,6 +75,9 @@ const EventOverview = () => {
 
   const { successToast, errorToast } = useToast();
 
+  const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
+    api.email.sendCalendarInvite.useMutation();
+
   if (isEventLoading)
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">
@@ -85,8 +91,8 @@ const EventOverview = () => {
         <Head>
           <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
-        {(event?.datetime?.getTime() as number) <= new Date().getTime() &&
-        (event?.endTime?.getTime() as number) >= new Date().getTime() ? (
+        {event?.datetime?.getTime() <= new Date().getTime() &&
+        event?.endTime?.getTime() >= new Date().getTime() ? (
           <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2">
             <div className="flex items-center gap-2">
               <span className="relative flex h-3 w-3 items-center justify-center">
@@ -254,15 +260,27 @@ const EventOverview = () => {
           event={event}
         />
 
-        <button
-          onClick={() => {
-            setSendUpdate(true);
-          }}
-          className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
-        >
-          <EnvelopeIcon className="w-3" />
-          Send email update
-        </button>
+        <div className="flex w-full gap-2">
+          <button
+            onClick={() => {
+              setSendUpdate(true);
+            }}
+            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+          >
+            <EnvelopeIcon className="w-3" />
+            Send email update
+          </button>
+
+          <button
+            onClick={async () => {
+              await addToCalendarMutation({ eventId: event?.id ?? "" });
+            }}
+            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+          >
+            {addingToCalendar ? <Loader /> : <CalendarIcon className="w-3" />}
+            Send calendar invite
+          </button>
+        </div>
 
         <div className="w-full">
           <div className="my-5 flex w-full items-center justify-between">
@@ -283,21 +301,21 @@ const EventOverview = () => {
                       <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
                         <Image
                           className="rounded-full"
-                          src={host?.image ?? ""}
+                          src={host?.user?.image ?? ""}
                           alt="host img"
                           fill
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <Link href={`/${host?.creatorProfile ?? ""}`}>
+                        <Link href={`/${host?.user?.creatorProfile ?? ""}`}>
                           <Link
-                            href={`/${host?.creatorProfile ?? ""}`}
+                            href={`/${host?.user?.creatorProfile ?? ""}`}
                             className="truncate text-sm font-medium text-neutral-200 hover:underline"
                           >
-                            {host?.name ?? ""}
+                            {host?.user?.name ?? ""}
                           </Link>
                           <p className="truncate text-sm text-neutral-400">
-                            {host?.email ?? ""}
+                            {host?.user?.email ?? ""}
                           </p>
                         </Link>
                       </div>
@@ -506,13 +524,13 @@ export function AddHostModel({
                               className={`relative aspect-square w-[1.7rem] overflow-hidden rounded-full`}
                             >
                               <Image
-                                src={host?.image ?? ""}
-                                alt={host?.name ?? ""}
+                                src={host?.user?.image ?? ""}
+                                alt={host?.user?.name ?? ""}
                                 fill
                               />
                             </div>
                             <p className={`text-neutral-300 transition-all`}>
-                              {host?.name ?? ""}
+                              {host?.user?.name ?? ""}
                             </p>
                           </div>
                         ))}
@@ -602,10 +620,10 @@ const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
                   <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
                     <button
                       onClick={async () => {
-                        await sendNotification({ eventId: event.id ?? "" });
+                        await sendNotification({ eventId: event?.id ?? "" });
                         if (!isLoading) {
                           const newWindow = window.open(
-                            event.eventUrl ?? "",
+                            event?.eventUrl ?? "",
                             "_blank",
                             "noopener,noreferrer"
                           );
@@ -677,7 +695,7 @@ function EventLayoutR({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
+    <div className="relative flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
       <div className="flex w-full flex-col items-start justify-between gap-4 px-4 md:flex-row">
         <h1 className="truncate text-xl text-neutral-200">{event?.title}</h1>
         <Link
@@ -687,7 +705,7 @@ function EventLayoutR({ children }: { children: ReactNode }) {
           <GlobeAltIcon className="w-4" /> Event Public Page
         </Link>
       </div>
-      <div className="border-b border-neutral-700 text-center text-sm font-medium text-neutral-400">
+      <div className="hidden border-b border-neutral-700 text-center text-sm font-medium text-neutral-400 sm:block">
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-1 sm:mr-2">
             <Link
@@ -714,6 +732,19 @@ function EventLayoutR({ children }: { children: ReactNode }) {
               Registrations
             </Link>
           </li>
+          <li className="mr-1 sm:mr-2">
+            <Link
+              href={`/creator/dashboard/event/${id}/feedbacks`}
+              className={`inline-block rounded-t-lg px-2 py-4 text-xs sm:p-4 sm:text-base ${
+                pathname === `/creator/dashboard/event/${id}/feedbacks`
+                  ? "border-b-2 border-pink-600 text-pink-600"
+                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
+              }`}
+              aria-current="page"
+            >
+              Feedbacks
+            </Link>
+          </li>
           <li>
             <Link
               href={`/creator/dashboard/event/${id}/settings`}
@@ -728,6 +759,72 @@ function EventLayoutR({ children }: { children: ReactNode }) {
             </Link>
           </li>
         </ul>
+      </div>
+      <div className="absolute right-8 z-20 flex flex-col items-end sm:hidden">
+        <Menu>
+          {({ open }) => (
+            <>
+              <Menu.Button>
+                {open ? (
+                  <ChevronDownIcon className="w-6" />
+                ) : (
+                  <Bars3Icon className="w-6" />
+                )}
+              </Menu.Button>
+              <Menu.Items className="flex flex-col overflow-hidden rounded-xl bg-neutral-800/50 backdrop-blur-sm">
+                <Menu.Item>
+                  <Link
+                    className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium  active:text-pink-600 ${
+                      pathname === `/creator/dashboard/event/${id}`
+                        ? "bg-pink-600/20 text-pink-600"
+                        : "hover:text-pink-600"
+                    }`}
+                    href={`/creator/dashboard/event/${id}`}
+                  >
+                    Overview
+                  </Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link
+                    className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium active:text-pink-600 ${
+                      pathname ===
+                      `/creator/dashboard/event/${id}/registrations`
+                        ? "bg-pink-600/20 text-pink-600"
+                        : "hover:text-pink-600"
+                    }`}
+                    href={`/creator/dashboard/event/${id}/registrations`}
+                  >
+                    Registrations
+                  </Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link
+                    className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium active:text-pink-600 ${
+                      pathname === `/creator/dashboard/event/${id}/feedbacks`
+                        ? "bg-pink-600/20 text-pink-600"
+                        : "hover:text-pink-600"
+                    }`}
+                    href={`/creator/dashboard/event/${id}/feedbacks`}
+                  >
+                    Feedbacks
+                  </Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <Link
+                    className={`w-full px-6 py-2 font-medium active:text-pink-600 ${
+                      pathname === `/creator/dashboard/event/${id}/settings`
+                        ? "bg-pink-600/20 text-pink-600"
+                        : "hover:text-pink-600"
+                    }`}
+                    href={`/creator/dashboard/event/${id}/settings`}
+                  >
+                    Settings
+                  </Link>
+                </Menu.Item>
+              </Menu.Items>
+            </>
+          )}
+        </Menu>
       </div>
       {children}
     </div>

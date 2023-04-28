@@ -76,11 +76,11 @@ const Settings = () => {
       setCreatorinit(true);
       methods.setValue(
         "socialLinks",
-        creator.socialLinks.map((sl) => ({
+        creator.socialLinks?.map((sl) => ({
           type: sl.type,
           url: sl.url,
           id: sl.id,
-        }))
+        })) ?? []
       );
 
       methods.setValue("image", creator?.image ?? "");

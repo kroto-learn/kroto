@@ -46,10 +46,22 @@ export const emailRouter = createTRPCRouter({
         where: {
           id: event?.creatorId,
         },
+        include: {
+          host: {
+            include: {
+              user: true,
+            },
+          },
+        },
       });
 
       if (!event || !creator) throw new Error("Event or creator not found");
 
+      if (event.id === ctx.session.user.id) {
+        for (const h of creator.host) {
+          await sendCalendarInvite(event, creator, h.user.email ?? "");
+        }
+      }
       await sendCalendarInvite(event, creator, ctx.session.user.email ?? "");
     }),
 
