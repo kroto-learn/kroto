@@ -43,7 +43,7 @@ const Index = () => {
       <Head>
         <title>Testimonials</title>
       </Head>
-      <div className="flex w-full flex-col items-center">
+      <div className="my-12 flex w-full flex-col items-center p-6">
         <div className="flex min-h-screen w-full max-w-2xl flex-col items-start gap-4">
           <h1 className="text-3xl font-medium">Testimonials</h1>
           {testimonials && testimonials.length > 0 ? (
