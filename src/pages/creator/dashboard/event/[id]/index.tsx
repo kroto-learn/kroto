@@ -260,7 +260,7 @@ const EventOverview = () => {
           event={event}
         />
 
-        <div className="flex w-full gap-2">
+        <div className="flex flex-col md:flex-row w-full gap-2">
           <button
             onClick={() => {
               setSendUpdate(true);
@@ -771,7 +771,7 @@ function EventLayoutR({ children }: { children: ReactNode }) {
                   <Bars3Icon className="w-6" />
                 )}
               </Menu.Button>
-              <Menu.Items className="flex flex-col overflow-hidden rounded-xl bg-neutral-800/50 backdrop-blur-sm">
+              <Menu.Items className="flex flex-col overflow-hidden rounded-xl bg-neutral-900/80 backdrop-blur-sm">
                 <Menu.Item>
                   <Link
                     className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium  active:text-pink-600 ${
