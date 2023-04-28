@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["jsonProtocol"]
 }
 
@@ -62,7 +62,7 @@ model User {
   audienceMembers AudienceMember[]
   host            Host[]
   feedbacks       Feedback[]
-
+  testimonials    Testimonial[]
 }
 
 model Event {
@@ -160,5 +160,16 @@ model Feedback {
 
   @@unique([eventId, userId])
   @@index([eventId])
+  @@index([userId])
+}
+
+model Testimonial {
+  id             String @id @default(cuid())
+  content        String
+  creatorProfile String
+  userId         String
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, creatorProfile])
   @@index([userId])
 }
