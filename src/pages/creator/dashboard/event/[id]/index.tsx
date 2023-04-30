@@ -1,10 +1,8 @@
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, type SetStateAction } from "react";
-import CalenderBox from "@/components/CalenderBox";
 import React, { type ReactNode, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { DashboardLayout } from "../..";
 import { type RouterOutputs, api } from "@/utils/api";
 import useToast from "@/hooks/useToast";
@@ -21,14 +19,6 @@ import {
   LinkedinShareButton,
   LinkedinIcon,
 } from "next-share";
-import dynamic from "next/dynamic";
-
-const EventEditModal = dynamic(() => import("@/components/EventEditModal"), {
-  ssr: false,
-});
-const SendUpdateModal = dynamic(() => import("@/components/SendUpdateModal"), {
-  ssr: false,
-});
 import { MdLocationOn } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
 import {
@@ -36,19 +26,35 @@ import {
   XMarkIcon,
   RocketLaunchIcon,
   LinkIcon,
-  ArrowUpRightIcon,
   EnvelopeIcon,
-  Bars3Icon,
   CalendarIcon,
-  ChevronDownIcon,
 } from "@heroicons/react/20/solid";
-import { GlobeAltIcon } from "@heroicons/react/24/outline";
-
+import dynamic from "next/dynamic";
+const CalenderBox = dynamic(() => import("@/components/CalenderBox"), {
+  ssr: false,
+});
+const EventLayoutR = dynamic(
+  () => import("@/components/layouts/eventDasboard"),
+  {
+    ssr: false,
+  }
+);
+const EventStateBanner = dynamic(
+  () => import("@/components/EventStateBanner"),
+  {
+    ssr: false,
+  }
+);
 const Hosts = dynamic(() => import("@/components/EventHosts"), {
   ssr: false,
 });
-
 const AddHostModal = dynamic(() => import("@/components/AddHostModal"), {
+  ssr: false,
+});
+const EventEditModal = dynamic(() => import("@/components/EventEditModal"), {
+  ssr: false,
+});
+const SendUpdateModal = dynamic(() => import("@/components/SendUpdateModal"), {
   ssr: false,
 });
 
@@ -76,17 +82,6 @@ const EventOverview = () => {
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
     api.email.sendCalendarInvite.useMutation();
 
-  const isEventLive =
-    event &&
-    event?.datetime?.getTime() <= new Date().getTime() &&
-    event?.endTime?.getTime() >= new Date().getTime();
-
-  const isEventIn10min =
-    event &&
-    (event?.datetime ?? new Date()).getTime() <=
-      new Date().getTime() + 600000 &&
-    (event?.endTime ?? new Date()).getTime() >= new Date().getTime();
-
   const isEventOver = event && event?.endTime?.getTime() < new Date().getTime();
 
   if (isEventLoading)
@@ -107,64 +102,8 @@ const EventOverview = () => {
         <Head>
           <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
-        {isEventLive ? (
-          <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-3 w-3 items-center justify-center">
-                <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
-                <span className="h-4/5 w-4/5 rounded-full bg-pink-500"></span>
-              </span>
-              The Event is Live Now.
-            </div>
-            {event.eventType === "virtual" ? (
-              <button
-                onClick={() => {
-                  setStartEventModal(true);
-                }}
-                className={`group inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600 transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
-              >
-                Join Event <ArrowUpRightIcon className="w-4" />
-              </button>
-            ) : (
-              <></>
-            )}
-          </div>
-        ) : (
-          <></>
-        )}
 
-        {!isEventLive && isEventIn10min ? (
-          <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-yellow-500/20 px-3 py-2 text-yellow-500">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-3 w-3 items-center justify-center">
-                <span className="absolute h-full w-full animate-ping rounded-full bg-yellow-500 opacity-75"></span>
-                <span className="h-4/5 w-4/5 rounded-full bg-yellow-500"></span>
-              </span>
-              The Event is about to start.
-            </div>
-          </div>
-        ) : (
-          <></>
-        )}
-
-        {isEventOver ? (
-          <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2">
-            <div className="flex items-center gap-2">
-              The Event has concluded.
-            </div>
-            <button
-              onClick={() => {
-                console.log("ask for feedback clicked");
-              }}
-              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
-            >
-              <EnvelopeIcon className="w-3" />
-              Ask for feedback
-            </button>
-          </div>
-        ) : (
-          <></>
-        )}
+        <EventStateBanner setStartEventModal={setStartEventModal} />
         <div className="flex w-full max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4">
           <div className="flex w-full flex-col items-start gap-8 sm:flex-row">
             <div className="flex w-full flex-col items-start gap-4">
@@ -182,7 +121,6 @@ const EventOverview = () => {
             </div>
 
             <div className="flex w-full flex-col gap-3">
-              <h3 className="font-medium text-neutral-200">When & Where</h3>
               <div className="flex gap-2">
                 <CalenderBox date={event?.datetime ?? new Date()} />
                 <p className="text-left text-sm  font-medium text-neutral-300">
@@ -205,18 +143,80 @@ const EventOverview = () => {
                   })}
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-sm text-neutral-400">
-                {event?.eventType === "virtual" ? (
-                  <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
-                ) : (
-                  <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
-                )}
-                <p>
-                  {event?.eventType === "virtual"
-                    ? "Google Meet"
-                    : event?.eventLocation}
-                </p>
-              </div>
+              {!isEventOver ? (
+                <div className="flex items-center gap-2 text-sm text-neutral-400">
+                  {event?.eventType === "virtual" ? (
+                    <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                  ) : (
+                    <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                  )}
+                  <p>
+                    {event?.eventType === "virtual"
+                      ? "Google Meet"
+                      : event?.eventLocation}
+                  </p>
+                </div>
+              ) : (
+                <></>
+              )}
+              {!isEventOver ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
+                    onClick={() => {
+                      void navigator.clipboard.writeText(
+                        `https://kroto.in/event/${event?.id ?? ""}`
+                      );
+                      successToast("Event URL copied to clipboard!");
+                    }}
+                  >
+                    <LinkIcon className="w-3" />
+                  </button>
+                  <LinkedinShareButton
+                    url={`https://kroto.in/event/${event?.id ?? ""}`}
+                  >
+                    <LinkedinIcon
+                      size={28}
+                      round
+                      className="grayscale duration-300 hover:grayscale-0"
+                    />
+                  </LinkedinShareButton>
+                  <FacebookShareButton
+                    url={`https://kroto.in/event/${event?.id ?? ""}`}
+                    quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                    hashtag={"#kroto"}
+                  >
+                    <FacebookIcon
+                      size={28}
+                      round
+                      className="grayscale duration-300 hover:grayscale-0"
+                    />
+                  </FacebookShareButton>
+                  <TwitterShareButton
+                    url={`https://kroto.in/event/${event?.id ?? ""}`}
+                    title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                  >
+                    <TwitterIcon
+                      size={28}
+                      round
+                      className="grayscale duration-300 hover:grayscale-0"
+                    />
+                  </TwitterShareButton>
+                  <WhatsappShareButton
+                    url={`https://kroto.in/event/${event?.id ?? ""}`}
+                    title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                    separator=": "
+                  >
+                    <WhatsappIcon
+                      size={28}
+                      round
+                      className="grayscale duration-300 hover:grayscale-0"
+                    />
+                  </WhatsappShareButton>
+                </div>
+              ) : (
+                <></>
+              )}
               {isEventOver ? (
                 <>
                   <div className="flex items-center gap-2">
@@ -261,61 +261,6 @@ const EventOverview = () => {
                   <RocketLaunchIcon className="w-3" />
                   Start Event
                 </button>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
-                  onClick={() => {
-                    void navigator.clipboard.writeText(
-                      `https://kroto.in/event/${event?.id ?? ""}`
-                    );
-                    successToast("Event URL copied to clipboard!");
-                  }}
-                >
-                  <LinkIcon className="w-3" />
-                </button>
-                <LinkedinShareButton
-                  url={`https://kroto.in/event/${event?.id ?? ""}`}
-                >
-                  <LinkedinIcon
-                    size={28}
-                    round
-                    className="grayscale duration-300 hover:grayscale-0"
-                  />
-                </LinkedinShareButton>
-                <FacebookShareButton
-                  url={`https://kroto.in/event/${event?.id ?? ""}`}
-                  quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-                  hashtag={"#kroto"}
-                >
-                  <FacebookIcon
-                    size={28}
-                    round
-                    className="grayscale duration-300 hover:grayscale-0"
-                  />
-                </FacebookShareButton>
-                <TwitterShareButton
-                  url={`https://kroto.in/event/${event?.id ?? ""}`}
-                  title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-                >
-                  <TwitterIcon
-                    size={28}
-                    round
-                    className="grayscale duration-300 hover:grayscale-0"
-                  />
-                </TwitterShareButton>
-                <WhatsappShareButton
-                  url={`https://kroto.in/event/${event?.id ?? ""}`}
-                  title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-                  separator=": "
-                >
-                  <WhatsappIcon
-                    size={28}
-                    round
-                    className="grayscale duration-300 hover:grayscale-0"
-                  />
-                </WhatsappShareButton>
               </div>
             </div>
           ) : (
@@ -531,151 +476,6 @@ export const EventNestedLayout = nestLayout(DashboardLayout, EventLayout);
 EventOverview.getLayout = EventNestedLayout;
 
 export default EventOverview;
-
-function EventLayoutR({ children }: { children: ReactNode }) {
-  const router = useRouter();
-  const { id } = router.query as { id: string };
-
-  const { data: event } = api.event.get.useQuery({ id });
-
-  const pathname = usePathname();
-
-  return (
-    <div className="relative flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <div className="flex w-full flex-col items-start justify-between gap-4 px-4 md:flex-row">
-        <h1 className="truncate text-xl text-neutral-200">{event?.title}</h1>
-        <Link
-          href={`/event/${id}`}
-          className="flex min-w-[7rem] items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
-        >
-          <GlobeAltIcon className="w-4" /> Event Public Page
-        </Link>
-      </div>
-      <div className="hidden border-b border-neutral-700 text-center text-sm font-medium text-neutral-400 sm:block">
-        <ul className="-mb-px flex flex-wrap">
-          <li className="mr-1 sm:mr-2">
-            <Link
-              href={`/creator/dashboard/event/${id}`}
-              className={`inline-block rounded-t-lg px-2 py-4 text-xs sm:p-4 sm:text-base ${
-                pathname === `/creator/dashboard/event/${id}`
-                  ? "border-b-2 border-pink-600 text-pink-600"
-                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
-              }`}
-            >
-              Overview
-            </Link>
-          </li>
-          <li className="mr-1 sm:mr-2">
-            <Link
-              href={`/creator/dashboard/event/${id}/registrations`}
-              className={`inline-block rounded-t-lg px-2 py-4 text-xs sm:p-4 sm:text-base ${
-                pathname === `/creator/dashboard/event/${id}/registrations`
-                  ? "border-b-2 border-pink-600 text-pink-600"
-                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
-              }`}
-              aria-current="page"
-            >
-              Registrations
-            </Link>
-          </li>
-          <li className="mr-1 sm:mr-2">
-            <Link
-              href={`/creator/dashboard/event/${id}/feedbacks`}
-              className={`inline-block rounded-t-lg px-2 py-4 text-xs sm:p-4 sm:text-base ${
-                pathname === `/creator/dashboard/event/${id}/feedbacks`
-                  ? "border-b-2 border-pink-600 text-pink-600"
-                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
-              }`}
-              aria-current="page"
-            >
-              Feedbacks
-            </Link>
-          </li>
-          <li>
-            <Link
-              href={`/creator/dashboard/event/${id}/settings`}
-              className={`inline-block rounded-t-lg px-2 py-4 text-xs sm:p-4 sm:text-base ${
-                pathname === `/creator/dashboard/event/${id}/settings`
-                  ? "border-b-2 border-pink-600 text-pink-600"
-                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
-              }`}
-              aria-current="page"
-            >
-              Settings
-            </Link>
-          </li>
-        </ul>
-      </div>
-      <div className="absolute right-8 z-20 flex flex-col items-end sm:hidden">
-        <Menu>
-          {({ open }) => (
-            <>
-              <Menu.Button>
-                {open ? (
-                  <ChevronDownIcon className="w-6" />
-                ) : (
-                  <Bars3Icon className="w-6" />
-                )}
-              </Menu.Button>
-              <Menu.Items className="flex flex-col overflow-hidden rounded-xl bg-neutral-900/80 backdrop-blur-sm">
-                <Menu.Item>
-                  <Link
-                    className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium  active:text-pink-600 ${
-                      pathname === `/creator/dashboard/event/${id}`
-                        ? "bg-pink-600/20 text-pink-600"
-                        : "hover:text-pink-600"
-                    }`}
-                    href={`/creator/dashboard/event/${id}`}
-                  >
-                    Overview
-                  </Link>
-                </Menu.Item>
-                <Menu.Item>
-                  <Link
-                    className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium active:text-pink-600 ${
-                      pathname ===
-                      `/creator/dashboard/event/${id}/registrations`
-                        ? "bg-pink-600/20 text-pink-600"
-                        : "hover:text-pink-600"
-                    }`}
-                    href={`/creator/dashboard/event/${id}/registrations`}
-                  >
-                    Registrations
-                  </Link>
-                </Menu.Item>
-                <Menu.Item>
-                  <Link
-                    className={`w-full border-b border-neutral-600/50 px-6 py-2 font-medium active:text-pink-600 ${
-                      pathname === `/creator/dashboard/event/${id}/feedbacks`
-                        ? "bg-pink-600/20 text-pink-600"
-                        : "hover:text-pink-600"
-                    }`}
-                    href={`/creator/dashboard/event/${id}/feedbacks`}
-                  >
-                    Feedbacks
-                  </Link>
-                </Menu.Item>
-                <Menu.Item>
-                  <Link
-                    className={`w-full px-6 py-2 font-medium active:text-pink-600 ${
-                      pathname === `/creator/dashboard/event/${id}/settings`
-                        ? "bg-pink-600/20 text-pink-600"
-                        : "hover:text-pink-600"
-                    }`}
-                    href={`/creator/dashboard/event/${id}/settings`}
-                  >
-                    Settings
-                  </Link>
-                </Menu.Item>
-              </Menu.Items>
-            </>
-          )}
-        </Menu>
-      </div>
-      {children}
-    </div>
-  );
-}
 
 function EventLayout(page: ReactNode) {
   return <EventLayoutR>{page}</EventLayoutR>;

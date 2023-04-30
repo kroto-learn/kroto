@@ -217,7 +217,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
 
               <div className="flex w-full items-center gap-2">
                 <Cog6ToothIconO
-                  className={` w-6 ${
+                  className={`w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/settings")
                       ? "hidden"
@@ -225,7 +225,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                   }`}
                 />{" "}
                 <Cog6ToothIcon
-                  className={` w-6 ${
+                  className={`w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/settings")
                       ? "flex"

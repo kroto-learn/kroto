@@ -108,7 +108,7 @@ const Settings = () => {
       <Head>
         <title>Settings | Dashboard</title>
       </Head>
-      <div className="my-10 w-full px-2">
+      <div className="my-10 flex w-full px-2">
         <form
           onSubmit={methods.handleSubmit(async (values) => {
             setUpdating(true);
