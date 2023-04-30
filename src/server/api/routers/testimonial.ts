@@ -16,6 +16,17 @@ export const testimonialRouter = createTRPCRouter({
 
       if (!ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
 
+      const creator = await prisma.user.findUnique({
+        where: {
+          creatorProfile: input.creatorProfile,
+        },
+      });
+
+      if (!creator) throw new TRPCError({ code: "BAD_REQUEST" });
+
+      if (creator.id === ctx.session.user.id)
+        throw new TRPCError({ code: "BAD_REQUEST" });
+
       const testimonial = await prisma.testimonial.create({
         data: {
           userId: ctx.session.user.id,

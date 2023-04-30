@@ -10,6 +10,8 @@ import { Loader } from "@/components/Loader";
 // import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { ClaimLinkBanner } from "..";
 import Link from "next/link";
+import { GlobeAltIcon } from "@heroicons/react/20/solid";
+import { FaQuoteLeft } from "react-icons/fa";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -28,24 +30,43 @@ export default function Dashboard() {
       <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
         <div className="my-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-5">
-              <Image
-                width={80}
-                height={80}
-                alt={session?.user.name ?? ""}
-                className="aspect-square w-28 rounded-full"
-                src={session?.user.image ?? ""}
-              />
-              <div>
-                <p>
-                  <span className="block text-neutral-400">Welcome back,</span>
-                  <span className="text-3xl font-medium text-neutral-200">
-                    {session?.user.name}
-                  </span>
-                  <span className="block text-neutral-400">
-                    You&apos;re looking nice today!
-                  </span>
-                </p>
+            <div className="flex w-full items-center justify-between gap-5">
+              <div className="flex items-center gap-5">
+                <Image
+                  width={80}
+                  height={80}
+                  alt={session?.user.name ?? ""}
+                  className="aspect-square w-28 rounded-full"
+                  src={session?.user.image ?? ""}
+                />
+                <div>
+                  <p>
+                    <span className="block text-neutral-400">
+                      Welcome back,
+                    </span>
+                    <span className="text-3xl font-medium text-neutral-200">
+                      {session?.user.name}
+                    </span>
+                    <span className="block text-neutral-400">
+                      You&apos;re looking nice today!
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-3">
+                <Link
+                  href="/dashboard/testimonials"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
+                >
+                  <FaQuoteLeft /> Testimonials
+                </Link>
+
+                <button
+                  disabled
+                  className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-500 disabled:text-neutral-500 disabled:hover:bg-transparent sm:min-w-[10rem]"
+                >
+                  <GlobeAltIcon className="w-4" /> Your Public Page
+                </button>
               </div>
             </div>
             {/* <div className="flex flex-col gap-3">
