@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon, EnvelopeIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import { Disclosure } from "@headlessui/react";
 import { FaQuoteLeft } from "react-icons/fa";
@@ -65,9 +65,15 @@ const Index = () => {
         </div>
       ) : (
         <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
-          <p className="mb-2 text-center text-sm text-neutral-400 sm:text-left sm:text-base">
-            You have not received any testimonials yet.
+          <div className="relative aspect-square w-40 object-contain">
+            <Image src="/empty/testimonial_empty.svg" alt="empty" fill />
+          </div>
+          <p className="mb-2 text-sm text-neutral-400 sm:text-base">
+            You have not got any testimonials yet.
           </p>
+          <button className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200">
+            <EnvelopeIcon className="w-5" /> Ask for feedbacks
+          </button>
         </div>
       )}
     </>

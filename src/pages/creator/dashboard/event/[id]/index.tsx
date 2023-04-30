@@ -1,5 +1,5 @@
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { type Dispatch, Fragment, type SetStateAction } from "react";
+import { Fragment, type SetStateAction } from "react";
 import CalenderBox from "@/components/CalenderBox";
 import React, { type ReactNode, useState } from "react";
 import Head from "next/head";
@@ -9,7 +9,6 @@ import { DashboardLayout } from "../..";
 import { type RouterOutputs, api } from "@/utils/api";
 import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
-import { TRPCError } from "@trpc/server";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import {
@@ -22,8 +21,7 @@ import {
   LinkedinShareButton,
   LinkedinIcon,
 } from "next-share";
-
-// import EventEditModal from "@/components/EventEditModal";
+import dynamic from "next/dynamic";
 
 const EventEditModal = dynamic(() => import("@/components/EventEditModal"), {
   ssr: false,
@@ -33,11 +31,8 @@ const SendUpdateModal = dynamic(() => import("@/components/SendUpdateModal"), {
 });
 import { MdLocationOn } from "react-icons/md";
 import { SiGooglemeet } from "react-icons/si";
-import dynamic from "next/dynamic";
 import {
   PencilIcon,
-  TrashIcon,
-  UserPlusIcon,
   XMarkIcon,
   RocketLaunchIcon,
   LinkIcon,
@@ -49,7 +44,13 @@ import {
 } from "@heroicons/react/20/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 
-import useRevalidateSSG from "@/hooks/useRevalidateSSG";
+const Hosts = dynamic(() => import("@/components/EventHosts"), {
+  ssr: false,
+});
+
+const AddHostModal = dynamic(() => import("@/components/AddHostModal"), {
+  ssr: false,
+});
 
 const EventOverview = () => {
   const router = useRouter();
@@ -68,21 +69,36 @@ const EventOverview = () => {
     eventId: event?.id ?? "",
   });
 
-  const { mutateAsync: removeHost, isLoading: removingHost } =
-    api.event.removeHost.useMutation();
-
   const [startEventModal, setStartEventModal] = useState(false);
 
-  const { successToast, errorToast } = useToast();
+  const { successToast } = useToast();
 
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
     api.email.sendCalendarInvite.useMutation();
 
+  const isEventLive =
+    event &&
+    event?.datetime?.getTime() <= new Date().getTime() &&
+    event?.endTime?.getTime() >= new Date().getTime();
+
+  const isEventIn10min =
+    event &&
+    (event?.datetime ?? new Date()).getTime() <=
+      new Date().getTime() + 600000 &&
+    (event?.endTime ?? new Date()).getTime() >= new Date().getTime();
+
+  const isEventOver = event && event?.endTime?.getTime() < new Date().getTime();
+
   if (isEventLoading)
     return (
-      <div className="flex h-[50vh] w-full items-center justify-center">
-        <Loader size="lg" />
-      </div>
+      <>
+        <Head>
+          <title> Event | Overview</title>
+        </Head>
+        <div className="flex h-[50vh] w-full items-center justify-center">
+          <Loader size="lg" />
+        </div>
+      </>
     );
 
   if (event)
@@ -91,8 +107,7 @@ const EventOverview = () => {
         <Head>
           <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
-        {event?.datetime?.getTime() <= new Date().getTime() &&
-        event?.endTime?.getTime() >= new Date().getTime() ? (
+        {isEventLive ? (
           <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2">
             <div className="flex items-center gap-2">
               <span className="relative flex h-3 w-3 items-center justify-center">
@@ -113,6 +128,39 @@ const EventOverview = () => {
             ) : (
               <></>
             )}
+          </div>
+        ) : (
+          <></>
+        )}
+
+        {!isEventLive && isEventIn10min ? (
+          <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-yellow-500/20 px-3 py-2 text-yellow-500">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-3 w-3 items-center justify-center">
+                <span className="absolute h-full w-full animate-ping rounded-full bg-yellow-500 opacity-75"></span>
+                <span className="h-4/5 w-4/5 rounded-full bg-yellow-500"></span>
+              </span>
+              The Event is about to start.
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
+
+        {isEventOver ? (
+          <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2">
+            <div className="flex items-center gap-2">
+              The Event has concluded.
+            </div>
+            <button
+              onClick={() => {
+                console.log("ask for feedback clicked");
+              }}
+              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+            >
+              <EnvelopeIcon className="w-3" />
+              Ask for feedback
+            </button>
           </div>
         ) : (
           <></>
@@ -169,88 +217,110 @@ const EventOverview = () => {
                     : event?.eventLocation}
                 </p>
               </div>
+              {isEventOver ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-bold">
+                      {event.registrations.length}{" "}
+                    </span>
+                    <span className="text-lg">Registrations</span>
+                    <Link
+                      href={`/creator/dashboard/event/${event.id}/registrations`}
+                      className="text-sm text-neutral-400 duration-150 hover:text-pink-600 hover:underline"
+                    >
+                      View all
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
 
-          <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:gap-12">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => {
-                  setEditEvent(true);
-                  // router.push(`${router.asPath}/edit`)
-                }}
-                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
-              >
-                <PencilIcon className="w-3" />
-                Edit Event
-              </button>
+          {!isEventOver ? (
+            <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:gap-12">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => {
+                    setEditEvent(true);
+                    // router.push(`${router.asPath}/edit`)
+                  }}
+                  className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+                >
+                  <PencilIcon className="w-3" />
+                  Edit Event
+                </button>
 
-              <button
-                onClick={() => {
-                  setStartEventModal(true);
-                }}
-                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600  transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
-              >
-                <RocketLaunchIcon className="w-3" />
-                Start Event
-              </button>
-            </div>
+                <button
+                  onClick={() => {
+                    setStartEventModal(true);
+                  }}
+                  className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-pink-500/20 px-4 py-2 text-center text-xs font-medium text-pink-600  transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200`}
+                >
+                  <RocketLaunchIcon className="w-3" />
+                  Start Event
+                </button>
+              </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
-                onClick={() => {
-                  void navigator.clipboard.writeText(
-                    `https://kroto.in/event/${event?.id ?? ""}`
-                  );
-                  successToast("Event URL copied to clipboard!");
-                }}
-              >
-                <LinkIcon className="w-3" />
-              </button>
-              <LinkedinShareButton
-                url={`https://kroto.in/event/${event?.id ?? ""}`}
-              >
-                <LinkedinIcon
-                  size={28}
-                  round
-                  className="grayscale duration-300 hover:grayscale-0"
-                />
-              </LinkedinShareButton>
-              <FacebookShareButton
-                url={`https://kroto.in/event/${event?.id ?? ""}`}
-                quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-                hashtag={"#kroto"}
-              >
-                <FacebookIcon
-                  size={28}
-                  round
-                  className="grayscale duration-300 hover:grayscale-0"
-                />
-              </FacebookShareButton>
-              <TwitterShareButton
-                url={`https://kroto.in/event/${event?.id ?? ""}`}
-                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-              >
-                <TwitterIcon
-                  size={28}
-                  round
-                  className="grayscale duration-300 hover:grayscale-0"
-                />
-              </TwitterShareButton>
-              <WhatsappShareButton
-                url={`https://kroto.in/event/${event?.id ?? ""}`}
-                title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
-                separator=": "
-              >
-                <WhatsappIcon
-                  size={28}
-                  round
-                  className="grayscale duration-300 hover:grayscale-0"
-                />
-              </WhatsappShareButton>
+              <div className="flex items-center gap-2">
+                <button
+                  className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(
+                      `https://kroto.in/event/${event?.id ?? ""}`
+                    );
+                    successToast("Event URL copied to clipboard!");
+                  }}
+                >
+                  <LinkIcon className="w-3" />
+                </button>
+                <LinkedinShareButton
+                  url={`https://kroto.in/event/${event?.id ?? ""}`}
+                >
+                  <LinkedinIcon
+                    size={28}
+                    round
+                    className="grayscale duration-300 hover:grayscale-0"
+                  />
+                </LinkedinShareButton>
+                <FacebookShareButton
+                  url={`https://kroto.in/event/${event?.id ?? ""}`}
+                  quote={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                  hashtag={"#kroto"}
+                >
+                  <FacebookIcon
+                    size={28}
+                    round
+                    className="grayscale duration-300 hover:grayscale-0"
+                  />
+                </FacebookShareButton>
+                <TwitterShareButton
+                  url={`https://kroto.in/event/${event?.id ?? ""}`}
+                  title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                >
+                  <TwitterIcon
+                    size={28}
+                    round
+                    className="grayscale duration-300 hover:grayscale-0"
+                  />
+                </TwitterShareButton>
+                <WhatsappShareButton
+                  url={`https://kroto.in/event/${event?.id ?? ""}`}
+                  title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                  separator=": "
+                >
+                  <WhatsappIcon
+                    size={28}
+                    round
+                    className="grayscale duration-300 hover:grayscale-0"
+                  />
+                </WhatsappShareButton>
+              </div>
             </div>
-          </div>
+          ) : (
+            <></>
+          )}
         </div>
 
         {/* start event confirmation modal */}
@@ -260,95 +330,36 @@ const EventOverview = () => {
           event={event}
         />
 
-        <div className="flex flex-col md:flex-row w-full gap-2">
-          <button
-            onClick={() => {
-              setSendUpdate(true);
-            }}
-            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
-          >
-            <EnvelopeIcon className="w-3" />
-            Send email update
-          </button>
-
-          <button
-            onClick={async () => {
-              await addToCalendarMutation({ eventId: event?.id ?? "" });
-            }}
-            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
-          >
-            {addingToCalendar ? <Loader /> : <CalendarIcon className="w-3" />}
-            Send calendar invite
-          </button>
-        </div>
-
-        <div className="w-full">
-          <div className="my-5 flex w-full items-center justify-between">
-            <h3 className="text-2xl font-medium text-neutral-200">Hosts</h3>
+        {!isEventOver ? (
+          <div className="flex w-full flex-col gap-2 md:flex-row">
             <button
-              onClick={() => setIsOpen(true)}
-              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-sm font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+              onClick={() => {
+                setSendUpdate(true);
+              }}
+              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
             >
-              <UserPlusIcon className="w-4" /> Add Host
+              <EnvelopeIcon className="w-3" />
+              Send email update
+            </button>
+
+            <button
+              onClick={async () => {
+                await addToCalendarMutation({ eventId: event?.id ?? "" });
+              }}
+              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+            >
+              {addingToCalendar ? <Loader /> : <CalendarIcon className="w-3" />}
+              Send calendar invite
             </button>
           </div>
-          <ul className="w-full divide-y divide-neutral-700">
-            {hosts instanceof TRPCError
-              ? ""
-              : hosts?.map((host) => (
-                  <li key={host?.id} className="py-3 sm:py-4">
-                    <div className="flex w-full items-center space-x-4">
-                      <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
-                        <Image
-                          className="rounded-full"
-                          src={host?.user?.image ?? ""}
-                          alt="host img"
-                          fill
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <Link href={`/${host?.user?.creatorProfile ?? ""}`}>
-                          <Link
-                            href={`/${host?.user?.creatorProfile ?? ""}`}
-                            className="truncate text-sm font-medium text-neutral-200 hover:underline"
-                          >
-                            {host?.user?.name ?? ""}
-                          </Link>
-                          <p className="truncate text-sm text-neutral-400">
-                            {host?.user?.email ?? ""}
-                          </p>
-                        </Link>
-                      </div>
-                      <button
-                        onClick={async () => {
-                          await removeHost(
-                            {
-                              hostId: host?.id ?? "",
-                              eventId: event?.id ?? "",
-                            },
-                            {
-                              onError: () => {
-                                errorToast("Error in removing host!");
-                              },
-                            }
-                          );
-                          void refetchHosts();
-                        }}
-                        className="flex items-center gap-1 rounded-xl border border-pink-700 bg-pink-700 p-1 px-2 text-sm font-medium text-white transition duration-300 hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
-                      >
-                        {removingHost ? (
-                          <Loader />
-                        ) : (
-                          <TrashIcon className="w-4" />
-                        )}{" "}
-                        Remove
-                      </button>
-                    </div>
-                  </li>
-                ))}
-          </ul>
-        </div>
-        <AddHostModel
+        ) : (
+          <></>
+        )}
+
+        {/* hosts */}
+
+        <Hosts setIsHostModalOpen={setIsOpen} />
+        <AddHostModal
           refetch={refetchHosts}
           eventId={event.id ?? ""}
           hosts={hosts ?? []}
@@ -397,154 +408,6 @@ const EventOverview = () => {
     );
   else return <></>;
 };
-
-export function AddHostModel({
-  eventId,
-  isOpen,
-  setIsOpen,
-  hosts,
-  refetch,
-}: {
-  eventId: string;
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-  hosts: RouterOutputs["event"]["getHosts"];
-  refetch: () => void;
-}) {
-  const [creatorId, setCreatorId] = useState<string>("");
-  const { successToast, errorToast } = useToast();
-
-  const { mutateAsync: addHostMutation, isLoading } =
-    api.event.addHost.useMutation();
-  const revalidate = useRevalidateSSG();
-
-  const handleSubmit = async () => {
-    await addHostMutation(
-      { eventId, creatorId },
-      {
-        onSuccess: () => {
-          successToast("Host added successfully!");
-          void revalidate(`/event/${eventId}`);
-        },
-        onError: () => {
-          errorToast("Error in adding host!");
-        },
-      }
-    );
-    refetch();
-  };
-
-  return (
-    <>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-50"
-          onClose={() => setIsOpen(false)}
-        >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-6 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 p-4 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title as="div" className="flex w-full flex-col gap-4">
-                    <div className="flex w-full justify-between">
-                      <h3 className="ml-2 text-xl font-medium text-neutral-200">
-                        Add Host
-                      </h3>
-                      <button
-                        onClick={() => {
-                          setIsOpen(false);
-                        }}
-                        type="button"
-                        className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
-                      >
-                        <XMarkIcon className="w-5" />
-                      </button>
-                    </div>
-                  </Dialog.Title>
-                  <div className="flex flex-col gap-4 p-6">
-                    <p className="text-neutral-300">
-                      Add host&apos;s creator id {"(kroto.in/creatorId)"}
-                    </p>
-                    <div className="flex">
-                      <label className="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Your Email
-                      </label>
-                      <div className="relative w-full">
-                        <input
-                          value={creatorId}
-                          onChange={(e) => setCreatorId(e.target.value)}
-                          className="block w-full rounded-xl border border-neutral-800 bg-neutral-900 p-2.5 text-sm placeholder-neutral-400 outline-none ring-transparent transition hover:border-neutral-600 focus:border-neutral-500 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-                          placeholder="Enter the creator id"
-                          required
-                        />
-                        <button
-                          onClick={() => handleSubmit()}
-                          className="absolute right-0 top-0 flex items-center gap-1 rounded-r-lg border border-pink-700 bg-pink-700 p-2.5 text-sm font-medium text-white hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
-                        >
-                          {isLoading ? (
-                            <Loader white />
-                          ) : (
-                            <UserPlusIcon className="w-4" />
-                          )}{" "}
-                          Add Host
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex flex-wrap gap-5 px-4 pb-4">
-                      {!(hosts instanceof TRPCError) &&
-                        hosts?.map((host) => (
-                          <div
-                            key={host?.id}
-                            className="flex items-center gap-2"
-                          >
-                            <div
-                              className={`relative aspect-square w-[1.7rem] overflow-hidden rounded-full`}
-                            >
-                              <Image
-                                src={host?.user?.image ?? ""}
-                                alt={host?.user?.name ?? ""}
-                                fill
-                              />
-                            </div>
-                            <p className={`text-neutral-300 transition-all`}>
-                              {host?.user?.name ?? ""}
-                            </p>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-    </>
-  );
-}
 
 type SEProps = {
   isOpen: boolean;
@@ -652,23 +515,6 @@ const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
           </div>
         </Dialog>
       </Transition>
-
-      {/* <div className="relative max-h-full max-w-lg">
-        <div className="relative rounded-lg bg-neutral-800 shadow">
-          <div className="flex items-start justify-end rounded-t p-2">
-            <button
-              onClick={() => {
-                setIsOpen(false);
-              }}
-              type="button"
-              className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
-            >
-              <XMarkIcon className="w-5" />
-            </button>
-          </div>
-          
-        </div>
-      </div> */}
     </>
   );
 };

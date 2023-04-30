@@ -93,9 +93,14 @@ const Settings = () => {
 
   if (isLoading)
     return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader size="lg" />
-      </div>
+      <>
+        <Head>
+          <title>Settings | Dashboard</title>
+        </Head>
+        <div className="flex h-screen items-center justify-center">
+          <Loader size="lg" />
+        </div>
+      </>
     );
 
   return (

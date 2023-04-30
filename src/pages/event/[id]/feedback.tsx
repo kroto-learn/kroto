@@ -55,7 +55,7 @@ const Index = () => {
 
   const ctx = api.useContext();
 
-  const { successToast, errorToast } = useToast();
+  const { successToast, errorToast, warningToast } = useToast();
 
   const { data: feedback, isLoading: feedbackLoading } =
     api.event.getFeedback.useQuery({
@@ -88,11 +88,14 @@ const Index = () => {
       ) : (
         <form
           onSubmit={methods.handleSubmit(async (values) => {
+            if (event?.creatorId === session.data?.user?.id) {
+              warningToast("You can't give feedback for your own event");
+              return;
+            }
             await addFeedbackMutation(
               {
                 ...values,
                 eventId: id,
-                userId: session.data?.user?.id ?? "",
               },
               {
                 onSuccess: () => {

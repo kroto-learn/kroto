@@ -390,7 +390,6 @@ export const eventRouter = createTRPCRouter({
     .input(
       z.object({
         eventId: z.string(),
-        userId: z.string(),
         rating: z.number(),
         comment: z.string(),
       })
@@ -404,11 +403,14 @@ export const eventRouter = createTRPCRouter({
 
       const user = await prisma.user.findUnique({
         where: {
-          id: input.userId,
+          id: ctx.session.user.id,
         },
       });
 
       if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
+
+      if (event.creatorId === ctx.session.user.id)
+        return new TRPCError({ code: "BAD_REQUEST" });
 
       const isFeedback = await prisma.feedback.findFirst({
         where: {

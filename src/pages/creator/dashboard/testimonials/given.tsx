@@ -91,7 +91,10 @@ const Index = () => {
         </div>
       ) : (
         <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
-          <p className="mb-2 text-neutral-400">
+          <div className="relative aspect-square w-40 object-contain">
+            <Image src="/empty/testimonial_empty.svg" alt="empty" fill />
+          </div>
+          <p className="mb-2 text-sm text-neutral-400 sm:text-base">
             You have not wrote any testimonials.
           </p>
         </div>
