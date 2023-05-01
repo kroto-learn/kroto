@@ -1,13 +1,12 @@
 import { KrotoLogo } from "@/pages/auth/sign-in";
 import { Menu, Transition } from "@headlessui/react";
 import { api } from "@/utils/api";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { Fragment } from "react";
 
-export default function Navbar() {
-  const { status } = useSession();
+export default function Navbar({ status }: { status: string }) {
   const { data: creator, isLoading } = api.creator.getProfile.useQuery();
 
   return (

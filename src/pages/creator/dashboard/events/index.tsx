@@ -15,9 +15,14 @@ const UpcomingEvents = () => {
 
   if (isEventsLoading)
     return (
-      <div className="flex h-[50vh] w-full items-center justify-center">
-        <Loader size="lg" />
-      </div>
+      <>
+        <Head>
+          <title>Events | Dashboard</title>
+        </Head>
+        <div className="flex h-[50vh] w-full items-center justify-center">
+          <Loader size="lg" />
+        </div>
+      </>
     );
 
   return (

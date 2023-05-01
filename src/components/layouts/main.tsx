@@ -1,7 +1,9 @@
+import { useSession } from "next-auth/react";
 import Footer from "../Footer";
 import Navbar from "../Navbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const { status } = useSession();
   return (
     <div>
       {/* <Head> */}
@@ -25,7 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/*   {home ? <></> : ""} */}
       {/* </header> */}
       <nav>
-        <Navbar />
+        <Navbar status={status} />
       </nav>
       <main className="mt-20">{children}</main>
 

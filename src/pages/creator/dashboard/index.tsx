@@ -9,7 +9,6 @@ import CalenderIcon from "@heroicons/react/20/solid/CalendarIcon";
 import { CalendarIcon } from "@heroicons/react/24/outline";
 import UserGroupIcon from "@heroicons/react/20/solid/UserGroupIcon";
 import { UserGroupIcon as UserGroupIconO } from "@heroicons/react/24/outline";
-import { FaQuoteLeft } from "react-icons/fa";
 import Cog6ToothIcon from "@heroicons/react/20/solid/Cog6ToothIcon";
 import { Cog6ToothIcon as Cog6ToothIconO } from "@heroicons/react/24/outline";
 import Bars3Icon from "@heroicons/react/20/solid/Bars3Icon";
@@ -19,6 +18,7 @@ import UserPlusIcon from "@heroicons/react/20/solid/UserPlusIcon";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 import { useRouter } from "next/router";
+import { BsChatSquareQuote, BsChatSquareQuoteFill } from "react-icons/bs";
 export default function Dashboard() {
   return <div />;
 }
@@ -178,7 +178,22 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               <span className="w-1/3" />
 
               <div className="flex w-full items-center gap-2">
-                <FaQuoteLeft className="text-lg" />{" "}
+                <BsChatSquareQuote
+                  className={` ${
+                    pathname &&
+                    pathname.startsWith("/creator/dashboard/testimonials")
+                      ? "hidden"
+                      : ""
+                  }`}
+                />{" "}
+                <BsChatSquareQuoteFill
+                  className={`${
+                    pathname &&
+                    pathname.startsWith("/creator/dashboard/testimonials")
+                      ? "flex"
+                      : "hidden"
+                  }`}
+                />{" "}
                 <span className="hidden md:block">Testimonials</span>
               </div>
               <span
@@ -202,7 +217,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
 
               <div className="flex w-full items-center gap-2">
                 <Cog6ToothIconO
-                  className={` w-6 ${
+                  className={`w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/settings")
                       ? "hidden"
@@ -210,7 +225,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                   }`}
                 />{" "}
                 <Cog6ToothIcon
-                  className={` w-6 ${
+                  className={`w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/settings")
                       ? "flex"

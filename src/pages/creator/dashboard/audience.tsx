@@ -56,9 +56,14 @@ const Audience = () => {
 
   if (isLoading)
     return (
-      <div className="my-12 flex h-[50vh] w-full items-center justify-center">
-        <Loader size="lg" />
-      </div>
+      <>
+        <Head>
+          <title>Audience | Dashboard</title>
+        </Head>
+        <div className="my-12 flex h-[50vh] w-full items-center justify-center">
+          <Loader size="lg" />
+        </div>
+      </>
     );
 
   return (

@@ -1,6 +1,5 @@
-import { type NextPage } from "next";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 import Head from "next/head";
-import Layout from "@/components/layouts/main";
 import { ClaimLink, ClaimLinkLanding } from "@/components/ClaimLink";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -14,10 +13,14 @@ import {
   ListBulletIcon,
   NewspaperIcon,
 } from "@heroicons/react/20/solid";
+import Navbar from "@/components/Navbar";
+import { useSession } from "next-auth/react";
+import { getServerAuthSession } from "@/server/auth";
 
 const Home: NextPage = () => {
+  const { status } = useSession();
   return (
-    <Layout>
+    <>
       <Head>
         <title>Kroto - Learn Collectively</title>
         <meta
@@ -25,16 +28,29 @@ const Home: NextPage = () => {
           content="Collective learning with the creators you love"
         />
       </Head>
+      <nav>
+        <Navbar status={status} />
+      </nav>
 
-      <Hero />
-      <div id="features">
-        <Features />
-      </div>
-      <div id="claim-link">
-        <ClaimLinkBannerLanding />
-      </div>
-    </Layout>
+      <main className="mt-20">
+        <Hero />
+        <div id="features">
+          <Features />
+        </div>
+        <div id="claim-link">
+          <ClaimLinkBannerLanding />
+        </div>
+      </main>
+    </>
   );
+};
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  return {
+    props: {
+      session: await getServerAuthSession(ctx),
+    },
+  };
 };
 
 export default Home;

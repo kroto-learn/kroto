@@ -74,7 +74,7 @@ const Index = () => {
 
   const ctx = api.useContext();
 
-  const { successToast, errorToast } = useToast();
+  const { successToast, errorToast, warningToast } = useToast();
 
   useEffect(() => {
     if (testimonialExists) {
@@ -103,6 +103,11 @@ const Index = () => {
       ) : (
         <form
           onSubmit={methods.handleSubmit(async (values) => {
+            if (creator?.id === session?.data?.user.id) {
+              warningToast("You cannot submit testimonial for yourself!");
+              return;
+            }
+
             if (!testimonialExists) {
               await addTestimonialMutation(
                 {
