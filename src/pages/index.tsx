@@ -1,6 +1,5 @@
-import { GetServerSidePropsContext, type NextPage } from "next";
+import { type GetServerSidePropsContext, type NextPage } from "next";
 import Head from "next/head";
-import Layout from "@/components/layouts/main";
 import { ClaimLink, ClaimLinkLanding } from "@/components/ClaimLink";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -14,7 +13,6 @@ import {
   ListBulletIcon,
   NewspaperIcon,
 } from "@heroicons/react/20/solid";
-import { getServerSession } from "next-auth";
 import Navbar from "@/components/Navbar";
 import { useSession } from "next-auth/react";
 import { getServerAuthSession } from "@/server/auth";
