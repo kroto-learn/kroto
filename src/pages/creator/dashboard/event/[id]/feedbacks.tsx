@@ -18,7 +18,7 @@ const Index = () => {
   const { id } = router.query as { id: string };
 
   const { data: feedbacks, isLoading: feedbacksLoading } =
-    api.event.getFeedbacks.useQuery({ eventId: id });
+    api.eventFeedback.getFeedbacks.useQuery({ eventId: id });
 
   return (
     <div className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6">

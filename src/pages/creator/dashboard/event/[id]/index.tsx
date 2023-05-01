@@ -71,9 +71,10 @@ const EventOverview = () => {
 
   const [open, setIsOpen] = useState<boolean>(false);
 
-  const { data: hosts, refetch: refetchHosts } = api.event.getHosts.useQuery({
-    eventId: event?.id ?? "",
-  });
+  const { data: hosts, refetch: refetchHosts } =
+    api.eventHost.getHosts.useQuery({
+      eventId: event?.id ?? "",
+    });
 
   const [startEventModal, setStartEventModal] = useState(false);
 

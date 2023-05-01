@@ -18,14 +18,14 @@ export default function AddHostModal({
   eventId: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  hosts: RouterOutputs["event"]["getHosts"];
+  hosts: RouterOutputs["eventHost"]["getHosts"];
   refetch: () => void;
 }) {
   const [creatorId, setCreatorId] = useState<string>("");
   const { successToast, errorToast } = useToast();
 
   const { mutateAsync: addHostMutation, isLoading } =
-    api.event.addHost.useMutation();
+    api.eventHost.addHost.useMutation();
   const revalidate = useRevalidateSSG();
 
   const handleSubmit = async () => {
