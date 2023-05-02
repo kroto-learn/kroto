@@ -1,20 +1,28 @@
+/* eslint-disable @next/next/no-img-element */
 import Head from "next/head";
 import { DashboardLayout } from ".";
 import { api } from "@/utils/api";
 import getCSV from "@/helpers/downloadCSV";
-import React from "react";
+import React, { Fragment, useState } from "react";
 import { useTable, type Column } from "react-table";
 import Image from "next/image";
 import { Loader } from "@/components/Loader";
 import {
-  FolderArrowDownIcon,
+  ArrowUpOnSquareIcon,
   PlusIcon,
   UserIcon,
+  XMarkIcon,
 } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { FaFileCsv } from "react-icons/fa";
+import { Transition, Dialog } from "@headlessui/react";
+import Papa from "papaparse";
+
 const Audience = () => {
   const { data: audience, isLoading } =
     api.creator.getAudienceMembers.useQuery();
+
+  const [uploadCSVModal, setUploadCSVModal] = useState(false);
 
   const tableData = React.useMemo(() => {
     if (audience)
@@ -79,22 +87,35 @@ const Audience = () => {
               {audience?.length ?? "-"}
             </p>
           </div>
-          <button
-            disabled={audience?.length === 0 || !audience}
-            type="button"
-            className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
-            onClick={() => {
-              getCSV(
-                audience?.map((r) => ({
-                  name: r.name,
-                  email: r.email,
-                  image: r.image,
-                })) ?? []
-              );
-            }}
-          >
-            <FolderArrowDownIcon className="w-5" /> Download CSV
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              disabled={audience?.length === 0 || !audience}
+              type="button"
+              className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
+              onClick={() => {
+                setUploadCSVModal(true);
+              }}
+            >
+              <ArrowUpOnSquareIcon className="w-5" /> Upload CSV
+            </button>
+            <button
+              disabled={audience?.length === 0 || !audience}
+              type="button"
+              className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
+              onClick={() => {
+                console.log("reached here");
+                getCSV(
+                  audience?.map((r) => ({
+                    NAME: r.name,
+                    EMAIL: r.email,
+                    IMAGE: r.image,
+                  })) ?? []
+                );
+              }}
+            >
+              <FaFileCsv className="w-5" /> Download CSV
+            </button>
+          </div>
         </div>
         {audience && audience.length > 0 ? (
           <table
@@ -199,6 +220,159 @@ const Audience = () => {
           </div>
         )}
       </div>
+      <UploadCSVModal isOpen={uploadCSVModal} setIsOpen={setUploadCSVModal} />
+    </>
+  );
+};
+
+type UCMProps = {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
+  const [uploading, setUploading] = useState(false);
+  return (
+    <>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => setIsOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-6 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 p-4 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="div" className="flex w-full flex-col gap-4">
+                    <div className="flex w-full justify-between">
+                      <h3 className="ml-2 text-xl font-medium text-neutral-200">
+                        Upload CSV
+                      </h3>
+                      <button
+                        onClick={() => {
+                          setIsOpen(false);
+                        }}
+                        type="button"
+                        className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
+                      >
+                        <XMarkIcon className="w-5" />
+                      </button>
+                    </div>
+                  </Dialog.Title>
+                  <div className="flex flex-col gap-1 p-2">
+                    {/* dialog content */}
+                    <p className="mb-2 text-lg">
+                      Import your <span className="font-medium">.csv</span> file
+                      and populate it into your Audience data.
+                    </p>
+                    <div className="relative mx-auto w-4/5 overflow-hidden rounded">
+                      <img
+                        src="/csv_example.png"
+                        alt="example"
+                        className="h-full w-full"
+                      />
+                    </div>
+                    <p className="mb-2">
+                      We will scrape columns with headers{" "}
+                      <span className="rounded-lg bg-yellow-500/60 p-1 px-2 text-xs font-bold text-neutral-200">
+                        EMAIL
+                      </span>
+                      ,{" "}
+                      <span className="rounded-lg bg-blue-500/60 p-1 px-2 text-xs font-bold text-neutral-200">
+                        IMAGE
+                      </span>{" "}
+                      and{" "}
+                      <span className="rounded-lg bg-green-500/60 p-1 px-2 text-xs font-bold text-neutral-200">
+                        NAME
+                      </span>{" "}
+                      from your CSV file.
+                    </p>
+                    <p>
+                      <span className="mr-1 text-pink-600">
+                        <b>Note:</b>
+                      </span>{" "}
+                      <span className="rounded-lg bg-yellow-500/60 p-1 px-2 text-xs font-bold text-neutral-200">
+                        EMAIL
+                      </span>{" "}
+                      column is required.
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
+                    <div className="relative cursor-pointer rounded-lg bg-pink-500/50 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-pink-500 hover:text-neutral-200">
+                      {false ?? <Loader />}
+                      Upload CSV
+                      <input
+                        type="file"
+                        accept=".csv"
+                        onChange={(e) => {
+                          const [csvfile] = e.target.files ?? [null];
+
+                          if (csvfile) {
+                            setUploading(true);
+                            const reader = new FileReader();
+                            reader.onloadend = ({ target }) => {
+                              if (target?.result) {
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore
+                                const csv: { data: any[] } = Papa.parse(
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                  // @ts-ignore
+                                  target.result,
+                                  {
+                                    header: true,
+                                    transformHeader: (header) =>
+                                      header.toLowerCase(),
+                                  }
+                                );
+                                console.log("csv data", csv.data);
+                                // TODO: implement upload CSV data
+                              }
+                              setUploading(false);
+                              setIsOpen(false);
+                            };
+                            reader.readAsText(csvfile);
+                          }
+                        }}
+                        className="absolute left-0 top-0 h-full w-full cursor-pointer opacity-0"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOpen(false);
+                      }}
+                      className="rounded-lg bg-neutral-600 px-5 py-2.5 text-center text-sm font-medium text-neutral-400 duration-300 hover:text-neutral-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </>
   );
 };
