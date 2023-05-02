@@ -320,7 +320,7 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                   </div>
                   <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
                     <div className="relative cursor-pointer rounded-lg bg-pink-500/50 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-pink-500 hover:text-neutral-200">
-                      {false ?? <Loader />}
+                      {uploading ?? <Loader />}
                       Upload CSV
                       <input
                         type="file"
