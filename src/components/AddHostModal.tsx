@@ -11,14 +11,14 @@ import { Loader } from "./Loader";
 export default function AddHostModal({
   eventId,
   isOpen,
-  setIsOpen,
   hosts,
+  setIsOpen,
   refetch,
 }: {
   eventId: string;
   isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
   hosts: RouterOutputs["eventHost"]["getHosts"];
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
   refetch: () => void;
 }) {
   const [creatorId, setCreatorId] = useState<string>("");
