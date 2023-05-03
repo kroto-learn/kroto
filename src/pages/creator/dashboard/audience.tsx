@@ -7,19 +7,13 @@ import React, { Fragment, useState } from "react";
 import { useTable, type Column } from "react-table";
 import Image from "next/image";
 import { Loader } from "@/components/Loader";
-import {
-  CheckCircleIcon,
-  PlusIcon,
-  UserIcon,
-  XMarkIcon,
-} from "@heroicons/react/20/solid";
+import { PlusIcon, UserIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { Transition, Dialog } from "@headlessui/react";
 import Papa from "papaparse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileCsv, faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
 import useToast from "@/hooks/useToast";
-import { type ImportedAudieceMember } from "@prisma/client";
 import { useRouter } from "next/router";
 
 const Audience = () => {
@@ -406,13 +400,10 @@ type UCMProps = {
 
 const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
-  const [importedEmails, setImportedEmails] = useState<
-    ImportedAudieceMember[] | null
-  >(null);
   const { mutateAsync: importAudienceMutation, isLoading: importLoading } =
     api.creator.audience.importAudience.useMutation();
 
-  const { errorToast } = useToast();
+  const { errorToast, successToast } = useToast();
 
   return (
     <>
@@ -423,7 +414,6 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
           onClose={() => {
             setIsOpen(false);
             setSelectedEmails([]);
-            setImportedEmails(null);
           }}
         >
           <Transition.Child
@@ -459,7 +449,6 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                         onClick={() => {
                           setIsOpen(false);
                           setSelectedEmails([]);
-                          setImportedEmails(null);
                         }}
                         type="button"
                         className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
@@ -470,7 +459,7 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                   </Dialog.Title>
                   <div className="flex flex-col gap-4 p-2">
                     {/* dialog content */}
-                    {!importedEmails ? (
+                    {
                       <>
                         <p className="mb-2 text-lg">
                           Import your <span className="font-medium">.csv</span>{" "}
@@ -484,7 +473,7 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                               </span>{" "}
                               Emails selected
                             </p>
-                            <p className="text-sm">
+                            {/* <p className="text-sm">
                               <span className="rounded-lg bg-neutral-600 p-1 px-2 text-xs">
                                 {!!selectedEmails[0] ? selectedEmails[0] : ""}
                               </span>
@@ -503,7 +492,30 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                                   ? `, and ${selectedEmails.length - 2} more`
                                   : ""}
                               </span>
-                            </p>
+                            </p> */}
+                            <div className="h-32 w-full overflow-scroll">
+                              <table className="w-full border-collapse">
+                                <thead>
+                                  <tr>
+                                    <td className="w-full border border-neutral-700 bg-neutral-600 p-1 px-3 font-bold uppercase text-neutral-400">
+                                      EMAIL
+                                    </td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {selectedEmails.map((se) => (
+                                    <tr
+                                      key={se}
+                                      className="bg-neutral-800 even:bg-neutral-700"
+                                    >
+                                      <td className="border-collapse border border-neutral-700 p-1 px-3 ">
+                                        {se}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         ) : (
                           <></>
@@ -563,53 +575,21 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                           from your CSV file.
                         </p>
                       </>
-                    ) : (
-                      <>
-                        <p className="flex gap-2 text-xl">
-                          <span className="font-bold">
-                            {importedEmails.length}
-                          </span>{" "}
-                          Audience imported successfully!{" "}
-                          <CheckCircleIcon className="w-6 text-green-500" />
-                        </p>
-                        <div className="h-64 w-full overflow-scroll">
-                          <table className="w-full border-collapse">
-                            <thead>
-                              <tr>
-                                <td className="w-full border border-neutral-700 bg-neutral-600 p-1 px-3 font-bold uppercase text-neutral-400">
-                                  EMAIL
-                                </td>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {importedEmails.map((iem) => (
-                                <tr
-                                  key={iem.id}
-                                  className="bg-neutral-800 even:bg-neutral-700"
-                                >
-                                  <td className="border-collapse border border-neutral-700 p-1 px-3 ">
-                                    {iem.email}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </>
-                    )}
+                    }
                   </div>
-                  {!importedEmails ? (
+                  {
                     <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
                       <button
                         onClick={() => {
                           void importAudienceMutation(
                             { email: selectedEmails },
                             {
-                              onSuccess: (data) => {
-                                if (data)
-                                  setImportedEmails(
-                                    data as ImportedAudieceMember[]
-                                  );
+                              onSuccess: () => {
+                                successToast(
+                                  "Audience imported from CSV successfully!"
+                                );
+                                setIsOpen(false);
+                                setSelectedEmails([]);
                               },
                               onError: () => {
                                 errorToast(
@@ -630,16 +610,13 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                         onClick={() => {
                           setIsOpen(false);
                           setSelectedEmails([]);
-                          setImportedEmails(null);
                         }}
                         className="rounded-lg bg-neutral-600 px-5 py-2.5 text-center text-sm font-medium text-neutral-400 duration-300 hover:text-neutral-200"
                       >
                         Cancel
                       </button>
                     </div>
-                  ) : (
-                    <></>
-                  )}
+                  }
                 </Dialog.Panel>
               </Transition.Child>
             </div>
