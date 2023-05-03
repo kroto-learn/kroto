@@ -82,18 +82,24 @@ select:-webkit-autofill {
 
 /* Global Scrollbar */
 
-*:not(table)::-webkit-scrollbar {
-  width: 10px;
-}
+@media screen and (min-width: 700px) {
+  *:not(table)::-webkit-scrollbar {
+    width: 10px;
+  }
 
-*:not(table)::-webkit-scrollbar-track {
-  background: transparent;
-}
+  *:not(table)::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-*:not(table)::-webkit-scrollbar-thumb {
-  background: #ffffff55;
-}
+  *:not(table)::-webkit-scrollbar-thumb {
+    background: #ffffff55;
+  }
 
-*:not(table)::-webkit-scrollbar-thumb:hover {
-  background: #ffffff89;
+  *:not(table)::-webkit-scrollbar-thumb:hover {
+    background: #ffffff89;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: rgba(0, 0, 0, 0);
+  }
 }

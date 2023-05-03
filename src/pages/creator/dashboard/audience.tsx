@@ -13,22 +13,40 @@ import { Transition, Dialog } from "@headlessui/react";
 import Papa from "papaparse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileCsv, faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
+import useToast from "@/hooks/useToast";
+import { useRouter } from "next/router";
 
 const Audience = () => {
-  const { data: audience, isLoading } =
+  const router = useRouter();
+  const { audience } = router.query as { audience?: string };
+  const isImportedTab = audience === "imported";
+  const { data: audienceData, isLoading: isAudienceLoading } =
     api.creator.audience.getAudienceMembers.useQuery();
+
+  const { data: importedAudienceData, isLoading: isImpAudLoading } =
+    api.creator.audience.getImportedAudience.useQuery();
+
+  const isLoading = isImportedTab ? isImpAudLoading : isAudienceLoading;
 
   const [uploadCSVModal, setUploadCSVModal] = useState(false);
 
   const tableData = React.useMemo(() => {
-    if (audience)
-      return audience.map((a) => ({
+    if (audienceData)
+      return audienceData.map((a) => ({
         col1: a?.image ?? "",
         col2: a?.name ?? "",
         col3: a?.email ?? "",
       }));
     return [];
-  }, [audience]);
+  }, [audienceData]);
+
+  const importedTableData = React.useMemo(() => {
+    if (importedAudienceData)
+      return importedAudienceData.map((a) => ({
+        col1: a?.email ?? "",
+      }));
+    return [];
+  }, [importedAudienceData]);
 
   const tableHeaders: readonly Column<{
     col1: string;
@@ -53,10 +71,34 @@ const Audience = () => {
     []
   );
 
+  const importedTableHeaders: readonly Column<{
+    col1: string;
+  }>[] = React.useMemo(
+    () => [
+      {
+        Header: "Email",
+        accessor: "col1",
+      },
+    ],
+    []
+  );
+
   const tableInstance = useTable({ columns: tableHeaders, data: tableData });
+  const importedTableInstance = useTable({
+    columns: importedTableHeaders,
+    data: importedTableData,
+  });
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance;
+
+  const {
+    getTableProps: getImpTableProps,
+    getTableBodyProps: getImpTableBodyProps,
+    headerGroups: impHeaderGroups,
+    rows: impRows,
+    prepareRow: prepareImpRows,
+  } = importedTableInstance;
 
   if (isLoading)
     return (
@@ -75,17 +117,17 @@ const Audience = () => {
       <Head>
         <title>Audience | Dashboard</title>
       </Head>
-      <div className="mx-2 my-8 min-h-[80%] w-full items-start justify-start gap-4 px-6">
+      <div className="mx-2 my-8 min-h-[80%] w-full px-6">
         <h3 className="mb-4 text-2xl font-medium">Audience</h3>
-        <div className="mb-6 flex w-full items-start justify-between">
+        <div className="mb-6 flex w-full items-start justify-between gap-2">
           <div className="flex flex-col items-start">
             <p className="text-3xl text-neutral-200">
-              {audience?.length ?? "-"}
+              {audienceData?.length ?? "-"}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-col items-end gap-2 sm:w-auto sm:flex-row sm:items-center">
             <button
-              disabled={audience?.length === 0 || !audience}
+              disabled={audienceData?.length === 0 || !audienceData}
               type="button"
               className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
               onClick={() => {
@@ -95,13 +137,13 @@ const Audience = () => {
               <FontAwesomeIcon icon={faFileArrowUp} /> Upload CSV
             </button>
             <button
-              disabled={audience?.length === 0 || !audience}
+              disabled={audienceData?.length === 0 || !audienceData}
               type="button"
               className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
               onClick={() => {
                 console.log("reached here");
                 getCSV(
-                  audience?.map((r) => ({
+                  audienceData?.map((r) => ({
                     NAME: r.name,
                     EMAIL: r.email,
                     IMAGE: r.image,
@@ -113,69 +155,199 @@ const Audience = () => {
             </button>
           </div>
         </div>
-        {audience && audience.length > 0 ? (
-          <table
-            {...getTableProps()}
-            className="block h-[80%] w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
-          >
-            <thead>
-              {
-                // Loop over the header rows
-                headerGroups.map((headerGroup) => (
-                  // Apply the header row props
-                  // eslint-disable-next-line react/jsx-key
-                  <tr
-                    className="border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400"
-                    {...headerGroup.getHeaderGroupProps()}
-                  >
-                    {
-                      // Loop over the headers in each row
-                      headerGroup.headers.map((column) => (
-                        // Apply the header cell props
-                        // eslint-disable-next-line react/jsx-key
-                        <th className="px-6 py-3" {...column.getHeaderProps()}>
-                          {
-                            // Render the header
-                            column.render("Header")
-                          }
-                        </th>
-                      ))
-                    }
-                  </tr>
-                ))
-              }
-            </thead>
+        <div className="flex w-full justify-start">
+          <div className="mb-6 border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
+            <ul className="-mb-px flex flex-wrap">
+              <li className="mr-2">
+                <Link
+                  href="/creator/dashboard/audience"
+                  className={`inline-block rounded-t-lg p-4 ${
+                    !isImportedTab
+                      ? "border-b-2 border-pink-500 text-pink-500 transition"
+                      : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
+                  }`}
+                >
+                  Normal
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/creator/dashboard/audience?audience=imported"
+                  className={`inline-block rounded-t-lg p-4 transition ${
+                    isImportedTab
+                      ? "border-b-2 border-pink-500 text-pink-500"
+                      : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
+                  }`}
+                  aria-current="page"
+                >
+                  Imported
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-            <tbody {...getTableBodyProps()}>
-              {
-                // Loop over the table rows
-                rows.map((row) => {
-                  // Prepare the row for display
-                  prepareRow(row);
-                  return (
-                    // Apply the row props
+        {!isImportedTab ? (
+          audienceData && audienceData.length > 0 ? (
+            <div className="h-[80vh] overflow-scroll">
+              <table
+                {...getTableProps()}
+                className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
+              >
+                <thead>
+                  {
+                    // Loop over the header rows
+                    headerGroups.map((headerGroup) => (
+                      // Apply the header row props
+                      // eslint-disable-next-line react/jsx-key
+                      <tr
+                        className="border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400"
+                        {...headerGroup.getHeaderGroupProps()}
+                      >
+                        {
+                          // Loop over the headers in each row
+                          headerGroup.headers.map((column) => (
+                            // Apply the header cell props
+                            // eslint-disable-next-line react/jsx-key
+                            <th
+                              className="px-6 py-3"
+                              {...column.getHeaderProps()}
+                            >
+                              {
+                                // Render the header
+                                column.render("Header")
+                              }
+                            </th>
+                          ))
+                        }
+                      </tr>
+                    ))
+                  }
+                </thead>
+
+                <tbody {...getTableBodyProps()}>
+                  {
+                    // Loop over the table rows
+                    rows.map((row) => {
+                      // Prepare the row for display
+                      prepareRow(row);
+                      return (
+                        // Apply the row props
+                        // eslint-disable-next-line react/jsx-key
+                        <tr
+                          className="border border-neutral-800 bg-neutral-900 even:bg-neutral-800"
+                          {...row.getRowProps()}
+                        >
+                          {
+                            // Loop over the rows cells
+                            row.cells.map((cell) => {
+                              // Apply the cell props
+                              if (cell.column.id === "img")
+                                return (
+                                  <td className="py-4 pl-6 pr-2">
+                                    <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
+                                      <Image
+                                        fill
+                                        src={(cell?.value as string) ?? ""}
+                                        alt="image"
+                                      />
+                                    </div>
+                                  </td>
+                                );
+                              return (
+                                // eslint-disable-next-line react/jsx-key
+                                <td
+                                  className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
+                                  {...cell.getCellProps()}
+                                >
+                                  {
+                                    // Render the cell contents
+                                    cell.render("Cell")
+                                  }
+                                </td>
+                              );
+                            })
+                          }
+                        </tr>
+                      );
+                    })
+                  }
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+              <div className="relative aspect-square w-40 object-contain">
+                <Image src="/empty/users_empty.svg" alt="empty" fill />
+              </div>
+              <p className="text-neutral-400">
+                You don&apos;t have any audience yet.
+              </p>
+              <p className="text-neutral-400">
+                Do events to gather audience data.
+              </p>
+              <br />
+              <Link
+                href="/event/create"
+                className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
+              >
+                <PlusIcon className="w-5" /> Create Event
+              </Link>
+            </div>
+          )
+        ) : importedAudienceData && importedAudienceData.length > 0 ? (
+          <div className="h-[80vh] overflow-scroll">
+            <table
+              {...getImpTableProps()}
+              className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
+            >
+              <thead>
+                {
+                  // Loop over the header rows
+                  impHeaderGroups.map((headerGroup) => (
+                    // Apply the header row props
                     // eslint-disable-next-line react/jsx-key
                     <tr
-                      className="border border-neutral-800 bg-neutral-900 even:bg-neutral-800"
-                      {...row.getRowProps()}
+                      className="border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400"
+                      {...headerGroup.getHeaderGroupProps()}
                     >
                       {
-                        // Loop over the rows cells
-                        row.cells.map((cell) => {
-                          // Apply the cell props
-                          if (cell.column.id === "img")
-                            return (
-                              <td className="py-4 pl-6 pr-2">
-                                <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
-                                  <Image
-                                    fill
-                                    src={(cell?.value as string) ?? ""}
-                                    alt="image"
-                                  />
-                                </div>
-                              </td>
-                            );
-                          return (
+                        // Loop over the headers in each row
+                        headerGroup.headers.map((column) => (
+                          // Apply the header cell props
+                          // eslint-disable-next-line react/jsx-key
+                          <th
+                            className="px-6 py-3"
+                            {...column.getHeaderProps()}
+                          >
+                            {
+                              // Render the header
+                              column.render("Header")
+                            }
+                          </th>
+                        ))
+                      }
+                    </tr>
+                  ))
+                }
+              </thead>
+
+              <tbody {...getImpTableBodyProps()}>
+                {
+                  // Loop over the table rows
+                  impRows.map((row) => {
+                    // Prepare the row for display
+                    prepareImpRows(row);
+                    return (
+                      // Apply the row props
+                      // eslint-disable-next-line react/jsx-key
+                      <tr
+                        className="border border-neutral-800 bg-neutral-900 even:bg-neutral-800"
+                        {...row.getRowProps()}
+                      >
+                        {
+                          // Loop over the rows cells
+                          row.cells.map((cell) => (
                             // eslint-disable-next-line react/jsx-key
                             <td
                               className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
@@ -186,15 +358,15 @@ const Audience = () => {
                                 cell.render("Cell")
                               }
                             </td>
-                          );
-                        })
-                      }
-                    </tr>
-                  );
-                })
-              }
-            </tbody>
-          </table>
+                          ))
+                        }
+                      </tr>
+                    );
+                  })
+                }
+              </tbody>
+            </table>
+          </div>
         ) : (
           <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
             <div className="relative aspect-square w-40 object-contain">
@@ -227,14 +399,22 @@ type UCMProps = {
 };
 
 const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
-  const [uploading, setUploading] = useState(false);
+  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const { mutateAsync: importAudienceMutation, isLoading: importLoading } =
+    api.creator.audience.importAudience.useMutation();
+
+  const { errorToast, successToast } = useToast();
+
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
           className="relative z-50"
-          onClose={() => setIsOpen(false)}
+          onClose={() => {
+            setIsOpen(false);
+            setSelectedEmails([]);
+          }}
         >
           <Transition.Child
             as={Fragment}
@@ -268,6 +448,7 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                       <button
                         onClick={() => {
                           setIsOpen(false);
+                          setSelectedEmails([]);
                         }}
                         type="button"
                         className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
@@ -276,93 +457,166 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                       </button>
                     </div>
                   </Dialog.Title>
-                  <div className="flex flex-col gap-1 p-2">
+                  <div className="flex flex-col gap-4 p-2">
                     {/* dialog content */}
-                    <p className="mb-2 text-lg">
-                      Import your <span className="font-medium">.csv</span> file
-                      and populate it into your Audience data.
-                    </p>
-                    <div className="relative mx-auto w-4/5 overflow-hidden rounded">
-                      <img
-                        src="/csv_example.png"
-                        alt="example"
-                        className="h-full w-full"
-                      />
-                    </div>
-                    <p className="mb-2">
-                      We will scrape columns with headers{" "}
-                      <span className="rounded-lg bg-yellow-500/60 p-1 px-2 text-xs font-bold text-neutral-200">
-                        EMAIL
-                      </span>
-                      ,{" "}
-                      <span className="rounded-lg bg-blue-500/60 p-1 px-2 text-xs font-bold text-neutral-200">
-                        IMAGE
-                      </span>{" "}
-                      and{" "}
-                      <span className="rounded-lg bg-green-500/60 p-1 px-2 text-xs font-bold text-neutral-200">
-                        NAME
-                      </span>{" "}
-                      from your CSV file.
-                    </p>
-                    <p>
-                      <span className="mr-1 text-pink-600">
-                        <b>Note:</b>
-                      </span>{" "}
-                      <span className="rounded-lg bg-yellow-500/60 p-1 px-2 text-xs font-bold text-neutral-200">
-                        EMAIL
-                      </span>{" "}
-                      column is required.
-                    </p>
-                  </div>
-                  <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
-                    <div className="relative cursor-pointer rounded-lg bg-pink-500/50 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-pink-500 hover:text-neutral-200">
-                      {uploading ?? <Loader />}
-                      Upload CSV
-                      <input
-                        type="file"
-                        accept=".csv"
-                        onChange={(e) => {
-                          const [csvfile] = e.target.files ?? [null];
+                    {
+                      <>
+                        <p className="mb-2 text-lg">
+                          Import your <span className="font-medium">.csv</span>{" "}
+                          file and populate it into your Audience data.
+                        </p>
+                        {selectedEmails.length > 0 ? (
+                          <div className="flex flex-col gap-2">
+                            <p className="text-xl">
+                              <span className="font-bold">
+                                {selectedEmails.length}
+                              </span>{" "}
+                              Emails selected
+                            </p>
+                            {/* <p className="text-sm">
+                              <span className="rounded-lg bg-neutral-600 p-1 px-2 text-xs">
+                                {!!selectedEmails[0] ? selectedEmails[0] : ""}
+                              </span>
+                              {selectedEmails[1] ? (
+                                <>
+                                  ,
+                                  <span className="ml-2 rounded-lg bg-neutral-600 p-1 px-2 text-xs">
+                                    {selectedEmails[1]}
+                                  </span>
+                                </>
+                              ) : (
+                                <></>
+                              )}
+                              <span>
+                                {selectedEmails.length > 2
+                                  ? `, and ${selectedEmails.length - 2} more`
+                                  : ""}
+                              </span>
+                            </p> */}
+                            <div className="h-32 w-full overflow-scroll">
+                              <table className="w-full border-collapse">
+                                <thead>
+                                  <tr>
+                                    <td className="w-full border border-neutral-700 bg-neutral-600 p-1 px-3 font-bold uppercase text-neutral-400">
+                                      EMAIL
+                                    </td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {selectedEmails.map((se) => (
+                                    <tr
+                                      key={se}
+                                      className="bg-neutral-800 even:bg-neutral-700"
+                                    >
+                                      <td className="border-collapse border border-neutral-700 p-1 px-3 ">
+                                        {se}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                        <div
+                          style={{
+                            backgroundImage:
+                              "url(\"data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='12' ry='12' stroke='%23DB2777FF' stroke-width='4' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e\")",
+                          }}
+                          className="relative m-4 mx-auto flex w-full flex-col items-center justify-center gap-2 rounded-xl bg-pink-600/10 p-4 py-8"
+                        >
+                          <p>Drag and drop .csv files here</p>
+                          <p>or</p>
+                          <div className="cursor-pointer rounded-lg bg-pink-500/50 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-pink-500 hover:text-neutral-200">
+                            Upload CSV
+                            <input
+                              type="file"
+                              accept=".csv"
+                              onChange={(e) => {
+                                const [csvfile] = e.target.files ?? [null];
 
-                          if (csvfile) {
-                            setUploading(true);
-                            const reader = new FileReader();
-                            reader.onloadend = ({ target }) => {
-                              if (target?.result) {
-                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                // @ts-ignore
-                                const csv: { data: any[] } = Papa.parse(
-                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                  // @ts-ignore
-                                  target.result,
-                                  {
-                                    header: true,
-                                    transformHeader: (header) =>
-                                      header.toLowerCase(),
-                                  }
-                                );
-                                console.log("csv data", csv.data);
-                                // TODO: implement upload CSV data
-                              }
-                              setUploading(false);
-                              setIsOpen(false);
-                            };
-                            reader.readAsText(csvfile);
-                          }
-                        }}
-                        className="absolute left-0 top-0 h-full w-full cursor-pointer opacity-0"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsOpen(false);
-                      }}
-                      className="rounded-lg bg-neutral-600 px-5 py-2.5 text-center text-sm font-medium text-neutral-400 duration-300 hover:text-neutral-200"
-                    >
-                      Cancel
-                    </button>
+                                if (csvfile) {
+                                  const reader = new FileReader();
+                                  reader.onloadend = ({ target }) => {
+                                    if (target?.result) {
+                                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                      // @ts-ignore
+                                      const csv: { data: { email: string }[] } =
+                                        Papa.parse(
+                                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                          // @ts-ignore
+                                          target.result,
+                                          {
+                                            header: true,
+                                            transformHeader: (header) =>
+                                              header.toLowerCase(),
+                                          }
+                                        );
+                                      setSelectedEmails([
+                                        ...selectedEmails,
+                                        ...csv.data.map((c) => c.email),
+                                      ]);
+                                    }
+                                  };
+                                  reader.readAsText(csvfile);
+                                }
+                              }}
+                              className="absolute left-0 top-0 h-full w-full cursor-pointer opacity-0"
+                            />
+                          </div>
+                        </div>
+                        <p className="mb-2">
+                          We will scrape column with header{" "}
+                          <span className="rounded-lg bg-neutral-700 p-1 px-2 text-xs font-bold text-neutral-200">
+                            EMAIL
+                          </span>{" "}
+                          from your CSV file.
+                        </p>
+                      </>
+                    }
                   </div>
+                  {
+                    <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
+                      <button
+                        onClick={() => {
+                          void importAudienceMutation(
+                            { email: selectedEmails },
+                            {
+                              onSuccess: () => {
+                                successToast(
+                                  "Audience imported from CSV successfully!"
+                                );
+                                setIsOpen(false);
+                                setSelectedEmails([]);
+                              },
+                              onError: () => {
+                                errorToast(
+                                  "Error in importing audience from CSV!"
+                                );
+                              },
+                            }
+                          );
+                        }}
+                        className="cursor-pointer rounded-lg bg-pink-500/50 px-5 py-2.5 text-center text-sm font-medium text-neutral-200/70 duration-300 hover:bg-pink-500 hover:text-neutral-200"
+                      >
+                        {importLoading ?? <Loader />}
+                        Import Emails
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsOpen(false);
+                          setSelectedEmails([]);
+                        }}
+                        className="rounded-lg bg-neutral-600 px-5 py-2.5 text-center text-sm font-medium text-neutral-400 duration-300 hover:text-neutral-200"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  }
                 </Dialog.Panel>
               </Transition.Child>
             </div>
