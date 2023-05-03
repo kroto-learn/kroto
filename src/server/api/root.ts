@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "@/server/api/trpc";
 import { exampleRouter } from "@/server/api/routers/example";
-import { creatorRouter } from "@/server/api/routers/creator";
+import { creatorRouter } from "@/server/api/routers/creator/creator";
 import { eventRouter } from "./routers/event/event";
 import { emailRouter } from "./routers/email";
 import { testimonialRouter } from "./routers/testimonial";

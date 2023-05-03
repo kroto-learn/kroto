@@ -7,7 +7,7 @@ import {
 } from "@/server/api/trpc";
 import { imageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
-import { audienceRouter } from "./creator/audience";
+import { audienceRouter } from "./audience";
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
