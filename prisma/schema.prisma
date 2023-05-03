@@ -45,24 +45,25 @@ model Session {
 }
 
 model User {
-  id              String           @id @default(cuid())
-  name            String
-  email           String           @unique
-  emailVerified   DateTime?
-  image           String?
-  creatorProfile  String?          @unique
-  isCreator       Boolean          @default(false)
-  bio             String?          @db.Text
-  topmateUrl      String?
-  accounts        Account[]
-  sessions        Session[]
-  socialLinks     SocialLink[]
-  events          Event[]
-  registrations   Registration[]
-  audienceMembers AudienceMember[]
-  host            Host[]
-  feedbacks       Feedback[]
-  testimonials    Testimonial[]
+  id                    String                  @id @default(cuid())
+  name                  String
+  email                 String                  @unique
+  emailVerified         DateTime?
+  image                 String?
+  creatorProfile        String?                 @unique
+  isCreator             Boolean                 @default(false)
+  bio                   String?                 @db.Text
+  topmateUrl            String?
+  accounts              Account[]
+  sessions              Session[]
+  socialLinks           SocialLink[]
+  events                Event[]
+  registrations         Registration[]
+  audienceMembers       AudienceMember[]
+  host                  Host[]
+  feedbacks             Feedback[]
+  testimonials          Testimonial[]
+  importedAudieceMember ImportedAudieceMember[]
 }
 
 model Event {
@@ -116,6 +117,16 @@ model AudienceMember {
   creator            User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   @@index([creatorId])
+}
+
+model ImportedAudieceMember {
+  id     String @id @default(cuid())
+  email  String
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([email, userId])
+  @@index([userId])
 }
 
 model Registration {

@@ -20,7 +20,7 @@ import Papa from "papaparse";
 
 const Audience = () => {
   const { data: audience, isLoading } =
-    api.creator.getAudienceMembers.useQuery();
+    api.creator.audience.getAudienceMembers.useQuery();
 
   const [uploadCSVModal, setUploadCSVModal] = useState(false);
 
