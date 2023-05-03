@@ -33,7 +33,19 @@ export const audienceRouter = createTRPCRouter({
         skipDuplicates: true,
       });
 
-      return audiences;
+      //FIXME createMany does not return created records, returning hardcode data for now
+      // return audiences;
+      return [
+        { email: "rosekamallove@gmail.com", id: "1" },
+        { email: "ysgaur9919@gmail.com", id: "2" },
+        { email: "ysgaur9919@gmail.com", id: "3" },
+        { email: "ysgaur9919@gmail.com", id: "4" },
+        { email: "ysgaur9919@gmail.com", id: "5" },
+        { email: "ysgaur9919@gmail.com", id: "6" },
+        { email: "ysgaur9919@gmail.com", id: "7" },
+        { email: "ysgaur9919@gmail.com", id: "8" },
+        { email: "ysgaur9919@gmail.com", id: "9" },
+      ];
     }),
 
   getImportedAudience: protectedProcedure.query(async ({ ctx }) => {
