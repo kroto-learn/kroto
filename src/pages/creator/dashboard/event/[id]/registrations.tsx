@@ -113,82 +113,87 @@ const EventRegistrations = () => {
         {event?.registrations &&
         event.registrations.length > 0 &&
         !isLoading ? (
-          <table
-            {...getTableProps()}
-            className="block h-[80%] w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
-          >
-            <thead className="rounded-t-lg border border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400">
-              {
-                // Loop over the header rows
-                headerGroups.map((headerGroup) => (
-                  // Apply the header row props
-                  // eslint-disable-next-line react/jsx-key
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {
-                      // Loop over the headers in each row
-                      headerGroup.headers.map((column) => (
-                        // Apply the header cell props
-                        // eslint-disable-next-line react/jsx-key
-                        <th className="px-6 py-3" {...column.getHeaderProps()}>
-                          {
-                            // Render the header
-                            column.render("Header")
-                          }
-                        </th>
-                      ))
-                    }
-                  </tr>
-                ))
-              }
-            </thead>
-
-            <tbody {...getTableBodyProps()}>
-              {
-                // Loop over the table rows
-                rows.map((row) => {
-                  // Prepare the row for display
-                  prepareRow(row);
-                  return (
-                    // Apply the row props
-                    <tr
-                      className="border border-neutral-800 bg-neutral-900 even:bg-neutral-800"
-                      {...row.getRowProps()}
-                    >
+          <div className="h-[80vh] overflow-scroll">
+            <table
+              {...getTableProps()}
+              className="block h-[80%] w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
+            >
+              <thead className="rounded-t-lg border border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400">
+                {
+                  // Loop over the header rows
+                  headerGroups.map((headerGroup) => (
+                    // Apply the header row props
+                    // eslint-disable-next-line react/jsx-key
+                    <tr {...headerGroup.getHeaderGroupProps()}>
                       {
-                        // Loop over the rows cells
-                        row.cells.map((cell) => {
-                          // Apply the cell props
-                          if (cell.column.id === "img")
-                            return (
-                              <td className="py-4 pl-6 pr-2">
-                                <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
-                                  <Image
-                                    fill
-                                    src={(cell?.value as string) ?? ""}
-                                    alt="image"
-                                  />
-                                </div>
-                              </td>
-                            );
-                          return (
-                            <td
-                              className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
-                              {...cell.getCellProps()}
-                            >
-                              {
-                                // Render the cell contents
-                                cell.render("Cell")
-                              }
-                            </td>
-                          );
-                        })
+                        // Loop over the headers in each row
+                        headerGroup.headers.map((column) => (
+                          // Apply the header cell props
+                          // eslint-disable-next-line react/jsx-key
+                          <th
+                            className="px-6 py-3"
+                            {...column.getHeaderProps()}
+                          >
+                            {
+                              // Render the header
+                              column.render("Header")
+                            }
+                          </th>
+                        ))
                       }
                     </tr>
-                  );
-                })
-              }
-            </tbody>
-          </table>
+                  ))
+                }
+              </thead>
+
+              <tbody {...getTableBodyProps()}>
+                {
+                  // Loop over the table rows
+                  rows.map((row) => {
+                    // Prepare the row for display
+                    prepareRow(row);
+                    return (
+                      // Apply the row props
+                      <tr
+                        className="border border-neutral-800 bg-neutral-900 even:bg-neutral-800"
+                        {...row.getRowProps()}
+                      >
+                        {
+                          // Loop over the rows cells
+                          row.cells.map((cell) => {
+                            // Apply the cell props
+                            if (cell.column.id === "img")
+                              return (
+                                <td className="py-4 pl-6 pr-2">
+                                  <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
+                                    <Image
+                                      fill
+                                      src={(cell?.value as string) ?? ""}
+                                      alt="image"
+                                    />
+                                  </div>
+                                </td>
+                              );
+                            return (
+                              <td
+                                className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
+                                {...cell.getCellProps()}
+                              >
+                                {
+                                  // Render the cell contents
+                                  cell.render("Cell")
+                                }
+                              </td>
+                            );
+                          })
+                        }
+                      </tr>
+                    );
+                  })
+                }
+              </tbody>
+            </table>
+          </div>
         ) : (
           <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
             {isLoading ? (
