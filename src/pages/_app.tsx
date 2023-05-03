@@ -11,6 +11,9 @@ import { Analytics } from "@vercel/analytics/react";
 
 import "@/styles/globals.css";
 import ProtectedRoutes from "@/components/ProtectedRoutes";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false;
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -25,7 +28,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       />
       <Toaster />
       <Analytics />
-      <ProtectedRoutes/>
+      <ProtectedRoutes />
       <Layout
         Component={
           Component as NextComponentType & {

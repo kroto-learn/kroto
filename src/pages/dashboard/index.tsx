@@ -11,7 +11,8 @@ import { Loader } from "@/components/Loader";
 import { ClaimLinkBanner } from "..";
 import Link from "next/link";
 import { GlobeAltIcon } from "@heroicons/react/20/solid";
-import { FaQuoteLeft } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -58,7 +59,7 @@ export default function Dashboard() {
                   href="/dashboard/testimonials"
                   className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
                 >
-                  <FaQuoteLeft /> Testimonials
+                  <FontAwesomeIcon icon={faQuoteLeft} /> Testimonials
                 </Link>
 
                 <button

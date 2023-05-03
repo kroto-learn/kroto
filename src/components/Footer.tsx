@@ -1,5 +1,5 @@
-import { IoLogoTwitter } from "react-icons/io5";
-import { BsDiscord } from "react-icons/bs";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
 
 export default function Footer() {
@@ -32,13 +32,13 @@ export default function Footer() {
             href="https://twitter.com/RoseKamalLove1"
             className="text-base text-neutral-400 transition duration-300 hover:text-neutral-200"
           >
-            <IoLogoTwitter />
+            <FontAwesomeIcon icon={faTwitter} />
           </Link>
           <Link
             href="https://discord.com/invite/e5SnnVP3ad"
             className="text-base text-neutral-400 transition duration-300 hover:text-neutral-200"
           >
-            <BsDiscord />
+            <FontAwesomeIcon icon={faDiscord} />
           </Link>
         </div>
         <p className="text-center text-neutral-400">

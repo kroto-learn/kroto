@@ -12,7 +12,8 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
-import { FaQuoteLeft } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 
 const TestimonialEditModal = dynamic(
   () => import("@/components/TestimonialEditModal"),
@@ -33,7 +34,7 @@ const Index = () => {
         <Head>
           <title>Testimonials Given | Dashboard</title>
         </Head>
-        <div className="flex h-[50vh] w-full items-center justify-center">
+        <div className="flex min-h-screen w-full items-center justify-center">
           <Loader size="lg" />
         </div>
       </>
@@ -82,7 +83,10 @@ const Index = () => {
                         </div>
                       </Disclosure.Button>
                       <Disclosure.Panel className="realtive z-0 w-full -translate-y-6 rounded-b-xl bg-neutral-800 px-4 py-4 text-gray-300">
-                        <FaQuoteLeft className="absolute text-neutral-400" />{" "}
+                        <FontAwesomeIcon
+                          icon={faQuoteLeft}
+                          className="absolute text-neutral-400"
+                        />{" "}
                         <p className="ml-6 mt-1">{testimonial?.content}</p>
                       </Disclosure.Panel>
                     </>
