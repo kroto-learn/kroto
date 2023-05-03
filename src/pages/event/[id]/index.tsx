@@ -1,9 +1,9 @@
 import CalenderBox from "@/components/CalenderBox";
 import Head from "next/head";
 import Image from "next/image";
-import { SiGooglemeet } from "react-icons/si";
 import { api } from "@/utils/api";
-import { MdLocationOn } from "react-icons/md";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVideo, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { type GetStaticPropsContext } from "next";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { type ParsedUrlQuery } from "querystring";
@@ -158,9 +158,15 @@ export default function EventPage({ eventId }: Props) {
               </div>
               <div className="flex items-center gap-2 text-sm text-neutral-400">
                 {event?.eventType === "virtual" ? (
-                  <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-4xl text-neutral-400" />
+                  <FontAwesomeIcon
+                    icon={faVideo}
+                    className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-neutral-400"
+                  />
                 ) : (
-                  <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-4xl text-neutral-400" />
+                  <FontAwesomeIcon
+                    icon={faLocationDot}
+                    className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-neutral-400"
+                  />
                 )}
                 <p>
                   {event?.eventType === "virtual"

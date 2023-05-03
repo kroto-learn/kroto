@@ -7,16 +7,12 @@ import React, { Fragment, useState } from "react";
 import { useTable, type Column } from "react-table";
 import Image from "next/image";
 import { Loader } from "@/components/Loader";
-import {
-  ArrowUpOnSquareIcon,
-  PlusIcon,
-  UserIcon,
-  XMarkIcon,
-} from "@heroicons/react/20/solid";
+import { PlusIcon, UserIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
-import { FaFileCsv } from "react-icons/fa";
 import { Transition, Dialog } from "@headlessui/react";
 import Papa from "papaparse";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileCsv, faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 const Audience = () => {
   const { data: audience, isLoading } =
@@ -96,7 +92,7 @@ const Audience = () => {
                 setUploadCSVModal(true);
               }}
             >
-              <ArrowUpOnSquareIcon className="w-5" /> Upload CSV
+              <FontAwesomeIcon icon={faFileArrowUp} /> Upload CSV
             </button>
             <button
               disabled={audience?.length === 0 || !audience}
@@ -113,7 +109,7 @@ const Audience = () => {
                 );
               }}
             >
-              <FaFileCsv className="w-5" /> Download CSV
+              <FontAwesomeIcon icon={faFileCsv} /> Download CSV
             </button>
           </div>
         </div>
