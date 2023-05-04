@@ -152,7 +152,7 @@ export const eventRouter = createTRPCRouter({
        * can just use the function.
        */
       const ogImageRes = await axios({
-        url: `${NEXTAUTH_URL ?? process.env.VERCEL_URL}/api/og/event`,
+        url: `${NEXTAUTH_URL ?? "https://kroto.in"}/api/og/event`,
         responseType: "arraybuffer",
         params: {
           title: input.title,
@@ -210,7 +210,7 @@ export const eventRouter = createTRPCRouter({
         thumbnail = await imageUpload(input.thumbnail, input.id, "event");
 
       const ogImageRes = await axios({
-        url: `${NEXTAUTH_URL ?? process.env.VERCEL_URL}/api/og/event`,
+        url: `${NEXTAUTH_URL ?? "https://kroto.in"}/api/og/event`,
         responseType: "arraybuffer",
         params: {
           title: input.title,
