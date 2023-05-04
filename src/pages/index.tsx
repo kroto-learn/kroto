@@ -17,6 +17,7 @@ import Navbar from "@/components/Navbar";
 import { useSession } from "next-auth/react";
 import { getServerAuthSession } from "@/server/auth";
 import landingOg from "public/landing/og.png";
+import Footer from "@/components/Footer";
 
 const Home: NextPage = () => {
   const { status } = useSession();
@@ -67,6 +68,7 @@ const Home: NextPage = () => {
         <div id="claim-link">
           <ClaimLinkBannerLanding />
         </div>
+        <Footer />
       </main>
     </>
   );
