@@ -1,26 +1,30 @@
-import { IoLogoGoogle, IoLogoFacebook } from "react-icons/io";
-import { BsDiscord } from "react-icons/bs";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faDiscord,
+  faFacebookF,
+  faGoogle,
+} from "@fortawesome/free-brands-svg-icons";
 
 const options = [
   {
     id: "google",
     name: "Google",
-    icon: <IoLogoGoogle />,
+    icon: <FontAwesomeIcon icon={faGoogle} />,
   },
   {
     id: "discord",
     name: "Discord",
-    icon: <BsDiscord />,
+    icon: <FontAwesomeIcon icon={faDiscord} />,
   },
   {
     id: "facebook",
     name: "Facebook",
-    icon: <IoLogoFacebook />,
+    icon: <FontAwesomeIcon icon={faFacebookF} />,
   },
 ];
 

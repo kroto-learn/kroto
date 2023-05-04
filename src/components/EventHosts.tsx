@@ -18,12 +18,13 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
   const { data: event } = api.event.get.useQuery({
     id,
   });
-  const { data: hosts, refetch: refetchHosts } = api.event.getHosts.useQuery({
-    eventId: id,
-  });
+  const { data: hosts, refetch: refetchHosts } =
+    api.eventHost.getHosts.useQuery({
+      eventId: id,
+    });
 
   const { mutateAsync: removeHost, isLoading: removingHost } =
-    api.event.removeHost.useMutation();
+    api.eventHost.removeHost.useMutation();
 
   const { errorToast } = useToast();
 

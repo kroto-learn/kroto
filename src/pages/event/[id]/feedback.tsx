@@ -51,14 +51,14 @@ const Index = () => {
   const session = useSession();
 
   const { mutateAsync: addFeedbackMutation, isLoading: addFeedbackLoading } =
-    api.event.addFeedback.useMutation();
+    api.eventFeedback.addFeedback.useMutation();
 
   const ctx = api.useContext();
 
   const { successToast, errorToast, warningToast } = useToast();
 
   const { data: feedback, isLoading: feedbackLoading } =
-    api.event.getFeedback.useQuery({
+    api.eventFeedback.getFeedback.useQuery({
       eventId: id,
       userId: session.data?.user?.id ?? "",
     });
@@ -100,7 +100,7 @@ const Index = () => {
               {
                 onSuccess: () => {
                   successToast("Feedback submitted successfully");
-                  void ctx.event.getFeedback.invalidate();
+                  void ctx.eventFeedback.getFeedback.invalidate();
                 },
                 onError: () => {
                   errorToast("Error in submitting feedback");

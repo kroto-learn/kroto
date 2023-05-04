@@ -1,9 +1,9 @@
 import CalenderBox from "@/components/CalenderBox";
 import Head from "next/head";
 import Image from "next/image";
-import { SiGooglemeet } from "react-icons/si";
 import { api } from "@/utils/api";
-import { MdLocationOn } from "react-icons/md";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVideo, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { type GetStaticPropsContext } from "next";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { type ParsedUrlQuery } from "querystring";
@@ -68,6 +68,10 @@ export default function EventPage({ eventId }: Props) {
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
     api.email.sendCalendarInvite.useMutation();
 
+  const ogImage = `https://kroto.s3.ap-south-1.amazonaws.com/og_event_${
+    event?.id ?? ""
+  }.png`;
+
   return (
     <Layout>
       <Head>
@@ -77,33 +81,12 @@ export default function EventPage({ eventId }: Props) {
         {/* Google SEO */}
         <meta itemProp="name" content={event?.title ?? ""} />
         <meta itemProp="description" content={event?.description ?? ""} />
-        <meta
-          itemProp="image"
-          content={`https://kroto.in/api/og/event?title=${
-            event?.title ?? ""
-          }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
-            event?.creator?.name ?? ""
-          }`}
-        />
+        <meta itemProp="image" content={ogImage} />
         {/* Facebook meta */}
         <meta property="og:title" content={event?.title ?? ""} />
         <meta property="og:description" content={event?.description ?? ""} />
-        <meta
-          property="og:image"
-          content={`https://kroto.in/api/og/event?title=${
-            event?.title ?? ""
-          }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
-            event?.creator?.name ?? ""
-          }`}
-        />
-        <meta
-          property="image"
-          content={`https://kroto.in/api/og/event?title=${
-            event?.title ?? ""
-          }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
-            event?.creator?.name ?? ""
-          }`}
-        />
+        <meta property="og:image" content={ogImage} />
+        <meta property="image" content={ogImage} />
         <meta
           property="og:url"
           content={`https://kroto.in/event/${event?.id ?? ""}`}
@@ -112,14 +95,7 @@ export default function EventPage({ eventId }: Props) {
         {/* twitter meta */}
         <meta name="twitter:title" content={event?.title ?? ""} />
         <meta name="twitter:description" content={event?.description ?? ""} />
-        <meta
-          name="twitter:image"
-          content={`https://kroto.in/api/og/event?title=${
-            event?.title ?? ""
-          }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
-            event?.creator?.name ?? ""
-          }`}
-        />
+        <meta name="twitter:image" content={ogImage} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <main className="-mt-10 flex h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
@@ -158,9 +134,15 @@ export default function EventPage({ eventId }: Props) {
               </div>
               <div className="flex items-center gap-2 text-sm text-neutral-400">
                 {event?.eventType === "virtual" ? (
-                  <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-4xl text-neutral-400" />
+                  <FontAwesomeIcon
+                    icon={faVideo}
+                    className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-neutral-400"
+                  />
                 ) : (
-                  <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-4xl text-neutral-400" />
+                  <FontAwesomeIcon
+                    icon={faLocationDot}
+                    className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-neutral-400"
+                  />
                 )}
                 <p>
                   {event?.eventType === "virtual"

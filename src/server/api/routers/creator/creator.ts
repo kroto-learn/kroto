@@ -7,6 +7,7 @@ import {
 } from "@/server/api/trpc";
 import { imageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
+import { audienceRouter } from "./audience";
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
@@ -98,24 +99,6 @@ export const creatorRouter = createTRPCRouter({
     });
 
     return pastRegistrations;
-  }),
-
-  getAudienceMembers: protectedProcedure.query(async ({ ctx }) => {
-    const { prisma } = ctx;
-
-    const audienceMembers = await prisma.audienceMember.findMany({
-      where: {
-        creatorId: ctx.session.user.id,
-      },
-    });
-
-    const audienceUsers = await prisma.user.findMany({
-      where: {
-        id: { in: audienceMembers.map((a) => a.userId) },
-      },
-    });
-
-    return audienceUsers;
   }),
 
   searchCreators: publicProcedure
@@ -280,4 +263,6 @@ export const creatorRouter = createTRPCRouter({
 
       return socialLink;
     }),
+
+  audience: audienceRouter,
 });

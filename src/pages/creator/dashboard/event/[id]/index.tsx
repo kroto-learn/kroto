@@ -19,8 +19,8 @@ import {
   LinkedinShareButton,
   LinkedinIcon,
 } from "next-share";
-import { MdLocationOn } from "react-icons/md";
-import { SiGooglemeet } from "react-icons/si";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVideo, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import {
   PencilIcon,
   XMarkIcon,
@@ -71,9 +71,10 @@ const EventOverview = () => {
 
   const [open, setIsOpen] = useState<boolean>(false);
 
-  const { data: hosts, refetch: refetchHosts } = api.event.getHosts.useQuery({
-    eventId: event?.id ?? "",
-  });
+  const { data: hosts, refetch: refetchHosts } =
+    api.eventHost.getHosts.useQuery({
+      eventId: event?.id ?? "",
+    });
 
   const [startEventModal, setStartEventModal] = useState(false);
 
@@ -146,9 +147,15 @@ const EventOverview = () => {
               {!isEventOver ? (
                 <div className="flex items-center gap-2 text-sm text-neutral-400">
                   {event?.eventType === "virtual" ? (
-                    <SiGooglemeet className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                    <FontAwesomeIcon
+                      icon={faVideo}
+                      className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-neutral-400"
+                    />
                   ) : (
-                    <MdLocationOn className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-3xl text-neutral-400" />
+                    <FontAwesomeIcon
+                      icon={faLocationDot}
+                      className="rounded-xl border border-neutral-500 bg-neutral-700 p-2 text-neutral-400"
+                    />
                   )}
                   <p>
                     {event?.eventType === "virtual"

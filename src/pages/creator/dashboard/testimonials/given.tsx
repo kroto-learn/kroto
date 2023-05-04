@@ -11,7 +11,8 @@ import {
   PencilIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { FaQuoteLeft } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 import dynamic from "next/dynamic";
 import { type Testimonial } from "@prisma/client";
 
@@ -81,7 +82,10 @@ const Index = () => {
                     </div>
                   </Disclosure.Button>
                   <Disclosure.Panel className="realtive z-0 w-full -translate-y-6 rounded-b-xl bg-neutral-800 px-4 py-4 text-gray-300">
-                    <FaQuoteLeft className="absolute text-neutral-400" />{" "}
+                    <FontAwesomeIcon
+                      icon={faQuoteLeft}
+                      className="absolute text-neutral-400"
+                    />{" "}
                     <p className="ml-6 mt-1">{testimonial?.content}</p>
                   </Disclosure.Panel>
                 </>

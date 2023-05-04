@@ -11,21 +11,21 @@ import { Loader } from "./Loader";
 export default function AddHostModal({
   eventId,
   isOpen,
-  setIsOpen,
   hosts,
+  setIsOpen,
   refetch,
 }: {
   eventId: string;
   isOpen: boolean;
+  hosts: RouterOutputs["eventHost"]["getHosts"];
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  hosts: RouterOutputs["event"]["getHosts"];
   refetch: () => void;
 }) {
   const [creatorId, setCreatorId] = useState<string>("");
   const { successToast, errorToast } = useToast();
 
   const { mutateAsync: addHostMutation, isLoading } =
-    api.event.addHost.useMutation();
+    api.eventHost.addHost.useMutation();
   const revalidate = useRevalidateSSG();
 
   const handleSubmit = async () => {

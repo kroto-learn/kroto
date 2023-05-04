@@ -1,4 +1,6 @@
 import { z } from "zod";
+import AWS from "aws-sdk";
+import { env } from "@/env.mjs";
 
 import {
   createTRPCRouter,
@@ -7,9 +9,15 @@ import {
 } from "@/server/api/trpc";
 import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
-import { imageUpload } from "@/server/helpers/base64ToS3";
+import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
-import { sendRegistrationConfirmation } from "./email";
+import { sendRegistrationConfirmation } from "../email";
+import axios from "axios";
+
+interface ImageUploadResponse {
+  location: string;
+  key: string;
+}
 
 export const eventRouter = createTRPCRouter({
   get: protectedProcedure
@@ -34,7 +42,7 @@ export const eventRouter = createTRPCRouter({
       return event;
     }),
 
-  // User for RouterOutputs don't remove.
+  // Used for RouterOutputs don't remove.
   getEvent: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -143,6 +151,21 @@ export const eventRouter = createTRPCRouter({
 
       const thumbnail = await imageUpload(input.thumbnail, event.id, "event");
 
+      const ogImageRes = await axios({
+        url: `https://kroto.in/api/og/event?title=${
+          event?.title ?? ""
+        }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
+          ctx.session.user.name ?? ""
+        }`,
+        responseType: "arraybuffer",
+      });
+
+      const ogImage = await ogImageUpload(
+        ogImageRes.data as AWS.S3.Body,
+        event.id,
+        "event"
+      );
+
       const updatedEvent = await prisma.event.update({
         where: {
           id: event.id,
@@ -203,6 +226,21 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
+      const ogImageRes = await axios({
+        url: `https://kroto.in/api/og/event?title=${
+          event?.title ?? ""
+        }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
+          ctx.session.user.name ?? ""
+        }`,
+        responseType: "arraybuffer",
+      });
+
+      const ogImage = await ogImageUpload(
+        ogImageRes.data as AWS.S3.Body,
+        event.id,
+        "event"
+      );
+
       return event;
     }),
 
@@ -233,8 +271,6 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      /* TODO thid doesn't seem like the proper way to do this hit */
-
       const audienceMember = await prisma.audienceMember.findFirst({
         where: {
           email: user.email,
@@ -250,7 +286,7 @@ export const eventRouter = createTRPCRouter({
 
       /* Adding to audience list */
       if (!audienceMember) {
-        // Create audience member for the creator
+        // if audience member doesn't exist, create one
         await prisma.audienceMember.create({
           data: {
             email: user.email,
@@ -261,6 +297,7 @@ export const eventRouter = createTRPCRouter({
           },
         });
       }
+
       // Create audience member for all hosts
       for (const host of hosts) {
         const audienceMember = await prisma.audienceMember.findFirst({
@@ -300,187 +337,6 @@ export const eventRouter = createTRPCRouter({
       }
 
       return registration;
-    }),
-
-  getHosts: protectedProcedure
-    .input(z.object({ eventId: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const { prisma } = ctx;
-
-      const event = await prisma.event.findUnique({
-        where: {
-          id: input.eventId,
-        },
-      });
-
-      if (!event) return new TRPCError({ code: "BAD_REQUEST" });
-
-      const creator = await prisma.user.findUnique({
-        where: {
-          id: event?.creatorId,
-        },
-      });
-
-      const hosts = await prisma.host.findMany({
-        where: {
-          eventId: event.id,
-        },
-        include: {
-          user: true,
-        },
-      });
-
-      return [{ id: creator?.id, user: creator }, ...hosts];
-    }),
-
-  addHost: protectedProcedure
-    .input(z.object({ eventId: z.string(), creatorId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { prisma } = ctx;
-
-      const event = await prisma.event.findUnique({
-        where: { id: input.eventId },
-      });
-
-      const user = await prisma.user.findUnique({
-        where: {
-          creatorProfile: input.creatorId,
-        },
-      });
-
-      if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
-      if (!user.isCreator) return new TRPCError({ code: "BAD_REQUEST" });
-
-      const isHost = await prisma.host.findFirst({
-        where: {
-          userId: user.id,
-          eventId: event.id,
-        },
-      });
-
-      if (!isHost) {
-        const host = await prisma.host.create({
-          data: {
-            userId: user.id,
-            eventId: event.id,
-          },
-        });
-        return host;
-      }
-      return new TRPCError({ code: "BAD_REQUEST" });
-    }),
-
-  removeHost: protectedProcedure
-    .input(z.object({ hostId: z.string(), eventId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const { prisma } = ctx;
-      const { hostId, eventId } = input;
-
-      await prisma.host.delete({
-        where: {
-          eventId_userId: {
-            eventId,
-            userId: hostId,
-          },
-        },
-      });
-    }),
-
-  addFeedback: protectedProcedure
-    .input(
-      z.object({
-        eventId: z.string(),
-        rating: z.number(),
-        comment: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { prisma } = ctx;
-
-      const event = await prisma.event.findUnique({
-        where: { id: input.eventId },
-      });
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id: ctx.session.user.id,
-        },
-      });
-
-      if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
-
-      if (event.creatorId === ctx.session.user.id)
-        return new TRPCError({ code: "BAD_REQUEST" });
-
-      const isFeedback = await prisma.feedback.findFirst({
-        where: {
-          userId: user.id,
-          eventId: event.id,
-        },
-      });
-
-      if (!isFeedback) {
-        const feedback = await prisma.feedback.create({
-          data: {
-            userId: user.id,
-            eventId: event.id,
-            rating: input.rating,
-            comment: input.comment,
-          },
-        });
-        return feedback;
-      }
-      return new TRPCError({ code: "BAD_REQUEST" });
-    }),
-
-  getFeedback: protectedProcedure
-    .input(z.object({ eventId: z.string(), userId: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const { prisma } = ctx;
-
-      const event = await prisma.event.findUnique({
-        where: {
-          id: input.eventId,
-        },
-      });
-
-      if (!event) return new TRPCError({ code: "BAD_REQUEST" });
-
-      const feedback = await prisma.feedback.findFirst({
-        where: {
-          eventId: event.id,
-          userId: input.userId,
-        },
-      });
-
-      return feedback;
-    }),
-
-  getFeedbacks: protectedProcedure
-    .input(z.object({ eventId: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const { prisma } = ctx;
-
-      const event = await prisma.event.findUnique({
-        where: {
-          id: input.eventId,
-        },
-      });
-
-      if (!event) return new TRPCError({ code: "BAD_REQUEST" });
-
-      const feedbacks = await prisma.feedback.findMany({
-        where: {
-          eventId: event.id,
-        },
-        include: {
-          user: true,
-        },
-      });
-
-      if (!feedbacks) return new TRPCError({ code: "BAD_REQUEST" });
-
-      return feedbacks;
     }),
 
   delete: protectedProcedure

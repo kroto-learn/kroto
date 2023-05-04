@@ -1,10 +1,11 @@
 import type { ReactElement, ReactNode } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  AiFillInstagram,
-  AiFillLinkedin,
-  AiFillYoutube,
-  AiOutlineTwitter,
-} from "react-icons/ai";
+  faYoutube,
+  faTwitter,
+  faLinkedinIn,
+  faInstagram,
+} from "@fortawesome/free-brands-svg-icons";
 import { GlobeAltIcon, LinkIcon } from "@heroicons/react/24/outline";
 type Props = {
   href: string;
@@ -16,13 +17,13 @@ type Props = {
 const Icon = ({ type }: { type: string }) => {
   switch (type) {
     case "youtube":
-      return <AiFillYoutube />;
+      return <FontAwesomeIcon className="text-sm" icon={faYoutube} />;
     case "twitter":
-      return <AiOutlineTwitter />;
+      return <FontAwesomeIcon className="text-sm" icon={faTwitter} />;
     case "linkedin":
-      return <AiFillLinkedin />;
+      return <FontAwesomeIcon icon={faLinkedinIn} />;
     case "instagram":
-      return <AiFillInstagram />;
+      return <FontAwesomeIcon icon={faInstagram} />;
     case "website":
       return <GlobeAltIcon className="w-4" />;
     default:
@@ -60,7 +61,7 @@ const Text: ({
 const SocialLink = ({ href, type = "other", children, collapsed }: Props) => {
   return (
     <a
-      className={`flex cursor-pointer items-center gap-2 border border-neutral-600 bg-neutral-200/10 px-3 py-2 font-medium text-neutral-200 duration-300 hover:bg-neutral-200 hover:text-black ${
+      className={`flex h-10 w-10 cursor-pointer items-center justify-center gap-2 border border-neutral-600 bg-neutral-200/10 px-2 py-1 font-medium text-neutral-200 duration-300 hover:bg-neutral-200 hover:text-black ${
         collapsed ? "aspect-square rounded-full text-base" : "text-xs"
       }`}
       href={href}
