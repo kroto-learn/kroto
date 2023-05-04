@@ -1,6 +1,7 @@
 import { z } from "zod";
-import AWS from "aws-sdk";
+import type AWS from "aws-sdk";
 import { env } from "@/env.mjs";
+const { NEXTAUTH_URL } = env;
 
 import {
   createTRPCRouter,
@@ -11,13 +12,12 @@ import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
 import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
-import { sendRegistrationConfirmation } from "../email";
 import axios from "axios";
+import { sendRegistrationConfirmation } from "@/server/helpers/emailHelper";
 
-interface ImageUploadResponse {
-  location: string;
-  key: string;
-}
+const OG_URL = `${
+  process.env.VERCEL ? "https://" : ""
+}${NEXTAUTH_URL}/api/og/event`;
 
 export const eventRouter = createTRPCRouter({
   get: protectedProcedure
@@ -151,13 +151,19 @@ export const eventRouter = createTRPCRouter({
 
       const thumbnail = await imageUpload(input.thumbnail, event.id, "event");
 
+      /* Don't use axios, make the api end point a function,
+       * and call it if needed from /pages/api/og and here we
+       * can just use the function.
+       */
+      console.log("NEXT_AUTH_URL", NEXTAUTH_URL);
       const ogImageRes = await axios({
-        url: `https://kroto.in/api/og/event?title=${
-          event?.title ?? ""
-        }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
-          ctx.session.user.name ?? ""
-        }`,
+        url: OG_URL,
         responseType: "arraybuffer",
+        params: {
+          title: input.title,
+          datetime: input.datetime.getTime(),
+          host: ctx.session.user.name ?? "",
+        },
       });
 
       const ogImage = await ogImageUpload(
@@ -172,6 +178,7 @@ export const eventRouter = createTRPCRouter({
         },
         data: {
           thumbnail,
+          ogImage,
         },
       });
 
@@ -207,6 +214,22 @@ export const eventRouter = createTRPCRouter({
       if (isBase64(input.thumbnail, { allowMime: true }))
         thumbnail = await imageUpload(input.thumbnail, input.id, "event");
 
+      const ogImageRes = await axios({
+        url: OG_URL,
+        responseType: "arraybuffer",
+        params: {
+          title: input.title,
+          datetime: input.datetime.getTime(),
+          host: ctx.session.user.name ?? "",
+        },
+      });
+
+      const ogImage = await ogImageUpload(
+        ogImageRes.data as AWS.S3.Body,
+        input.id,
+        "event"
+      );
+
       const event = await prisma.event.update({
         where: {
           id: input.id,
@@ -218,28 +241,13 @@ export const eventRouter = createTRPCRouter({
           eventUrl: input.eventUrl ?? "",
           eventLocation: input.eventLocation ?? "",
           eventType: input.eventType,
-          // duration: input.duration,
           thumbnail: thumbnail,
+          ogImage,
           endTime: input.endTime,
 
           creatorId: ctx.session.user.id,
         },
       });
-
-      const ogImageRes = await axios({
-        url: `https://kroto.in/api/og/event?title=${
-          event?.title ?? ""
-        }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
-          ctx.session.user.name ?? ""
-        }`,
-        responseType: "arraybuffer",
-      });
-
-      const ogImage = await ogImageUpload(
-        ogImageRes.data as AWS.S3.Body,
-        event.id,
-        "event"
-      );
 
       return event;
     }),

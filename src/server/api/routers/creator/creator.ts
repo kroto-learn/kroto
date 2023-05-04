@@ -5,9 +5,12 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { imageUpload } from "@/server/helpers/base64ToS3";
+import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
 import { audienceRouter } from "./audience";
+import axios from "axios";
+import { env } from "@/env.mjs";
+const { NEXTAUTH_URL } = env;
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
@@ -173,6 +176,22 @@ export const creatorRouter = createTRPCRouter({
       if (isBase64(input.image, { allowMime: true }))
         image = await imageUpload(input.image, ctx.session.user.id, "event");
 
+      const ogImageRes = await axios({
+        url: `${NEXTAUTH_URL}/api/og/creator`,
+        responseType: "arraybuffer",
+        params: {
+          name,
+          creatorProfile,
+          image,
+        },
+      });
+
+      const ogImage = await ogImageUpload(
+        ogImageRes.data as AWS.S3.Body,
+        ctx.session.user.id,
+        "creator"
+      );
+
       const user = await prisma.user.update({
         where: {
           id: ctx.session.user.id,
@@ -185,6 +204,7 @@ export const creatorRouter = createTRPCRouter({
           name: name,
           topmateUrl,
           image,
+          ogImage,
         },
       });
 
@@ -202,6 +222,22 @@ export const creatorRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
+      const ogImageRes = await axios({
+        url: `${NEXTAUTH_URL}/api/og/creator`,
+        responseType: "arraybuffer",
+        params: {
+          name: ctx.session.user.name,
+          creatorProfile: input.creatorProfile ?? ctx.session.user.email,
+          image: ctx.session.user.image,
+        },
+      });
+
+      const ogImage = await ogImageUpload(
+        ogImageRes.data as AWS.S3.Body,
+        ctx.session.user.id,
+        "creator"
+      );
+
       const creator = await prisma.user.update({
         where: {
           id: ctx.session.user.id,
@@ -209,6 +245,7 @@ export const creatorRouter = createTRPCRouter({
         data: {
           isCreator: true,
           creatorProfile: input.creatorProfile ?? ctx.session.user.email,
+          ogImage,
         },
       });
 

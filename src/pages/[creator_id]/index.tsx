@@ -22,6 +22,12 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
     creatorProfile,
   });
 
+  const dynamicOgImage = `https://kroto.in/api/og/creator?name=${
+    creator?.name ?? ""
+  }&image=${creator?.image ?? ""}&creatorProfile=${
+    creator?.creatorProfile ?? ""
+  }`;
+
   if (!creator) {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
@@ -48,33 +54,15 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         {/* Google SEO */}
         <meta itemProp="name" content={creator?.name ?? ""} />
         <meta itemProp="description" content={creator?.bio ?? ""} />
-        <meta
-          itemProp="image"
-          content={`https://kroto.in/api/og/creator?name=${
-            creator?.name ?? ""
-          }&image=${creator?.image ?? ""}&creatorProfile=${
-            creator?.creatorProfile ?? ""
-          }`}
-        />
+        <meta itemProp="image" content={creator?.ogImage ?? dynamicOgImage} />
         {/* facebook meta */}
         <meta property="og:title" content={`${creator?.name} | Kroto` ?? ""} />
         <meta property="og:description" content={creator?.bio ?? ""} />
         <meta
           property="og:image"
-          content={`https://kroto.in/api/og/creator?name=${
-            creator?.name ?? ""
-          }&image=${creator?.image ?? ""}&creatorProfile=${
-            creator?.creatorProfile ?? ""
-          }`}
+          content={creator?.ogImage ?? dynamicOgImage}
         />
-        <meta
-          property="image"
-          content={`https://kroto.in/api/og/creator?name=${
-            creator?.name ?? ""
-          }&image=${creator?.image ?? ""}&creatorProfile=${
-            creator?.creatorProfile ?? ""
-          }`}
-        />
+        <meta property="image" content={creator?.ogImage ?? dynamicOgImage} />
         <meta
           property="og:url"
           content={`https://kroto.in/${creator?.creatorProfile ?? ""}`}
@@ -86,11 +74,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         <meta name="twitter:description" content={creator?.bio ?? ""} />
         <meta
           name="twitter:image"
-          content={`https://kroto.in/api/og/creator?name=${
-            creator?.name ?? ""
-          }&image=${creator?.image ?? ""}&creatorProfile=${
-            creator?.creatorProfile ?? ""
-          }`}
+          content={creator?.ogImage ?? dynamicOgImage}
         />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
