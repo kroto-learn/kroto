@@ -15,6 +15,10 @@ import isBase64 from "is-base64";
 import axios from "axios";
 import { sendRegistrationConfirmation } from "@/server/helpers/emailHelper";
 
+const OG_URL = `${
+  process.env.VERCEL ? "https://" : ""
+}${NEXTAUTH_URL}/api/og/event`;
+
 export const eventRouter = createTRPCRouter({
   get: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -153,9 +157,7 @@ export const eventRouter = createTRPCRouter({
        */
       console.log("NEXT_AUTH_URL", NEXTAUTH_URL);
       const ogImageRes = await axios({
-        url: `${
-          process.env.VERCEL ? "https://" : ""
-        }${NEXTAUTH_URL}/api/og/event`,
+        url: OG_URL,
         responseType: "arraybuffer",
         params: {
           title: input.title,
@@ -213,7 +215,7 @@ export const eventRouter = createTRPCRouter({
         thumbnail = await imageUpload(input.thumbnail, input.id, "event");
 
       const ogImageRes = await axios({
-        url: `${NEXTAUTH_URL}/api/og/event`,
+        url: OG_URL,
         responseType: "arraybuffer",
         params: {
           title: input.title,
