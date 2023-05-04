@@ -6,6 +6,9 @@ import handlebars from "handlebars";
 import nodemailer from "nodemailer";
 import fs from "fs";
 import { TRPCError } from "@trpc/server";
+import { env } from "@/env.mjs";
+
+import AWS from "aws-sdk";
 
 const templateSource = fs.readFileSync(
   `${process.cwd()}/templates/base.hbs`,
@@ -26,6 +29,14 @@ const transporter = nodemailer.createTransport({
     pass: "0p9lhegi2q",
   },
 });
+
+const SES_CONFIG = {
+  accessKeyId: env.SES_ACCESS_KEY,
+  secretAccessKey: env.SES_SECRET_KEY,
+  // region: env.AWS_REGION,
+};
+
+const AWS_SES = new AWS.SES(SES_CONFIG);
 
 const sendUpdatePreview = async (
   subject: string,
@@ -196,19 +207,33 @@ const sendCalendarInvite = async (
 
   const html = template(data);
 
-  const mailOptions = {
-    from: "kamal@kroto.in", // sender email
-    to: email, // recipient email
-    subject: `Calendar Invite for ${event?.title ?? "Event"}`,
-    html: html,
-    icalEvent: {
-      method: "REQUEST",
-      content: calendar.toString(),
+  const mailOptions: AWS.SES.SendEmailRequest = {
+    Source: "kamal@kroto.in", // sender email
+    Destination: {
+      ToAddresses: [email],
+    }, // recipient email
+    ReplyToAddresses: [],
+    Message: {
+      Subject: {
+        Charset: "UTF-8",
+        Data: `Calendar Invite for ${event?.title ?? "Event"}`,
+      },
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+        // "calendar_invite.ics": {
+        //   Data: calendar.toString(),
+        //   Charset: "utf-8",
+        //   ContentType: "text/calendar; method=request",
+        // } as AWS.SES.Content,
+      } as AWS.SES.Body,
     },
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await AWS_SES.sendEmail(mailOptions).promise();
   } catch (err) {
     if (err instanceof Error)
       throw new TRPCError({
