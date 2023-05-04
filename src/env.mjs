@@ -32,10 +32,16 @@ const server = z.object({
   GITHUB_CLIENT_SECRET: z.string(),
 
   // AWS
+  AWS_REGION: z.string(),
+
+  // S3
   ACCESS_KEY_ID: z.string(),
   SECRET_ACCESS_KEY: z.string(),
-  AWS_REGION: z.string(),
   S3_BUCKET: z.string(),
+
+  // SES
+  SES_ACCESS_KEY: z.string(),
+  SES_SECRET_KEY: z.string(),
 });
 
 /**
@@ -72,10 +78,17 @@ const processEnv = {
   FACEBOOK_CLIENT_SECRET: process.env.FACEBOOK_CLIENT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 
+  // AWS
+  AWS_REGION: process.env.AWS_REGION,
+
+  // S3
   ACCESS_KEY_ID: process.env.ACCESS_KEY_ID,
   SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY,
-  AWS_REGION: process.env.AWS_REGION,
   S3_BUCKET: process.env.S3_BUCKET,
+
+  // SES
+  SES_ACCESS_KEY: process.env.SES_ACCESS_KEY,
+  SES_SECRET_KEY: process.env.SES_SECRET_KEY,
 };
 
 // Don't touch the part below
