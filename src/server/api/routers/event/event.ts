@@ -1,4 +1,6 @@
 import { z } from "zod";
+import AWS from "aws-sdk";
+import { env } from "@/env.mjs";
 
 import {
   createTRPCRouter,
@@ -7,9 +9,15 @@ import {
 } from "@/server/api/trpc";
 import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
-import { imageUpload } from "@/server/helpers/base64ToS3";
+import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
 import { sendRegistrationConfirmation } from "../email";
+import axios from "axios";
+
+interface ImageUploadResponse {
+  location: string;
+  key: string;
+}
 
 export const eventRouter = createTRPCRouter({
   get: protectedProcedure
@@ -143,6 +151,21 @@ export const eventRouter = createTRPCRouter({
 
       const thumbnail = await imageUpload(input.thumbnail, event.id, "event");
 
+      const ogImageRes = await axios({
+        url: `https://kroto.in/api/og/event?title=${
+          event?.title ?? ""
+        }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
+          ctx.session.user.name ?? ""
+        }`,
+        responseType: "arraybuffer",
+      });
+
+      const ogImage = await ogImageUpload(
+        ogImageRes.data as AWS.S3.Body,
+        event.id,
+        "event"
+      );
+
       const updatedEvent = await prisma.event.update({
         where: {
           id: event.id,
@@ -202,6 +225,21 @@ export const eventRouter = createTRPCRouter({
           creatorId: ctx.session.user.id,
         },
       });
+
+      const ogImageRes = await axios({
+        url: `https://kroto.in/api/og/event?title=${
+          event?.title ?? ""
+        }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
+          ctx.session.user.name ?? ""
+        }`,
+        responseType: "arraybuffer",
+      });
+
+      const ogImage = await ogImageUpload(
+        ogImageRes.data as AWS.S3.Body,
+        event.id,
+        "event"
+      );
 
       return event;
     }),
