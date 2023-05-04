@@ -50,6 +50,7 @@ model User {
   email                 String                  @unique
   emailVerified         DateTime?
   image                 String?
+  ogImage               String?
   creatorProfile        String?                 @unique
   isCreator             Boolean                 @default(false)
   bio                   String?                 @db.Text
@@ -70,6 +71,7 @@ model Event {
   id               String         @id @default(cuid())
   title            String
   thumbnail        String?
+  ogImage          String?
   description      String?        @db.Text
   eventUrl         String?
   eventType        String?

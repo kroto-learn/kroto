@@ -48,33 +48,12 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         {/* Google SEO */}
         <meta itemProp="name" content={creator?.name ?? ""} />
         <meta itemProp="description" content={creator?.bio ?? ""} />
-        <meta
-          itemProp="image"
-          content={`https://kroto.in/api/og/creator?name=${
-            creator?.name ?? ""
-          }&image=${creator?.image ?? ""}&creatorProfile=${
-            creator?.creatorProfile ?? ""
-          }`}
-        />
+        <meta itemProp="image" content={creator?.ogImage ?? ""} />
         {/* facebook meta */}
         <meta property="og:title" content={`${creator?.name} | Kroto` ?? ""} />
         <meta property="og:description" content={creator?.bio ?? ""} />
-        <meta
-          property="og:image"
-          content={`https://kroto.in/api/og/creator?name=${
-            creator?.name ?? ""
-          }&image=${creator?.image ?? ""}&creatorProfile=${
-            creator?.creatorProfile ?? ""
-          }`}
-        />
-        <meta
-          property="image"
-          content={`https://kroto.in/api/og/creator?name=${
-            creator?.name ?? ""
-          }&image=${creator?.image ?? ""}&creatorProfile=${
-            creator?.creatorProfile ?? ""
-          }`}
-        />
+        <meta property="og:image" content={creator?.ogImage ?? ""} />
+        <meta property="image" content={creator?.ogImage ?? ""} />
         <meta
           property="og:url"
           content={`https://kroto.in/${creator?.creatorProfile ?? ""}`}
@@ -84,14 +63,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         {/* twitter meta */}
         <meta name="twitter:title" content={creator?.name ?? ""} />
         <meta name="twitter:description" content={creator?.bio ?? ""} />
-        <meta
-          name="twitter:image"
-          content={`https://kroto.in/api/og/creator?name=${
-            creator?.name ?? ""
-          }&image=${creator?.image ?? ""}&creatorProfile=${
-            creator?.creatorProfile ?? ""
-          }`}
-        />
+        <meta name="twitter:image" content={creator?.ogImage ?? ""} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">

@@ -16,6 +16,7 @@ import {
 import Navbar from "@/components/Navbar";
 import { useSession } from "next-auth/react";
 import { getServerAuthSession } from "@/server/auth";
+import landingOg from "public/landing/og.png";
 
 const Home: NextPage = () => {
   const { status } = useSession();
@@ -25,8 +26,34 @@ const Home: NextPage = () => {
         <title>Kroto - Learn Collectively</title>
         <meta
           name="description"
-          content="Collective learning with the creators you love"
+          content="Collective learning with the creators you love."
         />
+
+        {/* Google SEO */}
+        <meta itemProp="name" content="Kroto - Learn Collectively" />
+        <meta
+          itemProp="description"
+          content="Collective learning with the creators you love."
+        />
+        <meta itemProp="image" content={landingOg.src} />
+        {/* Facebook meta */}
+        <meta property="og:title" content="Kroto - Learn Collectively" />
+        <meta
+          property="og:description"
+          content="Collective learning with the creators you love."
+        />
+        <meta property="og:image" content={landingOg.src} />
+        <meta property="image" content={landingOg.src} />
+        <meta property="og:url" content="https://kroto.in" />
+        <meta property="og:type" content="website" />
+        {/* twitter meta */}
+        <meta name="twitter:title" content="Kroto - Learn Collectively" />
+        <meta
+          name="twitter:description"
+          content="Collective learning with the creators you love."
+        />
+        <meta name="twitter:image" content={landingOg.src} />
+        <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <nav>
         <Navbar status={status} />
