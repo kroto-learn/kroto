@@ -177,7 +177,7 @@ export const creatorRouter = createTRPCRouter({
         image = await imageUpload(input.image, ctx.session.user.id, "event");
 
       const ogImageRes = await axios({
-        url: `${NEXTAUTH_URL}/api/og/creator`,
+        url: `${NEXTAUTH_URL ?? process.env.VERCEL_URL}/api/og/creator`,
         responseType: "arraybuffer",
         params: {
           name,
@@ -223,7 +223,7 @@ export const creatorRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       const ogImageRes = await axios({
-        url: `${NEXTAUTH_URL}/api/og/creator`,
+        url: `${NEXTAUTH_URL ?? process.env.VERCEL_URL}/api/og/creator`,
         responseType: "arraybuffer",
         params: {
           name: ctx.session.user.name,
