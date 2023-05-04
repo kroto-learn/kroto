@@ -22,6 +22,12 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
     creatorProfile,
   });
 
+  const dynamicOgImage = `https://kroto.in/api/og/creator?name=${
+    creator?.name ?? ""
+  }&image=${creator?.image ?? ""}&creatorProfile=${
+    creator?.creatorProfile ?? ""
+  }`;
+
   if (!creator) {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
@@ -48,12 +54,15 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         {/* Google SEO */}
         <meta itemProp="name" content={creator?.name ?? ""} />
         <meta itemProp="description" content={creator?.bio ?? ""} />
-        <meta itemProp="image" content={creator?.ogImage ?? ""} />
+        <meta itemProp="image" content={creator?.ogImage ?? dynamicOgImage} />
         {/* facebook meta */}
         <meta property="og:title" content={`${creator?.name} | Kroto` ?? ""} />
         <meta property="og:description" content={creator?.bio ?? ""} />
-        <meta property="og:image" content={creator?.ogImage ?? ""} />
-        <meta property="image" content={creator?.ogImage ?? ""} />
+        <meta
+          property="og:image"
+          content={creator?.ogImage ?? dynamicOgImage}
+        />
+        <meta property="image" content={creator?.ogImage ?? dynamicOgImage} />
         <meta
           property="og:url"
           content={`https://kroto.in/${creator?.creatorProfile ?? ""}`}
@@ -63,7 +72,10 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         {/* twitter meta */}
         <meta name="twitter:title" content={creator?.name ?? ""} />
         <meta name="twitter:description" content={creator?.bio ?? ""} />
-        <meta name="twitter:image" content={creator?.ogImage ?? ""} />
+        <meta
+          name="twitter:image"
+          content={creator?.ogImage ?? dynamicOgImage}
+        />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
