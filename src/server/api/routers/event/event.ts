@@ -11,13 +11,13 @@ import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
 import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
-import { sendRegistrationConfirmation } from "../email";
 import axios from "axios";
 
 interface ImageUploadResponse {
   location: string;
   key: string;
 }
+import { sendRegistrationConfirmation } from "@/server/helpers/emailHelper";
 
 export const eventRouter = createTRPCRouter({
   get: protectedProcedure
@@ -151,6 +151,10 @@ export const eventRouter = createTRPCRouter({
 
       const thumbnail = await imageUpload(input.thumbnail, event.id, "event");
 
+      /* Don't use axios, make the api end point a function,
+       * and call it if needed from /pages/api/og and here we
+       * can just use the function.
+       */
       const ogImageRes = await axios({
         url: `https://kroto.in/api/og/event?title=${
           event?.title ?? ""
