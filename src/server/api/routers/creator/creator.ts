@@ -9,6 +9,8 @@ import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
 import { audienceRouter } from "./audience";
 import axios from "axios";
+import { env } from "@/env.mjs";
+const { NEXTAUTH_URL } = env;
 
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
@@ -175,7 +177,7 @@ export const creatorRouter = createTRPCRouter({
         image = await imageUpload(input.image, ctx.session.user.id, "event");
 
       const ogImageRes = await axios({
-        url: `/api/og/creator`,
+        url: `${NEXTAUTH_URL}/api/og/creator`,
         responseType: "arraybuffer",
         params: {
           name,
@@ -221,7 +223,7 @@ export const creatorRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       const ogImageRes = await axios({
-        url: `/api/og/creator`,
+        url: `${NEXTAUTH_URL}/api/og/creator`,
         responseType: "arraybuffer",
         params: {
           name: ctx.session.user.name,
