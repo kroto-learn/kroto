@@ -1,5 +1,7 @@
 import { z } from "zod";
 import type AWS from "aws-sdk";
+import { env } from "@/env.mjs";
+const { NEXTAUTH_URL } = env;
 
 import {
   createTRPCRouter,
@@ -150,7 +152,7 @@ export const eventRouter = createTRPCRouter({
        * can just use the function.
        */
       const ogImageRes = await axios({
-        url: `/api/og/event`,
+        url: `${NEXTAUTH_URL}/api/og/event`,
         responseType: "arraybuffer",
         params: {
           title: input.title,
@@ -208,7 +210,7 @@ export const eventRouter = createTRPCRouter({
         thumbnail = await imageUpload(input.thumbnail, input.id, "event");
 
       const ogImageRes = await axios({
-        url: `/api/og/event`,
+        url: `${NEXTAUTH_URL}/api/og/event`,
         responseType: "arraybuffer",
         params: {
           title: input.title,
