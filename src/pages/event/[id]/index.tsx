@@ -68,6 +68,12 @@ export default function EventPage({ eventId }: Props) {
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
     api.email.sendCalendarInvite.useMutation();
 
+  const dynamicOgImage = `https://kroto.in/api/og/event?title=${
+    event?.title ?? ""
+  }&datetime=${event?.datetime?.getTime() ?? 0}&host=${
+    event?.creator?.name ?? ""
+  }`;
+
   return (
     <Layout>
       <Head>
@@ -77,12 +83,12 @@ export default function EventPage({ eventId }: Props) {
         {/* Google SEO */}
         <meta itemProp="name" content={event?.title ?? ""} />
         <meta itemProp="description" content={event?.description ?? ""} />
-        <meta itemProp="image" content={event?.ogImage ?? ""} />
+        <meta itemProp="image" content={event?.ogImage ?? dynamicOgImage} />
         {/* Facebook meta */}
         <meta property="og:title" content={event?.title ?? ""} />
         <meta property="og:description" content={event?.description ?? ""} />
-        <meta property="og:image" content={event?.ogImage ?? ""} />
-        <meta property="image" content={event?.ogImage ?? ""} />
+        <meta property="og:image" content={event?.ogImage ?? dynamicOgImage} />
+        <meta property="image" content={event?.ogImage ?? dynamicOgImage} />
         <meta
           property="og:url"
           content={`https://kroto.in/event/${event?.id ?? ""}`}
@@ -91,7 +97,7 @@ export default function EventPage({ eventId }: Props) {
         {/* twitter meta */}
         <meta name="twitter:title" content={event?.title ?? ""} />
         <meta name="twitter:description" content={event?.description ?? ""} />
-        <meta name="twitter:image" content={event?.ogImage ?? ""} />
+        <meta name="twitter:image" content={event?.ogImage ?? dynamicOgImage} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <main className="-mt-10 flex h-full min-h-screen w-full flex-col items-center gap-8 overflow-x-hidden py-12">
