@@ -151,8 +151,11 @@ export const eventRouter = createTRPCRouter({
        * and call it if needed from /pages/api/og and here we
        * can just use the function.
        */
+      console.log("NEXT_AUTH_URL", NEXTAUTH_URL);
       const ogImageRes = await axios({
-        url: `${NEXTAUTH_URL}/api/og/event`,
+        url: `${
+          process.env.VERCEL ? "https://" : ""
+        }${NEXTAUTH_URL}/api/og/event`,
         responseType: "arraybuffer",
         params: {
           title: input.title,
