@@ -31,6 +31,8 @@ const server = z.object({
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
 
+  NEXT_PUBLIC_MIXPANEL_ID: z.string(),
+
   // AWS
   AWS_REGION: z.string(),
 
@@ -76,7 +78,8 @@ const processEnv = {
 
   FACEBOOK_CLIENT_ID: process.env.FACEBOOK_CLIENT_ID,
   FACEBOOK_CLIENT_SECRET: process.env.FACEBOOK_CLIENT_SECRET,
-  // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+
+  NEXT_PUBLIC_MIXPANEL_ID: process.env.NEXT_PUBLIC_MIXPANEL_ID,
 
   // AWS
   AWS_REGION: process.env.AWS_REGION,
