@@ -13,7 +13,7 @@ import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 import GithubProvider from "next-auth/providers/github";
-import { type DefaultJWT } from "next-auth/jwt";
+import type { DefaultJWT } from "next-auth/jwt";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -78,7 +78,9 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       authorization: {
-        params: { scope: "https://www.googleapis.com/auth/youtube.readonly" },
+        params: {
+          scope: "openid https://www.googleapis.com/auth/youtube.readonly",
+        },
       },
     }),
     FacebookProvider({

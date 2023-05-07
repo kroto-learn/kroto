@@ -10,6 +10,7 @@ import isBase64 from "is-base64";
 import { audienceRouter } from "./audience";
 import axios from "axios";
 import { env } from "@/env.mjs";
+import { getToken } from "next-auth/jwt";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -34,6 +35,7 @@ export const creatorRouter = createTRPCRouter({
         include: {
           socialLinks: true,
           testimonials: true,
+          accounts: true,
           events: {
             where: {
               endTime: {
@@ -43,6 +45,25 @@ export const creatorRouter = createTRPCRouter({
           },
         },
       });
+
+      try {
+        const response = await axios.get(
+          "https://www.googleapis.com/youtube/v3/playlists",
+          {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${ctx.session?.user.token ?? ""}`,
+            },
+            params: {
+              mine: true,
+            },
+          }
+        );
+        console.log(response);
+      } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        console.log(e);
+      }
 
       return creator;
     }),
