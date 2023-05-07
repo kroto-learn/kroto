@@ -18,6 +18,9 @@ import UserPlusIcon from "@heroicons/react/20/solid/UserPlusIcon";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChalkboardTeacher } from "@fortawesome/free-solid-svg-icons";
+
 export default function Dashboard() {
   return <div />;
 }
@@ -94,6 +97,28 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
             </>
           )}
           <div className="flex w-full flex-grow flex-col items-center">
+            <Link
+              href="/creator/dashboard/courses"
+              className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+                pathname && pathname.startsWith("/creator/dashboard/course")
+                  ? "text-pink-500"
+                  : "hover:text-neutral-200"
+              }`}
+            >
+              <span className="w-1/3" />
+              <div className="flex  w-full items-center gap-2">
+                <FontAwesomeIcon icon={faChalkboardTeacher} />
+
+                <span className="hidden md:block">Courses</span>
+              </div>
+              <span
+                className={`h-full w-1 rounded-l-lg bg-pink-600 ${
+                  pathname && pathname.startsWith("/creator/dashboard/course")
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              />
+            </Link>
             <Link
               href="/creator/dashboard/events"
               className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
