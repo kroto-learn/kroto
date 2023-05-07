@@ -44,6 +44,9 @@ const server = z.object({
   // SES
   SES_ACCESS_KEY: z.string(),
   SES_SECRET_KEY: z.string(),
+
+  // YouTube
+  YOUTUBE_API_KEY: z.string(),
 });
 
 /**
@@ -92,6 +95,9 @@ const processEnv = {
   // SES
   SES_ACCESS_KEY: process.env.SES_ACCESS_KEY,
   SES_SECRET_KEY: process.env.SES_SECRET_KEY,
+
+  // YouTube
+  YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
 };
 
 // Don't touch the part below

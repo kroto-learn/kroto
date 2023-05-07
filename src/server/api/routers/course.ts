@@ -5,6 +5,10 @@ import {
   protectedProcedure,
 } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import {
+  getPlaylistDataService,
+  searchYoutubePlaylistsService,
+} from "@/server/services/youtube";
 
 export const courseRouter = createTRPCRouter({
   get: protectedProcedure
@@ -51,7 +55,7 @@ export const courseRouter = createTRPCRouter({
 
       const courseBlocks = [...courseBlockVideos, ...courseBlockMds];
 
-      courseBlocks.sort((a, b) => a.index - b.index);
+      courseBlocks.sort((a, b) => a.position - b.position);
 
       return { ...course, courseBlocks };
     }),
@@ -67,6 +71,28 @@ export const courseRouter = createTRPCRouter({
 
     return courses;
   }),
+
+  searchYoutubePlaylists: protectedProcedure
+    .input(z.object({ searchQuery: z.string() }))
+    .query(async ({ ctx, input }) => {
+      if (!ctx.session.user.token)
+        return new TRPCError({ code: "BAD_REQUEST" });
+
+      const playlists = await searchYoutubePlaylistsService({
+        searchQuery: input.searchQuery,
+        accessToken: ctx.session.user.token,
+      });
+
+      return playlists;
+    }),
+
+  getYoutubePlaylist: publicProcedure
+    .input(z.object({ playlistId: z.string() }))
+    .query(async ({ input }) => {
+      const playlist = await getPlaylistDataService(input.playlistId);
+
+      return playlist;
+    }),
 
   // create: protectedProcedure
   //   .input(createFormSchema)
