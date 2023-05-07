@@ -18,9 +18,18 @@ import { useSession } from "next-auth/react";
 import { getServerAuthSession } from "@/server/auth";
 import landingOg from "public/landing/og.png";
 import Footer from "@/components/Footer";
+import { MixPannelTracking } from "@/analytics/mixpanel";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
   const { status } = useSession();
+
+  useEffect(() => {
+    MixPannelTracking.getInstance().pageViewed({
+      pagePath: "/",
+    });
+  }, []);
+
   return (
     <>
       <Head>

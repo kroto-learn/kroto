@@ -1,7 +1,12 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import { sendCalendarInvite, sendEventStarted, sendEventUpdate, sendUpdatePreview } from "@/server/helpers/emailHelper";
+import {
+  sendCalendarInvite,
+  sendEventStarted,
+  sendEventUpdate,
+  sendUpdatePreview,
+} from "@/server/helpers/emailHelper";
 
 export const emailRouter = createTRPCRouter({
   sendCalendarInvite: protectedProcedure
@@ -69,12 +74,13 @@ export const emailRouter = createTRPCRouter({
       });
 
       // This bad.
-      for (const registration of registrations) {
-        try {
-          await sendEventStarted(event, registration.email, registration.name);
-        } catch (e) {
-          console.log(e);
-        }
+      try {
+        await sendEventStarted(
+          event,
+          registrations.map((r) => r.email)
+        );
+      } catch (e) {
+        console.log(e);
       }
     }),
 

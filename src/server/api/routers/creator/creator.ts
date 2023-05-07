@@ -12,6 +12,10 @@ import axios from "axios";
 import { env } from "@/env.mjs";
 const { NEXTAUTH_URL } = env;
 
+const OG_URL = `${
+  process.env.VERCEL ? "https://" : ""
+}${NEXTAUTH_URL}/api/og/creator`;
+
 export const creatorRouter = createTRPCRouter({
   getPublicProfile: publicProcedure
     .input(
@@ -177,7 +181,7 @@ export const creatorRouter = createTRPCRouter({
         image = await imageUpload(input.image, ctx.session.user.id, "event");
 
       const ogImageRes = await axios({
-        url: `${NEXTAUTH_URL}/api/og/creator`,
+        url: OG_URL,
         responseType: "arraybuffer",
         params: {
           name,
@@ -223,7 +227,7 @@ export const creatorRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       const ogImageRes = await axios({
-        url: `${NEXTAUTH_URL}/api/og/creator`,
+        url: OG_URL,
         responseType: "arraybuffer",
         params: {
           name: ctx.session.user.name,
