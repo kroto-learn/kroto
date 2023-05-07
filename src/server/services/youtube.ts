@@ -1,10 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import axios from "axios";
 import { env } from "@/env.mjs";
 const { YOUTUBE_API_KEY } = env;
+
+const apiEndpoint = "https://www.googleapis.com/youtube/v3/playlists";
 
 export const searchYoutubePlaylistsService = async ({
   searchQuery,
@@ -14,13 +15,12 @@ export const searchYoutubePlaylistsService = async ({
   accessToken: string;
 }) => {
   try {
-    const apiEndpoint = "https://www.googleapis.com/youtube/v3/playlists";
-
     const res = await axios.get(apiEndpoint, {
       params: {
         part: "snippet,status,contentDetails",
         maxResults: 10,
         mine: true,
+        q: searchQuery,
         key: YOUTUBE_API_KEY,
         type: "playlist",
       },
@@ -38,16 +38,6 @@ export const searchYoutubePlaylistsService = async ({
             item.status.privacyStatus === "public" ||
             item.status.privacyStatus === "unlisted"
         )
-        .filter((item) => {
-          return (
-            item.snippet.title
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()) ||
-            item.snippet.description
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
-          );
-        })
         .map((item) => ({
           title: item.snippet.title as string,
           thumbnail: item.snippet.thumbnails.high.url as string,
@@ -103,26 +93,20 @@ export const getPlaylistDataService = async (id: string) => {
       playlistItemsConfig
     );
 
-    const videos: {
-      title: string;
-      thumbnail: string;
-      videoUrl: string;
-      ytId: string;
-    }[] = playlistItemsResponse?.data?.items?.map((video: any) => {
-      const videoTitle = video.snippet.title;
-      const videoThumbnail = video.snippet.thumbnails.high.url;
-      const videoUrl = `https://www.youtube.com/watch?v=${
-        video.snippet.resourceId.videoId as string
-      }`;
-      const videoId = video.id;
+    const videos: { title: string; thumbnail: string; videoUrl: string }[] =
+      playlistItemsResponse?.data?.items?.map((video: any) => {
+        const videoTitle = video.snippet.title;
+        const videoThumbnail = video.snippet.thumbnails.high.url;
+        const videoUrl = `https://www.youtube.com/watch?v=${
+          video.snippet.resourceId.videoId as string
+        }`;
 
-      return {
-        title: videoTitle,
-        thumbnail: videoThumbnail,
-        videoUrl,
-        ytId: videoId,
-      };
-    });
+        return {
+          title: videoTitle,
+          thumbnail: videoThumbnail,
+          videoUrl,
+        };
+      });
 
     return {
       title: playlistTitle,

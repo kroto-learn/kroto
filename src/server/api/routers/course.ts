@@ -9,7 +9,6 @@ import {
   getPlaylistDataService,
   searchYoutubePlaylistsService,
 } from "@/server/services/youtube";
-import { importCourseFormSchema } from "@/pages/course/import";
 
 export const courseRouter = createTRPCRouter({
   get: protectedProcedure
@@ -101,6 +100,27 @@ export const courseRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       if (!ctx.session.user.token)
         return new TRPCError({ code: "BAD_REQUEST" });
+
+      const playlists = await searchYoutubePlaylistsService({
+        searchQuery: input.searchQuery,
+        accessToken: ctx.session.user.token,
+      });
+
+      return playlists;
+    }),
+
+  getYoutubePlaylist: publicProcedure
+    .input(z.object({ playlistId: z.string() }))
+    .query(async ({ input }) => {
+      const playlist = await getPlaylistDataService(input.playlistId);
+
+      return playlist;
+    }),
+
+  // create: protectedProcedure
+  //   .input(createFormSchema)
+  //   .mutation(async ({ input, ctx }) => {
+  //     const { prisma } = ctx;
 
       const playlists = await searchYoutubePlaylistsService({
         searchQuery: input.searchQuery,

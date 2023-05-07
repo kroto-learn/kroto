@@ -99,9 +99,6 @@ const processEnv = {
   SES_SECRET_KEY: process.env.SES_SECRET_KEY,
   SES_SMTP_USERNAME: process.env.SES_SMTP_USERNAME,
   SES_SMTP_PASSWORD: process.env.SES_SMTP_PASSWORD,
-
-  // YouTube
-  YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
 };
 
 // Don't touch the part below
