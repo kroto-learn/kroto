@@ -61,7 +61,6 @@ export const creatorRouter = createTRPCRouter({
         );
         console.log(response.data);
       } catch (e) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         console.log(e);
       }
 
