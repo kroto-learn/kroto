@@ -10,7 +10,6 @@ import isBase64 from "is-base64";
 import { audienceRouter } from "./audience";
 import axios from "axios";
 import { env } from "@/env.mjs";
-import { getToken } from "next-auth/jwt";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
