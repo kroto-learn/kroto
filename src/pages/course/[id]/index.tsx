@@ -2,7 +2,8 @@ import { Loader } from "@/components/Loader";
 import Layout from "@/components/layouts/main";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
-import { ArrowRightIcon, PlayIcon } from "@heroicons/react/20/solid";
+import { PlayIcon } from "@heroicons/react/20/solid";
+import { TRPCError } from "@trpc/server";
 import { type GetStaticPropsContext } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -15,6 +16,8 @@ type Props = {
 
 const Index = ({ courseId }: Props) => {
   const { data: course } = api.course.getCourse.useQuery({ id: courseId });
+
+  if (course instanceof TRPCError) return <>Not found</>;
 
   return (
     <Layout>
@@ -45,8 +48,8 @@ const Index = ({ courseId }: Props) => {
         /> */}
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <main className="mx-auto -mt-10 flex h-[98vh] w-full max-w-4xl gap-4 overflow-x-hidden py-12">
-        <div className="flex h-full w-[30rem] flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-600 via-neutral-700 to-transparent p-4 backdrop-blur-sm">
+      <main className="mx-auto mb-8 mt-16 flex h-[80vh] w-full max-w-4xl gap-4 overflow-x-hidden">
+        <div className="flex h-full w-[30rem] flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm">
           <div className="relative mb-2 aspect-video w-full content-center overflow-hidden rounded-xl">
             <Image
               src={course?.thumbnail ?? ""}
@@ -90,10 +93,30 @@ const Index = ({ courseId }: Props) => {
           <p className="text-sm text-neutral-300">{course?.description}</p>
         </div>
         <div className="flex w-full flex-col gap-2">
-          {course?.CourseBlockVideos.map((cbv) => (
-            <h4 key={cbv.id} className="text-xl font-semibold">
-              {cbv.title}
-            </h4>
+          {course?.courseBlocks.map((courseBlock, index) => (
+            <Link
+              href={`/course/${course?.id}`}
+              className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
+              key={courseBlock.id}
+            >
+              <p className="text-sm text-neutral-300">{index + 1}</p>
+              <div className="relative mb-2 aspect-video w-40 content-center overflow-hidden rounded-lg">
+                <Image
+                  src={course?.thumbnail ?? ""}
+                  alt={course?.title ?? ""}
+                  fill
+                />
+              </div>
+              <div className="flex h-full w-full flex-col gap-1">
+                <h5 className="font-medium">{courseBlock.title}</h5>
+                <Link
+                  href={`/${course?.creator.creatorProfile ?? ""}`}
+                  className="text-xs text-neutral-400 duration-150 hover:text-neutral-300 hover:underline"
+                >
+                  {course?.creator.name}
+                </Link>
+              </div>
+            </Link>
           ))}
         </div>
       </main>

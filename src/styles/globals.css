@@ -92,11 +92,11 @@ select:-webkit-autofill {
   }
 
   *:not(table)::-webkit-scrollbar-thumb {
-    background: #ffffff55;
+    background: #ffffff2e;
   }
 
   *:not(table)::-webkit-scrollbar-thumb:hover {
-    background: #ffffff89;
+    background: #ffffff53;
   }
 
   ::-webkit-scrollbar-corner {

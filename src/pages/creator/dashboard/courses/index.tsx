@@ -2,13 +2,8 @@ import Link from "next/link";
 import { DashboardLayout } from "..";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
-import { api } from "@/utils/api";
 
 const Index = () => {
-  const { data: ytplaylist } = api.course.getYoutubePlaylists.useQuery({
-    query: "",
-  });
-
   return (
     <>
       <Head>
