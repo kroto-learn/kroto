@@ -4,6 +4,7 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 
 export const courseRouter = createTRPCRouter({
   get: protectedProcedure
@@ -35,11 +36,21 @@ export const courseRouter = createTRPCRouter({
         },
         include: {
           creator: true,
-          CourseBlockVideo: true,
+          courseBlockMds: true,
+          courseBlockVideos: true,
         },
       });
 
-      return course;
+      if (!course) return new TRPCError({ code: "NOT_FOUND" });
+
+      const courseBlocks = [
+        ...course.courseBlockMds,
+        ...course.courseBlockVideos,
+      ];
+
+      courseBlocks.sort((a, b) => a.index - b.index);
+
+      return { ...course, courseBlocks };
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
