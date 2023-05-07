@@ -7,7 +7,6 @@ import Image from "next/image";
 import Layout from "@/components/layouts/main";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
-// import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { ClaimLinkBanner } from "..";
 import Link from "next/link";
 import { GlobeAltIcon } from "@heroicons/react/20/solid";
@@ -70,20 +69,6 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-            {/* <div className="flex flex-col gap-3">
-              <button
-                className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-2 text-center font-medium text-neutral-200 transition duration-300 hover:bg-neutral-800`}
-              >
-                <MdAccountCircle />
-                Account
-              </button>
-              <button
-                className={`group inline-flex items-center gap-1 rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-2 text-center font-medium text-neutral-200 transition duration-300 hover:bg-neutral-800`}
-              >
-                <MdSubscriptions />
-              Subscriptions
-              </button>
-            </div> */}
           </div>
         </div>
         <div className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8">
@@ -160,66 +145,6 @@ export default function Dashboard() {
           )}
         </div>
         <ClaimLinkBanner />
-        {/* <div> */}
-        {/*   <h3 className="mb-5 text-2xl font-medium text-neutral-300"> */}
-        {/*     Discover Creators */}
-        {/*   </h3> */}
-        {/*   <div> */}
-        {/*     <form */}
-        {/*       onSubmit={(e) => { */}
-        {/*         e.preventDefault(); */}
-        {/*         setSearchQuery(inputValue); */}
-        {/*       }} */}
-        {/*     > */}
-        {/*       <label className="sr-only mb-2 text-sm font-medium dark:text-white"> */}
-        {/*         Search */}
-        {/*       </label> */}
-        {/*       <div className="relative"> */}
-        {/*         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"> */}
-        {/*           <MagnifyingGlassIcon className="w-5" /> */}
-        {/*         </div> */}
-        {/*         <input */}
-        {/*           type="search" */}
-        {/*           id="default-search" */}
-        {/*           className="block w-full rounded-xl border border-neutral-800 bg-neutral-900 p-4 pl-10 text-sm placeholder-neutral-400 outline-none ring-transparent transition hover:border-neutral-600 focus:border-neutral-500 focus:ring-neutral-500 active:outline-none active:ring-transparent" */}
-        {/*           placeholder="Search for you favorite creators..." */}
-        {/*           onChange={(e) => setInputValue(e.target.value)} */}
-        {/*         /> */}
-        {/*         <button */}
-        {/*           type="submit" */}
-        {/*           className="absolute bottom-2.5 right-2.5 rounded-xl bg-pink-600 px-6 py-2 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-pink-800 " */}
-        {/*         > */}
-        {/*           Search */}
-        {/*         </button> */}
-        {/*       </div> */}
-        {/*     </form> */}
-        {/*     <div> */}
-        {/*       {searchQuery === "" ? ( */}
-        {/*         creators?.map((c) => <CreatorCard key={c.id} creator={c} />) */}
-        {/*       ) : ( */}
-        {/*         <div className="my-5 flex flex-col items-center justify-center rounded-xl border border-neutral-800 bg-neutral-900 p-5"> */}
-        {/*           <h4 className="max-w-md text-center text-2xl text-neutral-400"> */}
-        {/*             Hang in there, */}
-        {/*           </h4> */}
-        {/*           <div className="relative aspect-square h-56"> */}
-        {/*             <Image */}
-        {/*               width={80} */}
-        {/*               height={80} */}
-        {/*               className="h-56" */}
-        {/*               src="/CatWorkingHard.png" */}
-        {/*               fill */}
-        {/*               alt="hard working cat" */}
-        {/*             /> */}
-        {/*           </div> */}
-        {/*           <h4 className="max-w-md text-center text-2xl text-neutral-400"> */}
-        {/*             We&apos;re working really hard to get more creators on */}
-        {/*             board. */}
-        {/*           </h4> */}
-        {/*         </div> */}
-        {/*       )} */}
-        {/*     </div> */}
-        {/*   </div> */}
-        {/* </div> */}
       </div>
     </Layout>
   );

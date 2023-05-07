@@ -34,6 +34,7 @@ export const creatorRouter = createTRPCRouter({
         include: {
           socialLinks: true,
           testimonials: true,
+          accounts: true,
           events: {
             where: {
               endTime: {
@@ -43,6 +44,24 @@ export const creatorRouter = createTRPCRouter({
           },
         },
       });
+
+      try {
+        const response = await axios.get(
+          "https://www.googleapis.com/youtube/v3/playlists",
+          {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${ctx.session?.user.token ?? ""}`,
+            },
+            params: {
+              mine: true,
+            },
+          }
+        );
+        console.log(response.data);
+      } catch (e) {
+        console.log(e);
+      }
 
       return creator;
     }),
