@@ -22,11 +22,12 @@ const registration = handlebars.compile(registrationSource);
 const template = handlebars.compile(templateSource);
 
 const transporter = nodemailer.createTransport({
-  host: "smtpout.secureserver.net",
+  host: "email-smtp.us-east-1.amazonaws.com",
   port: 465,
+  secure: true,
   auth: {
-    user: "kamal@kroto.in",
-    pass: "0p9lhegi2q",
+    user: env.SES_SMTP_USERNAME,
+    pass: env.SES_SMTP_PASSWORD,
   },
 });
 
@@ -54,15 +55,27 @@ const sendUpdatePreview = async (
 
   const html = template(data);
 
-  const mailOptions = {
-    from: "kamal@kroto.in", // sender email
-    to: email, // recipient email
-    subject: subject,
-    html: html,
+  const mailOptions: AWS.SES.SendEmailRequest = {
+    Source: "kamal@kroto.in", // sender email
+    Destination: {
+      ToAddresses: [email],
+    }, // recipient email
+    Message: {
+      Subject: {
+        Charset: "UTF-8",
+        Data: subject,
+      },
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+      },
+    },
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await AWS_SES.sendEmail(mailOptions).promise();
   } catch (err) {
     if (err instanceof Error)
       throw new TRPCError({
@@ -88,15 +101,27 @@ const sendEventUpdate = async (
 
   const html = template(data);
 
-  const mailOptions = {
-    from: "rosekamallove@gmail.com", // sender email
-    to: email, // recipient email
-    subject: subject,
-    html: html,
+  const mailOptions: AWS.SES.SendEmailRequest = {
+    Source: "kamal@kroto.in", // sender email
+    Destination: {
+      ToAddresses: email,
+    }, // recipient email
+    Message: {
+      Subject: {
+        Charset: "UTF-8",
+        Data: subject,
+      },
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+      },
+    },
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await AWS_SES.sendEmail(mailOptions).promise();
   } catch (err) {
     if (err instanceof Error)
       throw new TRPCError({
@@ -106,31 +131,43 @@ const sendEventUpdate = async (
   }
 };
 
-const sendEventStarted = async (event: Event, email: string, name: string) => {
+const sendEventStarted = async (event: Event, email: string[]) => {
   const data = {
     title: event?.title ?? "",
     heading: `${event?.title ?? "Event"} has started 🥳`,
     content: `
-  <p>Hi ${name},</p>
-<p>Thank you for registering to <a href=https://kroto.in/event/${
-      event?.id ?? ""
-    }>${event?.title ?? "this event"}</a>. We are glad to have you here. </p>
-<p>Then event has started. Please join the event by clicking on the link below</p>
-<a href=https://kroto.in/event/${event?.eventUrl ?? ""}>Join Event</a>
+  <p>Hi,</p>
+  <p>Thank you for registering to <a href=https://kroto.in/event/${
+    event?.id ?? ""
+  }>${event?.title ?? "this event"}</a>. We are glad to have you here. </p>
+  <p>Then event has started. Please join the event by clicking on the link below</p>
+  <a href=https://kroto.in/event/${event?.eventUrl ?? ""}>Join Event</a>
 `,
   };
 
   const html = template(data);
 
-  const mailOptions = {
-    from: "kamal@kroto.in", // sender email
-    to: email, // recipient email
-    subject: `${event?.title ?? "Event"} has started 🥳`,
-    html: html,
+  const mailOptions: AWS.SES.SendEmailRequest = {
+    Source: "kamal@kroto.in", // sender email
+    Destination: {
+      ToAddresses: email,
+    }, // recipient email
+    Message: {
+      Subject: {
+        Charset: "UTF-8",
+        Data: `${event?.title ?? "Event"} has started party 🥳`,
+      },
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+      },
+    },
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await AWS_SES.sendEmail(mailOptions).promise();
   } catch (err) {
     if (err instanceof Error)
       throw new TRPCError({
@@ -158,15 +195,28 @@ const sendRegistrationConfirmation = async (
 
   const html = registration(data);
 
-  const mailOptions = {
-    from: "kamal@kroto.in", // sender email
-    to: email, // recipient email
-    subject: `Registration confirmation for ${event?.title ?? "Event"}`,
-    html: html,
+  const mailOptions: AWS.SES.SendEmailRequest = {
+    Source: "kamal@kroto.in", // sender email
+    Destination: {
+      ToAddresses: [email],
+    }, // recipient email
+    ReplyToAddresses: [creator?.email ?? ""],
+    Message: {
+      Subject: {
+        Charset: "UTF-8",
+        Data: `Registration confirmation for ${event?.title ?? "Event"}`,
+      },
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+      },
+    },
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await AWS_SES.sendEmail(mailOptions).promise();
   } catch (err) {
     if (err instanceof Error)
       throw new TRPCError({
@@ -200,6 +250,8 @@ const sendCalendarInvite = async (
     heading: `Calendar invite for ${event?.title ?? "Event"}`,
     content: `To add invites to the calendar of your preferrence, please open any of the <b>following attachment</b> 
       and it will redirect you to the calendar invite page for your calendar app \n \n \n 
+      </br>
+      </br>
       Thank your so much for registering to <a href=https://kroto.in/event/${
         event?.id ?? ""
       }>${event?.title ?? "this event"}</a> :)`,
@@ -207,33 +259,19 @@ const sendCalendarInvite = async (
 
   const html = template(data);
 
-  const mailOptions: AWS.SES.SendEmailRequest = {
-    Source: "kamal@kroto.in", // sender email
-    Destination: {
-      ToAddresses: [email],
-    }, // recipient email
-    ReplyToAddresses: [],
-    Message: {
-      Subject: {
-        Charset: "UTF-8",
-        Data: `Calendar Invite for ${event?.title ?? "Event"}`,
-      },
-      Body: {
-        Html: {
-          Charset: "UTF-8",
-          Data: html,
-        },
-        // "calendar_invite.ics": {
-        //   Data: calendar.toString(),
-        //   Charset: "utf-8",
-        //   ContentType: "text/calendar; method=request",
-        // } as AWS.SES.Content,
-      } as AWS.SES.Body,
+  const mailOptions = {
+    from: "kamal@kroto.in", // sender email
+    to: email, // recipient email
+    subject: `Calendar Invite for ${event?.title ?? "Event"}`,
+    html: html,
+    icalEvent: {
+      method: "REQUEST",
+      content: calendar.toString(),
     },
   };
 
   try {
-    await AWS_SES.sendEmail(mailOptions).promise();
+    await transporter.sendMail(mailOptions);
   } catch (err) {
     if (err instanceof Error)
       throw new TRPCError({

@@ -44,6 +44,8 @@ const server = z.object({
   // SES
   SES_ACCESS_KEY: z.string(),
   SES_SECRET_KEY: z.string(),
+  SES_SMTP_USERNAME: z.string(),
+  SES_SMTP_PASSWORD: z.string(),
 });
 
 /**
@@ -92,6 +94,9 @@ const processEnv = {
   // SES
   SES_ACCESS_KEY: process.env.SES_ACCESS_KEY,
   SES_SECRET_KEY: process.env.SES_SECRET_KEY,
+
+  SES_SMTP_USERNAME: process.env.SES_SMTP_USERNAME,
+  SES_SMTP_PASSWORD: process.env.SES_SMTP_PASSWORD,
 };
 
 // Don't touch the part below
