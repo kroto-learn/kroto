@@ -59,12 +59,15 @@ model User {
   sessions              Session[]
   socialLinks           SocialLink[]
   events                Event[]
+  courses               Course[]
   registrations         Registration[]
   audienceMembers       AudienceMember[]
   host                  Host[]
   feedbacks             Feedback[]
   testimonials          Testimonial[]
   importedAudieceMember ImportedAudieceMember[]
+  CourseBlockVideo      CourseBlockVideo[]
+  CourseBlockMd         CourseBlockMd[]
 }
 
 model Event {
@@ -93,11 +96,12 @@ model Event {
 }
 
 model Host {
-  id      String @id @default(cuid())
-  eventId String
-  userId  String
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Event   Event  @relation(fields: [eventId], references: [id])
+  id       String  @id @default(cuid())
+  eventId  String
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Event    Event   @relation(fields: [eventId], references: [id])
+  courseId String?
 
   @@unique([eventId, userId])
   @@index([eventId])
@@ -132,11 +136,12 @@ model ImportedAudieceMember {
 }
 
 model Registration {
-  id      String @id @default(cuid())
-  eventId String
-  userId  String
-  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       String  @id @default(cuid())
+  eventId  String
+  userId   String
+  event    Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String?
 
   @@unique([eventId, userId])
   @@index([eventId])
@@ -163,13 +168,14 @@ model VerificationToken {
 }
 
 model Feedback {
-  id      String @id @default(cuid())
-  rating  Int
-  comment String
-  eventId String
-  userId  String
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Event   Event  @relation(fields: [eventId], references: [id])
+  id       String  @id @default(cuid())
+  rating   Int
+  comment  String
+  eventId  String
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Event    Event   @relation(fields: [eventId], references: [id])
+  courseId String?
 
   @@unique([eventId, userId])
   @@index([eventId])
@@ -185,4 +191,54 @@ model Testimonial {
 
   @@unique([userId, creatorProfile])
   @@index([userId])
+}
+
+model Course {
+  id               String             @id @default(cuid())
+  title            String
+  thumbnail        String?
+  ogImage          String?
+  description      String?            @db.Text
+  creatorId        String
+  creator          User               @relation(fields: [creatorId], references: [id])
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  CourseBlockMd    CourseBlockMd[]
+  CourseBlockVideo CourseBlockVideo[]
+
+  @@index([creatorId])
+}
+
+model CourseBlockVideo {
+  id        String   @id @default(cuid())
+  title     String
+  position  Int
+  thumbnail String?
+  videoUrl  String
+  creatorId String
+  creator   User     @relation(fields: [creatorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+
+  @@index([creatorId])
+  @@index([courseId])
+}
+
+model CourseBlockMd {
+  id        String   @id @default(cuid())
+  title     String
+  thumbnail String?
+  text      String   @db.Text
+  position  Int
+  creatorId String
+  creator   User     @relation(fields: [creatorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+
+  @@index([creatorId])
+  @@index([courseId])
 }
