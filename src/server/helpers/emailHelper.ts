@@ -33,7 +33,7 @@ const transporter = nodemailer.createTransport({
 const SES_CONFIG = {
   accessKeyId: env.SES_ACCESS_KEY,
   secretAccessKey: env.SES_SECRET_KEY,
-  // region: env.AWS_REGION,
+  region: "us-east-1",
 };
 
 const AWS_SES = new AWS.SES(SES_CONFIG);
