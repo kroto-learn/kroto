@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import axios from "axios";
 import { env } from "@/env.mjs";
 const { YOUTUBE_API_KEY } = env;
@@ -29,21 +26,34 @@ export const searchYoutubePlaylistsService = async ({
       },
     });
 
-    console.log("res", res.data.items);
-
     if (res && res.status === 200) {
-      return (res.data.items as any[])
+      return (
+        res as {
+          data: {
+            items: {
+              status: { privacyStatus: string };
+              snippet: {
+                title: string;
+                thumbnails: { high: { url: string } };
+                channelTitle: string;
+              };
+              id: string;
+              contentDetails: { itemCount: number };
+            }[];
+          };
+        }
+      ).data.items
         .filter(
           (item) =>
             item.status.privacyStatus === "public" ||
             item.status.privacyStatus === "unlisted"
         )
         .map((item) => ({
-          title: item.snippet.title as string,
-          thumbnail: item.snippet.thumbnails.high.url as string,
-          playlistId: item.id as string,
-          channelTitle: item.snippet.channelTitle as string,
-          videoCount: item.contentDetails.itemCount as number,
+          title: item.snippet.title,
+          thumbnail: item.snippet.thumbnails.high.url,
+          playlistId: item.id,
+          channelTitle: item.snippet.channelTitle,
+          videoCount: item.contentDetails.itemCount,
         }));
     } else {
       console.log("something went wrong", res);
@@ -66,10 +76,22 @@ export const getPlaylistDataService = async (id: string) => {
 
   try {
     // Send request for playlist details
-    const playlistDetailsResponse = await axios.get(
+    const playlistDetailsResponse: {
+      data: {
+        items: {
+          snippet: {
+            title: string;
+            description: string;
+            thumbnails: { high: { url: string } };
+          };
+        }[];
+      };
+    } = await axios.get(
       "https://www.googleapis.com/youtube/v3/playlists",
       playlistDetailsConfig
     );
+
+    if (!playlistDetailsResponse.data.items[0]) return null;
 
     const playlistTitle: string =
       playlistDetailsResponse.data.items[0].snippet.title;
@@ -88,25 +110,39 @@ export const getPlaylistDataService = async (id: string) => {
     };
 
     // Send request for playlist items
-    const playlistItemsResponse = await axios.get(
+    const playlistItemsResponse: {
+      data: {
+        items: {
+          snippet: {
+            title: string;
+            thumbnails: { high: { url: string } };
+            resourceId: { videoId: string };
+          };
+        }[];
+      };
+    } = await axios.get(
       "https://www.googleapis.com/youtube/v3/playlistItems",
       playlistItemsConfig
     );
 
-    const videos: { title: string; thumbnail: string; videoUrl: string }[] =
-      playlistItemsResponse?.data?.items?.map((video: any) => {
-        const videoTitle = video.snippet.title;
-        const videoThumbnail = video.snippet.thumbnails.high.url;
-        const videoUrl = `https://www.youtube.com/watch?v=${
-          video.snippet.resourceId.videoId as string
-        }`;
+    const videos: {
+      title: string;
+      thumbnail: string;
+      videoUrl: string;
+      ytId: string;
+    }[] = playlistItemsResponse?.data?.items?.map((video) => {
+      const videoTitle = video.snippet.title;
+      const videoThumbnail = video.snippet.thumbnails.high.url;
+      const videoUrl = `https://www.youtube.com/watch?v=${video.snippet.resourceId.videoId}`;
+      const ytId = video.snippet.resourceId.videoId;
 
-        return {
-          title: videoTitle,
-          thumbnail: videoThumbnail,
-          videoUrl,
-        };
-      });
+      return {
+        title: videoTitle,
+        thumbnail: videoThumbnail,
+        videoUrl,
+        ytId,
+      };
+    });
 
     return {
       title: playlistTitle,
