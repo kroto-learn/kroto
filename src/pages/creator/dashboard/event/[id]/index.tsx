@@ -34,7 +34,7 @@ const CalenderBox = dynamic(() => import("@/components/CalenderBox"), {
   ssr: false,
 });
 const EventLayoutR = dynamic(
-  () => import("@/components/layouts/eventDasboard"),
+  () => import("@/components/layouts/eventDashboard"),
   {
     ssr: false,
   }

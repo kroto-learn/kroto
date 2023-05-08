@@ -103,20 +103,26 @@ export const getPlaylistDataService = async (id: string) => {
       playlistItemsConfig
     );
 
-    const videos: { title: string; thumbnail: string; videoUrl: string }[] =
-      playlistItemsResponse?.data?.items?.map((video: any) => {
-        const videoTitle = video.snippet.title;
-        const videoThumbnail = video.snippet.thumbnails.high.url;
-        const videoUrl = `https://www.youtube.com/watch?v=${
-          video.snippet.resourceId.videoId as string
-        }`;
+    const videos: {
+      title: string;
+      thumbnail: string;
+      videoUrl: string;
+      ytId: string;
+    }[] = playlistItemsResponse?.data?.items?.map((video: any) => {
+      const videoTitle = video.snippet.title;
+      const videoThumbnail = video.snippet.thumbnails.high.url;
+      const videoUrl = `https://www.youtube.com/watch?v=${
+        video.snippet.resourceId.videoId as string
+      }`;
+      const videoId = video.id;
 
-        return {
-          title: videoTitle,
-          thumbnail: videoThumbnail,
-          videoUrl,
-        };
-      });
+      return {
+        title: videoTitle,
+        thumbnail: videoThumbnail,
+        videoUrl,
+        ytId: videoId,
+      };
+    });
 
     return {
       title: playlistTitle,

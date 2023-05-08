@@ -9,6 +9,7 @@ import {
   getPlaylistDataService,
   searchYoutubePlaylistsService,
 } from "@/server/services/youtube";
+import { importCourseFormSchema } from "@/pages/course/import";
 
 export const courseRouter = createTRPCRouter({
   get: protectedProcedure
@@ -22,10 +23,21 @@ export const courseRouter = createTRPCRouter({
         },
         include: {
           creator: true,
+          courseBlockVideos: true,
+          courseBlockMds: true,
         },
       });
 
-      return course;
+      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const courseBlocks = [
+        ...course.courseBlockVideos,
+        ...course.courseBlockMds,
+      ];
+
+      courseBlocks.sort((a, b) => a.position - b.position);
+
+      return { ...course, courseBlocks };
     }),
 
   // Used for RouterOutputs don't remove.
@@ -43,7 +55,7 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      if (!course) return new TRPCError({ code: "NOT_FOUND" });
+      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
 
       const courseBlockVideos = await prisma.courseBlockVideo.findMany({
         where: { courseId: course.id },
@@ -63,13 +75,25 @@ export const courseRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
-    const courses = await prisma.course.findMany({
-      where: {
-        creatorId: ctx.session.user.id,
-      },
+    const coursesP = (
+      await prisma.course.findMany({
+        where: {
+          creatorId: ctx.session.user.id,
+        },
+      })
+    ).map(async (course) => {
+      const videos = await prisma.courseBlockVideo.count({
+        where: { courseId: course.id },
+      });
+      const mds = await prisma.courseBlockMd.count({
+        where: { courseId: course.id },
+      });
+      const blocks = videos + mds;
+      return { ...course, blocks };
     });
+    const coursesWithCount = await Promise.all(coursesP);
 
-    return courses;
+    return coursesWithCount;
   }),
 
   searchYoutubePlaylists: protectedProcedure
@@ -94,63 +118,58 @@ export const courseRouter = createTRPCRouter({
       return playlist;
     }),
 
-  // create: protectedProcedure
-  //   .input(createFormSchema)
-  //   .mutation(async ({ input, ctx }) => {
-  //     const { prisma } = ctx;
+  import: protectedProcedure
+    .input(importCourseFormSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
 
-  //     if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
 
-  //     const event = await prisma.event.create({
-  //       data: {
-  //         title: input.title,
-  //         description: input.description,
-  //         datetime: input.datetime,
-  //         endTime: input.endTime,
-  //         eventUrl: input.eventUrl ?? "",
-  //         eventLocation: input.eventLocation ?? "",
-  //         eventType: input.eventType,
-  //         // duration: input.duration,
+      const course = await prisma.course.create({
+        data: {
+          title: input.title,
+          description: input.description,
+          thumbnail: input.thumbnail,
+          creatorId: ctx.session.user.id,
+        },
+      });
 
-  //         creatorId: ctx.session.user.id,
-  //       },
-  //     });
+      const courseBlockVideos = await prisma.courseBlockVideo.createMany({
+        data: input.courseBlockVideos.map((cb, position) => ({
+          ...cb,
+          courseId: course.id,
+          creatorId: ctx.session.user.id,
+          position,
+        })),
+      });
 
-  //     const thumbnail = await imageUpload(input.thumbnail, event.id, "event");
+      // const ogImageRes = await axios({
+      //   url: OG_URL,
+      //   responseType: "arraybuffer",
+      //   params: {
+      //     title: input.title,
+      //     datetime: input.datetime.getTime(),
+      //     host: ctx.session.user.name ?? "",
+      //   },
+      // });
 
-  //     /* Don't use axios, make the api end point a function,
-  //      * and call it if needed from /pages/api/og and here we
-  //      * can just use the function.
-  //      */
-  //     console.log("NEXT_AUTH_URL", NEXTAUTH_URL);
-  //     const ogImageRes = await axios({
-  //       url: OG_URL,
-  //       responseType: "arraybuffer",
-  //       params: {
-  //         title: input.title,
-  //         datetime: input.datetime.getTime(),
-  //         host: ctx.session.user.name ?? "",
-  //       },
-  //     });
+      // const ogImage = await ogImageUpload(
+      //   ogImageRes.data as AWS.S3.Body,
+      //   event.id,
+      //   "event"
+      // );
 
-  //     const ogImage = await ogImageUpload(
-  //       ogImageRes.data as AWS.S3.Body,
-  //       event.id,
-  //       "event"
-  //     );
+      // const updatedEvent = await prisma.event.update({
+      //   where: {
+      //     id: event.id,
+      //   },
+      //   data: {
+      //     ogImage,
+      //   },
+      // });
 
-  //     const updatedEvent = await prisma.event.update({
-  //       where: {
-  //         id: event.id,
-  //       },
-  //       data: {
-  //         thumbnail,
-  //         ogImage,
-  //       },
-  //     });
-
-  //     return updatedEvent;
-  //   }),
+      return { ...course, courseBlockVideos };
+    }),
 
   // update: protectedProcedure
   //   .input(createFormSchema.and(z.object({ id: z.string() })))
@@ -219,17 +238,29 @@ export const courseRouter = createTRPCRouter({
   //     return event;
   //   }),
 
-  // delete: protectedProcedure
-  //   .input(z.object({ id: z.string() }))
-  //   .mutation(async ({ ctx, input }) => {
-  //     const { prisma } = ctx;
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
 
-  //     const event = await prisma.event.delete({
-  //       where: {
-  //         id: input.id,
-  //       },
-  //     });
+      await prisma.courseBlockVideo.deleteMany({
+        where: {
+          courseId: input.id,
+        },
+      });
 
-  //     return event;
-  //   }),
+      await prisma.courseBlockMd.deleteMany({
+        where: {
+          courseId: input.id,
+        },
+      });
+
+      const course = await prisma.course.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      return course;
+    }),
 });

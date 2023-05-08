@@ -1,47 +1,43 @@
 import Layout from "@/components/layouts/main";
-import fileToBase64 from "@/helpers/file";
 import { generateRandomGradientImages } from "@/helpers/randomGradientImages";
-import useToast from "@/hooks/useToast";
-import {
-  MagnifyingGlassIcon,
-  PhotoIcon,
-  PlayCircleIcon,
-  PlusIcon,
-} from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon, PlayCircleIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type MDEditorProps } from "@uiw/react-md-editor";
-import dynamic from "next/dynamic";
+// import { type MDEditorProps } from "@uiw/react-md-editor";
+// import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
-import { type ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { z } from "zod";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
+// import "@uiw/react-md-editor/markdown-editor.css";
+// import "@uiw/react-markdown-preview/markdown.css";
 import { api } from "@/utils/api";
 import { TRPCError } from "@trpc/server";
 import { Loader } from "@/components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons";
+import useToast from "@/hooks/useToast";
+import { useRouter } from "next/router";
 
-const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-});
+// const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
+//   ssr: false,
+// });
 
 const titleLimit = 100;
 
-export const createCourseFormSchema = z.object({
+export const importCourseFormSchema = z.object({
   thumbnail: z.string().nonempty("Please upload a cover"),
   title: z.string().max(titleLimit).nonempty("Please enter course title."),
   description: z
     .string()
     .max(3000)
     .nonempty("Please enter course description."),
-  courseBlocks: z.array(
+  courseBlockVideos: z.array(
     z.object({
       title: z.string(),
       thumbnail: z.string(),
       videoUrl: z.string(),
+      ytId: z.string(),
     })
   ),
 });
@@ -61,12 +57,12 @@ function useZodForm<TSchema extends z.ZodType>(
 
 const Index = () => {
   const methods = useZodForm({
-    schema: createCourseFormSchema,
+    schema: importCourseFormSchema,
     defaultValues: {
-      title: "",
-      description: "",
+      title: "Your course title",
+      description: "Your course description...",
       thumbnail: "",
-      courseBlocks: [],
+      courseBlockVideos: [],
     },
   });
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,6 +70,8 @@ const Index = () => {
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
   const [playlistId, setPlaylistId] = useState("");
   // const [playlistDetailInit, setPlaylistDetailInit] = useState(false);
+
+  const { errorToast } = useToast();
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -83,8 +81,6 @@ const Index = () => {
     return () => clearTimeout(timerId);
   }, [searchQuery]);
 
-  const { warningToast } = useToast();
-
   useEffect(() => {
     methods.setValue("thumbnail", generateRandomGradientImages());
   }, [methods]);
@@ -93,9 +89,17 @@ const Index = () => {
     searchQuery: debouncedQuery,
   });
 
-  const { data: playlistData } = api.course.getYoutubePlaylist.useQuery({
-    playlistId,
-  });
+  const { data: playlistData, isLoading: playlistLoading } =
+    api.course.getYoutubePlaylist.useQuery({
+      playlistId,
+    });
+
+  const {
+    mutateAsync: importCourseMutation,
+    isLoading: importCourseMutationLoading,
+  } = api.course.import.useMutation();
+
+  const router = useRouter();
 
   useEffect(() => {
     if (playlistData) {
@@ -105,7 +109,7 @@ const Index = () => {
       methods.setValue("description", playlistData.description);
       methods.setValue("thumbnail", playlistData.thumbnail);
       // }
-      methods.setValue("courseBlocks", playlistData.videos);
+      methods.setValue("courseBlockVideos", playlistData.videos);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playlistData]);
@@ -134,6 +138,10 @@ const Index = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="peer w-full rounded-lg bg-pink-500/10 px-3 py-2 pl-8 font-medium text-neutral-200   outline outline-2 outline-pink-500/40 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
             />
+            <div className="absolute right-4">
+              {playlistLoading && <Loader />}
+            </div>
+
             <MagnifyingGlassIcon className="absolute ml-2 w-4 text-pink-500/50 duration-300 peer-hover:text-pink-500/80 peer-focus:text-pink-500" />
           </div>
           <p className="text-sm text-neutral-400">
@@ -183,100 +191,54 @@ const Index = () => {
           )}
         </div>
         <form
-          onSubmit={methods.handleSubmit((values) => {
+          onSubmit={methods.handleSubmit(async (values) => {
             console.log(values);
+            await importCourseMutation(values, {
+              onSuccess: (courseCreated) => {
+                if (courseCreated && !(courseCreated instanceof TRPCError))
+                  void router.push(
+                    `/creator/dashboard/course/${courseCreated?.id}`
+                  );
+              },
+              onError: () => {
+                errorToast("Error in importing course from YouTube!");
+              },
+            });
           })}
           className="mt-12s mx-auto flex w-full flex-col gap-8"
         >
-          <div className="relative flex aspect-video w-80 items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
-            {!!methods.getValues("thumbnail") && (
-              <Image
-                src={methods.getValues("thumbnail")}
-                alt="thumbnail"
-                fill
-                className="object-cover"
-              />
-            )}
-            <div className="relative m-2 flex w-auto cursor-pointer items-center gap-2 rounded-xl border border-neutral-500 bg-neutral-800/80 p-3 text-sm font-medium duration-300 hover:border-neutral-400">
-              <input
-                type="file"
-                accept="image/*"
-                className="z-2 absolute h-full w-full cursor-pointer opacity-0"
-                onChange={(e) => {
-                  if (e.currentTarget.files && e.currentTarget.files[0]) {
-                    if (e.currentTarget.files[0].size > 1200000)
-                      warningToast(
-                        "Image is too big, try a smaller (<1MB) image for performance purposes."
-                      );
-
-                    if (e.currentTarget.files[0].size <= 3072000) {
-                      fileToBase64(e.currentTarget.files[0])
-                        .then((b64) => {
-                          if (b64) methods.setValue("thumbnail", b64);
-                        })
-                        .catch((err) => console.log(err));
-                    } else {
-                      warningToast("Upload cover image upto 3 MB of size.");
-                    }
-                  }
-                }}
-              />
-              <PhotoIcon className="w-4" />
-              Upload Cover
+          <div className="flex w-full items-start gap-4">
+            <div className="relative flex aspect-video w-1/3 items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
+              {!!methods.getValues("thumbnail") && (
+                <Image
+                  src={methods.getValues("thumbnail")}
+                  alt="thumbnail"
+                  fill
+                  className="object-cover"
+                />
+              )}
             </div>
-          </div>
-
-          {methods.formState.errors.thumbnail?.message && (
-            <p className="text-red-700">
-              {methods.formState.errors.thumbnail?.message}
-            </p>
-          )}
-
-          <div className="flex flex-col gap-3">
-            <label htmlFor="title" className="text-lg  text-neutral-200">
-              Course Title
-            </label>
-            <input
-              value={methods.watch()?.title}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                methods.setValue(
-                  "title",
-                  e.target?.value.substring(0, titleLimit)
-                );
-              }}
-              placeholder="Course Title"
-              className="w-full rounded-lg bg-neutral-800 px-3 py-1 font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500 sm:text-lg"
-            />
-            {
-              <p className="text-end text-xs text-neutral-400">
-                {methods.watch()?.title?.length}/{titleLimit}
+            <div className="w-2/3">
+              <label
+                htmlFor="title"
+                className="text-xs font-medium uppercase tracking-wider text-neutral-400"
+              >
+                Title
+              </label>
+              <p className="w-full text-sm font-medium text-neutral-200 duration-300 sm:text-base">
+                {methods.watch()?.title}
               </p>
-            }
-            {methods.formState.errors.title?.message && (
-              <p className="text-red-700">
-                {methods.formState.errors.title?.message}
-              </p>
-            )}
-          </div>
 
-          <div className="flex flex-col gap-3">
-            <label htmlFor="description" className="text-lg  text-neutral-200">
-              Description
-            </label>
-            <div data-color-mode="dark">
-              <MDEditor
-                height={350}
-                value={methods.watch()?.description}
-                onChange={(mdtext) => {
-                  methods.setValue("description", mdtext ?? "");
-                }}
-              />
+              <label
+                htmlFor="description"
+                className="mt-2 text-xs font-medium uppercase tracking-wider text-neutral-400"
+              >
+                Description
+              </label>
+              <p className="hide-scroll max-h-24 overflow-y-auto text-xs sm:text-sm">
+                {methods.watch()?.description}
+              </p>
             </div>
-            {methods.formState.errors.description?.message && (
-              <p className="text-red-700">
-                {methods.formState.errors.description?.message}
-              </p>
-            )}
           </div>
 
           <div className="mt-4 flex flex-col gap-3">
@@ -287,15 +249,15 @@ const Index = () => {
               >
                 Course Blocks
               </label>
-              <button
+              {/* <button
                 type="button"
                 className="flex items-center gap-1 rounded-lg border border-pink-600 px-3 py-1 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
               >
                 <PlusIcon className="w-4" /> Add Course block
-              </button>
+              </button> */}
             </div>
             <div className="max-h-[20rem] overflow-y-auto">
-              {methods.watch()?.courseBlocks.map((courseBlock, index) => (
+              {methods.watch()?.courseBlockVideos.map((courseBlock, index) => (
                 <div
                   className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
                   key={courseBlock.title + index.toString()}
@@ -325,7 +287,7 @@ const Index = () => {
             className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
             type="submit"
           >
-            {false && <Loader white />}
+            {importCourseMutationLoading && <Loader white />}
             Create Course
           </button>
         </form>

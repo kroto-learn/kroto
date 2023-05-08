@@ -194,51 +194,64 @@ model Testimonial {
 }
 
 model Course {
-  id               String             @id @default(cuid())
-  title            String
-  thumbnail        String?
-  ogImage          String?
-  description      String?            @db.Text
-  creatorId        String
-  creator          User               @relation(fields: [creatorId], references: [id])
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  CourseBlockMd    CourseBlockMd[]
-  CourseBlockVideo CourseBlockVideo[]
+  id                String             @id @default(cuid())
+  title             String
+  thumbnail         String?
+  ogImage           String?
+  description       String?            @db.Text
+  creatorId         String
+  creator           User               @relation(fields: [creatorId], references: [id])
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  courseBlockMds    CourseBlockMd[]
+  courseBlockVideos CourseBlockVideo[]
 
   @@index([creatorId])
 }
 
 model CourseBlockVideo {
-  id        String   @id @default(cuid())
-  title     String
-  position  Int
-  thumbnail String?
-  videoUrl  String
-  creatorId String
-  creator   User     @relation(fields: [creatorId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  courseId  String
-  course    Course   @relation(fields: [courseId], references: [id])
+  id          String               @id @default(cuid())
+  title       String
+  position    Int
+  thumbnail   String?
+  videoUrl    String
+  description String?
+  ytId        String?
+  type        CourseBlockVideoType @default(YTVIDEO)
+  creatorId   String
+  creator     User                 @relation(fields: [creatorId], references: [id])
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  courseId    String
+  course      Course               @relation(fields: [courseId], references: [id])
 
   @@index([creatorId])
   @@index([courseId])
 }
 
 model CourseBlockMd {
-  id        String   @id @default(cuid())
+  id        String            @id @default(cuid())
   title     String
   thumbnail String?
-  text      String   @db.Text
+  text      String            @db.Text
   position  Int
+  type      CourseBlockMdType @default(TEXT)
   creatorId String
-  creator   User     @relation(fields: [creatorId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  creator   User              @relation(fields: [creatorId], references: [id])
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
   courseId  String
-  course    Course   @relation(fields: [courseId], references: [id])
+  course    Course            @relation(fields: [courseId], references: [id])
 
   @@index([creatorId])
   @@index([courseId])
+}
+
+enum CourseBlockVideoType {
+  YTVIDEO
+  VIDEO
+}
+
+enum CourseBlockMdType {
+  TEXT
 }

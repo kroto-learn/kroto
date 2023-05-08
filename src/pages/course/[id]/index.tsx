@@ -2,7 +2,7 @@ import { Loader } from "@/components/Loader";
 import Layout from "@/components/layouts/main";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
-import { PlayIcon } from "@heroicons/react/20/solid";
+import { ArrowLeftIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { TRPCError } from "@trpc/server";
 import { type GetStaticPropsContext } from "next";
 import Head from "next/head";
@@ -17,7 +17,21 @@ type Props = {
 const Index = ({ courseId }: Props) => {
   const { data: course } = api.course.getCourse.useQuery({ id: courseId });
 
-  if (course instanceof TRPCError) return <>Not found</>;
+  if (course instanceof TRPCError || !course)
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <h1 className="text-4xl font-medium text-neutral-200">
+          Course not found
+        </h1>
+        <Link
+          href="/"
+          className="mt-4 flex items-center gap-2 text-xl font-medium text-pink-500 transition duration-300 hover:text-pink-600"
+        >
+          <ArrowLeftIcon className="w-6" />
+          Go back to home
+        </Link>
+      </div>
+    );
 
   return (
     <Layout>
@@ -50,28 +64,29 @@ const Index = ({ courseId }: Props) => {
       </Head>
       <main className="mx-auto mb-8 mt-16 flex h-[80vh] w-full max-w-4xl gap-4 overflow-x-hidden">
         <div className="flex h-full w-[30rem] flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm">
-          <div className="relative mb-2 aspect-video w-full overflow-hidden rounded-xl object-cover">
+          <div className="relative mb-2 aspect-video w-full overflow-hidden rounded-xl">
             <Image
               src={course?.thumbnail ?? ""}
               alt={course?.title ?? ""}
               fill
+              className="object-cover"
             />
           </div>
           <h2 className="mb-2 text-xl font-semibold">{course?.title}</h2>
 
           <Link
-            href={`/${course?.creator.creatorProfile ?? ""}`}
+            href={`/${course?.creator?.creatorProfile ?? ""}`}
             className="group flex items-center gap-2"
           >
             <Image
-              src={course?.creator.image ?? ""}
-              alt={course?.creator.name ?? ""}
+              src={course?.creator?.image ?? ""}
+              alt={course?.creator?.name ?? ""}
               className="aspect-square rounded-full"
               width={18}
               height={18}
             />
             <p className="text-sm text-neutral-300 duration-150 group-hover:text-neutral-200 group-hover:underline">
-              {course?.creator.name}
+              {course?.creator?.name}
             </p>
           </Link>
 
@@ -90,31 +105,31 @@ const Index = ({ courseId }: Props) => {
             )}
           </button>
 
-          <p className="text-sm text-neutral-300">{course?.description}</p>
+          <p className="hide-scroll max-h-52 overflow-y-scroll text-sm text-neutral-300">
+            {course?.description}
+          </p>
         </div>
         <div className="flex w-full flex-col gap-2">
-          {course?.courseBlocks.map((courseBlock, index) => (
+          {course?.courseBlocks?.map((courseBlock, index) => (
             <Link
               href={`/course/${course?.id}`}
               className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-              key={courseBlock.id}
+              key={courseBlock?.id}
             >
               <p className="text-sm text-neutral-300">{index + 1}</p>
-              <div className="relative mb-2 aspect-video w-40 overflow-hidden rounded-lg object-cover">
+              <div className="relative mb-2 aspect-video w-40 overflow-hidden rounded-lg">
                 <Image
                   src={course?.thumbnail ?? ""}
                   alt={course?.title ?? ""}
                   fill
+                  className="object-cover"
                 />
               </div>
               <div className="flex h-full w-full flex-col gap-1">
-                <h5 className="font-medium">{courseBlock.title}</h5>
-                <Link
-                  href={`/${course?.creator.creatorProfile ?? ""}`}
-                  className="text-xs text-neutral-400 duration-150 hover:text-neutral-300 hover:underline"
-                >
-                  {course?.creator.name}
-                </Link>
+                <h5 className="font-medium">{courseBlock?.title}</h5>
+                <p className="text-xs text-neutral-400">
+                  {course?.creator?.name}
+                </p>
               </div>
             </Link>
           ))}

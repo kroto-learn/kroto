@@ -1,10 +1,7 @@
 import { api } from "@/utils/api";
 import { Menu, Transition } from "@headlessui/react";
-import {
-  ChevronDownIcon,
-  Bars3Icon,
-  GlobeAltIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon, Bars3Icon } from "@heroicons/react/20/solid";
+import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
