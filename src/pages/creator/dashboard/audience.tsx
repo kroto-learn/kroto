@@ -404,6 +404,7 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
     api.creator.audience.importAudience.useMutation();
 
   const { errorToast, successToast } = useToast();
+  const ctx = api.useContext();
 
   return (
     <>
@@ -585,6 +586,7 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                             { email: selectedEmails },
                             {
                               onSuccess: () => {
+                                void ctx.creator.audience.getImportedAudience.invalidate();
                                 successToast(
                                   "Audience imported from CSV successfully!"
                                 );
