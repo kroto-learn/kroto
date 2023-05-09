@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { z } from "zod";
 // import "@uiw/react-md-editor/markdown-editor.css";
@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons";
 import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
+import { debounce } from "lodash";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -72,14 +73,17 @@ const Index = () => {
   // const [playlistDetailInit, setPlaylistDetailInit] = useState(false);
 
   const { errorToast } = useToast();
+  const debouncedFxn = useRef(
+    debounce((searchQuery: string) => {
+      setDebouncedQuery(searchQuery);
+    }, 500)
+  ).current;
 
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, 500);
+    debouncedFxn(searchQuery);
 
-    return () => clearTimeout(timerId);
-  }, [searchQuery]);
+    return () => debouncedFxn.cancel();
+  }, [searchQuery, debouncedFxn]);
 
   useEffect(() => {
     methods.setValue("thumbnail", generateRandomGradientImages());

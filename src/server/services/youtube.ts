@@ -36,6 +36,7 @@ export const searchYoutubePlaylistsService = async ({
                 title: string;
                 thumbnails: { high: { url: string } };
                 channelTitle: string;
+                description: string;
               };
               id: string;
               contentDetails: { itemCount: number };
@@ -48,6 +49,16 @@ export const searchYoutubePlaylistsService = async ({
             item.status.privacyStatus === "public" ||
             item.status.privacyStatus === "unlisted"
         )
+        .filter((item) => {
+          return (
+            item.snippet.title
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            item.snippet.description
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
+          );
+        })
         .map((item) => ({
           title: item.snippet.title,
           thumbnail: item.snippet.thumbnails.high.url,
@@ -56,7 +67,7 @@ export const searchYoutubePlaylistsService = async ({
           videoCount: item.contentDetails.itemCount,
         }));
     } else {
-      console.log("something went wrong", res);
+      console.log("Error in getting youtube playlists", res);
       return [];
     }
   } catch (err) {

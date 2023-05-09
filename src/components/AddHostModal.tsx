@@ -5,8 +5,16 @@ import { Dialog, Transition } from "@headlessui/react";
 import { UserPlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { TRPCError } from "@trpc/server";
 import Image from "next/image";
-import { type Dispatch, Fragment, type SetStateAction, useState } from "react";
+import {
+  type Dispatch,
+  Fragment,
+  type SetStateAction,
+  useState,
+  useRef,
+  useEffect,
+} from "react";
 import { Loader } from "./Loader";
+import { debounce } from "lodash";
 
 export default function AddHostModal({
   eventId,
@@ -28,21 +36,27 @@ export default function AddHostModal({
     api.eventHost.addHost.useMutation();
   const revalidate = useRevalidateSSG();
 
-  const handleSubmit = async () => {
-    await addHostMutation(
-      { eventId, creatorId },
-      {
-        onSuccess: () => {
-          successToast("Host added successfully!");
-          void revalidate(`/event/${eventId}`);
-        },
-        onError: () => {
-          errorToast("Error in adding host!");
-        },
-      }
-    );
-    refetch();
-  };
+  const debouncedHandleSubmit = useRef(
+    debounce(async () => {
+      await addHostMutation(
+        { eventId, creatorId },
+        {
+          onSuccess: () => {
+            successToast("Host added successfully!");
+            void revalidate(`/event/${eventId}`);
+          },
+          onError: () => {
+            errorToast("Error in adding host!");
+          },
+        }
+      );
+      refetch();
+    }, 500)
+  ).current;
+
+  useEffect(() => {
+    debouncedHandleSubmit.cancel();
+  }, [debouncedHandleSubmit]);
 
   return (
     <>
@@ -109,7 +123,7 @@ export default function AddHostModal({
                           required
                         />
                         <button
-                          onClick={() => handleSubmit()}
+                          onClick={() => debouncedHandleSubmit()}
                           className="absolute right-0 top-0 flex items-center gap-1 rounded-r-lg border border-pink-700 bg-pink-700 p-2.5 text-sm font-medium text-white hover:bg-pink-800 focus:outline-none focus:ring-4 focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
                         >
                           {isLoading ? (
