@@ -196,7 +196,6 @@ const Index = () => {
         </div>
         <form
           onSubmit={methods.handleSubmit(async (values) => {
-            console.log(values);
             await importCourseMutation(values, {
               onSuccess: (courseCreated) => {
                 if (courseCreated && !(courseCreated instanceof TRPCError))

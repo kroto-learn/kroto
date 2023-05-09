@@ -66,7 +66,6 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   events: {
     async signIn({ user, account }) {
-      console.log("sign in", account);
       const dbUser = await prisma.user.findUnique({
         where: {
           id: user.id,

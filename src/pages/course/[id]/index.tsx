@@ -1,3 +1,4 @@
+import AnimatedSection from "@/components/AnimatedSection";
 import { Loader } from "@/components/Loader";
 import Layout from "@/components/layouts/main";
 import useToast from "@/hooks/useToast";
@@ -73,7 +74,7 @@ const Index = ({ courseId }: Props) => {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <main className="mx-auto mb-8 mt-16 flex h-[80vh] w-full max-w-4xl gap-4 overflow-x-hidden">
-        <div className="flex h-full w-[30rem] flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm">
+        <AnimatedSection className="flex h-full w-[30rem] flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm">
           <div className="relative mb-2 aspect-video w-full content-center overflow-hidden rounded-xl">
             <Image
               src={course?.thumbnail ?? ""}
@@ -155,8 +156,8 @@ const Index = ({ courseId }: Props) => {
           <p className="hide-scroll max-h-52 overflow-y-scroll text-sm text-neutral-300">
             {course?.description}
           </p>
-        </div>
-        <div className="flex w-full flex-col gap-2">
+        </AnimatedSection>
+        <AnimatedSection delay={0.1} className="flex w-full flex-col gap-2">
           {course?.courseBlocks?.map((courseBlock, index) => (
             <Link
               href={`/course/${course?.id}`}
@@ -180,7 +181,7 @@ const Index = ({ courseId }: Props) => {
               </div>
             </Link>
           ))}
-        </div>
+        </AnimatedSection>
       </main>
     </Layout>
   );

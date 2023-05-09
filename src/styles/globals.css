@@ -84,7 +84,7 @@ select:-webkit-autofill {
 
 @media screen and (min-width: 700px) {
   *:not(table)::-webkit-scrollbar {
-    width: 10px;
+    width: 7px;
   }
 
   *:not(table)::-webkit-scrollbar-track {
@@ -92,11 +92,12 @@ select:-webkit-autofill {
   }
 
   *:not(table)::-webkit-scrollbar-thumb {
-    background: #ffffff2e;
+    background: #ffffff1c;
+    border-radius: 3px;
   }
 
   *:not(table)::-webkit-scrollbar-thumb:hover {
-    background: #ffffff53;
+    background: #ffffff29;
   }
 
   ::-webkit-scrollbar-corner {

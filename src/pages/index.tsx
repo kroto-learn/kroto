@@ -30,8 +30,6 @@ const Home: NextPage = () => {
     });
   }, []);
 
-  console.log(session);
-
   return (
     <>
       <Head>

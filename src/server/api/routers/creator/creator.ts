@@ -8,8 +8,8 @@ import {
 import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
 import { audienceRouter } from "./audience";
-import axios from "axios";
 import { env } from "@/env.mjs";
+import { generateStaticCreatorOgImage } from "@/server/services/og";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -44,24 +44,6 @@ export const creatorRouter = createTRPCRouter({
           },
         },
       });
-
-      try {
-        const response = await axios.get(
-          "https://www.googleapis.com/youtube/v3/playlists",
-          {
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${ctx.session?.user.token ?? ""}`,
-            },
-            params: {
-              mine: true,
-            },
-          }
-        );
-        console.log(response.data);
-      } catch (e) {
-        console.log(e);
-      }
 
       return creator;
     }),
@@ -199,21 +181,20 @@ export const creatorRouter = createTRPCRouter({
       if (isBase64(input.image, { allowMime: true }))
         image = await imageUpload(input.image, ctx.session.user.id, "event");
 
-      const ogImageRes = await axios({
-        url: OG_URL,
-        responseType: "arraybuffer",
-        params: {
-          name,
-          creatorProfile,
-          image,
-        },
+      const ogImageRes = await generateStaticCreatorOgImage({
+        ogUrl: OG_URL,
+        name,
+        creatorProfile,
+        image,
       });
 
-      const ogImage = await ogImageUpload(
-        ogImageRes.data as AWS.S3.Body,
-        ctx.session.user.id,
-        "creator"
-      );
+      const ogImage = ogImageRes
+        ? await ogImageUpload(
+            ogImageRes.data as AWS.S3.Body,
+            ctx.session.user.id,
+            "creator"
+          )
+        : undefined;
 
       const user = await prisma.user.update({
         where: {
@@ -245,21 +226,20 @@ export const creatorRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
-      const ogImageRes = await axios({
-        url: OG_URL,
-        responseType: "arraybuffer",
-        params: {
-          name: ctx.session.user.name,
-          creatorProfile: input.creatorProfile ?? ctx.session.user.email,
-          image: ctx.session.user.image,
-        },
+      const ogImageRes = await generateStaticCreatorOgImage({
+        ogUrl: OG_URL,
+        name: ctx.session.user.name ?? "",
+        creatorProfile: input.creatorProfile ?? "",
+        image: ctx.session.user.image ?? "",
       });
 
-      const ogImage = await ogImageUpload(
-        ogImageRes.data as AWS.S3.Body,
-        ctx.session.user.id,
-        "creator"
-      );
+      const ogImage = ogImageRes
+        ? await ogImageUpload(
+            ogImageRes.data as AWS.S3.Body,
+            ctx.session.user.id,
+            "creator"
+          )
+        : undefined;
 
       const creator = await prisma.user.update({
         where: {

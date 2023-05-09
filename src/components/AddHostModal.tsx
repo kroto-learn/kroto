@@ -107,6 +107,15 @@ export default function AddHostModal({
                     </div>
                   </Dialog.Title>
                   <div className="flex flex-col gap-4 p-6">
+                    <button
+                      onClick={() => {
+                        debounce(() => {
+                          console.log("Debounce test");
+                        }, 2000)();
+                      }}
+                    >
+                      Debounce test
+                    </button>
                     <p className="text-neutral-300">
                       Add host&apos;s creator id {"(kroto.in/creatorId)"}
                     </p>

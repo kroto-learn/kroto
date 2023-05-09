@@ -101,7 +101,7 @@ const CreateEvent = () => {
   const router = useRouter();
   const { warningToast, errorToast } = useToast();
 
-  const { mutateAsync: eventMutation, isLoading: loading } =
+  const { mutateAsync: eventCreateMutation, isLoading: loading } =
     api.event.create.useMutation();
 
   useEffect(() => {
@@ -147,7 +147,7 @@ const CreateEvent = () => {
             // const duration = (etime.getTime() - stime.getTime()) / 60000;
 
             try {
-              await eventMutation(
+              await eventCreateMutation(
                 {
                   title: values.title ?? "",
                   description: values.description ?? "",
