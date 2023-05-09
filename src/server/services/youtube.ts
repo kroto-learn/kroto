@@ -76,7 +76,17 @@ export const getPlaylistDataService = async (id: string) => {
 
   try {
     // Send request for playlist details
-    const playlistDetailsResponse: {
+    const res = await axios.get(
+      "https://www.googleapis.com/youtube/v3/playlists",
+      playlistDetailsConfig
+    );
+
+    if (!res || res.status !== 200) {
+      console.log("error in getting playlist details!", res?.data);
+      return null;
+    }
+
+    const successRes: {
       data: {
         items: {
           snippet: {
@@ -86,19 +96,15 @@ export const getPlaylistDataService = async (id: string) => {
           };
         }[];
       };
-    } = await axios.get(
-      "https://www.googleapis.com/youtube/v3/playlists",
-      playlistDetailsConfig
-    );
+    } = res;
 
-    if (!playlistDetailsResponse.data.items[0]) return null;
+    if (!successRes.data.items[0]) return null;
 
-    const playlistTitle: string =
-      playlistDetailsResponse.data.items[0].snippet.title;
+    const playlistTitle: string = successRes.data.items[0].snippet.title;
     const playlistDescription: string =
-      playlistDetailsResponse.data.items[0].snippet.description;
+      successRes.data.items[0].snippet.description;
     const playlistThumbnail: string =
-      playlistDetailsResponse.data.items[0].snippet.thumbnails.high.url;
+      successRes.data.items[0].snippet.thumbnails.high.url;
 
     // Define playlist items request config
     const playlistItemsConfig = {
@@ -110,7 +116,17 @@ export const getPlaylistDataService = async (id: string) => {
     };
 
     // Send request for playlist items
-    const playlistItemsResponse: {
+    const piRes = await axios.get(
+      "https://www.googleapis.com/youtube/v3/playlistItems",
+      playlistItemsConfig
+    );
+
+    if (!piRes || piRes.status !== 200) {
+      console.log("error in getting playlist items!", piRes?.data);
+      return null;
+    }
+
+    const successPiRes: {
       data: {
         items: {
           snippet: {
@@ -120,17 +136,14 @@ export const getPlaylistDataService = async (id: string) => {
           };
         }[];
       };
-    } = await axios.get(
-      "https://www.googleapis.com/youtube/v3/playlistItems",
-      playlistItemsConfig
-    );
+    } = piRes;
 
     const videos: {
       title: string;
       thumbnail: string;
       videoUrl: string;
       ytId: string;
-    }[] = playlistItemsResponse?.data?.items?.map((video) => {
+    }[] = successPiRes?.data?.items?.map((video) => {
       const videoTitle = video.snippet.title;
       const videoThumbnail = video.snippet.thumbnails.high.url;
       const videoUrl = `https://www.youtube.com/watch?v=${video.snippet.resourceId.videoId}`;
