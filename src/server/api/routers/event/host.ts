@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 export const hostRouter = createTRPCRouter({
@@ -76,19 +73,15 @@ export const hostRouter = createTRPCRouter({
     }),
 
   removeHost: protectedProcedure
-    .input(z.object({ hostId: z.string(), eventId: z.string() }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const { hostId, eventId } = input;
+      const { id } = input;
 
       await prisma.host.delete({
         where: {
-          eventId_userId: {
-            eventId,
-            userId: hostId,
-          },
+          id: id,
         },
       });
     }),
 });
- 
