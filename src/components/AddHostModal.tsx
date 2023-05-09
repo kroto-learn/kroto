@@ -55,7 +55,7 @@ export default function AddHostModal({
   ).current;
 
   useEffect(() => {
-    debouncedHandleSubmit.cancel();
+    return () => debouncedHandleSubmit.cancel();
   }, [debouncedHandleSubmit]);
 
   return (

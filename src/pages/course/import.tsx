@@ -105,6 +105,29 @@ const Index = () => {
 
   const router = useRouter();
 
+  const debouncedHandleSubmit = useRef(
+    debounce(
+      methods.handleSubmit(async (values) => {
+        await importCourseMutation(values, {
+          onSuccess: (courseCreated) => {
+            if (courseCreated && !(courseCreated instanceof TRPCError))
+              void router.push(
+                `/creator/dashboard/course/${courseCreated?.id}`
+              );
+          },
+          onError: () => {
+            errorToast("Error in importing course from YouTube!");
+          },
+        });
+      }),
+      300
+    )
+  ).current;
+
+  useEffect(() => {
+    debouncedHandleSubmit.cancel();
+  }, [debouncedHandleSubmit]);
+
   useEffect(() => {
     if (playlistData) {
       // if (!playlistDetailInit) {
@@ -195,19 +218,7 @@ const Index = () => {
           )}
         </div>
         <form
-          onSubmit={methods.handleSubmit(async (values) => {
-            await importCourseMutation(values, {
-              onSuccess: (courseCreated) => {
-                if (courseCreated && !(courseCreated instanceof TRPCError))
-                  void router.push(
-                    `/creator/dashboard/course/${courseCreated?.id}`
-                  );
-              },
-              onError: () => {
-                errorToast("Error in importing course from YouTube!");
-              },
-            });
-          })}
+          onSubmit={debouncedHandleSubmit}
           className="mt-12s mx-auto flex w-full flex-col gap-8"
         >
           <div className="flex w-full items-start gap-4">
