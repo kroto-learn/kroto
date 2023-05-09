@@ -68,6 +68,7 @@ model User {
   importedAudieceMember ImportedAudieceMember[]
   CourseBlockVideo      CourseBlockVideo[]
   CourseBlockMd         CourseBlockMd[]
+  Enrollment            Enrollment[]
 }
 
 model Event {
@@ -205,6 +206,7 @@ model Course {
   updatedAt         DateTime           @updatedAt
   courseBlockMds    CourseBlockMd[]
   courseBlockVideos CourseBlockVideo[]
+  enrollments       Enrollment[]
 
   @@index([creatorId])
 }
@@ -223,7 +225,7 @@ model CourseBlockVideo {
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
   courseId    String
-  course      Course               @relation(fields: [courseId], references: [id])
+  course      Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@index([creatorId])
   @@index([courseId])
@@ -241,7 +243,7 @@ model CourseBlockMd {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
   courseId  String
-  course    Course            @relation(fields: [courseId], references: [id])
+  course    Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@index([creatorId])
   @@index([courseId])
@@ -254,4 +256,16 @@ enum CourseBlockVideoType {
 
 enum CourseBlockMdType {
   TEXT
+}
+
+model Enrollment {
+  id       String @id @default(cuid())
+  courseId String
+  userId   String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, userId])
+  @@index([courseId])
+  @@index([userId])
 }
