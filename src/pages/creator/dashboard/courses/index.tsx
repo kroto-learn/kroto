@@ -45,7 +45,7 @@ const Index = () => {
                 className="flex w-full gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
                 key={course?.id}
               >
-                <div className="relative mb-2 aspect-video w-40 overflow-hidden rounded-lg">
+                <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
                   <Image
                     src={course?.thumbnail ?? ""}
                     alt={course?.title ?? ""}

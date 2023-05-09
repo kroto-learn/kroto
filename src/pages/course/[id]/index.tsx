@@ -75,7 +75,7 @@ const Index = ({ courseId }: Props) => {
       </Head>
       <main className="mx-auto mb-8 mt-16 flex h-[80vh] w-full max-w-4xl gap-4 overflow-x-hidden">
         <AnimatedSection className="flex h-full w-[30rem] flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm">
-          <div className="relative mb-2 aspect-video w-full content-center overflow-hidden rounded-xl">
+          <div className="relative aspect-video w-full content-center overflow-hidden rounded-xl">
             <Image
               src={course?.thumbnail ?? ""}
               alt={course?.title ?? ""}
@@ -165,7 +165,7 @@ const Index = ({ courseId }: Props) => {
               key={courseBlock?.id}
             >
               <p className="text-sm text-neutral-300">{index + 1}</p>
-              <div className="relative mb-2 aspect-video w-40 content-center overflow-hidden rounded-lg">
+              <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
                 <Image
                   src={course?.thumbnail ?? ""}
                   alt={course?.title ?? ""}
