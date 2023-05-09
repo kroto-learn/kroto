@@ -94,7 +94,9 @@ const CourseOverview = () => {
                 </LinkedinShareButton>
                 <FacebookShareButton
                   url={courseUrl}
-                  quote={`Join the "${course?.title ?? ""}" event on Kroto.in`}
+                  quote={`Enroll the "${
+                    course?.title ?? ""
+                  }" course on Kroto.in`}
                   hashtag={"#kroto"}
                 >
                   <FacebookIcon
@@ -105,7 +107,9 @@ const CourseOverview = () => {
                 </FacebookShareButton>
                 <TwitterShareButton
                   url={courseUrl}
-                  title={`Join the "${course?.title ?? ""}" event on Kroto.in`}
+                  title={`Enroll the "${
+                    course?.title ?? ""
+                  }" event on Kroto.in`}
                 >
                   <TwitterIcon
                     size={28}
@@ -115,7 +119,9 @@ const CourseOverview = () => {
                 </TwitterShareButton>
                 <WhatsappShareButton
                   url={courseUrl}
-                  title={`Join the "${course?.title ?? ""}" event on Kroto.in`}
+                  title={`Enroll the "${
+                    course?.title ?? ""
+                  }" course on Kroto.in`}
                   separator=": "
                 >
                   <WhatsappIcon
@@ -204,14 +210,14 @@ const nestLayout = (
   return (page: ReactNode) => parent(child(page));
 };
 
-export const CourseNestedLayout = nestLayout(DashboardLayout, EventLayout);
+export const CourseNestedLayout = nestLayout(DashboardLayout, CourseLayout);
 
 CourseOverview.getLayout = CourseNestedLayout;
 
 export default CourseOverview;
 
-function EventLayout(page: ReactNode) {
+function CourseLayout(page: ReactNode) {
   return <CourseLayoutR>{page}</CourseLayoutR>;
 }
 
-export { EventLayout };
+export { CourseLayout };

@@ -68,13 +68,13 @@ const Index = () => {
               <Image src="/empty/event_empty.svg" alt="empty" fill />
             </div>
             <p className="mb-2 text-sm text-neutral-400 sm:text-base">
-              You have not created any events yet.
+              You have not created any course yet.
             </p>
             <Link
-              href="/event/create"
+              href="/course/create"
               className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
             >
-              <PlusIcon className="w-5" /> Create Event
+              <PlusIcon className="w-5" /> Create Course
             </Link>
           </div>
         )}

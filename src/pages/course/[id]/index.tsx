@@ -1,13 +1,17 @@
 import { Loader } from "@/components/Loader";
 import Layout from "@/components/layouts/main";
+import useToast from "@/hooks/useToast";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import { ArrowLeftIcon, PlayIcon } from "@heroicons/react/20/solid";
+import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { TRPCError } from "@trpc/server";
 import { type GetStaticPropsContext } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+// import { useRouter } from "next/router";
 import { type ParsedUrlQuery } from "querystring";
 
 type Props = {
@@ -16,6 +20,12 @@ type Props = {
 
 const Index = ({ courseId }: Props) => {
   const { data: course } = api.course.getCourse.useQuery({ id: courseId });
+  const session = useSession();
+  // const router = useRouter();
+  const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
+    api.course.enroll.useMutation();
+  const { data: isEnrolled } = api.course.isEnrolled.useQuery({ courseId });
+  const { successToast, errorToast } = useToast();
 
   if (course instanceof TRPCError || !course)
     return (
@@ -90,20 +100,57 @@ const Index = ({ courseId }: Props) => {
             </p>
           </Link>
 
-          <button
-            className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
-          >
-            {false ? (
-              <div>
-                <Loader white />
-              </div>
+          {session.data?.user.id !== course?.creator?.id ? (
+            isEnrolled ? (
+              <Link
+                href={`/course/${course?.id}`}
+                className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+              >
+                <>
+                  <PlayIcon className="w-4" />
+                  <span>Play</span>
+                </>
+              </Link>
             ) : (
+              <button
+                onClick={async () => {
+                  await enrollMutation(
+                    { courseId: course?.id },
+                    {
+                      onSuccess: () => {
+                        successToast("Successfully enrolled in course!");
+                      },
+                      onError: () => {
+                        errorToast("Error in enrolling in course!");
+                      },
+                    }
+                  );
+                }}
+                className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+              >
+                {enrollLoading ? (
+                  <div>
+                    <Loader white />
+                  </div>
+                ) : (
+                  <>
+                    <PlayIcon className="w-4" />
+                    <span>Enroll now</span>
+                  </>
+                )}
+              </button>
+            )
+          ) : (
+            <Link
+              href={`/creator/dashboard/course/${course?.id}`}
+              className={`group my-4 inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/10 px-6 py-1  text-center font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200`}
+            >
               <>
-                <PlayIcon className="w-4" />
-                <span>Enroll now</span>
+                <AdjustmentsHorizontalIcon className="w-4" />
+                <span>Manage</span>
               </>
-            )}
-          </button>
+            </Link>
+          )}
 
           <p className="hide-scroll max-h-52 overflow-y-scroll text-sm text-neutral-300">
             {course?.description}
