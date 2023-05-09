@@ -151,7 +151,7 @@ const Index = () => {
             <></>
           ) : (
             <div className="absolute top-20 z-10 mt-2 flex w-full flex-col overflow-hidden rounded-xl border border-neutral-700 backdrop-blur">
-              {playlists.map((playlist) => (
+              {playlists?.map((playlist) => (
                 <button
                   onClick={() => {
                     setPlaylistId(playlist.playlistId);

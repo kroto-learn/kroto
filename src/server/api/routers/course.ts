@@ -104,7 +104,7 @@ export const courseRouter = createTRPCRouter({
 
       const playlists = await searchYoutubePlaylistsService({
         searchQuery: input.searchQuery,
-        accessToken: ctx.session.user.token,
+        accessToken: ctx.session.user.token ?? "",
       });
 
       return playlists;

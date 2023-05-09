@@ -22,13 +22,15 @@ import { MixPannelTracking } from "@/analytics/mixpanel";
 import { useEffect } from "react";
 
 const Home: NextPage = () => {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     MixPannelTracking.getInstance().pageViewed({
       pagePath: "/",
     });
   }, []);
+
+  console.log(session);
 
   return (
     <>
