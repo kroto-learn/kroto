@@ -41,9 +41,17 @@ declare module "next-auth" {
  *
  * @see https://next-auth.js.org/configuration/options
  */
+
+const scopes = [
+  "https://www.googleapis.com/auth/youtube.readonly",
+  "https://www.googleapis.com/auth/userinfo.email",
+  "https://www.googleapis.com/auth/userinfo.profile",
+];
+
 export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, user }) {
+      if (!session || !user) return session;
       if (session.user) {
         const newSession = await checkAndRefresh(session, user);
         if (newSession) return newSession;
@@ -55,6 +63,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  adapter: PrismaAdapter(prisma),
   events: {
     async signIn({ user, account }) {
       console.log("sign in", account);
@@ -86,7 +95,6 @@ export const authOptions: NextAuthOptions = {
       });
     },
   },
-  adapter: PrismaAdapter(prisma),
   providers: [
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
@@ -101,7 +109,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
-          scope: "openid https://www.googleapis.com/auth/youtube.readonly",
+          scope: `openid ${scopes.join(" ")}`,
         },
       },
     }),
