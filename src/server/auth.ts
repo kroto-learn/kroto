@@ -44,10 +44,6 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, user }) {
-      if (!session || !user) {
-        return session;
-      }
-
       if (session.user) {
         const newSession = await checkAndRefresh(session, user);
         if (newSession) return newSession;
@@ -57,6 +53,37 @@ export const authOptions: NextAuthOptions = {
       const newSession = await checkAndRefresh(session, user);
       if (newSession) return newSession;
       return session;
+    },
+  },
+  events: {
+    async signIn({ user, account }) {
+      console.log("sign in", account);
+      const dbUser = await prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+        include: {
+          accounts: true,
+        },
+      });
+
+      if (!dbUser?.accounts[0] || !account) return;
+
+      const dbAccount = dbUser?.accounts[0];
+
+      await prisma.account.update({
+        where: {
+          provider_providerAccountId: {
+            provider: "google",
+            providerAccountId: dbAccount.providerAccountId,
+          },
+        },
+        data: {
+          access_token: account.access_token,
+          expires_at: account.expires_at,
+          refresh_token: account.refresh_token,
+        },
+      });
     },
   },
   adapter: PrismaAdapter(prisma),
@@ -74,6 +101,8 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       authorization: {
         params: {
+          access_type: "offline",
+          prompt: "consent",
           scope: "openid https://www.googleapis.com/auth/youtube.readonly",
         },
       },
@@ -108,7 +137,7 @@ async function checkAndRefresh(session: Session, user: User) {
 
   session.user = {
     ...user,
-    token: dbUser?.accounts[0]?.access_token ?? null,
+    token: dbUser?.accounts[0]?.access_token ?? "",
   };
 
   const newSession = {
@@ -122,7 +151,6 @@ async function checkAndRefresh(session: Session, user: User) {
   const refreshToken = dbUser?.accounts[0].refresh_token;
 
   if (difference < 5 && refreshToken) {
-    console.log("REFRESH", refreshToken);
     try {
       const request = await axios.post<{
         access_token: string;
@@ -137,10 +165,7 @@ async function checkAndRefresh(session: Session, user: User) {
         },
       });
 
-      console.log("TOKEN REQUEST", request);
-
       if (!(request.status === 200)) {
-        console.log(request.status);
         return newSession;
       }
 
