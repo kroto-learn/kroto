@@ -162,7 +162,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
             </div>
           </div>
         </div>
-        <div className="flex w-full max-w-4xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-gradient-to-b from-neutral-800 via-neutral-800 to-transparent p-8 pb-24">
+        <div className="flex w-full max-w-4xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-gradient-to-b from-neutral-800 via-neutral-800 to-transparent p-8 pb-24 backdrop-blur-sm">
           <div className="mb-4 flex items-center gap-8">
             <Link
               href={`/${creator.creatorProfile ?? ""}`}
