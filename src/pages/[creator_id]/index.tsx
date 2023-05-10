@@ -11,11 +11,12 @@ import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { Loader } from "@/components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAt, faQuoteLeft, faT } from "@fortawesome/free-solid-svg-icons";
+import { faAt, faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
 import Layout from "@/components/layouts/main";
 import CourseCard from "@/components/CourseCard";
 import TestimonialDisclosure from "@/components/TestimonialDisclosure";
+import { Tooltip } from "antd";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -138,37 +139,27 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                   type={link.type}
                 ></SocialLink>
               ))}
+              {creator?.topmateUrl && creator?.topmateUrl !== "" ? (
+                <Tooltip title="Schedule a 1:1 session with me!">
+                  <Link
+                    href={creator?.topmateUrl ?? ""}
+                    target="_blank"
+                    className="group flex aspect-square w-10 items-center justify-center rounded-full border border-neutral-500 bg-neutral-200/10 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332]"
+                  >
+                    <div className="group relative h-4 w-4">
+                      <Image
+                        src="/topmate_logo.png"
+                        alt="topmate"
+                        fill
+                        className="opacity-70 group-hover:opacity-100"
+                      />
+                    </div>
+                  </Link>{" "}
+                </Tooltip>
+              ) : (
+                <></>
+              )}
             </div>
-            {creator?.topmateUrl && creator?.topmateUrl !== "" ? (
-              <Link
-                href={creator?.topmateUrl ?? ""}
-                target="_blank"
-                className="group mb-4 flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332] hover:text-neutral-200"
-              >
-                <div className="group relative h-4 w-4">
-                  <Image
-                    src="/topmate_logo.png"
-                    alt="topmate"
-                    fill
-                    className="opacity-70 group-hover:opacity-100"
-                  />
-                </div>
-                Schedule a 1:1 call
-              </Link>
-            ) : (
-              <></>
-            )}
-            {creator?.topmateUrl && creator?.topmateUrl !== "" ? (
-              <Link
-                href={`/${creator?.creatorProfile ?? ""}/testimonial`}
-                className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:bg-pink-500 hover:text-neutral-200"
-              >
-                <FontAwesomeIcon icon={faQuoteLeft} /> Write a Testimonial for
-                me
-              </Link>
-            ) : (
-              <></>
-            )}
           </div>
         </div>
         <div className="flex w-full max-w-4xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-gradient-to-b from-neutral-800 via-neutral-800 to-transparent p-8 pb-24">
@@ -270,6 +261,13 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
             </div>
           )}
         </div>
+        <Link
+          id="testimonial"
+          href={`/${creator?.creatorProfile ?? ""}/testimonial`}
+          className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 backdrop-blur-sm transition-all duration-300 hover:bg-pink-500/80 hover:text-neutral-200"
+        >
+          <FontAwesomeIcon icon={faQuoteLeft} /> Write a Testimonial for me
+        </Link>
       </main>
     </Layout>
   );
