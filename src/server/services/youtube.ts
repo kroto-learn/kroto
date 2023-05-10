@@ -179,3 +179,28 @@ export const getPlaylistDataService = async (id: string) => {
     return null;
   }
 };
+
+export const getVideoDataService = async (id: string) => {
+  try {
+    const videoRes = await axios.get(
+      "https://www.googleapis.com/youtube/v3/videos",
+      {
+        params: { part: "snippet", id, key: YOUTUBE_API_KEY },
+      }
+    );
+
+    if (videoRes && videoRes.status === 200) {
+      const videoData = (
+        videoRes as {
+          data: { items: { snippet: { description: string } }[] };
+        }
+      ).data;
+      if (videoData?.items[0])
+        return videoData.items[0].snippet as { description: string };
+    }
+    return null;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};

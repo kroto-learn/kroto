@@ -68,6 +68,7 @@
     "react-hot-toast": "^2.4.0",
     "react-markdown": "^8.0.7",
     "react-table": "^7.8.0",
+    "react-youtube": "^10.1.0",
     "remark-gfm": "^3.0.1",
     "sharp": "^0.32.0",
     "showdown": "^2.1.0",

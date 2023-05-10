@@ -57,20 +57,17 @@ export const courseRouter = createTRPCRouter({
         },
         include: {
           creator: true,
+          courseBlockMds: true,
+          courseBlockVideos: true,
         },
       });
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
 
-      const courseBlockVideos = await prisma.courseBlockVideo.findMany({
-        where: { courseId: course.id },
-      });
-
-      const courseBlockMds = await prisma.courseBlockMd.findMany({
-        where: { courseId: course.id },
-      });
-
-      const courseBlocks = [...courseBlockVideos, ...courseBlockMds];
+      const courseBlocks = [
+        ...course.courseBlockVideos,
+        ...course.courseBlockMds,
+      ];
 
       courseBlocks.sort((a, b) => a.position - b.position);
 

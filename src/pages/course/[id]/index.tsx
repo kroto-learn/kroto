@@ -27,6 +27,7 @@ const Index = ({ courseId }: Props) => {
     api.course.enroll.useMutation();
   const { data: isEnrolled } = api.course.isEnrolled.useQuery({ courseId });
   const { successToast, errorToast } = useToast();
+  const ctx = api.useContext();
 
   if (course instanceof TRPCError || !course)
     return (
@@ -104,7 +105,7 @@ const Index = ({ courseId }: Props) => {
           {session.data?.user.id !== course?.creator?.id ? (
             isEnrolled ? (
               <Link
-                href={`/course/${course?.id}`}
+                href={`/course/play/${course?.id}`}
                 className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
               >
                 <>
@@ -119,6 +120,7 @@ const Index = ({ courseId }: Props) => {
                     { courseId: course?.id },
                     {
                       onSuccess: () => {
+                        void ctx.course.isEnrolled.invalidate();
                         successToast("Successfully enrolled in course!");
                       },
                       onError: () => {
