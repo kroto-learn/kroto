@@ -80,25 +80,21 @@ export const courseRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
-    const coursesP = (
-      await prisma.course.findMany({
-        where: {
-          creatorId: ctx.session.user.id,
+    const courses = await prisma.course.findMany({
+      where: {
+        creatorId: ctx.session.user.id,
+      },
+      include: {
+        _count: {
+          select: {
+            courseBlockMds: true,
+            courseBlockVideos: true,
+          },
         },
-      })
-    ).map(async (course) => {
-      const videos = await prisma.courseBlockVideo.count({
-        where: { courseId: course.id },
-      });
-      const mds = await prisma.courseBlockMd.count({
-        where: { courseId: course.id },
-      });
-      const blocks = videos + mds;
-      return { ...course, blocks };
+      },
     });
-    const coursesWithCount = await Promise.all(coursesP);
 
-    return coursesWithCount;
+    return courses;
   }),
 
   searchYoutubePlaylists: protectedProcedure

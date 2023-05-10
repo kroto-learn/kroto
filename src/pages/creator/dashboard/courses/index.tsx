@@ -5,6 +5,7 @@ import Head from "next/head";
 import { Loader } from "@/components/Loader";
 import { api } from "@/utils/api";
 import Image from "next/image";
+import CourseCard from "@/components/CourseCard";
 
 const Index = () => {
   const { data: courses, isLoading: couresesLoading } =
@@ -40,26 +41,7 @@ const Index = () => {
         {courses && courses.length > 0 ? (
           <div className="mt-8 flex w-full flex-col items-start gap-4">
             {courses?.map((course) => (
-              <Link
-                href={`/creator/dashboard/course/${course?.id}`}
-                className="flex w-full gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                key={course?.id}
-              >
-                <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
-                  <Image
-                    src={course?.thumbnail ?? ""}
-                    alt={course?.title ?? ""}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex h-full w-full flex-col items-start gap-1">
-                  <h5 className="font-medium">{course?.title}</h5>
-                  <p className="flex items-center text-xs text-neutral-300">
-                    {course.blocks} Blocks
-                  </p>
-                </div>
-              </Link>
+              <CourseCard course={course} key={course.id} manage />
             ))}
           </div>
         ) : (

@@ -11,22 +11,33 @@ import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { Loader } from "@/components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
+import { faAt, faQuoteLeft, faT } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/router";
+import Layout from "@/components/layouts/main";
+import CourseCard from "@/components/CourseCard";
+import TestimonialDisclosure from "@/components/TestimonialDisclosure";
 
 type CreatorPageProps = {
   creatorProfile: string;
 };
 
 const Index = ({ creatorProfile }: CreatorPageProps) => {
-  const { data: creator, isLoading } = api.creator.getPublicProfile.useQuery({
-    creatorProfile,
-  });
+  const { data: creator, isLoading: isCreatorLoading } =
+    api.creator.getPublicProfile.useQuery({
+      creatorProfile,
+    });
 
   const dynamicOgImage = `https://kroto.in/api/og/creator?name=${
     creator?.name ?? ""
   }&image=${creator?.image ?? ""}&creatorProfile=${
     creator?.creatorProfile ?? ""
   }`;
+
+  const router = useRouter();
+
+  const isCoursesTab = !router.query.events && !router.query.testimonials;
+  const isEventsTab = router.query.events && !router.query.testimonials;
+  const isTestimonialsTab = !router.query.events && router.query.testimonials;
 
   if (!creator) {
     return (
@@ -46,7 +57,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   }
 
   return (
-    <>
+    <Layout>
       <Head>
         <title>{`${creator?.name ?? ""} - Kroto`}</title>
         <meta name="description" content={creator?.bio ?? ""} />
@@ -56,7 +67,10 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         <meta itemProp="description" content={creator?.bio ?? ""} />
         <meta itemProp="image" content={creator?.ogImage ?? dynamicOgImage} />
         {/* facebook meta */}
-        <meta property="og:title" content={`${creator?.name} | Kroto` ?? ""} />
+        <meta
+          property="og:title"
+          content={`${creator?.name ?? ""} | Kroto` ?? ""}
+        />
         <meta property="og:description" content={creator?.bio ?? ""} />
         <meta
           property="og:image"
@@ -79,10 +93,10 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
-        <div className="relative mt-6 flex w-full max-w-2xl flex-col items-center">
+        <div className="relative mt-6 flex w-full max-w-4xl flex-col items-center">
           <div className="absolute z-[2]">
             <div
-              className={`relative aspect-square w-28 overflow-hidden  rounded-full border border-neutral-900 outline outline-neutral-800 transition-all`}
+              className={`relative aspect-square w-28 overflow-hidden  rounded-3xl border-4 border-neutral-950 transition-all`}
             >
               <Image
                 src={creator?.image ?? ""}
@@ -92,19 +106,30 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
             </div>
           </div>
           <div
-            className={`mt-[3.7rem] flex w-full flex-col items-center justify-between gap-[1.5rem] rounded-3xl bg-neutral-900 px-16 pb-32 pt-16 backdrop-blur-lg transition-all duration-300`}
+            className={`mt-[3.7rem] flex w-full flex-col items-center justify-between gap-1 rounded-3xl bg-neutral-900 px-16 pb-32 pt-16 backdrop-blur-lg transition-all duration-300`}
           >
             <h1
               className={`text-center text-2xl font-medium text-neutral-200 transition-all duration-300 lg:text-left`}
             >
               {creator?.name}
             </h1>
+
+            <h3
+              className={`mb-3 text-center text-neutral-300 transition-all duration-300 lg:text-left`}
+            >
+              {/* <span className="font-medium text-pink-500">@</span> */}
+              <FontAwesomeIcon
+                icon={faAt}
+                className="mr-[0.15rem] text-sm text-pink-500"
+              />
+              {creator?.creatorProfile}
+            </h3>
             <p
-              className={`text-center text-sm text-neutral-400 transition-all duration-300  sm:text-base`}
+              className={`mb-5 max-w-xl text-center text-sm text-neutral-400 transition-all duration-300  sm:text-base`}
             >
               {creator?.bio}
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+            <div className="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               {creator?.socialLinks?.map((link) => (
                 <SocialLink
                   collapsed={true}
@@ -118,7 +143,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
               <Link
                 href={creator?.topmateUrl ?? ""}
                 target="_blank"
-                className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332] hover:text-neutral-200"
+                className="group mb-4 flex w-full max-w-xs items-center justify-center gap-2 rounded-xl border border-neutral-500 bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 transition-all duration-300 hover:border-neutral-200 hover:bg-[#E44332] hover:text-neutral-200"
               >
                 <div className="group relative h-4 w-4">
                   <Image
@@ -146,16 +171,92 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
             )}
           </div>
         </div>
-        <div className="flex w-full max-w-2xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-neutral-800 p-8">
-          <h2 className="text-lg font-medium uppercase tracking-wider text-neutral-200">
-            Upcoming Events
-          </h2>
-          {isLoading ? (
+        <div className="flex w-full max-w-4xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-gradient-to-b from-neutral-800 via-neutral-800 to-transparent p-8 pb-24">
+          <div className="mb-4 flex items-center gap-8">
+            <Link
+              href={`/${creator.creatorProfile ?? ""}`}
+              className={`relative flex justify-center text-sm font-medium uppercase tracking-widest text-neutral-200 duration-150 hover:text-neutral-300 active:scale-95 ${
+                !isCoursesTab ? "text-neutral-400" : ""
+              }`}
+            >
+              Courses
+              <div
+                className={`absolute -bottom-2 mx-auto h-[0.15rem] w-6 rounded-full ${
+                  isCoursesTab ? "bg-pink-500" : ""
+                }`}
+              />
+            </Link>
+            <Link
+              href={`/${creator.creatorProfile ?? ""}?events=true`}
+              className={`relative flex justify-center text-sm font-medium uppercase tracking-widest text-neutral-200 duration-150 hover:text-neutral-300 active:scale-95 ${
+                !isEventsTab ? "text-neutral-400" : ""
+              }`}
+            >
+              Events
+              <div
+                className={`absolute -bottom-2 mx-auto h-[0.15rem] w-6 rounded-full ${
+                  isEventsTab ? "bg-pink-500" : ""
+                }`}
+              />
+            </Link>
+            <Link
+              href={`/${creator.creatorProfile ?? ""}?testimonials=true`}
+              className={`relative flex justify-center text-sm font-medium uppercase tracking-widest text-neutral-200 duration-150 hover:text-neutral-300 active:scale-95 ${
+                !isTestimonialsTab ? "text-neutral-400" : ""
+              }`}
+            >
+              Testimonials
+              <div
+                className={`absolute -bottom-2 mx-auto h-[0.15rem] w-6 rounded-full ${
+                  isTestimonialsTab ? "bg-pink-500" : ""
+                }`}
+              />
+            </Link>
+          </div>
+
+          {isCreatorLoading ? (
             <Loader size="lg" />
-          ) : creator.events && creator.events.length > 0 ? (
+          ) : isEventsTab ? (
+            creator.events && creator.events.length > 0 ? (
+              <div className="flex w-full flex-col items-center gap-4">
+                {creator?.events?.map((event) => (
+                  <EventCard key={event?.id ?? ""} event={event} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+                <div className="relative aspect-square w-40 object-contain">
+                  <Image src="/empty/event_empty.svg" alt="empty" fill />
+                </div>
+                <p className="mb-2 text-neutral-400">
+                  The creater has not created any events.
+                </p>
+              </div>
+            )
+          ) : isTestimonialsTab ? (
+            creator.testimonials && creator.testimonials.length > 0 ? (
+              <div className="flex w-full max-w-lg flex-col items-center gap-4">
+                {creator?.testimonials?.map((testimonial) => (
+                  <TestimonialDisclosure
+                    key={testimonial?.id ?? ""}
+                    testimonial={testimonial}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+                <div className="relative aspect-square w-40 object-contain">
+                  <Image src="/empty/testimonial_empty.svg" alt="empty" fill />
+                </div>
+                <p className="mb-2 text-neutral-400">
+                  The creater has not got any testimonials.
+                </p>
+              </div>
+            )
+          ) : creator.courses && creator.courses.length > 0 ? (
             <div className="flex w-full flex-col items-center gap-4">
-              {creator?.events?.map((event) => (
-                <EventCard key={event?.id ?? ""} event={event} />
+              {creator?.courses?.map((course) => (
+                <CourseCard key={course?.id ?? ""} course={course} lg />
               ))}
             </div>
           ) : (
@@ -164,13 +265,13 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                 <Image src="/empty/event_empty.svg" alt="empty" fill />
               </div>
               <p className="mb-2 text-neutral-400">
-                The creater has not created any events.
+                The creater has not created any courses.
               </p>
             </div>
           )}
         </div>
       </main>
-    </>
+    </Layout>
   );
 };
 

@@ -33,7 +33,16 @@ export const creatorRouter = createTRPCRouter({
         },
         include: {
           socialLinks: true,
-          testimonials: true,
+          courses: {
+            include: {
+              _count: {
+                select: {
+                  courseBlockMds: true,
+                  courseBlockVideos: true,
+                },
+              },
+            },
+          },
           accounts: true,
           events: {
             where: {
@@ -45,7 +54,12 @@ export const creatorRouter = createTRPCRouter({
         },
       });
 
-      return creator;
+      const testimonials = await prisma.testimonial.findMany({
+        where: { creatorProfile },
+        include: { user: true },
+      });
+
+      return { ...creator, testimonials };
     }),
 
   getProfile: protectedProcedure.query(async ({ ctx }) => {

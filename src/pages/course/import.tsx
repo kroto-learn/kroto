@@ -261,7 +261,7 @@ const Index = () => {
                 htmlFor="description"
                 className="text-lg  text-neutral-200"
               >
-                Course Blocks
+                Course chapters
               </label>
               {/* <button
                 type="button"

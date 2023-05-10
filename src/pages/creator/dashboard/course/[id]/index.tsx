@@ -162,7 +162,7 @@ const CourseOverview = () => {
                 htmlFor="description"
                 className="text-lg  text-neutral-200"
               >
-                Blocks
+                Chapters
               </label>
               {/* <button
                 type="button"
