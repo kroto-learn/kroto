@@ -117,8 +117,9 @@ export function Hero({ word }: { word: number }) {
               <h1 className="relative text-center text-4xl font-extrabold tracking-tight sm:mt-5 sm:text-6xl lg:mt-6 xl:text-8xl">
                 <span
                   className={`${
-                    word === 1 &&
-                    "bg-gradient-to-r from-rose-700 to-pink-600 bg-clip-text text-transparent transition-colors duration-500"
+                    word === 1
+                      ? "bg-gradient-to-r from-rose-700 to-pink-600 bg-clip-text text-transparent transition-colors duration-500"
+                      : ""
                   } pr-2`}
                 >
                   Create.
@@ -126,16 +127,18 @@ export function Hero({ word }: { word: number }) {
                 <span
                   className={`
                     ${
-                      word === 2 &&
-                      "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text  text-transparent transition-all duration-500"
+                      word === 2
+                        ? "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text  text-transparent transition-all duration-500"
+                        : ""
                     } pr-2`}
                 >
                   Market.
                 </span>
                 <span
                   className={`${
-                    word === 3 &&
-                    "bg-gradient-to-r from-emerald-500 to-lime-600 bg-clip-text text-transparent transition-all duration-500"
+                    word === 3
+                      ? "bg-gradient-to-r from-emerald-500 to-lime-600 bg-clip-text text-transparent transition-all duration-500"
+                      : ""
                   } pl-2`}
                 >
                   Monetize.
