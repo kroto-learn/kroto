@@ -101,13 +101,14 @@ export function Hero() {
           <div className="mx-auto max-w-lg sm:max-w-4xl sm:px-4 sm:text-center lg:flex lg:items-center lg:pl-0 lg:text-left">
             <div className="">
               <h1 className="relative max-w-4xl text-center text-4xl font-extrabold tracking-tight text-white sm:mt-5 sm:text-6xl lg:mt-6 xl:text-7xl">
+                 {/* Create. Market. Monetize. */}
                 <span className="block">Unlocking the potential of</span>
                 <span className="block pb-3 text-pink-500 sm:pb-5">
                   Online Education
                 </span>
               </h1>
               <p className="relative my-5 text-center text-base text-neutral-300 sm:text-xl lg:text-lg xl:text-2xl">
-                We help Online educators monetize their content and provide
+                We help online educators market and monetize their content and provide
                 students with a seamless learning experience
               </p>
               <div className="mt-6 flex justify-center sm:mt-8">
