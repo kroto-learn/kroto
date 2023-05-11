@@ -299,6 +299,6 @@ model Recipient {
   emailModelId String
   email        Email    @relation(fields: [emailModelId], references: [id], onDelete: Cascade)
 
-  @@unique([emailModelId, name])
+  @@unique([emailModelId, id])
   @@index([emailModelId])
 }
