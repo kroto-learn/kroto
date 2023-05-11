@@ -141,7 +141,6 @@ const Audience = () => {
               type="button"
               className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
               onClick={() => {
-                console.log("reached here");
                 getCSV(
                   audienceData?.map((r) => ({
                     NAME: r.name,
@@ -404,6 +403,7 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
     api.creator.audience.importAudience.useMutation();
 
   const { errorToast, successToast } = useToast();
+  const ctx = api.useContext();
 
   return (
     <>
@@ -495,13 +495,6 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                             </p> */}
                             <div className="h-32 w-full overflow-scroll">
                               <table className="w-full border-collapse">
-                                <thead>
-                                  <tr>
-                                    <td className="w-full border border-neutral-700 bg-neutral-600 p-1 px-3 font-bold uppercase text-neutral-400">
-                                      EMAIL
-                                    </td>
-                                  </tr>
-                                </thead>
                                 <tbody>
                                   {selectedEmails.map((se) => (
                                     <tr
@@ -585,6 +578,7 @@ const UploadCSVModal = ({ isOpen, setIsOpen }: UCMProps) => {
                             { email: selectedEmails },
                             {
                               onSuccess: () => {
+                                void ctx.creator.audience.getImportedAudience.invalidate();
                                 successToast(
                                   "Audience imported from CSV successfully!"
                                 );

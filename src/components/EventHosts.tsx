@@ -81,8 +81,7 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
                           onClick={async () => {
                             await removeHost(
                               {
-                                hostId: host?.id ?? "",
-                                eventId: event?.id ?? "",
+                                id: host?.id ?? "",
                               },
                               {
                                 onError: () => {

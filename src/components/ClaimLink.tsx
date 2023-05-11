@@ -6,13 +6,16 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import { Loader } from "./Loader";
 
 export function ClaimLink({ profile }: { profile?: string }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [creatorProfile, setCreatorProfile] = useState<string>("");
   const { data: creator } = api.creator.getProfile.useQuery();
-  const makeCreator = api.creator.makeCreator.useMutation().mutateAsync;
+  const { mutateAsync: makeCreator, isLoading: makeCreatorLoading } =
+    api.creator.makeCreator.useMutation();
+  const ctx = api.useContext();
 
   useEffect(() => {
     if (profile) setCreatorProfile(profile);
@@ -25,9 +28,16 @@ export function ClaimLink({ profile }: { profile?: string }) {
         localStorage.setItem("creatorProfile", creatorProfile);
         if (session?.user) {
           if (!creator?.isCreator) {
-            const creatorM = await makeCreator({
-              creatorProfile,
-            });
+            const creatorM = await makeCreator(
+              {
+                creatorProfile,
+              },
+              {
+                onSuccess: () => {
+                  void ctx.creator.getProfile.invalidate();
+                },
+              }
+            );
             if (creatorM.isCreator)
               void router.push(`/creator/dashboard/settings`);
           } else void router.push(`/creator/dashboard/settings`);
@@ -56,7 +66,11 @@ export function ClaimLink({ profile }: { profile?: string }) {
         className="group absolute right-1 flex items-center gap-1 rounded-full bg-pink-600 p-2 px-4 text-xs font-bold text-neutral-200 duration-300 hover:bg-pink-700"
       >
         <span className="hidden md:block">Claim Now</span>
-        <ChevronRightIcon className="w-5 transition-transform duration-300 group-hover:translate-x-1" />
+        {makeCreatorLoading ? (
+          <Loader white />
+        ) : (
+          <ChevronRightIcon className="w-5 transition-transform duration-300 group-hover:translate-x-1" />
+        )}
       </button>
     </form>
   );
@@ -66,8 +80,10 @@ export function ClaimLinkLanding({ profile }: { profile?: string }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [creatorProfile, setCreatorProfile] = useState<string>("");
-  const makeCreator = api.creator.makeCreator.useMutation().mutateAsync;
+  const { mutateAsync: makeCreator, isLoading: makeCreatorLoading } =
+    api.creator.makeCreator.useMutation();
   const { data: creator } = api.creator.getProfile.useQuery();
+  const ctx = api.useContext();
 
   useEffect(() => {
     if (profile) setCreatorProfile(profile);
@@ -80,9 +96,16 @@ export function ClaimLinkLanding({ profile }: { profile?: string }) {
         localStorage.setItem("creatorProfile", creatorProfile);
         if (session?.user) {
           if (!creator?.isCreator) {
-            const creator = await makeCreator({
-              creatorProfile,
-            });
+            const creator = await makeCreator(
+              {
+                creatorProfile,
+              },
+              {
+                onSuccess: () => {
+                  void ctx.creator.getProfile.invalidate();
+                },
+              }
+            );
             if (creator.isCreator)
               void router.push(`/creator/dashboard/settings`);
           } else void router.push(`/creator/dashboard/settings`);
@@ -127,7 +150,11 @@ export function ClaimLinkLanding({ profile }: { profile?: string }) {
         className="group flex h-[512/14px] items-center rounded-2xl border border-pink-500 bg-pink-500 px-6 py-2 font-bold text-neutral-200 shadow-[-2px_3px_0px_0px] shadow-pink-500/60 duration-300 hover:shadow-[-4px_7px_0px_0px] hover:shadow-pink-500/60 active:shadow-[-2px_3px_0px_0px] active:shadow-pink-500/60 disabled:cursor-not-allowed disabled:border-pink-500/80 disabled:bg-pink-500/50 disabled:text-neutral-200/70 disabled:hover:shadow-[-2px_3px_0px_0px] disabled:hover:shadow-pink-500/60"
       >
         <span className="hidden md:block">Claim Now</span>
-        <ChevronRightIcon className="w-6 transition-transform duration-300 group-hover:translate-x-1 group-disabled:group-hover:translate-x-0 sm:w-8" />
+        {makeCreatorLoading ? (
+          <Loader white />
+        ) : (
+          <ChevronRightIcon className="w-6 transition-transform duration-300 group-hover:translate-x-1 group-disabled:group-hover:translate-x-0 sm:w-8" />
+        )}
       </button>
     </form>
   );

@@ -14,11 +14,14 @@ const ProtectedRoutes = () => {
       "/auth/sign-in",
       "/[creator_id]",
       "/event/[id]",
+      "/course/[id]",
     ];
 
     if (publicRoutes.includes(router.pathname)) return;
 
-    if (status === "unauthenticated") void router.push("/");
+    if (status === "unauthenticated") {
+      void router.push("/");
+    }
   }, [status, router, session]);
 
   return <></>;

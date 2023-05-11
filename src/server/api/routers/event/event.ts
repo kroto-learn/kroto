@@ -12,8 +12,8 @@ import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
 import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
 import isBase64 from "is-base64";
-import axios from "axios";
 import { sendRegistrationConfirmation } from "@/server/helpers/emailHelper";
+import { generateStaticEventOgImage } from "@/server/services/og";
 
 const OG_URL = `${
   process.env.VERCEL ? "https://" : ""
@@ -151,26 +151,16 @@ export const eventRouter = createTRPCRouter({
 
       const thumbnail = await imageUpload(input.thumbnail, event.id, "event");
 
-      /* Don't use axios, make the api end point a function,
-       * and call it if needed from /pages/api/og and here we
-       * can just use the function.
-       */
-      console.log("NEXT_AUTH_URL", NEXTAUTH_URL);
-      const ogImageRes = await axios({
-        url: OG_URL,
-        responseType: "arraybuffer",
-        params: {
-          title: input.title,
-          datetime: input.datetime.getTime(),
-          host: ctx.session.user.name ?? "",
-        },
+      const ogImageRes = await generateStaticEventOgImage({
+        ogUrl: OG_URL,
+        title: input.title,
+        datetime: input.datetime,
+        host: ctx.session.user.name ?? "",
       });
 
-      const ogImage = await ogImageUpload(
-        ogImageRes.data as AWS.S3.Body,
-        event.id,
-        "event"
-      );
+      const ogImage = ogImageRes
+        ? await ogImageUpload(ogImageRes.data as AWS.S3.Body, event.id, "event")
+        : undefined;
 
       const updatedEvent = await prisma.event.update({
         where: {
@@ -214,21 +204,16 @@ export const eventRouter = createTRPCRouter({
       if (isBase64(input.thumbnail, { allowMime: true }))
         thumbnail = await imageUpload(input.thumbnail, input.id, "event");
 
-      const ogImageRes = await axios({
-        url: OG_URL,
-        responseType: "arraybuffer",
-        params: {
-          title: input.title,
-          datetime: input.datetime.getTime(),
-          host: ctx.session.user.name ?? "",
-        },
+      const ogImageRes = await generateStaticEventOgImage({
+        ogUrl: OG_URL,
+        title: input.title,
+        datetime: input.datetime,
+        host: ctx.session.user.name ?? "",
       });
 
-      const ogImage = await ogImageUpload(
-        ogImageRes.data as AWS.S3.Body,
-        input.id,
-        "event"
-      );
+      const ogImage: string | undefined = ogImageRes
+        ? await ogImageUpload(ogImageRes.data as AWS.S3.Body, input.id, "event")
+        : undefined;
 
       const event = await prisma.event.update({
         where: {

@@ -15,6 +15,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { MixPannelTracking } from "@/analytics/mixpanel";
 import { useRouter } from "next/router";
+import { AnimatePresence } from "framer-motion";
 config.autoAddCss = false;
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -39,14 +40,16 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Toaster />
       <Analytics />
       <ProtectedRoutes />
-      <Layout
-        Component={
-          Component as NextComponentType & {
-            getLayout: (page: ReactNode) => JSX.Element;
+      <AnimatePresence mode="wait" initial={true}>
+        <Layout
+          Component={
+            Component as NextComponentType & {
+              getLayout: (page: ReactNode) => JSX.Element;
+            }
           }
-        }
-        pageProps={pageProps}
-      />
+          pageProps={pageProps}
+        />
+      </AnimatePresence>
     </SessionProvider>
   );
 };

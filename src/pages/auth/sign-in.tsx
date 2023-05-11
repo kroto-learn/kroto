@@ -4,11 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDiscord,
-  faFacebookF,
-  faGoogle,
-} from "@fortawesome/free-brands-svg-icons";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 const options = [
   {
@@ -16,16 +12,16 @@ const options = [
     name: "Google",
     icon: <FontAwesomeIcon icon={faGoogle} />,
   },
-  {
-    id: "discord",
-    name: "Discord",
-    icon: <FontAwesomeIcon icon={faDiscord} />,
-  },
-  {
-    id: "facebook",
-    name: "Facebook",
-    icon: <FontAwesomeIcon icon={faFacebookF} />,
-  },
+  // {
+  //   id: "discord",
+  //   name: "Discord",
+  //   icon: <FontAwesomeIcon icon={faDiscord} />,
+  // },
+  // {
+  //   id: "facebook",
+  //   name: "Facebook",
+  //   icon: <FontAwesomeIcon icon={faFacebookF} />,
+  // },
 ];
 
 export function KrotoLogo() {

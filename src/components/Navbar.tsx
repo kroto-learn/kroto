@@ -5,9 +5,11 @@ import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { Fragment } from "react";
+import { useRouter } from "next/router";
 
 export default function Navbar({ status }: { status: string }) {
   const { data: creator, isLoading } = api.creator.getProfile.useQuery();
+  const router = useRouter();
 
   return (
     <div className="fixed top-0 z-40 w-full border-b border-neutral-800/50 bg-neutral-950/50 font-medium backdrop-blur-lg">
@@ -73,7 +75,9 @@ export default function Navbar({ status }: { status: string }) {
               {!(status === "loading") && status === "unauthenticated" ? (
                 <button
                   className="transition-all duration-300 hover:text-neutral-400"
-                  onClick={() => void signIn()}
+                  onClick={() =>
+                    void signIn('google', { callbackUrl: router.asPath })
+                  }
                 >
                   Sign In
                 </button>

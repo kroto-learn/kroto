@@ -20,6 +20,9 @@ const config = {
       {
         hostname: "kroto.s3.ap-south-1.amazonaws.com",
       },
+      {
+        hostname: "i.ytimg.com",
+      },
     ],
   },
 };

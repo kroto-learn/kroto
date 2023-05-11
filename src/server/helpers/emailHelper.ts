@@ -105,7 +105,7 @@ const sendEventUpdate = async (
     Source: "kamal@kroto.in", // sender email
     Destination: {
       ToAddresses: email,
-    }, // recipient email
+    },
     Message: {
       Subject: {
         Charset: "UTF-8",

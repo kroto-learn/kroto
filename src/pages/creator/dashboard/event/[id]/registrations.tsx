@@ -85,7 +85,7 @@ const EventRegistrations = () => {
       <Head>
         <title>{(event?.title ?? "Event") + " | Registrations"}</title>
       </Head>
-      <div className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6">
+      <div className="min-h-[80%] w-full p-6">
         <h3 className="mb-4 text-lg font-medium  sm:text-2xl">Registrations</h3>
         <div className="mb-4 flex w-full items-start justify-between">
           <div className="flex flex-col items-start">
@@ -113,10 +113,10 @@ const EventRegistrations = () => {
         {event?.registrations &&
         event.registrations.length > 0 &&
         !isLoading ? (
-          <div className="h-[80vh] overflow-scroll">
+          <div className="h-[55vh] overflow-scroll">
             <table
               {...getTableProps()}
-              className="block h-[80%] w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
+              className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
             >
               <thead className="rounded-t-lg border border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400">
                 {

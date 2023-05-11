@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="border-neutral-800/50 bg-neutral-950">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-y-4 px-4 py-12 sm:px-6 md:justify-between lg:flex-row lg:px-8">
         <div className="text-center font-medium text-neutral-400">
-          Created by <span className="text-neutral-200">The Kreator Labs</span>
+          Created by <span className="text-neutral-200">Kroto Kreator Labs</span>
         </div>
         <nav className="flex flex-wrap justify-center" aria-label="Footer">
           <div className="px-5 py-2">
@@ -42,7 +42,7 @@ export default function Footer() {
           </Link>
         </div>
         <p className="text-center text-neutral-400">
-          © 2023 The Kreator Labs, All rights reserved.
+          © 2023 Kroto Kreator Labs, All rights reserved.
         </p>
       </div>
     </footer>

@@ -5,11 +5,9 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
-import { ChevronDownIcon, EnvelopeIcon } from "@heroicons/react/20/solid";
+import { EnvelopeIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import { Disclosure } from "@headlessui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
+import TestimonialDisclosure from "@/components/TestimonialDisclosure";
 
 const Index = () => {
   const { data: testimonials, isLoading: testimonialsLoading } =
@@ -35,36 +33,10 @@ const Index = () => {
       {testimonials && testimonials.length > 0 ? (
         <div className="flex w-full flex-col items-start gap-4">
           {testimonials.map((testimonial) => (
-            <Disclosure key={testimonial?.id ?? ""}>
-              {({ open }) => (
-                <>
-                  <Disclosure.Button className="z-2 flex w-full items-center justify-between rounded-xl bg-neutral-800 px-4 py-2">
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src={testimonial.user.image ?? ""}
-                        height={25}
-                        width={25}
-                        alt="Rose"
-                        className="aspect-square rounded-full object-cover"
-                      />
-                      <p className="max-w-[8rem] overflow-hidden truncate text-ellipsis">
-                        {testimonial.user.name}
-                      </p>
-                    </div>
-                    <ChevronDownIcon
-                      className={`${open ? "rotate-180 duration-150" : ""} w-5`}
-                    />
-                  </Disclosure.Button>
-                  <Disclosure.Panel className="realtive z-0 w-full -translate-y-6 rounded-b-xl bg-neutral-800 px-4 py-4 text-gray-300">
-                    <FontAwesomeIcon
-                      icon={faQuoteLeft}
-                      className="absolute text-neutral-400"
-                    />{" "}
-                    <p className="ml-6 mt-1">{testimonial?.content}</p>
-                  </Disclosure.Panel>
-                </>
-              )}
-            </Disclosure>
+            <TestimonialDisclosure
+              key={testimonial.id}
+              testimonial={testimonial}
+            />
           ))}
         </div>
       ) : (
@@ -76,7 +48,7 @@ const Index = () => {
             You have not got any testimonials yet.
           </p>
           <button className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200">
-            <EnvelopeIcon className="w-5" /> Ask for feedbacks
+            <EnvelopeIcon className="w-5" /> Ask for testimonial.
           </button>
         </div>
       )}

@@ -73,7 +73,6 @@ export const emailRouter = createTRPCRouter({
         },
       });
 
-      // This bad.
       try {
         await sendEventStarted(
           event,

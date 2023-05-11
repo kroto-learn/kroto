@@ -3,6 +3,8 @@ import {
   getServerSession,
   type NextAuthOptions,
   type DefaultSession,
+  type User,
+  type Session,
 } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "@/env.mjs";
@@ -12,6 +14,8 @@ import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 import GithubProvider from "next-auth/providers/github";
+import type { DefaultJWT } from "next-auth/jwt";
+import axios from "axios";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -23,15 +27,13 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      token: string | null;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface JWT extends DefaultJWT {
+    user: User | null;
+  }
 }
 
 /**
@@ -39,17 +41,59 @@ declare module "next-auth" {
  *
  * @see https://next-auth.js.org/configuration/options
  */
+
+const scopes = [
+  "https://www.googleapis.com/auth/youtube.readonly",
+  "https://www.googleapis.com/auth/userinfo.email",
+  "https://www.googleapis.com/auth/userinfo.profile",
+];
+
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, user }) {
+    async session({ session, user }) {
+      if (!session || !user) return session;
       if (session.user) {
-        session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
+        const newSession = await checkAndRefresh(session, user);
+        if (newSession) return newSession;
+        return session;
       }
+
+      const newSession = await checkAndRefresh(session, user);
+      if (newSession) return newSession;
       return session;
     },
   },
   adapter: PrismaAdapter(prisma),
+  events: {
+    async signIn({ user, account }) {
+      const dbUser = await prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+        include: {
+          accounts: true,
+        },
+      });
+
+      if (!dbUser?.accounts[0] || !account) return;
+
+      const dbAccount = dbUser?.accounts[0];
+
+      await prisma.account.update({
+        where: {
+          provider_providerAccountId: {
+            provider: "google",
+            providerAccountId: dbAccount.providerAccountId,
+          },
+        },
+        data: {
+          access_token: account.access_token,
+          expires_at: account.expires_at,
+          refresh_token: account.refresh_token,
+        },
+      });
+    },
+  },
   providers: [
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
@@ -62,6 +106,11 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          scope: `openid ${scopes.join(" ")}`,
+        },
+      },
     }),
     FacebookProvider({
       clientId: env.FACEBOOK_CLIENT_ID,
@@ -84,3 +133,68 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
+
+async function checkAndRefresh(session: Session, user: User) {
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    include: { accounts: true },
+  });
+
+  session.user = {
+    ...user,
+    token: dbUser?.accounts[0]?.access_token ?? "",
+  };
+
+  const newSession = {
+    ...session,
+  };
+
+  if (!dbUser?.accounts[0] || !dbUser.accounts[0].expires_at) return newSession;
+
+  const now = Math.floor(Date.now() / 1000);
+  const difference = Math.floor((dbUser?.accounts[0]?.expires_at - now) / 60);
+  const refreshToken = dbUser?.accounts[0].refresh_token;
+
+  if (difference < 5 && refreshToken) {
+    try {
+      const request = await axios.post<{
+        access_token: string;
+        expires_in: number;
+        refresh_token: string;
+      }>("https://oauth2.googleapis.com/token", null, {
+        params: {
+          client_id: env.GOOGLE_CLIENT_ID,
+          client_secret: env.GOOGLE_CLIENT_SECRET,
+          refresh_token: refreshToken,
+          grant_type: "refresh_token",
+        },
+      });
+
+      if (!(request.status === 200)) {
+        return newSession;
+      }
+
+      const { access_token, expires_in, refresh_token } = request.data;
+      const timestamp = Math.floor((Date.now() + expires_in * 1000) / 1000);
+
+      await prisma.account.update({
+        where: {
+          provider_providerAccountId: {
+            provider: "google",
+            providerAccountId: dbUser?.accounts[0].providerAccountId,
+          },
+        },
+        data: {
+          access_token,
+          expires_at: timestamp,
+          refresh_token,
+        },
+      });
+      newSession.user.token = access_token;
+      return newSession;
+    } catch (e) {
+      console.log(e);
+      return newSession;
+    }
+  }
+}
