@@ -25,10 +25,10 @@ export function ClaimLink({ profile }: { profile?: string }) {
         localStorage.setItem("creatorProfile", creatorProfile);
         if (session?.user) {
           if (!creator?.isCreator) {
-            const creatorM = await makeCreator({
+            const creator = await makeCreator({
               creatorProfile,
             });
-            if (creatorM.isCreator)
+            if (creator.isCreator)
               void router.push(`/creator/dashboard/settings`);
           } else void router.push(`/creator/dashboard/settings`);
         } else {

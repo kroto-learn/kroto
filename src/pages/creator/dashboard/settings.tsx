@@ -366,6 +366,15 @@ const Settings = () => {
               </div>
             </div>
             <div className="my-5">
+              <label className="font-medium text-neutral-400">Number</label>
+              <div className="mt-2 flex">
+                <input
+                  className="block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                  placeholder="Enter Mobile Number"
+                />
+              </div>
+            </div>
+            <div className="my-5">
               <label className="mb-2 block font-medium text-neutral-400">
                 Bio
               </label>
