@@ -129,4 +129,18 @@ export const emailRouter = createTRPCRouter({
 
       return recipients;
     }),
+
+  delete: protectedProcedure
+    .input(z.object({ emailUniqueId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const email = await prisma.email.delete({
+        where: {
+          id: input.emailUniqueId,
+        },
+      });
+
+      return email;
+    }),
 });
