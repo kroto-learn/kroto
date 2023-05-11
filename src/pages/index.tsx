@@ -115,30 +115,24 @@ export function Hero({ word }: { word: number }) {
           <div className="mx-auto flex items-center justify-center sm:px-4 sm:text-center">
             <div>
               <h1 className="relative text-center text-4xl font-extrabold tracking-tight sm:mt-5 sm:text-6xl lg:mt-6 xl:text-8xl">
+                {/* bg-gradient-to-r from-rose-700 to-pink-600 */}
                 <span
-                  className={`${
-                    word === 1
-                      ? "bg-gradient-to-r from-rose-700 to-pink-600 bg-clip-text text-transparent transition-colors duration-500"
-                      : ""
+                  className={`bg-gradient-to-r from-rose-700 to-pink-600  bg-clip-text transition-all duration-1000 ${
+                    word === 1 ? "text-white/0" : "text-white"
                   } pr-2`}
                 >
                   Create.
                 </span>{" "}
                 <span
-                  className={`
-                    ${
-                      word === 2
-                        ? "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text  text-transparent transition-all duration-500"
-                        : ""
-                    } pr-2`}
+                  className={`bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500  bg-clip-text transition-all duration-1000 ${
+                    word === 2 ? "text-white/0" : "text-white"
+                  } pr-2`}
                 >
                   Market.
                 </span>
                 <span
-                  className={`${
-                    word === 3
-                      ? "bg-gradient-to-r from-emerald-500 to-lime-600 bg-clip-text text-transparent transition-all duration-500"
-                      : ""
+                  className={`bg-gradient-to-r from-emerald-500 to-lime-600  bg-clip-text transition-all duration-1000 ${
+                    word === 3 ? "text-white/0" : "text-white"
                   } pl-2`}
                 >
                   Monetize.
