@@ -109,7 +109,7 @@ export default Home;
 
 export function Hero({ word }: { word: number }) {
   return (
-    <div className="my-56">
+    <div className="my-40">
       <div className="mx-auto flex w-full flex-col gap-10 px-2 sm:px-6 md:max-w-7xl lg:px-8">
         <div className="flex h-full flex-col pt-10 sm:pt-16 lg:pt-0">
           <div className="mx-auto flex items-center justify-center sm:px-4 sm:text-center">
