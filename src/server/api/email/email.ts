@@ -11,6 +11,9 @@ export const emailRouter = createTRPCRouter({
       where: {
         creatorId: ctx.session.user.id,
       },
+      include: {
+        recipients: true,
+      },
     });
 
     return emails;
