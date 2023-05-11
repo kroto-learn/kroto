@@ -15,6 +15,7 @@ import { Transition, Dialog } from "@headlessui/react";
 import { Loader } from "@/components/Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import useToast from "@/hooks/useToast";
+import { TRPCError } from "@trpc/server";
 
 const EventSettings = () => {
   const router = useRouter();
@@ -22,6 +23,8 @@ const EventSettings = () => {
   const { data: event } = api.event.get.useQuery({ id });
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  if (event instanceof TRPCError || !event) return <>Event not found!</>;
 
   return (
     <>

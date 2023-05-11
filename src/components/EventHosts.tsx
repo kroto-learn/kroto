@@ -28,6 +28,8 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
 
   const { errorToast } = useToast();
 
+  if (event instanceof TRPCError || !event) return <></>;
+
   const isEventOver = event && event?.endTime?.getTime() < new Date().getTime();
 
   return (
