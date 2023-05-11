@@ -124,14 +124,14 @@ export function Hero({ word }: { word: number }) {
                   Create.
                 </span>{" "}
                 <span
-                  className={`bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500  bg-clip-text transition-all duration-1000 ${
+                  className={`bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text transition-all duration-1000 ${
                     word === 2 ? "text-white/0" : "text-white"
                   } pr-2`}
                 >
                   Market.
                 </span>
                 <span
-                  className={`bg-gradient-to-r from-emerald-500 to-lime-600  bg-clip-text transition-all duration-1000 ${
+                  className={`bg-gradient-to-l from-fuchsia-500 via-red-600 to-orange-400 bg-clip-text transition-all duration-1000 ${
                     word === 3 ? "text-white/0" : "text-white"
                   } pl-2`}
                 >
