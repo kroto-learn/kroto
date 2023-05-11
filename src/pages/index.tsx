@@ -19,15 +19,29 @@ import { getServerAuthSession } from "@/server/auth";
 import landingOg from "public/landing/og.png";
 import Footer from "@/components/Footer";
 import { MixPannelTracking } from "@/analytics/mixpanel";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Home: NextPage = () => {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
+
+  const [word, setWord] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
     MixPannelTracking.getInstance().pageViewed({
       pagePath: "/",
     });
+
+    const timer = setInterval(() => {
+      setWord((prev) => {
+        if (prev === 1) return 2;
+        if (prev === 2) return 3;
+        else return 1;
+      });
+    }, 2000);
+
+    return () => {
+      clearInterval(timer);
+    };
   }, []);
 
   return (
@@ -70,7 +84,7 @@ const Home: NextPage = () => {
       </nav>
 
       <main className="mt-20">
-        <Hero />
+        <Hero word={word} />
         <div id="features">
           <Features />
         </div>
@@ -93,40 +107,53 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
 export default Home;
 
-export function Hero() {
+export function Hero({ word }: { word: number }) {
   return (
-    <div className="my-28">
+    <div className="my-56">
       <div className="mx-auto flex w-full flex-col gap-10 px-2 sm:px-6 md:max-w-7xl lg:px-8">
         <div className="flex h-full flex-col pt-10 sm:pt-16 lg:pt-0">
-          <div className="mx-auto max-w-lg sm:max-w-4xl sm:px-4 sm:text-center lg:flex lg:items-center lg:pl-0 lg:text-left">
-            <div className="">
-              <h1 className="relative max-w-4xl text-center text-4xl font-extrabold tracking-tight text-white sm:mt-5 sm:text-6xl lg:mt-6 xl:text-7xl">
-                 {/* Create. Market. Monetize. */}
-                <span className="block">Unlocking the potential of</span>
-                <span className="block pb-3 text-pink-500 sm:pb-5">
-                  Online Education
+          <div className="mx-auto flex items-center justify-center sm:px-4 sm:text-center">
+            <div>
+              <h1 className="relative text-center text-4xl font-extrabold tracking-tight sm:mt-5 sm:text-6xl lg:mt-6 xl:text-8xl">
+                <span
+                  className={`${
+                    word === 1 &&
+                    "bg-gradient-to-r from-rose-700 to-pink-600 bg-clip-text text-transparent transition-colors duration-500"
+                  } pr-2`}
+                >
+                  Create.
+                </span>{" "}
+                <span
+                  className={`
+                    ${
+                      word === 2 &&
+                      "bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text  text-transparent transition-all duration-500"
+                    } pr-2`}
+                >
+                  Market.
+                </span>
+                <span
+                  className={`${
+                    word === 3 &&
+                    "bg-gradient-to-r from-emerald-500 to-lime-600 bg-clip-text text-transparent transition-all duration-500"
+                  } pl-2`}
+                >
+                  Monetize.
                 </span>
               </h1>
-              <p className="relative my-5 text-center text-base text-neutral-300 sm:text-xl lg:text-lg xl:text-2xl">
-                We help online educators market and monetize their content and provide
-                students with a seamless learning experience
-              </p>
+              <div className="flex items-center justify-center">
+                <p className="relative my-5 max-w-4xl text-center text-base text-neutral-300 sm:text-xl lg:text-lg xl:text-2xl">
+                  We help online educators market and monetize their content and
+                  provide students with a seamless learning experience
+                </p>
+              </div>
               <div className="mt-6 flex justify-center sm:mt-8">
                 <div className="sm:mx-auto sm:max-w-xl lg:mx-0">
                   <div className="flex flex-wrap gap-x-4 gap-y-2 sm:justify-center lg:justify-start">
                     <a
                       href="#claim-link"
-                      // onClick={() => {
-                      //   void (session?.user
-                      //     ? router.push("/dashboard")
-                      //     : void signIn());
-                      // }}
                       className={`group inline-flex items-center gap-[0.15rem] rounded-xl bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
                     >
-                      {/* {status === "loading" && <Loader />}
-                      {session?.user
-                        ? "Go to dashboard"
-                        : "Become a Kreator now"} */}
                       Become a Kreator now
                       <ArrowRightIcon className="w-5 text-xl duration-300 group-hover:translate-x-1" />
                     </a>
