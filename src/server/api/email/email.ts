@@ -4,6 +4,18 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 export const emailRouter = createTRPCRouter({
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const emails = await prisma.email.findMany({
+      where: {
+        creatorId: ctx.session.user.id,
+      },
+    });
+
+    return emails;
+  }),
+
   create: protectedProcedure
     .input(
       z.object({
