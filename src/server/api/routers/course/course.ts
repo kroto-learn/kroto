@@ -71,7 +71,7 @@ export const courseRouter = createTRPCRouter({
 
       courseBlocks.sort((a, b) => a.position - b.position);
 
-      return { ...course, courseBlocks };
+      return { ...course, courseBlocks, previewBlock: courseBlocks[0] };
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {

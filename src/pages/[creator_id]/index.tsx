@@ -37,9 +37,11 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
 
   const router = useRouter();
 
-  const isCoursesTab = !router.query.events && !router.query.testimonials;
-  const isEventsTab = router.query.events && !router.query.testimonials;
-  const isTestimonialsTab = !router.query.events && router.query.testimonials;
+  const tab = router.asPath.split("#")[1];
+
+  const isCoursesTab = !(tab === "events") && !(tab === "testimonials");
+  const isEventsTab = tab === "events";
+  const isTestimonialsTab = tab === "testimonials";
 
   if (!creator) {
     return (
@@ -167,7 +169,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           <div className="flex w-full max-w-4xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-gradient-to-b from-neutral-800 via-neutral-800 to-transparent p-8 pb-24 backdrop-blur-sm">
             <div className="mb-4 flex items-center gap-8">
               <Link
-                href={`/${creator.creatorProfile ?? ""}`}
+                href={`/${creator.creatorProfile ?? ""}#courses`}
                 className={`relative flex justify-center text-sm font-medium uppercase tracking-widest text-neutral-200 duration-150 hover:text-neutral-300 active:scale-95 ${
                   !isCoursesTab ? "text-neutral-400" : ""
                 }`}
@@ -180,7 +182,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                 />
               </Link>
               <Link
-                href={`/${creator.creatorProfile ?? ""}?events=true`}
+                href={`/${creator.creatorProfile ?? ""}#events`}
                 className={`relative flex justify-center text-sm font-medium uppercase tracking-widest text-neutral-200 duration-150 hover:text-neutral-300 active:scale-95 ${
                   !isEventsTab ? "text-neutral-400" : ""
                 }`}
@@ -193,7 +195,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                 />
               </Link>
               <Link
-                href={`/${creator.creatorProfile ?? ""}?testimonials=true`}
+                href={`/${creator.creatorProfile ?? ""}#testimonials`}
                 className={`relative flex justify-center text-sm font-medium uppercase tracking-widest text-neutral-200 duration-150 hover:text-neutral-300 active:scale-95 ${
                   !isTestimonialsTab ? "text-neutral-400" : ""
                 }`}
