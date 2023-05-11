@@ -37,7 +37,7 @@ const Home: NextPage = () => {
         if (prev === 2) return 3;
         else return 1;
       });
-    }, 2000);
+    }, 3000);
 
     return () => {
       clearInterval(timer);
@@ -117,7 +117,7 @@ export function Hero({ word }: { word: number }) {
               <h1 className="relative text-center text-4xl font-extrabold tracking-tight sm:mt-5 sm:text-6xl lg:mt-6 xl:text-8xl">
                 {/* bg-gradient-to-r from-rose-700 to-pink-600 */}
                 <span
-                  className={`bg-gradient-to-r from-rose-700 to-pink-600  bg-clip-text transition-all duration-1000 ${
+                  className={`bg-gradient-to-r from-fuchsia-600 to-pink-600 bg-clip-text transition-all duration-1000 ${
                     word === 1 ? "text-white/0" : "text-white"
                   } pr-2`}
                 >
@@ -144,18 +144,21 @@ export function Hero({ word }: { word: number }) {
                   provide students with a seamless learning experience
                 </p>
               </div>
-              <div className="mt-6 flex justify-center sm:mt-8">
-                <div className="sm:mx-auto sm:max-w-xl lg:mx-0">
-                  <div className="flex flex-wrap gap-x-4 gap-y-2 sm:justify-center lg:justify-start">
-                    <a
-                      href="#claim-link"
-                      className={`group inline-flex items-center gap-[0.15rem] rounded-xl bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `}
-                    >
-                      Become a Kreator now
-                      <ArrowRightIcon className="w-5 text-xl duration-300 group-hover:translate-x-1" />
-                    </a>
-                  </div>
-                </div>
+              {/* <div className="mt-6 flex justify-center sm:mt-8"> */}
+              {/*   <div className="sm:mx-auto sm:max-w-xl lg:mx-0"> */}
+              {/*     <div className="flex flex-wrap gap-x-4 gap-y-2 sm:justify-center lg:justify-start"> */}
+              {/*       <a */}
+              {/*         href="#claim-link" */}
+              {/*         className={`group inline-flex items-center gap-[0.15rem] rounded-xl bg-pink-600 px-6 py-2 text-center text-lg font-medium text-white transition-all duration-300 hover:bg-pink-700 `} */}
+              {/*       > */}
+              {/*         Become a Kreator now */}
+              {/*         <ArrowRightIcon className="w-5 text-xl duration-300 group-hover:translate-x-1" /> */}
+              {/*       </a> */}
+              {/*     </div> */}
+              {/*   </div> */}
+              {/* </div> */}
+              <div className="mt-10 flex w-full justify-center">
+                <ClaimLinkLanding />
               </div>
             </div>
           </div>
