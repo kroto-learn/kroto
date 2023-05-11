@@ -81,7 +81,7 @@ const EventOverview = () => {
   const { successToast } = useToast();
 
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
-    api.email.sendCalendarInvite.useMutation();
+    api.emailSender.sendCalendarInvite.useMutation();
 
   const isEventOver = event && event?.endTime?.getTime() < new Date().getTime();
 
@@ -369,7 +369,7 @@ type SEProps = {
 
 const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
   const { mutateAsync: sendNotification, isLoading } =
-    api.email.eventStarting.useMutation();
+    api.emailSender.eventStarting.useMutation();
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>

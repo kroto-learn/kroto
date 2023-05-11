@@ -67,7 +67,7 @@ export default function EventPage({ eventId }: Props) {
   const isYourEvent = event?.creatorId === session?.user?.id;
 
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
-    api.email.sendCalendarInvite.useMutation();
+    api.emailSender.sendCalendarInvite.useMutation();
 
   const dynamicOgImage = `https://kroto.in/api/og/event?title=${
     event?.title ?? ""

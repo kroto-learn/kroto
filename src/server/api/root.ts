@@ -2,12 +2,13 @@ import { createTRPCRouter } from "@/server/api/trpc";
 import { exampleRouter } from "@/server/api/routers/example";
 import { creatorRouter } from "@/server/api/routers/creator/creator";
 import { eventRouter } from "./routers/event/event";
-import { emailRouter } from "./routers/email";
+import { emailSenderRouter } from "./email/emailSender";
 import { testimonialRouter } from "./routers/testimonial";
 import { feedbacksRouter } from "./routers/event/feedback";
 import { hostRouter } from "./routers/event/host";
 import { courseRouter } from "./routers/course/course";
 import { courseChapterRouter } from "./routers/course/chapter";
+import { emailRouter } from "./email/email";
 
 /**
  * This is the primary router for your server.
@@ -25,7 +26,9 @@ export const appRouter = createTRPCRouter({
   eventFeedback: feedbacksRouter,
   eventHost: hostRouter,
 
+  emailSender: emailSenderRouter,
   email: emailRouter,
+
   testimonial: testimonialRouter,
 });
 
