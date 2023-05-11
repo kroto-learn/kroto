@@ -31,6 +31,37 @@ export const emailRouter = createTRPCRouter({
       return email;
     }),
 
+  update: protectedProcedure
+    .input(
+      z.object({
+        emailUniqueId: z.string(),
+        subject: z.string(),
+        body: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const email = await prisma.email.update({
+        where: {
+          id: input.emailUniqueId,
+        },
+        data: {
+          subject: input.subject,
+          body: input.body,
+          from: ctx.session.user.email ?? "",
+          sent: false,
+          creator: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
+        },
+      });
+
+      return email;
+    }),
+
   addRecipients: protectedProcedure
     .input(z.object({ emailUniqueId: z.string(), email: z.string().array() }))
     .mutation(async ({ ctx, input }) => {
