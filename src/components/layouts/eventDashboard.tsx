@@ -16,7 +16,7 @@ export default function EventLayoutR({ children }: { children: ReactNode }) {
 
   const pathname = usePathname();
 
-  if (event instanceof TRPCError || !event) return <>Event not found!</>;
+  if (event instanceof TRPCError || !event) return <></>;
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">

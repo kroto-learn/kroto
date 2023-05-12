@@ -34,7 +34,7 @@ const Index = () => {
     },
   };
 
-  if (chapterLoading || courseLoading)
+  if (chapterLoading || courseLoading || !chapter_id || !course_id)
     return (
       <div className="flex min-h-screen w-full items-center justify-center">
         <Head>

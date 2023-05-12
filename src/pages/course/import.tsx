@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { z } from "zod";
 // import "@uiw/react-md-editor/markdown-editor.css";
@@ -18,7 +18,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons";
 import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
-import { debounce } from "lodash";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -73,17 +72,14 @@ const Index = () => {
   // const [playlistDetailInit, setPlaylistDetailInit] = useState(false);
 
   const { errorToast } = useToast();
-  const debouncedFxn = useRef(
-    debounce((searchQuery: string) => {
-      setDebouncedQuery(searchQuery);
-    }, 500)
-  ).current;
 
   useEffect(() => {
-    debouncedFxn(searchQuery);
+    const timerId = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500);
 
-    return () => debouncedFxn.cancel();
-  }, [searchQuery, debouncedFxn]);
+    return () => clearTimeout(timerId);
+  }, [searchQuery]);
 
   useEffect(() => {
     methods.setValue("thumbnail", generateRandomGradientImages());
@@ -104,29 +100,6 @@ const Index = () => {
   } = api.course.import.useMutation();
 
   const router = useRouter();
-
-  const debouncedHandleSubmit = useRef(
-    debounce(
-      methods.handleSubmit(async (values) => {
-        await importCourseMutation(values, {
-          onSuccess: (courseCreated) => {
-            if (courseCreated && !(courseCreated instanceof TRPCError))
-              void router.push(
-                `/creator/dashboard/course/${courseCreated?.id}`
-              );
-          },
-          onError: () => {
-            errorToast("Error in importing course from YouTube!");
-          },
-        });
-      }),
-      300
-    )
-  ).current;
-
-  useEffect(() => {
-    debouncedHandleSubmit.cancel();
-  }, [debouncedHandleSubmit]);
 
   useEffect(() => {
     if (playlistData) {
@@ -178,7 +151,7 @@ const Index = () => {
             <></>
           ) : (
             <div className="absolute top-20 z-10 mt-2 flex w-full flex-col overflow-hidden rounded-xl border border-neutral-700 backdrop-blur">
-              {playlists?.map((playlist) => (
+              {playlists.map((playlist) => (
                 <button
                   onClick={() => {
                     setPlaylistId(playlist.playlistId);
@@ -218,7 +191,20 @@ const Index = () => {
           )}
         </div>
         <form
-          onSubmit={debouncedHandleSubmit}
+          onSubmit={methods.handleSubmit(async (values) => {
+            console.log(values);
+            await importCourseMutation(values, {
+              onSuccess: (courseCreated) => {
+                if (courseCreated && !(courseCreated instanceof TRPCError))
+                  void router.push(
+                    `/creator/dashboard/course/${courseCreated?.id}`
+                  );
+              },
+              onError: () => {
+                errorToast("Error in importing course from YouTube!");
+              },
+            });
+          })}
           className="mt-12s mx-auto flex w-full flex-col gap-8"
         >
           <div className="flex w-full items-start gap-4">
@@ -261,7 +247,7 @@ const Index = () => {
                 htmlFor="description"
                 className="text-lg  text-neutral-200"
               >
-                Course chapters
+                Course Blocks
               </label>
               {/* <button
                 type="button"
@@ -300,6 +286,7 @@ const Index = () => {
           <button
             className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
             type="submit"
+            disabled={methods.formState.isSubmitting}
           >
             {importCourseMutationLoading && <Loader white />}
             Create Course

@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react";
 import useToast from "@/hooks/useToast";
 import Link from "next/link";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 
 const CoursePreviewModal = ({
   isOpen,
@@ -53,8 +54,9 @@ const CoursePreviewModal = ({
   const { data: isEnrolled } = api.course.isEnrolled.useQuery({ courseId });
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
+  const router = useRouter();
 
-  if (course instanceof TRPCError || !course) return <></>;
+  if (course instanceof TRPCError || !course) return <>Course not found!</>;
 
   return (
     <>
@@ -191,20 +193,28 @@ const CoursePreviewModal = ({
                         <div className="flex items-center gap-2">
                           <button
                             onClick={async () => {
-                              await enrollMutation(
-                                { courseId: course?.id },
-                                {
-                                  onSuccess: () => {
-                                    void ctx.course.isEnrolled.invalidate();
-                                    successToast(
-                                      "Successfully enrolled in course!"
-                                    );
-                                  },
-                                  onError: () => {
-                                    errorToast("Error in enrolling in course!");
-                                  },
-                                }
-                              );
+                              if (!session) {
+                                errorToast("You're not logged in!");
+                                void router.push(
+                                  `/auth/sign-in/?redirect=/course/${courseId}`
+                                );
+                              } else
+                                await enrollMutation(
+                                  { courseId: course?.id },
+                                  {
+                                    onSuccess: () => {
+                                      void ctx.course.isEnrolled.invalidate();
+                                      successToast(
+                                        "Successfully enrolled in course!"
+                                      );
+                                    },
+                                    onError: () => {
+                                      errorToast(
+                                        "Error in enrolling in course!"
+                                      );
+                                    },
+                                  }
+                                );
                             }}
                             className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
                           >

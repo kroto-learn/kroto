@@ -208,60 +208,6 @@ const Index = ({ courseId }: Props) => {
                 </div>
               </button>
             ))}
-            {course?.courseBlocks?.map((courseBlock, index) => (
-              <button
-                onClick={() => {
-                  setPreviewOpen(true);
-                }}
-                className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                key={courseBlock?.id}
-              >
-                <p className="text-sm text-neutral-300">{index + 1}</p>
-                <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
-                  <Image
-                    src={course?.thumbnail ?? ""}
-                    alt={course?.title ?? ""}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex h-full w-full flex-col items-start gap-1">
-                  <h5 className="text-left font-medium">
-                    {courseBlock?.title}
-                  </h5>
-                  <p className="text-xs text-neutral-400">
-                    {course?.creator?.name}
-                  </p>
-                </div>
-              </button>
-            ))}
-            {course?.courseBlocks?.map((courseBlock, index) => (
-              <button
-                onClick={() => {
-                  setPreviewOpen(true);
-                }}
-                className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                key={courseBlock?.id}
-              >
-                <p className="text-sm text-neutral-300">{index + 1}</p>
-                <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
-                  <Image
-                    src={course?.thumbnail ?? ""}
-                    alt={course?.title ?? ""}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex h-full w-full flex-col items-start gap-1">
-                  <h5 className="text-left font-medium">
-                    {courseBlock?.title}
-                  </h5>
-                  <p className="text-xs text-neutral-400">
-                    {course?.creator?.name}
-                  </p>
-                </div>
-              </button>
-            ))}
           </AnimatedSection>
         </main>
       </Layout>

@@ -38,12 +38,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
   };
   const { data: course } = api.course.getCourse.useQuery({ id: course_id });
 
-  if (course instanceof TRPCError || !course)
-    return (
-      <div className="flex min-h-screen w-full items-center justify-center">
-        <h1 className="text-lg">Course not found!</h1>
-      </div>
-    );
+  if (course instanceof TRPCError || !course) return <></>;
 
   return (
     <div className="flex min-h-screen w-full gap-3 p-4">

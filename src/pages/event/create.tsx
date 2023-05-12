@@ -1,4 +1,4 @@
-import React, { type ChangeEvent, useEffect, useState, useRef } from "react";
+import React, { type ChangeEvent, useEffect, useState } from "react";
 import { object, string, date, literal } from "zod";
 import LinkIcon from "@heroicons/react/20/solid/LinkIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +22,6 @@ import { TimePicker, DatePicker, ConfigProvider, theme } from "antd";
 import dayjs from "dayjs";
 import { PhotoIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
-import { debounce } from "lodash";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -125,68 +124,57 @@ const CreateEvent = () => {
     })
   );
 
-  const debouncedHandleSubmit = useRef(
-    debounce(
-      methods.handleSubmit(async (values) => {
-        if (!!values) {
-          const mValues = values;
-          if (mValues.eventType === "virtual") mValues.eventLocation = "";
-          else mValues.eventUrl = "";
-          const stime = dayjs(startTime, "hh:mm A").toDate();
-          const updateddt = new Date(values.datetime);
-          updateddt.setHours(stime.getHours());
-          updateddt.setMinutes(stime.getMinutes());
-          const etime = dayjs(endTime, "hh:mm A").toDate();
-          const updatedet = new Date(values.datetime);
-          updatedet.setHours(etime.getHours());
-          updatedet.setMinutes(etime.getMinutes());
-
-          // const duration = (etime.getTime() - stime.getTime()) / 60000;
-
-          try {
-            await eventCreateMutation(
-              {
-                title: values.title ?? "",
-                description: values.description ?? "",
-                thumbnail: values.thumbnail ?? "",
-                eventType: values.eventType ?? "",
-                eventLocation: values.eventLocation ?? "",
-                eventUrl: values.eventUrl ?? "",
-                datetime: updateddt,
-                endTime: updatedet,
-              },
-              {
-                onSuccess: (createdEvent) => {
-                  if (!(createdEvent instanceof TRPCError))
-                    void router.push(
-                      `/creator/dashboard/event/${createdEvent.id}`
-                    );
-                },
-                onError: () => {
-                  errorToast("Error in creating event!");
-                },
-              }
-            );
-          } catch (err) {
-            console.log(err);
-          }
-        }
-      }),
-      500
-    )
-  ).current;
-
-  useEffect(() => {
-    return () => debouncedHandleSubmit.cancel();
-  }, [debouncedHandleSubmit]);
-
   return (
     <Layout>
       <Head>
         <title>Create Event</title>
       </Head>
       <form
-        onSubmit={debouncedHandleSubmit}
+        onSubmit={methods.handleSubmit(async (values) => {
+          if (!!values) {
+            const mValues = values;
+            if (mValues.eventType === "virtual") mValues.eventLocation = "";
+            else mValues.eventUrl = "";
+            const stime = dayjs(startTime, "hh:mm A").toDate();
+            const updateddt = new Date(values.datetime);
+            updateddt.setHours(stime.getHours());
+            updateddt.setMinutes(stime.getMinutes());
+            const etime = dayjs(endTime, "hh:mm A").toDate();
+            const updatedet = new Date(values.datetime);
+            updatedet.setHours(etime.getHours());
+            updatedet.setMinutes(etime.getMinutes());
+
+            // const duration = (etime.getTime() - stime.getTime()) / 60000;
+
+            try {
+              await eventCreateMutation(
+                {
+                  title: values.title ?? "",
+                  description: values.description ?? "",
+                  thumbnail: values.thumbnail ?? "",
+                  eventType: values.eventType ?? "",
+                  eventLocation: values.eventLocation ?? "",
+                  eventUrl: values.eventUrl ?? "",
+                  datetime: updateddt,
+                  endTime: updatedet,
+                },
+                {
+                  onSuccess: (createdEvent) => {
+                    if (!(createdEvent instanceof TRPCError))
+                      void router.push(
+                        `/creator/dashboard/event/${createdEvent.id}`
+                      );
+                  },
+                  onError: () => {
+                    errorToast("Error in creating event!");
+                  },
+                }
+              );
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        })}
         className="mx-auto my-12 flex w-full max-w-2xl flex-col gap-8"
       >
         <div className="relative flex aspect-[18/9] w-full items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
@@ -464,6 +452,7 @@ const CreateEvent = () => {
         <button
           className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
           type="submit"
+          disabled={methods.formState.isSubmitting}
         >
           {loading && <Loader white />}
           Create Event
