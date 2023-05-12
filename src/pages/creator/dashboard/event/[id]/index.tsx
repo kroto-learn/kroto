@@ -30,6 +30,7 @@ import {
   CalendarIcon,
 } from "@heroicons/react/20/solid";
 import dynamic from "next/dynamic";
+import { TRPCError } from "@trpc/server";
 const CalenderBox = dynamic(() => import("@/components/CalenderBox"), {
   ssr: false,
 });
@@ -71,17 +72,19 @@ const EventOverview = () => {
 
   const [open, setIsOpen] = useState<boolean>(false);
 
+  const [startEventModal, setStartEventModal] = useState(false);
+
+  const { successToast } = useToast();
+
+  if (event instanceof TRPCError || !event) return <>Event not found!</>;
+
   const { data: hosts, refetch: refetchHosts } =
     api.eventHost.getHosts.useQuery({
       eventId: event?.id ?? "",
     });
 
-  const [startEventModal, setStartEventModal] = useState(false);
-
-  const { successToast } = useToast();
-
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
-    api.email.sendCalendarInvite.useMutation();
+    api.emailSender.sendCalendarInvite.useMutation();
 
   const isEventOver = event && event?.endTime?.getTime() < new Date().getTime();
 
@@ -369,7 +372,10 @@ type SEProps = {
 
 const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
   const { mutateAsync: sendNotification, isLoading } =
-    api.email.eventStarting.useMutation();
+    api.emailSender.eventStarting.useMutation();
+
+  if (event instanceof TRPCError || !event) return <>Event not found!</>;
+
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>

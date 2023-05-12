@@ -39,6 +39,9 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
+      if (event?.creator.id !== ctx.session.user.id)
+        return new TRPCError({ code: "BAD_REQUEST" });
+
       return event;
     }),
 

@@ -48,7 +48,7 @@ export default function Navbar({ status }: { status: string }) {
                         <Link
                           href={
                             creator?.isCreator
-                              ? "/creator/dashboard/events"
+                              ? "/creator/dashboard/courses"
                               : "/dashboard"
                           }
                           className={`w-full px-6 py-2 font-medium transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
@@ -76,7 +76,7 @@ export default function Navbar({ status }: { status: string }) {
                 <button
                   className="transition-all duration-300 hover:text-neutral-400"
                   onClick={() =>
-                    void signIn('google', { callbackUrl: router.asPath })
+                    void signIn("google", { callbackUrl: router.asPath })
                   }
                 >
                   Sign In

@@ -166,6 +166,7 @@ export const creatorRouter = createTRPCRouter({
           .array()
           .optional(),
         topmateUrl: z.string().url().optional().or(z.literal("")),
+        mobileNumber: z.string(),
         image: z.string().nonempty(),
       })
     )
@@ -219,6 +220,7 @@ export const creatorRouter = createTRPCRouter({
           creatorProfile:
             creatorProfile === "" ? ctx.session.user.email : creatorProfile,
           bio: bio,
+          mobileNumber: input.mobileNumber,
           name: name,
           topmateUrl,
           image,

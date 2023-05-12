@@ -1,5 +1,6 @@
 import { api } from "@/utils/api";
 import { ArrowUpRightIcon, EnvelopeIcon } from "@heroicons/react/20/solid";
+import { TRPCError } from "@trpc/server";
 import { useRouter } from "next/router";
 
 type Props = {
@@ -12,6 +13,9 @@ const EventStateBanner = ({ setStartEventModal }: Props) => {
   const { data: event, isLoading: isEventLoading } = api.event.get.useQuery({
     id,
   });
+
+  if (event instanceof TRPCError || !event) return <></>;
+
   const isEventLive =
     event &&
     event?.datetime?.getTime() <= new Date().getTime() &&

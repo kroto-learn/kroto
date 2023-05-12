@@ -25,6 +25,7 @@ import {
 } from "next-share";
 import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
+import { TRPCError } from "@trpc/server";
 
 const EventRegistrations = () => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const EventRegistrations = () => {
   const { data: event, isLoading } = api.event.get.useQuery({ id });
 
   const tableData = React.useMemo(() => {
-    if (event && event?.registrations)
+    if (event && !(event instanceof TRPCError) && event?.registrations)
       return event.registrations.map((r) => ({
         col1: r.user?.image ?? "",
         col2: r.user?.name ?? "",
@@ -71,6 +72,8 @@ const EventRegistrations = () => {
     tableInstance;
 
   const { successToast } = useToast();
+
+  if (event instanceof TRPCError || !event) return <>Event not found!</>;
 
   // if (isLoading) {
   //   return (

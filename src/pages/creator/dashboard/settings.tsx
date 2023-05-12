@@ -22,6 +22,7 @@ const bioLimit = 180;
 export const creatorEditSchema = object({
   name: string().nonempty("Please enter your name."),
   creatorProfile: string().nonempty("Please enter your unique username."),
+  number: string().min(10).max(10),
   bio: string().max(bioLimit).nonempty("Please enter your bio."),
   socialLinks: array(
     object({
@@ -31,7 +32,7 @@ export const creatorEditSchema = object({
     })
   ),
   image: string().nonempty("Please upload your profile image."),
-  topmateUrl: string().url().optional().or(literal("")),
+  topmateUrl: string().url().optional().or(literal("")), 
 });
 
 function useZodForm<TSchema extends z.ZodType>(
@@ -121,6 +122,7 @@ const Settings = () => {
                   await updateProfile(
                     {
                       name: values.name,
+                      mobileNumber: values.number,
                       bio: values.bio,
                       creatorProfile: values.creatorProfile,
                       socialLink: values.socialLinks,
@@ -361,6 +363,26 @@ const Settings = () => {
                 {methods.formState.errors.topmateUrl?.message && (
                   <p className="text-red-700">
                     {methods.formState.errors.topmateUrl?.message}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="mt-5 flex flex-col gap-5 md:flex-row">
+              <div className="w-full">
+                <label className="mb-2 block font-medium text-neutral-400">
+                  Number
+                </label>
+                <input
+                  type="number"
+                  {...methods.register("number")}
+                  className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                  placeholder="Enter Mobile Number"
+                  defaultValue={(creator && creator.topmateUrl) ?? ""}
+                />
+                <p className=" m-1 font-medium text-xs text-neutral-400">For WhatsApp notification</p>
+                {methods.formState.errors.number?.message && (
+                  <p className="text-red-700">
+                    {methods.formState.errors.number?.message}
                   </p>
                 )}
               </div>

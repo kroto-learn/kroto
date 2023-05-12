@@ -3,10 +3,10 @@ import YouTube from "react-youtube";
 import { api } from "@/utils/api";
 import { TRPCError } from "@trpc/server";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
-import { PlayIcon } from "@heroicons/react/20/solid";
+import Head from "next/head";
+import { PlayerLayout } from ".";
 
 const Index = () => {
   const router = useRouter();
@@ -36,7 +36,10 @@ const Index = () => {
 
   if (chapterLoading || courseLoading)
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen w-full items-center justify-center">
+        <Head>
+          <title>Couse | Kroto</title>
+        </Head>
         <Loader size="lg" />
       </div>
     );
@@ -53,8 +56,17 @@ const Index = () => {
       </div>
     );
 
+  const position = course.courseBlocks.findIndex(
+    (block) => block.id === chapter.id
+  );
+
   return (
-    <div className="flex min-h-screen w-full gap-3 p-4">
+    <>
+      <Head>
+        <title>
+          Ch. {chapter.position + 1} | {course.title}
+        </title>
+      </Head>
       <div className="flex w-full flex-col items-start gap-2">
         {chapter.type !== "TEXT" ? (
           <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-neutral-700">
@@ -62,7 +74,14 @@ const Index = () => {
               className="absolute bottom-0 left-0 right-0 top-0 h-full w-full"
               videoId={chapter?.ytId ?? ""}
               opts={youtubeOpts}
-              // onReady={this._onReady}
+              onEnd={() => {
+                if (position < course.courseBlocks.length - 1)
+                  void router.push(
+                    `/course/play/${course_id}/${
+                      course.courseBlocks[position + 1]?.id ?? ""
+                    }`
+                  );
+              }}
             />
           </div>
         ) : (
@@ -93,47 +112,10 @@ const Index = () => {
           </p>
         </div>
       </div>
-      <div className=" top-4 flex h-[calc(100vh-2rem)] w-full max-w-sm flex-col rounded-lg border border-neutral-700 bg-neutral-200/5 backdrop-blur-sm">
-        <div className="flex w-full flex-col gap-2 border-b border-neutral-700 p-4 px-6">
-          <h3 className="text-lg font-medium">{course?.title}</h3>
-          <div className="flex items-center gap-2 text-sm text-neutral-300">
-            <p>{course.creator.name}</p> •{" "}
-            <p>{course.courseBlocks.length} Chapters</p>
-          </div>
-        </div>
-        <div className="flex max-h-[calc(100vh-8rem)] w-full flex-col overflow-auto">
-          {course.courseBlocks.map((chapter, idx) => (
-            <Link
-              href={`/course/play/${course?.id}/${chapter?.id}`}
-              className="flex w-full max-w-lg items-center gap-3 border-b border-neutral-700 bg-transparent p-2 px-4 backdrop-blur-sm duration-150 hover:bg-neutral-200/10"
-              key={chapter?.id}
-            >
-              <p className={`text-xs text-neutral-300`}>
-                {chapter_id === chapter?.id ? (
-                  <PlayIcon className="w-3 text-pink-500" />
-                ) : (
-                  <div className="aspect-square w-3">{idx + 1}</div>
-                )}
-              </p>
-              <div
-                className={`relative aspect-video w-40 overflow-hidden rounded-lg `}
-              >
-                <Image
-                  src={chapter?.thumbnail ?? ""}
-                  alt={chapter?.title ?? ""}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex h-full w-full flex-col items-start gap-1">
-                <h5 className={`text-sm font-medium`}>{chapter?.title}</h5>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
+
+Index.getLayout = PlayerLayout;
 
 export default Index;

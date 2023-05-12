@@ -51,6 +51,7 @@ model User {
   emailVerified         DateTime?
   image                 String?
   ogImage               String?
+  mobileNumber          String?
   creatorProfile        String?                 @unique
   isCreator             Boolean                 @default(false)
   bio                   String?                 @db.Text
@@ -69,6 +70,7 @@ model User {
   CourseBlockVideo      CourseBlockVideo[]
   CourseBlockMd         CourseBlockMd[]
   Enrollment            Enrollment[]
+  Email                 Email[]
 }
 
 model Event {
@@ -268,4 +270,36 @@ model Enrollment {
   @@unique([courseId, userId])
   @@index([courseId])
   @@index([userId])
+}
+
+model Email {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  sentAt    DateTime?
+  sent      Boolean   @default(false)
+  from      String
+  subject   String
+  body      String    @db.Text
+
+  recipients Recipient[]
+
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([creatorId, id])
+  @@index([creatorId])
+}
+
+model Recipient {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  emailId      String
+  name         String?
+  emailModelId String
+  email        Email    @relation(fields: [emailModelId], references: [id], onDelete: Cascade)
+
+  @@unique([emailModelId, id])
+  @@index([emailModelId])
 }

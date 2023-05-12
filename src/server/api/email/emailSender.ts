@@ -8,7 +8,7 @@ import {
   sendUpdatePreview,
 } from "@/server/helpers/emailHelper";
 
-export const emailRouter = createTRPCRouter({
+export const emailSenderRouter = createTRPCRouter({
   sendCalendarInvite: protectedProcedure
     .input(z.object({ eventId: z.string() }))
     .mutation(async ({ input, ctx }) => {

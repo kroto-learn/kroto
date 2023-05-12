@@ -40,10 +40,10 @@ const SendUpdateModal = ({ eventId }: { eventId: string }) => {
   });
 
   const { mutateAsync: sendUpdate, isLoading: sendingUpdate } =
-    api.email.sendUpdate.useMutation();
+    api.emailSender.sendUpdate.useMutation();
 
   const { mutateAsync: sendPreview, isLoading: sendingUpdatePreview } =
-    api.email.sendUpdatePreview.useMutation();
+    api.emailSender.sendUpdatePreview.useMutation();
 
   return (
     <form

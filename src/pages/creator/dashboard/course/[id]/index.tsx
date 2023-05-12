@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import React, { type ReactNode } from "react";
 import Head from "next/head";
 import { DashboardLayout } from "../..";
@@ -20,6 +20,7 @@ import {
 import { LinkIcon, PlayCircleIcon } from "@heroicons/react/20/solid";
 import dynamic from "next/dynamic";
 import { TRPCError } from "@trpc/server";
+import CoursePreviewModal from "@/components/CoursePreviewModal";
 
 const CourseLayoutR = dynamic(
   () => import("@/components/layouts/courseDashboard"),
@@ -35,6 +36,8 @@ const CourseLayoutR = dynamic(
 const CourseOverview = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewPos, setPreviewPos] = useState(0);
 
   const { data: course, isLoading: courseLoading } = api.course.get.useQuery({
     id,
@@ -55,6 +58,7 @@ const CourseOverview = () => {
     );
 
   if (course instanceof TRPCError || !course) return <>Not found</>;
+
   const courseUrl = `https://kroto.in/course/${course?.id ?? ""}`;
 
   if (course)
@@ -64,7 +68,7 @@ const CourseOverview = () => {
           <title>{`${course?.title ?? "Course"} | Overview`}</title>
         </Head>
 
-        <div className="mt-12s mx-auto flex w-full flex-col gap-8">
+        <div className="mx-auto flex w-full flex-col gap-8">
           <div className="flex w-full items-start gap-4 rounded-xl bg-neutral-800 p-4">
             <div className="flex w-1/3 flex-col gap-4">
               <div className="relative flex aspect-video w-full  items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
@@ -171,14 +175,18 @@ const CourseOverview = () => {
                 <PlusIcon className="w-4" /> Add Course block
               </button> */}
             </div>
-            <div className="max-h-[20rem] overflow-y-auto">
+            <div className="h-[calc(100vh-28rem)] overflow-y-auto pr-4">
               {course.courseBlocks.map((courseBlock, index) => (
-                <div
+                <button
+                  onClick={() => {
+                    setPreviewPos(index);
+                    setPreviewOpen(true);
+                  }}
                   className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
                   key={courseBlock.title + index.toString()}
                 >
                   <p className="text-sm text-neutral-300">{index + 1}</p>
-                  <div className="relative mb-2 aspect-video w-40 overflow-hidden rounded-lg">
+                  <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
                     <Image
                       src={courseBlock?.thumbnail ?? ""}
                       alt={courseBlock?.title ?? ""}
@@ -193,11 +201,20 @@ const CourseOverview = () => {
                       Video
                     </label>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>
         </div>
+
+        <CoursePreviewModal
+          courseId={id}
+          isOpen={previewOpen}
+          setIsOpen={setPreviewOpen}
+          position={previewPos}
+          setPosition={setPreviewPos}
+          manage
+        />
       </>
     );
   else return <></>;

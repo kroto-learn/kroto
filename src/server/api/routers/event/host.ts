@@ -16,6 +16,8 @@ export const hostRouter = createTRPCRouter({
       });
 
       if (!event) return new TRPCError({ code: "BAD_REQUEST" });
+      if (event.creatorId !== ctx.session.user.id)
+        return new TRPCError({ code: "BAD_REQUEST" });
 
       const creator = await prisma.user.findUnique({
         where: {
@@ -51,6 +53,8 @@ export const hostRouter = createTRPCRouter({
       });
 
       if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
+      if (event.creatorId !== ctx.session.user.id)
+        return new TRPCError({ code: "BAD_REQUEST" });
       if (!user.isCreator) return new TRPCError({ code: "BAD_REQUEST" });
 
       const isHost = await prisma.host.findFirst({

@@ -3,7 +3,6 @@ import Head from "next/head";
 import { ClaimLink, ClaimLinkLanding } from "@/components/ClaimLink";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import ArrowRightIcon from "@heroicons/react/20/solid/ArrowRightIcon";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import creatorPageImage from "public/creator-page.png";
 import {
