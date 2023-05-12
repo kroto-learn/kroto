@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
@@ -27,6 +28,23 @@ const Marketing = () => {
     api.creator.audience.getImportedAudience.useQuery();
 
   const isLoading = isImportedTab ? isImpAudLoading : isAudienceLoading;
+
+  if (process.env.NODE_ENV === "production") {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <div className="relative mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
+          <Image
+            src="/landing/newsletter.png"
+            alt="Newsletter"
+            className="grayscale filter"
+            width={500}
+            height={500}
+          />
+        </div>
+        <h1 className="text-3xl text-neutral-400">Coming soon...</h1>
+      </div>
+    );
+  }
 
   if (isLoading)
     return (
