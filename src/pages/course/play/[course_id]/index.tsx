@@ -57,7 +57,11 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
           {course.chapters.map((chapter, idx) => (
             <Link
               href={`/course/play/${course?.id}/${chapter?.id}`}
-              className="flex w-full max-w-lg items-center gap-3 border-b border-neutral-700 bg-transparent p-2 px-4 backdrop-blur-sm duration-150 hover:bg-neutral-200/10"
+              className={`flex w-full max-w-lg items-center gap-3 border-b ${
+                !(chapter.id === chapter_id) && chapter.chapterProgress
+                  ? "border-green-900 bg-green-900/20 hover:bg-green-900/30"
+                  : "border-neutral-700 hover:bg-neutral-200/10"
+              }  bg-transparent p-2 px-4 backdrop-blur-sm duration-150 `}
               key={chapter?.id}
             >
               <p className={`text-xs text-neutral-300`}>
@@ -77,7 +81,9 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                   className="object-cover"
                 />
               </div>
-              <div className="flex h-full w-full flex-col items-start justify-between gap-1">
+              <div
+                className={`flex h-full w-full flex-col items-start justify-between gap-1`}
+              >
                 <h5 className={`text-xs font-medium`}>{chapter?.title}</h5>
                 {chapter.id === chapter_id ? (
                   <span className="flex items-center text-xs text-pink-500/70">
