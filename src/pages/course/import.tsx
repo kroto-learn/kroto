@@ -155,8 +155,8 @@ const Index = () => {
               {playlists.map((playlist) => (
                 <button
                   onClick={() => {
-                    setPlaylistId(playlist.playlistId);
-                    methods.setValue("ytId", playlist.playlistId);
+                    setPlaylistId(playlist.playlistId ?? "");
+                    methods.setValue("ytId", playlist.playlistId ?? undefined);
                     setSearchFocused(false);
                   }}
                   className="group flex w-full items-center gap-2 border-b border-neutral-700 bg-neutral-800/80 px-4 py-3 duration-150 hover:bg-neutral-800/90"
@@ -164,8 +164,8 @@ const Index = () => {
                 >
                   <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
                     <Image
-                      src={playlist?.thumbnail}
-                      alt={playlist?.title}
+                      src={playlist?.thumbnail ?? ""}
+                      alt={playlist?.title ?? ""}
                       fill
                       className="object-cover"
                     />

@@ -188,8 +188,6 @@ export const courseRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
 
-      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
-
       const course = await prisma.course.findUnique({
         where: { id: input.id },
         include: {

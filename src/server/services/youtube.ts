@@ -1,8 +1,8 @@
-import axios from "axios";
 import { env } from "@/env.mjs";
-const { YOUTUBE_API_KEY } = env;
+const { YOUTUBE_API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = env;
+import { google } from "googleapis";
 
-const apiEndpoint = "https://www.googleapis.com/youtube/v3/playlists";
+const auth = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
 
 export const searchYoutubePlaylistsService = async ({
   searchQuery,
@@ -12,59 +12,47 @@ export const searchYoutubePlaylistsService = async ({
   accessToken: string;
 }) => {
   try {
-    const res = await axios.get(apiEndpoint, {
-      params: {
-        part: "snippet,status,contentDetails",
-        maxResults: 10,
-        mine: true,
-        q: searchQuery,
-        key: YOUTUBE_API_KEY,
-        type: "playlist",
-      },
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+    auth.setCredentials({
+      access_token: accessToken,
     });
 
-    if (res && res.status === 200) {
-      return (
-        res as {
-          data: {
-            items: {
-              status: { privacyStatus: string };
-              snippet: {
-                title: string;
-                thumbnails: { high: { url: string } };
-                channelTitle: string;
-                description: string;
-              };
-              id: string;
-              contentDetails: { itemCount: number };
-            }[];
-          };
-        }
-      ).data.items
+    const yt = google.youtube({ version: "v3", auth });
+
+    const searchParams = {
+      part: ["snippet", "status", "contentDetails"],
+      maxResults: 10,
+      mine: true,
+      q: searchQuery,
+      type: "playlist",
+    };
+
+    const res = await yt.playlists.list({
+      ...searchParams,
+    });
+
+    if (res && res.status === 200 && res?.data?.items) {
+      return res.data.items
         .filter(
           (item) =>
-            item.status.privacyStatus === "public" ||
-            item.status.privacyStatus === "unlisted"
+            item?.status?.privacyStatus === "public" ||
+            item?.status?.privacyStatus === "unlisted"
         )
         .filter((item) => {
           return (
-            item.snippet.title
-              .toLowerCase()
+            item?.snippet?.title
+              ?.toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
-            item.snippet.description
-              .toLowerCase()
+            item?.snippet?.description
+              ?.toLowerCase()
               .includes(searchQuery.toLowerCase())
           );
         })
         .map((item) => ({
-          title: item.snippet.title,
-          thumbnail: item.snippet.thumbnails.high.url,
+          title: item?.snippet?.title,
+          thumbnail: item?.snippet?.thumbnails?.high?.url,
           playlistId: item.id,
-          channelTitle: item.snippet.channelTitle,
-          videoCount: item.contentDetails.itemCount,
+          channelTitle: item?.snippet?.channelTitle,
+          videoCount: item?.contentDetails?.itemCount,
         }));
     } else {
       console.log("Error in getting youtube playlists", res);
@@ -78,101 +66,91 @@ export const searchYoutubePlaylistsService = async ({
 
 export const getPlaylistDataService = async (id: string) => {
   const playlistDetailsConfig = {
-    params: {
-      id,
-      part: "snippet",
-      key: YOUTUBE_API_KEY,
-    },
+    id: [id],
+    part: ["snippet"],
+    key: YOUTUBE_API_KEY,
   };
 
   try {
+    const yt = google.youtube({ version: "v3" });
     // Send request for playlist details
-    const res = await axios.get(
-      "https://www.googleapis.com/youtube/v3/playlists",
-      playlistDetailsConfig
-    );
+    const res = await yt.playlists.list(playlistDetailsConfig);
 
     if (!res || res.status !== 200) {
       console.log("error in getting playlist details!", res?.data);
       return null;
     }
 
-    const successRes: {
-      data: {
-        items: {
-          snippet: {
-            title: string;
-            description: string;
-            thumbnails: { high: { url: string } };
-          };
-        }[];
-      };
-    } = res;
+    if (!res?.data?.items || !res?.data?.items[0]) return null;
 
-    if (!successRes.data.items[0]) return null;
-
-    const playlistTitle: string = successRes.data.items[0].snippet.title;
+    const playlistTitle: string = res?.data?.items[0]?.snippet?.title ?? "";
     const playlistDescription: string =
-      successRes.data.items[0].snippet.description;
+      res?.data?.items[0]?.snippet?.description ?? "";
     const playlistThumbnail: string =
-      successRes.data.items[0].snippet.thumbnails.high.url;
+      res?.data?.items[0]?.snippet?.thumbnails?.high?.url ?? "";
 
     // Define playlist items request config
     const playlistItemsConfig = {
-      params: {
-        playlistId: id,
-        part: "snippet",
-        key: YOUTUBE_API_KEY,
-      },
+      playlistId: id,
+      part: ["snippet"],
+      key: YOUTUBE_API_KEY,
+      maxResults: 50,
     };
 
     // Send request for playlist items
-    const piRes = await axios.get(
-      "https://www.googleapis.com/youtube/v3/playlistItems",
-      playlistItemsConfig
-    );
+    let piRes = await yt.playlistItems.list(playlistItemsConfig);
 
     if (!piRes || piRes.status !== 200) {
       console.log("error in getting playlist items!", piRes?.data);
       return null;
     }
 
-    const successPiRes: {
-      data: {
-        items: {
-          snippet: {
-            title: string;
-            thumbnails: { high: { url: string } };
-            resourceId: { videoId: string };
-          };
-        }[];
-      };
-    } = piRes;
-
-    const videos: {
+    const allVidoes: {
       title: string;
       thumbnail: string;
       videoUrl: string;
       ytId: string;
-    }[] = successPiRes?.data?.items?.map((video) => {
-      const videoTitle = video.snippet.title;
-      const videoThumbnail = video.snippet.thumbnails.high.url;
-      const videoUrl = `https://www.youtube.com/watch?v=${video.snippet.resourceId.videoId}`;
-      const ytId = video.snippet.resourceId.videoId;
+    }[] = [];
 
-      return {
-        title: videoTitle,
-        thumbnail: videoThumbnail,
-        videoUrl,
-        ytId,
-      };
-    });
+    while (piRes) {
+      // Do something with the results on this page
+      piRes?.data?.items
+        ? piRes?.data?.items?.forEach((video) => {
+            const videoTitle = video?.snippet?.title ?? "";
+            const videoThumbnail = video?.snippet?.thumbnails?.high?.url ?? "";
+            const videoUrl = `https://www.youtube.com/watch?v=${
+              video?.snippet?.resourceId?.videoId ?? ""
+            }`;
+            const ytId = video?.snippet?.resourceId?.videoId ?? "";
+
+            allVidoes.push({
+              title: videoTitle,
+              thumbnail: videoThumbnail,
+              videoUrl,
+              ytId,
+            });
+          })
+        : [];
+
+      // Check if there are more pages
+      if (piRes?.data?.nextPageToken) {
+        // Request the next page of results
+        const requestNextPage = await yt.playlistItems.list({
+          ...playlistItemsConfig,
+          pageToken: piRes?.data?.nextPageToken,
+        });
+        piRes = requestNextPage;
+      } else {
+        // No more pages, end the loop
+        break;
+      }
+    }
 
     return {
       title: playlistTitle,
       description: playlistDescription,
       thumbnail: playlistThumbnail,
-      videos,
+      videos: allVidoes,
     };
   } catch (error) {
     console.log(error);
@@ -182,21 +160,20 @@ export const getPlaylistDataService = async (id: string) => {
 
 export const getVideoDataService = async (id: string) => {
   try {
-    const videoRes = await axios.get(
-      "https://www.googleapis.com/youtube/v3/videos",
-      {
-        params: { part: "snippet", id, key: YOUTUBE_API_KEY },
-      }
-    );
+    const yt = google.youtube({ version: "v3" });
+    const videoRes = await yt.videos.list({
+      part: ["snippet"],
+      id: [id],
+      key: YOUTUBE_API_KEY,
+    });
 
-    if (videoRes && videoRes.status === 200) {
-      const videoData = (
-        videoRes as {
-          data: { items: { snippet: { description: string } }[] };
-        }
-      ).data;
-      if (videoData?.items[0])
-        return videoData.items[0].snippet as { description: string };
+    if (
+      videoRes &&
+      videoRes.status === 200 &&
+      videoRes?.data?.items &&
+      videoRes?.data?.items[0]
+    ) {
+      return videoRes?.data?.items[0]?.snippet as { description: string };
     }
     return null;
   } catch (err) {
