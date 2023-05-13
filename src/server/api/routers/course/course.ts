@@ -429,14 +429,19 @@ export const courseRouter = createTRPCRouter({
         });
         return updatedCourseProgress;
       } else {
-        const newCourseProgress = await prisma.courseProgress.create({
-          data: {
-            watchedById: ctx.session.user.id,
-            courseId: input.courseId,
-            lastChapterId: input.lastChapterId,
-          },
-        });
-        return newCourseProgress;
+        try {
+          const newCourseProgress = await prisma.courseProgress.create({
+            data: {
+              watchedById: ctx.session.user.id,
+              courseId: input.courseId,
+              lastChapterId: input.lastChapterId,
+            },
+          });
+          return newCourseProgress;
+        } catch (err) {
+          console.log(err);
+          return null;
+        }
       }
     }),
 

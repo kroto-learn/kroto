@@ -21,7 +21,7 @@ const Index = () => {
       const lastChId = course.courseProgress
         ? course.courseProgress.lastChapterId
         : course.chapters[0]?.id;
-      void router.push(`/course/play/${course_id}/${lastChId ?? ""}`);
+      void router.replace(`/course/play/${course_id}/${lastChId ?? ""}`);
     }
   }, [course, course_id, router]);
 
@@ -47,20 +47,32 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
       {children}
       <div className="sticky top-4 flex h-[calc(100vh-2rem)] w-full max-w-sm flex-col rounded-lg border border-neutral-700 bg-neutral-200/5 backdrop-blur-sm">
         <div className="flex w-full flex-col gap-2 border-b border-neutral-700 p-4 px-6">
-          <h3 className="text-lg font-medium">{course?.title}</h3>
+          <Link
+            href={`/course/${course?.id ?? ""}`}
+            className="text-lg font-medium duration-150 hover:text-neutral-100"
+          >
+            {course?.title}
+          </Link>
           <div className="flex items-center gap-2 text-sm text-neutral-300">
-            <p>{course.creator.name}</p> •{" "}
-            <p>{course.chapters.length} Chapters</p>
+            <Link
+              href={`/${course?.creator.creatorProfile ?? ""}`}
+              className="duration-150 hover:text-neutral-200"
+            >
+              {course.creator.name}
+            </Link>{" "}
+            • <p>{course.chapters.length} Chapters</p>
           </div>
         </div>
         <div className="flex max-h-[calc(100vh-8rem)] w-full flex-col overflow-auto">
           {course.chapters.map((chapter, idx) => (
             <Link
               href={`/course/play/${course?.id}/${chapter?.id}`}
-              className={`flex w-full max-w-lg items-center gap-3 border-b ${
-                !(chapter.id === chapter_id) && chapter.chapterProgress
-                  ? "border-green-900 bg-green-900/20 hover:bg-green-900/30"
-                  : "border-neutral-700 hover:bg-neutral-200/10"
+              className={`flex w-full max-w-lg items-center gap-3 border-b border-neutral-700 ${
+                !(chapter.id === chapter_id)
+                  ? chapter.chapterProgress
+                    ? "bg-green-900/20 hover:bg-green-900/30"
+                    : "hover:bg-neutral-200/10"
+                  : " bg-pink-900/10 hover:bg-pink-900/20"
               }  bg-transparent p-2 px-4 backdrop-blur-sm duration-150 `}
               key={chapter?.id}
             >

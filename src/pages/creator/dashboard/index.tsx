@@ -18,8 +18,6 @@ import UserPlusIcon from "@heroicons/react/20/solid/UserPlusIcon";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 import { useRouter } from "next/router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChalkboardTeacher } from "@fortawesome/free-solid-svg-icons";
 import { PresentationChartLineIcon } from "@heroicons/react/24/solid";
 import { PresentationChartLineIcon as PresentationChartBarIcon0 } from "@heroicons/react/24/outline";
 
@@ -109,7 +107,63 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
             >
               <span className="w-1/3" />
               <div className="flex  w-full items-center gap-2">
-                <FontAwesomeIcon icon={faChalkboardTeacher} />
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={` w-6 ${
+                    pathname && pathname.startsWith("/creator/dashboard/event")
+                      ? "flex"
+                      : "hidden"
+                  }`}
+                >
+                  <rect
+                    x="1.25"
+                    y="5.25"
+                    width="21.5"
+                    height="12.75"
+                    rx="2.75"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M11.2812 10.3622L13.3497 11.5L11.2812 12.6377V10.3622Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`w-6 ${
+                    pathname && pathname.startsWith("/creator/dashboard/event")
+                      ? "hidden"
+                      : ""
+                  }`}
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M4 6C2.89543 6 2 6.89543 2 8V15.25C2 16.3546 2.89543 17.25 4 17.25H20C21.1046 17.25 22 16.3546 22 15.25V8C22 6.89543 21.1046 6 20 6H4ZM11.0175 9.36111C10.7987 9.24094 10.5312 9.39903 10.5312 9.64869V13.3514C10.5313 13.4084 10.5462 13.4644 10.5744 13.5139C10.6027 13.5634 10.6434 13.6047 10.6925 13.6337C10.7415 13.6626 10.7973 13.6784 10.8543 13.6792C10.9113 13.6801 10.9675 13.6662 11.0175 13.6387L14.3833 11.7875C14.4347 11.7592 14.4776 11.7175 14.5075 11.667C14.5374 11.6164 14.5532 11.5588 14.5532 11.5C14.5532 11.4413 14.5374 11.3837 14.5075 11.3331C14.4776 11.2825 14.4347 11.2409 14.3833 11.2126L11.0175 9.36111Z"
+                    fill="currentColor"
+                  />
+                  <rect
+                    x="1.25"
+                    y="5.25"
+                    width="21.5"
+                    height="12.75"
+                    rx="2.75"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                  />
+                </svg>
 
                 <span className="hidden md:block">Courses</span>
               </div>

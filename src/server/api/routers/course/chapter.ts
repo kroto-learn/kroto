@@ -125,13 +125,18 @@ export const courseChapterRouter = createTRPCRouter({
         });
         return updatedChapterProgress;
       } else {
-        const newChapterProgress = await prisma.chapterProgress.create({
-          data: {
-            watchedById: ctx.session.user.id,
-            chapterId: input.chapterId,
-          },
-        });
-        return newChapterProgress;
+        try {
+          const newChapterProgress = await prisma.chapterProgress.create({
+            data: {
+              watchedById: ctx.session.user.id,
+              chapterId: input.chapterId,
+            },
+          });
+          return newChapterProgress;
+        } catch (err) {
+          console.log(err);
+          return null;
+        }
       }
     }),
 

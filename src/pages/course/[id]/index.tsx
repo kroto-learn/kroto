@@ -94,23 +94,29 @@ const Index = ({ courseId }: Props) => {
                 className="object-cover"
               />
             </div>
-            <h2 className="mb-2 text-xl font-semibold">{course?.title}</h2>
+            <h2 className="text-xl font-semibold">{course?.title}</h2>
 
-            <Link
-              href={`/${course?.creator?.creatorProfile ?? ""}`}
-              className="group flex items-center gap-2"
-            >
-              <Image
-                src={course?.creator?.image ?? ""}
-                alt={course?.creator?.name ?? ""}
-                className="aspect-square rounded-full"
-                width={18}
-                height={18}
-              />
-              <p className="text-sm text-neutral-300 duration-150 group-hover:text-neutral-200 group-hover:underline">
-                {course?.creator?.name}
+            <div className="flex w-full items-center gap-6">
+              <p className="mb-1 text-sm text-neutral-300">
+                {course?.chapters.length} Chapters
               </p>
-            </Link>
+
+              <Link
+                href={`/${course?.creator?.creatorProfile ?? ""}`}
+                className="group flex items-center gap-1"
+              >
+                <Image
+                  src={course?.creator?.image ?? ""}
+                  alt={course?.creator?.name ?? ""}
+                  className="aspect-square rounded-full"
+                  width={22}
+                  height={22}
+                />
+                <p className="text-sm text-neutral-300 duration-150 group-hover:text-neutral-200 group-hover:underline">
+                  {course?.creator?.name}
+                </p>
+              </Link>
+            </div>
 
             {session.data?.user.id !== course?.creator?.id ? (
               isEnrolled ? (
@@ -192,7 +198,11 @@ const Index = ({ courseId }: Props) => {
             {course?.chapters?.map((chapter, index) => (
               <button
                 onClick={() => {
-                  setPreviewOpen(true);
+                  if (isEnrolled)
+                    void router.push(
+                      `/course/play/${course?.id}/${chapter?.id}`
+                    );
+                  else setPreviewOpen(true);
                 }}
                 className="flex w-full items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
                 key={chapter?.id}
