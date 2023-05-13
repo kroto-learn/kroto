@@ -4,8 +4,7 @@ import { DashboardLayout } from ".";
 import { api } from "@/utils/api";
 import React, { useState } from "react";
 import { Loader } from "@/components/Loader";
-import { PlusCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { useRouter } from "next/router";
+import { PlusCircleIcon,PencilIcon,PaperAirplaneIcon,DocumentDuplicateIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
@@ -15,18 +14,18 @@ import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
 
 const Marketing = () => {
-  const router = useRouter();
-  const { audience } = router.query as { audience?: string };
-  const isImportedTab = audience === "imported";
   const { data: audienceData, isLoading: isAudienceLoading } =
     api.creator.audience.getAudienceMembers.useQuery();
+
+  const { data: emailList, isLoading: emailListLoading } =
+    api.email.getAll.useQuery();
 
   const [createEmail, setCreateEmail] = useState<boolean>(false);
 
   const { data: importedAudienceData, isLoading: isImpAudLoading } =
     api.creator.audience.getImportedAudience.useQuery();
 
-  const isLoading = isImportedTab ? isImpAudLoading : isAudienceLoading;
+  const isLoading = isImpAudLoading || isAudienceLoading;
 
   if (isLoading)
     return (
@@ -45,41 +44,64 @@ const Marketing = () => {
       <Head>
         <title>Audience | Dashboard</title>
       </Head>
-      <div className="mx-2 my-8 min-h-[80%] w-full px-6">
-        <div className="mb-6 flex w-full items-start justify-between gap-2">
-          <div className="flex items-baseline gap-2">
-            <p className="text-3xl text-neutral-200">
-              {audienceData?.length ??
-                0 + (importedAudienceData?.length ?? 0) ??
-                "-"}
-            </p>
-            <h3 className="mb-4 text-xl font-medium">Audience members</h3>
+      <div className="flex flex-col">
+        <div className="mx-2 my-8 min-h-[80%] w-full px-6">
+          <div className="mb-6 flex w-full items-start justify-between gap-2">
+            <div className="flex items-baseline gap-2">
+              <p className="text-3xl text-neutral-200">
+                {audienceData?.length ??
+                  0 + (importedAudienceData?.length ?? 0) ??
+                  "-"}
+              </p>
+              <h3 className="mb-4 text-xl font-medium">Audience members</h3>
+            </div>
+            <div className="flex w-full flex-col items-end gap-2 sm:w-auto sm:flex-row sm:items-center">
+              <button
+                onClick={() => setCreateEmail(true)}
+                type="button"
+                className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
+              >
+                <PlusCircleIcon className="h-4" /> Create Email
+              </button>
+            </div>
           </div>
-          <div className="flex w-full flex-col items-end gap-2 sm:w-auto sm:flex-row sm:items-center">
-            <button
-              onClick={() => setCreateEmail(true)}
-              disabled={audienceData?.length === 0 || !audienceData}
-              type="button"
-              className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
-            >
-              <PlusCircleIcon className="h-4" /> Create Email
-            </button>
+          <div className="mt-10 py-1 rounded-xl bg-neutral-800">
+            <div className="divide-y divide-neutral-700">
+              {emailList?.map((d) => (
+                <div key={d.id} className="">
+                  <div className="mx-2 my-2 rounded p-2 text-lg">
+                    <p>{d.subject}</p>
+                  </div>
+                  <div className="flex flex-row-reverse mb-4 gap-2 px-5">
+                    <button className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}>
+                    <DocumentDuplicateIcon className="w-3"/> Duplicate
+                    </button>
+                    <button className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}>
+                    <PaperAirplaneIcon className="w-3" /> Send
+                    </button>
+                    <button className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}>
+                    <PencilIcon className="w-3" /> Edit
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-        <div
-          className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-xl flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
-            createEmail ? "translate-x-0" : "translate-x-full"
-          }`}
-        >
-          <button
-            onClick={() => {
-              setCreateEmail(false);
-            }}
-            className="self-start rounded-xl border border-neutral-500 p-1 text-xl text-neutral-400"
+          <div
+            className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-xl flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
+              createEmail ? "translate-x-0" : "translate-x-full"
+            }`}
           >
-            <XMarkIcon className="w-5" />
-          </button>
-          <CreateEmail />
+            <button
+              onClick={() => {
+                setCreateEmail(false);
+              }}
+              className="self-start rounded-xl border border-neutral-500 p-1 text-xl text-neutral-400"
+            >
+              <XMarkIcon className="w-5" />
+            </button>
+            <CreateEmail />
+          </div>
         </div>
       </div>
     </>
