@@ -143,6 +143,7 @@ export const courseRouter = createTRPCRouter({
           description: input.description,
           thumbnail: input.thumbnail,
           creatorId: ctx.session.user.id,
+          ytId: input.ytId,
         },
       });
 
@@ -196,7 +197,6 @@ export const courseRouter = createTRPCRouter({
       });
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
-
       const playlistData = await getPlaylistDataService(course?.ytId ?? "");
 
       if (!playlistData) return new TRPCError({ code: "BAD_REQUEST" });
@@ -405,6 +405,50 @@ export const courseRouter = createTRPCRouter({
 
       return enrolled;
     }),
+
+  getEnrollments: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const user = await prisma.user.findUnique({
+      where: { id: ctx.session.user.id },
+      include: {
+        enrollments: {
+          include: {
+            course: {
+              include: {
+                _count: {
+                  select: {
+                    chapters: true,
+                  },
+                },
+                courseProgress: {
+                  where: {
+                    watchedById: ctx.session.user.id,
+                  },
+                  include: {
+                    lastChapter: true,
+                  },
+                  take: 1,
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const enrollments = user?.enrollments
+      .map((er) => ({
+        ...er,
+        course: {
+          ...er.course,
+          courseProgress: er.course.courseProgress[0],
+        },
+      }))
+      .filter((er) => er.course.creatorId !== ctx.session.user.id);
+
+    return enrollments;
+  }),
 
   updateCourseProgress: protectedProcedure
     .input(z.object({ courseId: z.string(), lastChapterId: z.string() }))

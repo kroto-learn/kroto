@@ -67,7 +67,7 @@ model User {
   feedbacks             Feedback[]
   testimonials          Testimonial[]
   importedAudieceMember ImportedAudieceMember[]
-  Enrollment            Enrollment[]
+  enrollments           Enrollment[]
   Email                 Email[]
   courseProgress        CourseProgress[]
   chapterProgress       ChapterProgress[]

@@ -114,6 +114,7 @@ export const getPlaylistDataService = async (id: string) => {
 
     while (piRes) {
       // Do something with the results on this page
+
       piRes?.data?.items
         ? piRes?.data?.items?.forEach((video) => {
             const videoTitle = video?.snippet?.title ?? "";
