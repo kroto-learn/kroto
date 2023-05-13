@@ -4,7 +4,13 @@ import { DashboardLayout } from ".";
 import { api } from "@/utils/api";
 import React, { useState } from "react";
 import { Loader } from "@/components/Loader";
-import { PlusCircleIcon,PencilIcon,PaperAirplaneIcon,DocumentDuplicateIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import {
+  PlusCircleIcon,
+  PencilIcon,
+  PaperAirplaneIcon,
+  DocumentDuplicateIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
@@ -45,7 +51,7 @@ const Marketing = () => {
     );
   }
 
-  if (isLoading)
+  if (isLoading || emailListLoading)
     return (
       <>
         <Head>
@@ -83,22 +89,28 @@ const Marketing = () => {
               </button>
             </div>
           </div>
-          <div className="mt-10 py-1 rounded-xl bg-neutral-800">
-            <div className="divide-y divide-neutral-700">
+          <div className="mt-10 rounded-xl bg-neutral-900 py-1">
+            <div className="divide-y divide-neutral-800">
               {emailList?.map((d) => (
                 <div key={d.id} className="">
                   <div className="mx-2 my-2 rounded p-2 text-lg">
                     <p>{d.subject}</p>
                   </div>
-                  <div className="flex flex-row-reverse mb-4 gap-2 px-5">
-                    <button className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}>
-                    <DocumentDuplicateIcon className="w-3"/> Duplicate
+                  <div className="mb-4 flex flex-row-reverse gap-2 px-5">
+                    <button
+                      className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-800 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-400 hover:text-neutral-800`}
+                    >
+                      <DocumentDuplicateIcon className="w-3" /> Duplicate
                     </button>
-                    <button className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}>
-                    <PaperAirplaneIcon className="w-3" /> Send
+                    <button
+                      className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-800 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-400 hover:text-neutral-800`}
+                    >
+                      <PaperAirplaneIcon className="w-3" /> Send
                     </button>
-                    <button className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}>
-                    <PencilIcon className="w-3" /> Edit
+                    <button
+                      className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-800 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-400 hover:text-neutral-800`}
+                    >
+                      <PencilIcon className="w-3" /> Edit
                     </button>
                   </div>
                 </div>
@@ -151,6 +163,7 @@ function useZodForm<TSchema extends z.ZodType>(
 }
 
 export const CreateEmail = () => {
+  const ctx = api.useContext();
   const methods = useZodForm({
     schema: sendUpdateFormSchema,
   });
@@ -165,7 +178,14 @@ export const CreateEmail = () => {
     <form
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       onSubmit={methods.handleSubmit(async (values) => {
-        await createEmail({ ...values });
+        await createEmail(
+          { ...values },
+          {
+            onSuccess: () => {
+              void ctx.email.getAll.invalidate();
+            },
+          }
+        );
         methods.reset();
       })}
       className="mx-auto my-4 flex w-full max-w-2xl flex-col gap-8"
