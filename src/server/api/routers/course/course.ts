@@ -240,6 +240,7 @@ export const courseRouter = createTRPCRouter({
                 thumbnail: video.thumbnail,
                 creatorId: ctx.session.user.id,
                 position: idx,
+                ytId: video.ytId,
                 videoUrl: `https://www.youtube.com/watch?v=${video.ytId}`,
                 courseId: course.id,
               },

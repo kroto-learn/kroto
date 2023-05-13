@@ -118,7 +118,7 @@ const Index = () => {
   return (
     <Layout>
       <Head>
-        <title>Create Course</title>
+        <title>Import Course</title>
       </Head>
       <div className="relative mx-auto my-12 flex min-h-screen w-full max-w-2xl flex-col gap-8">
         <div className="flex flex-col gap-2">
@@ -258,30 +258,36 @@ const Index = () => {
                 <PlusIcon className="w-4" /> Add Course block
               </button> */}
             </div>
-            <div className="max-h-[20rem] overflow-y-auto">
-              {methods.watch()?.chapters.map((chapter, index) => (
-                <div
-                  className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                  key={chapter.title + index.toString()}
-                >
-                  <p className="text-sm text-neutral-300">{index + 1}</p>
-                  <div className="relative mb-2 aspect-video w-40 overflow-hidden rounded-lg">
-                    <Image
-                      src={chapter?.thumbnail ?? ""}
-                      alt={chapter?.title ?? ""}
-                      fill
-                      className="object-cover"
-                    />
+            <div className="max-h-[20rem] overflow-y-auto pr-2">
+              {methods.watch()?.chapters.length > 0 ? (
+                methods.watch()?.chapters.map((chapter, index) => (
+                  <div
+                    className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
+                    key={chapter.title + index.toString()}
+                  >
+                    <p className="text-sm text-neutral-300">{index + 1}</p>
+                    <div className="relative mb-2 aspect-video w-40 overflow-hidden rounded-lg">
+                      <Image
+                        src={chapter?.thumbnail ?? ""}
+                        alt={chapter?.title ?? ""}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex h-full w-full flex-col items-start gap-1">
+                      <h5 className="font-medium">{chapter.title}</h5>
+                      <label className="flex items-center gap-1 rounded-lg bg-neutral-300/20 px-2 py-1 text-xs text-neutral-300">
+                        <PlayCircleIcon className="w-3" />
+                        Video
+                      </label>
+                    </div>
                   </div>
-                  <div className="flex h-full w-full flex-col items-start gap-1">
-                    <h5 className="font-medium">{chapter.title}</h5>
-                    <label className="flex items-center gap-1 rounded-lg bg-neutral-300/20 px-2 py-1 text-xs text-neutral-300">
-                      <PlayCircleIcon className="w-3" />
-                      Video
-                    </label>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-sm text-neutral-400">
+                  Import your Youtube playlist above to populate chapters.
+                </p>
+              )}
             </div>
           </div>
 
@@ -291,7 +297,7 @@ const Index = () => {
             disabled={methods.formState.isSubmitting}
           >
             {importCourseMutationLoading && <Loader white />}
-            Create Course
+            Import Course
           </button>
         </form>
       </div>

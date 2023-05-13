@@ -194,7 +194,7 @@ const Index = ({ courseId }: Props) => {
                 onClick={() => {
                   setPreviewOpen(true);
                 }}
-                className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
+                className="flex w-full items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
                 key={chapter?.id}
               >
                 <p className="text-sm text-neutral-300">{index + 1}</p>
