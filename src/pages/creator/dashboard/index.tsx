@@ -37,7 +37,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (router.pathname === "/creator/dashboard")
-      void router.push("/creator/dashboard/events");
+      void router.push("/creator/dashboard/courses");
     if (creator && !creator?.isCreator) void router.push("/dashboard");
   }, [creator, router]);
 

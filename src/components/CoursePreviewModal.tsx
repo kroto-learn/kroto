@@ -1,36 +1,25 @@
 import { api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  PlayIcon,
-  XMarkIcon,
-} from "@heroicons/react/20/solid";
+import { PlayIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { type Dispatch, Fragment, type SetStateAction } from "react";
 import { Loader } from "./Loader";
 import { TRPCError } from "@trpc/server";
 import YouTube from "react-youtube";
 import Image from "next/image";
-import { type CourseBlockVideo } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import useToast from "@/hooks/useToast";
 import Link from "next/link";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 
 const CoursePreviewModal = ({
   isOpen,
   setIsOpen,
   courseId,
-  position,
-  setPosition,
-  manage,
 }: {
-  position?: number;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  setPosition?: Dispatch<SetStateAction<number>>;
   courseId: string;
-  manage?: boolean;
 }) => {
   const { data: course, isLoading: courseLoading } =
     api.course.getCourse.useQuery({ id: courseId });
@@ -53,8 +42,9 @@ const CoursePreviewModal = ({
   const { data: isEnrolled } = api.course.isEnrolled.useQuery({ courseId });
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
+  const router = useRouter();
 
-  if (course instanceof TRPCError || !course) return <></>;
+  if (course instanceof TRPCError || !course) return <>Course not found!</>;
 
   return (
     <>
@@ -113,20 +103,11 @@ const CoursePreviewModal = ({
                     </div>
                   ) : (
                     <div className="flex w-full flex-col items-start gap-2">
-                      {(position
-                        ? course.courseBlocks[position]
-                        : course.previewBlock
-                      )?.type !== "TEXT" ? (
+                      {course.previewChapter?.type !== "TEXT" ? (
                         <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-neutral-700">
                           <YouTube
                             className="absolute bottom-0 left-0 right-0 top-0 h-full w-full"
-                            videoId={
-                              (
-                                (position
-                                  ? course.courseBlocks[position]
-                                  : course.previewBlock) as CourseBlockVideo
-                              )?.ytId ?? ""
-                            }
+                            videoId={course.previewChapter?.ytId ?? ""}
                             opts={youtubeOpts}
                             // onReady={this._onReady}
                           />
@@ -135,28 +116,15 @@ const CoursePreviewModal = ({
                         <></>
                       )}
                       <h3 className="mb-0 mt-2 font-medium">
-                        {
-                          (position
-                            ? course.courseBlocks[position]
-                            : course.previewBlock
-                          )?.title
-                        }
+                        {course.previewChapter?.title}
                       </h3>
                       <div className="flex w-full items-center gap-2">
                         <p>
-                          Chapter{" "}
-                          {((position
-                            ? course.courseBlocks[position]
-                            : course.previewBlock
-                          )?.position ?? 0) + 1}
+                          Chapter {(course.previewChapter?.position ?? 0) + 1}
                         </p>
-                        {!manage ? (
-                          <span className="rounded border border-pink-500 bg-pink-500/10 p-1 px-2 text-xs font-medium uppercase tracking-wider text-pink-500">
-                            PREVIEW
-                          </span>
-                        ) : (
-                          <></>
-                        )}
+                        <span className="rounded border border-pink-500 bg-pink-500/10 p-1 px-2 text-xs font-medium uppercase tracking-wider text-pink-500">
+                          PREVIEW
+                        </span>
                       </div>
 
                       <div className="flex items-center gap-1">
@@ -173,9 +141,7 @@ const CoursePreviewModal = ({
                       </div>
                     </div>
                   )}
-                  {manage ? (
-                    <></>
-                  ) : session.data?.user.id !== course?.creator?.id ? (
+                  {session.data?.user.id !== course?.creator?.id ? (
                     isEnrolled ? (
                       <Link
                         href={`/course/play/${course?.id}`}
@@ -191,6 +157,12 @@ const CoursePreviewModal = ({
                         <div className="flex items-center gap-2">
                           <button
                             onClick={async () => {
+                              if (!session.data) {
+                                void router.push(
+                                  `/auth/sign-in/?redirect=/course/${courseId}`
+                                );
+                                return;
+                              }
                               await enrollMutation(
                                 { courseId: course?.id },
                                 {
@@ -231,34 +203,6 @@ const CoursePreviewModal = ({
                         <span>Manage</span>
                       </>
                     </Link>
-                  )}
-                  {position !== undefined && setPosition ? (
-                    <div className="mt-3 flex w-full items-center gap-2 space-x-2 rounded-b text-sm dark:border-neutral-600">
-                      {position > 0 ? (
-                        <button
-                          type="button"
-                          onClick={() => setPosition(position - 1)}
-                          className="flex items-center gap-1 rounded-lg bg-neutral-600 p-2 px-3 text-center text-sm font-medium text-neutral-400 duration-300 hover:text-neutral-200 active:scale-95 disabled:hidden"
-                        >
-                          <ChevronLeftIcon className="w-4" /> Previous
-                        </button>
-                      ) : (
-                        <></>
-                      )}
-                      {position < course.courseBlocks.length - 1 ? (
-                        <button
-                          type="button"
-                          onClick={() => setPosition(position + 1)}
-                          className="flex items-center gap-1 rounded-lg bg-neutral-600 p-2 px-3 text-center text-sm font-medium text-neutral-400 duration-300 hover:text-neutral-200 active:scale-95 disabled:hidden"
-                        >
-                          Next <ChevronRightIcon className="w-4" />
-                        </button>
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-                  ) : (
-                    <></>
                   )}
                 </Dialog.Panel>
               </Transition.Child>

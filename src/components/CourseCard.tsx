@@ -4,7 +4,7 @@ import Link from "next/link";
 
 type Props = {
   course: Course & {
-    _count: { courseBlockVideos: number; courseBlockMds: number };
+    _count: { chapters: number };
   };
   manage?: boolean;
   lg?: boolean;
@@ -42,8 +42,7 @@ const CourseCard = ({ course, manage, lg }: Props) => {
             lg ? "!text-sm" : ""
           }`}
         >
-          {course._count.courseBlockVideos + course._count.courseBlockMds}{" "}
-          Chapters
+          {course._count.chapters} Chapters
         </p>
         {!manage ? (
           <p

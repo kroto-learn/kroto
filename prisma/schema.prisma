@@ -67,10 +67,11 @@ model User {
   feedbacks             Feedback[]
   testimonials          Testimonial[]
   importedAudieceMember ImportedAudieceMember[]
-  CourseBlockVideo      CourseBlockVideo[]
-  CourseBlockMd         CourseBlockMd[]
   Enrollment            Enrollment[]
   Email                 Email[]
+  courseProgress        CourseProgress[]
+  chapterProgress       ChapterProgress[]
+  chapters              Chapter[]
 }
 
 model Event {
@@ -197,66 +198,49 @@ model Testimonial {
 }
 
 model Course {
-  id                String             @id @default(cuid())
-  title             String
-  thumbnail         String?
-  ogImage           String?
-  description       String?            @db.Text
-  creatorId         String
-  creator           User               @relation(fields: [creatorId], references: [id])
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  courseBlockMds    CourseBlockMd[]
-  courseBlockVideos CourseBlockVideo[]
-  enrollments       Enrollment[]
+  id             String           @id @default(cuid())
+  title          String
+  thumbnail      String?
+  ogImage        String?
+  description    String?          @db.Text
+  creatorId      String
+  ytId           String?
+  creator        User             @relation(fields: [creatorId], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  enrollments    Enrollment[]
+  courseProgress CourseProgress[]
+  chapters       Chapter[]
 
   @@index([creatorId])
 }
 
-model CourseBlockVideo {
-  id          String               @id @default(cuid())
-  title       String
-  position    Int
-  thumbnail   String?
-  videoUrl    String
-  description String?
-  ytId        String?
-  type        CourseBlockVideoType @default(YTVIDEO)
-  creatorId   String
-  creator     User                 @relation(fields: [creatorId], references: [id])
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
-  courseId    String
-  course      Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  @@index([creatorId])
-  @@index([courseId])
-}
-
-model CourseBlockMd {
-  id        String            @id @default(cuid())
-  title     String
-  thumbnail String?
-  text      String            @db.Text
-  position  Int
-  type      CourseBlockMdType @default(TEXT)
-  creatorId String
-  creator   User              @relation(fields: [creatorId], references: [id])
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-  courseId  String
-  course    Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+model Chapter {
+  id              String            @id @default(cuid())
+  title           String
+  position        Int
+  thumbnail       String?
+  text            String?
+  videoUrl        String?
+  description     String?
+  ytId            String?
+  type            ChapterType       @default(YTVIDEO)
+  creatorId       String
+  creator         User              @relation(fields: [creatorId], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  courseId        String
+  course          Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseProgress  CourseProgress[]
+  chapterProgress ChapterProgress[]
 
   @@index([creatorId])
   @@index([courseId])
 }
 
-enum CourseBlockVideoType {
+enum ChapterType {
   YTVIDEO
   VIDEO
-}
-
-enum CourseBlockMdType {
   TEXT
 }
 
@@ -270,6 +254,34 @@ model Enrollment {
   @@unique([courseId, userId])
   @@index([courseId])
   @@index([userId])
+}
+
+model CourseProgress {
+  id            String  @id @default(cuid())
+  lastChapterId String
+  courseId      String
+  watchedById   String
+  lastChapter   Chapter @relation(fields: [lastChapterId], references: [id], onDelete: Cascade)
+  course        Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  watchedBy     User    @relation(fields: [watchedById], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, watchedById])
+  @@index([courseId])
+  @@index([watchedById])
+  @@index([lastChapterId])
+}
+
+model ChapterProgress {
+  id            String  @id @default(cuid())
+  videoProgress Int     @default(0)
+  chapterId     String
+  watchedById   String
+  chapter       Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  watchedBy     User    @relation(fields: [watchedById], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, watchedById])
+  @@index([chapterId])
+  @@index([watchedById])
 }
 
 model Email {

@@ -10,6 +10,7 @@ import {
   searchYoutubePlaylistsService,
 } from "@/server/services/youtube";
 import { importCourseFormSchema } from "@/pages/course/import";
+import { exclude } from "@/server/helpers/util";
 
 export const courseRouter = createTRPCRouter({
   get: protectedProcedure
@@ -23,8 +24,18 @@ export const courseRouter = createTRPCRouter({
         },
         include: {
           creator: true,
-          courseBlockVideos: true,
-          courseBlockMds: true,
+          chapters: {
+            include: {
+              chapterProgress: {
+                where: { watchedById: ctx.session.user.id },
+                take: 1,
+              },
+            },
+          },
+          courseProgress: {
+            where: { watchedById: ctx.session.user.id },
+            take: 1,
+          },
           enrollments: {
             include: {
               user: true,
@@ -35,14 +46,16 @@ export const courseRouter = createTRPCRouter({
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
 
-      const courseBlocks = [
-        ...course.courseBlockVideos,
-        ...course.courseBlockMds,
-      ];
+      const courseProgress = course.courseProgress[0];
 
-      courseBlocks.sort((a, b) => a.position - b.position);
+      const chapters = course.chapters.map((chapter) => ({
+        ...chapter,
+        chapterProgress: chapter.chapterProgress[0],
+      }));
 
-      return { ...course, courseBlocks };
+      chapters.sort((a, b) => a.position - b.position);
+
+      return { ...course, chapters, courseProgress };
     }),
 
   // Used for RouterOutputs don't remove.
@@ -57,21 +70,23 @@ export const courseRouter = createTRPCRouter({
         },
         include: {
           creator: true,
-          courseBlockMds: true,
-          courseBlockVideos: true,
+          chapters: true,
         },
       });
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
 
-      const courseBlocks = [
-        ...course.courseBlockVideos,
-        ...course.courseBlockMds,
-      ];
+      const chapters = course.chapters;
 
-      courseBlocks.sort((a, b) => a.position - b.position);
+      chapters.sort((a, b) => a.position - b.position);
 
-      return { ...course, courseBlocks, previewBlock: courseBlocks[0] };
+      return {
+        ...course,
+        chapters: chapters.map((chapter) =>
+          exclude(chapter, ["videoUrl", "ytId"])
+        ),
+        previewChapter: chapters[0],
+      };
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -84,8 +99,7 @@ export const courseRouter = createTRPCRouter({
       include: {
         _count: {
           select: {
-            courseBlockMds: true,
-            courseBlockVideos: true,
+            chapters: true,
           },
         },
       },
@@ -132,8 +146,8 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      const courseBlockVideos = await prisma.courseBlockVideo.createMany({
-        data: input.courseBlockVideos.map((cb, position) => ({
+      const chapters = await prisma.chapter.createMany({
+        data: input.chapters.map((cb, position) => ({
           ...cb,
           courseId: course.id,
           creatorId: ctx.session.user.id,
@@ -166,7 +180,77 @@ export const courseRouter = createTRPCRouter({
       //   },
       // });
 
-      return { ...course, courseBlockVideos };
+      return { ...course, chapters };
+    }),
+
+  syncImport: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const course = await prisma.course.findUnique({
+        where: { id: input.id },
+        include: {
+          chapters: true,
+        },
+      });
+
+      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const playlistData = await getPlaylistDataService(course?.ytId ?? "");
+
+      if (!playlistData) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const updatedCourse = await prisma.course.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          title: playlistData.title,
+          description: playlistData.description,
+          thumbnail: playlistData.thumbnail,
+          creatorId: ctx.session.user.id,
+        },
+      });
+
+      const chapters = course.chapters;
+
+      const updatedChapters = await Promise.all(
+        playlistData.videos.map(async (video, idx) => {
+          const chapterExists = chapters.find(
+            (chapter) => chapter.ytId === video.ytId
+          );
+
+          if (chapterExists) {
+            const updatedChapter = await prisma.chapter.update({
+              where: {
+                id: chapterExists.id,
+              },
+              data: {
+                title: video.title,
+                thumbnail: video.thumbnail,
+                position: idx,
+              },
+            });
+            return updatedChapter;
+          } else {
+            const newChapter = await prisma.chapter.create({
+              data: {
+                title: video.title,
+                thumbnail: video.thumbnail,
+                creatorId: ctx.session.user.id,
+                position: idx,
+                ytId: video.ytId,
+                videoUrl: `https://www.youtube.com/watch?v=${video.ytId}`,
+                courseId: course.id,
+              },
+            });
+            return newChapter;
+          }
+        })
+      );
+
+      return { ...updatedCourse, chapters: updatedChapters };
     }),
 
   // update: protectedProcedure
@@ -320,6 +404,40 @@ export const courseRouter = createTRPCRouter({
       });
 
       return enrolled;
+    }),
+
+  updateCourseProgress: protectedProcedure
+    .input(z.object({ courseId: z.string(), lastChapterId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const courseProgress = await prisma.courseProgress.findFirst({
+        where: {
+          watchedById: ctx.session.user.id,
+          courseId: input.courseId,
+        },
+      });
+
+      if (courseProgress) {
+        const updatedCourseProgress = await prisma.courseProgress.update({
+          where: {
+            id: courseProgress.id,
+          },
+          data: {
+            lastChapterId: input.lastChapterId,
+          },
+        });
+        return updatedCourseProgress;
+      } else {
+        const newCourseProgress = await prisma.courseProgress.create({
+          data: {
+            watchedById: ctx.session.user.id,
+            courseId: input.courseId,
+            lastChapterId: input.lastChapterId,
+          },
+        });
+        return newCourseProgress;
+      }
     }),
 
   delete: protectedProcedure
