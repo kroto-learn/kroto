@@ -19,6 +19,7 @@ import Image from "next/image";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
+import { Tooltip } from "antd";
 
 const Marketing = () => {
   const { data: audienceData, isLoading: isAudienceLoading } =
@@ -89,28 +90,39 @@ const Marketing = () => {
               </button>
             </div>
           </div>
-          <div className="mt-10 rounded-xl bg-neutral-900 py-1">
+          <div className="mt-10 rounded-xl border border-neutral-900 bg-neutral-900/60 py-1 backdrop-blur">
             <div className="divide-y divide-neutral-800">
               {emailList?.map((d) => (
                 <div key={d.id} className="">
-                  <div className="mx-2 my-2 rounded p-2 text-lg">
+                  <div className="mx-5 my-2 flex justify-between rounded p-2 text-xl">
                     <p>{d.subject}</p>
+                    <div className="flex gap-2">
+                      <Tooltip title="Duplicate">
+                        <button
+                          className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-800`}
+                        >
+                          <DocumentDuplicateIcon className="w-3" />
+                        </button>
+                      </Tooltip>
+                      <Tooltip title="Edit">
+                        <button
+                          className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-800`}
+                        >
+                          <PencilIcon className="w-3" />
+                        </button>
+                      </Tooltip>
+                    </div>
                   </div>
-                  <div className="mb-4 flex flex-row-reverse gap-2 px-5">
+                  <div className="m-5 flex gap-2">
                     <button
                       className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-800 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-400 hover:text-neutral-800`}
                     >
-                      <DocumentDuplicateIcon className="w-3" /> Duplicate
+                      <PlusCircleIcon className="w-3" /> Add Recipients
                     </button>
                     <button
                       className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-800 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-400 hover:text-neutral-800`}
                     >
                       <PaperAirplaneIcon className="w-3" /> Send
-                    </button>
-                    <button
-                      className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-800 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-400 hover:text-neutral-800`}
-                    >
-                      <PencilIcon className="w-3" /> Edit
                     </button>
                   </div>
                 </div>
