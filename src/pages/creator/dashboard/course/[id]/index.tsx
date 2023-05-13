@@ -20,7 +20,9 @@ import {
 import { LinkIcon, PlayCircleIcon } from "@heroicons/react/20/solid";
 import dynamic from "next/dynamic";
 import { TRPCError } from "@trpc/server";
-import CoursePreviewModal from "@/components/CoursePreviewModal";
+import ChapterManagePreviewModal from "@/components/ChapterManagePreviewModal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRotate } from "@fortawesome/free-solid-svg-icons";
 
 const CourseLayoutR = dynamic(
   () => import("@/components/layouts/courseDashboard"),
@@ -28,10 +30,6 @@ const CourseLayoutR = dynamic(
     ssr: false,
   }
 );
-
-// const SendUpdateModal = dynamic(() => import("@/components/SendUpdateModal"), {
-//   ssr: false,
-// });
 
 const CourseOverview = () => {
   const router = useRouter();
@@ -42,6 +40,11 @@ const CourseOverview = () => {
   const { data: course, isLoading: courseLoading } = api.course.get.useQuery({
     id,
   });
+
+  const { mutateAsync: syncImportMutation, isLoading: syncImportLoading } =
+    api.course.syncImport.useMutation();
+
+  const ctx = api.useContext();
 
   const { successToast } = useToast();
 
@@ -68,8 +71,8 @@ const CourseOverview = () => {
           <title>{`${course?.title ?? "Course"} | Overview`}</title>
         </Head>
 
-        <div className="mx-auto flex w-full flex-col gap-8">
-          <div className="flex w-full items-start gap-4 rounded-xl bg-neutral-800 p-4">
+        <div className="mx-auto flex w-full flex-col items-start gap-2">
+          <div className="mb-2 flex w-full items-start gap-4 rounded-xl bg-neutral-800 p-4">
             <div className="flex w-1/3 flex-col gap-4">
               <div className="relative flex aspect-video w-full  items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
                 <Image
@@ -159,8 +162,29 @@ const CourseOverview = () => {
               </p>
             </div>
           </div>
+          <button
+            onClick={() => {
+              void syncImportMutation(
+                { id: course.id },
+                {
+                  onSuccess: () => {
+                    void ctx.course.get.invalidate();
+                    successToast("Course synced from YouTube successfully!");
+                  },
+                }
+              );
+            }}
+            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+          >
+            {syncImportLoading ? (
+              <Loader />
+            ) : (
+              <FontAwesomeIcon icon={faRotate} />
+            )}
+            Sync from YouTube
+          </button>
 
-          <div className="flex flex-col gap-3">
+          <div className="mt-4 flex flex-col gap-3">
             <div className="flex w-full justify-between">
               <label
                 htmlFor="description"
@@ -168,34 +192,28 @@ const CourseOverview = () => {
               >
                 Chapters
               </label>
-              {/* <button
-                type="button"
-                className="flex items-center gap-1 rounded-lg border border-pink-600 px-3 py-1 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
-              >
-                <PlusIcon className="w-4" /> Add Course block
-              </button> */}
             </div>
-            <div className="h-[calc(100vh-28rem)] overflow-y-auto pr-4">
-              {course.courseBlocks.map((courseBlock, index) => (
+            <div className="h-[calc(100vh-30rem)] overflow-y-auto pr-4">
+              {course.chapters.map((chapter, index) => (
                 <button
                   onClick={() => {
                     setPreviewPos(index);
                     setPreviewOpen(true);
                   }}
                   className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                  key={courseBlock.title + index.toString()}
+                  key={chapter.title + index.toString()}
                 >
                   <p className="text-sm text-neutral-300">{index + 1}</p>
                   <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
                     <Image
-                      src={courseBlock?.thumbnail ?? ""}
-                      alt={courseBlock?.title ?? ""}
+                      src={chapter?.thumbnail ?? ""}
+                      alt={chapter?.title ?? ""}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div className="flex h-full w-full flex-col items-start gap-1">
-                    <h5 className="font-medium">{courseBlock.title}</h5>
+                    <h5 className="font-medium">{chapter.title}</h5>
                     <label className="flex items-center gap-1 rounded-lg bg-neutral-300/20 px-2 py-1 text-xs text-neutral-300">
                       <PlayCircleIcon className="w-3" />
                       Video
@@ -207,13 +225,12 @@ const CourseOverview = () => {
           </div>
         </div>
 
-        <CoursePreviewModal
+        <ChapterManagePreviewModal
           courseId={id}
           isOpen={previewOpen}
           setIsOpen={setPreviewOpen}
           position={previewPos}
           setPosition={setPreviewPos}
-          manage
         />
       </>
     );

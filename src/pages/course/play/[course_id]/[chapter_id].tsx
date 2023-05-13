@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import Head from "next/head";
 import { PlayerLayout } from ".";
+import { useEffect } from "react";
 
 const Index = () => {
   const router = useRouter();
@@ -21,6 +22,14 @@ const Index = () => {
     id: course_id,
   });
 
+  const { mutateAsync: updateCourseProgressMutation } =
+    api.course.updateCourseProgress.useMutation();
+
+  const { mutateAsync: updateChapterProgressMutation } =
+    api.courseChapter.updateChapterProgress.useMutation();
+
+  const ctx = api.useContext();
+
   const youtubeOpts = {
     height: "100%",
     width: "100%",
@@ -33,6 +42,27 @@ const Index = () => {
       showinfo: 0,
     },
   };
+
+  useEffect(() => {
+    if (chapter_id && course_id) {
+      void updateCourseProgressMutation({
+        courseId: course_id,
+        lastChapterId: chapter_id,
+      });
+
+      void updateChapterProgressMutation(
+        {
+          chapterId: chapter_id,
+        },
+        {
+          onSuccess: () => {
+            void ctx.course.get.invalidate();
+          },
+        }
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chapter_id, course_id]);
 
   if (chapterLoading || courseLoading || !chapter_id || !course_id)
     return (
@@ -56,8 +86,8 @@ const Index = () => {
       </div>
     );
 
-  const position = course.courseBlocks.findIndex(
-    (block) => block.id === chapter.id
+  const position = course.chapters.findIndex(
+    (chapter) => chapter.id === chapter.id
   );
 
   return (
@@ -75,10 +105,10 @@ const Index = () => {
               videoId={chapter?.ytId ?? ""}
               opts={youtubeOpts}
               onEnd={() => {
-                if (position < course.courseBlocks.length - 1)
+                if (position < course.chapters.length - 1)
                   void router.push(
                     `/course/play/${course_id}/${
-                      course.courseBlocks[position + 1]?.id ?? ""
+                      course.chapters[position + 1]?.id ?? ""
                     }`
                   );
               }}

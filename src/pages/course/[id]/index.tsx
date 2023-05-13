@@ -16,6 +16,7 @@ import Link from "next/link";
 import { type ParsedUrlQuery } from "querystring";
 import { useState } from "react";
 import CoursePreviewModal from "@/components/CoursePreviewModal";
+import { useRouter } from "next/router";
 
 type Props = {
   courseId: string;
@@ -31,6 +32,7 @@ const Index = ({ courseId }: Props) => {
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
   const [previewOpen, setPreviewOpen] = useState(false);
+  const router = useRouter();
 
   if (course instanceof TRPCError || !course)
     return (
@@ -125,6 +127,12 @@ const Index = ({ courseId }: Props) => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={async () => {
+                      if (!session.data) {
+                        void router.push(
+                          `/auth/sign-in/?redirect=/course/${courseId}`
+                        );
+                        return;
+                      }
                       await enrollMutation(
                         { courseId: course?.id },
                         {
@@ -181,13 +189,13 @@ const Index = ({ courseId }: Props) => {
             delay={0.1}
             className="flex h-[calc(100vh-10rem)] w-full flex-col gap-2 overflow-y-auto pr-2"
           >
-            {course?.courseBlocks?.map((courseBlock, index) => (
+            {course?.chapters?.map((chapter, index) => (
               <button
                 onClick={() => {
                   setPreviewOpen(true);
                 }}
                 className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                key={courseBlock?.id}
+                key={chapter?.id}
               >
                 <p className="text-sm text-neutral-300">{index + 1}</p>
                 <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
@@ -199,9 +207,7 @@ const Index = ({ courseId }: Props) => {
                   />
                 </div>
                 <div className="flex h-full w-full flex-col items-start gap-1">
-                  <h5 className="text-left font-medium">
-                    {courseBlock?.title}
-                  </h5>
+                  <h5 className="text-left font-medium">{chapter?.title}</h5>
                   <p className="text-xs text-neutral-400">
                     {course?.creator?.name}
                   </p>

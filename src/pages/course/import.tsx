@@ -32,7 +32,7 @@ export const importCourseFormSchema = z.object({
     .string()
     .max(3000)
     .nonempty("Please enter course description."),
-  courseBlockVideos: z.array(
+  chapters: z.array(
     z.object({
       title: z.string(),
       thumbnail: z.string(),
@@ -40,6 +40,7 @@ export const importCourseFormSchema = z.object({
       ytId: z.string(),
     })
   ),
+  ytId: z.string().optional(),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
@@ -62,7 +63,7 @@ const Index = () => {
       title: "Your course title",
       description: "Your course description...",
       thumbnail: "",
-      courseBlockVideos: [],
+      chapters: [],
     },
   });
   const [searchQuery, setSearchQuery] = useState("");
@@ -109,7 +110,7 @@ const Index = () => {
       methods.setValue("description", playlistData.description);
       methods.setValue("thumbnail", playlistData.thumbnail);
       // }
-      methods.setValue("courseBlockVideos", playlistData.videos);
+      methods.setValue("chapters", playlistData.videos);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playlistData]);
@@ -155,6 +156,7 @@ const Index = () => {
                 <button
                   onClick={() => {
                     setPlaylistId(playlist.playlistId);
+                    methods.setValue("ytId", playlist.playlistId);
                     setSearchFocused(false);
                   }}
                   className="group flex w-full items-center gap-2 border-b border-neutral-700 bg-neutral-800/80 px-4 py-3 duration-150 hover:bg-neutral-800/90"
@@ -247,7 +249,7 @@ const Index = () => {
                 htmlFor="description"
                 className="text-lg  text-neutral-200"
               >
-                Course Blocks
+                Chapters
               </label>
               {/* <button
                 type="button"
@@ -257,22 +259,22 @@ const Index = () => {
               </button> */}
             </div>
             <div className="max-h-[20rem] overflow-y-auto">
-              {methods.watch()?.courseBlockVideos.map((courseBlock, index) => (
+              {methods.watch()?.chapters.map((chapter, index) => (
                 <div
                   className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                  key={courseBlock.title + index.toString()}
+                  key={chapter.title + index.toString()}
                 >
                   <p className="text-sm text-neutral-300">{index + 1}</p>
                   <div className="relative mb-2 aspect-video w-40 overflow-hidden rounded-lg">
                     <Image
-                      src={courseBlock?.thumbnail ?? ""}
-                      alt={courseBlock?.title ?? ""}
+                      src={chapter?.thumbnail ?? ""}
+                      alt={chapter?.title ?? ""}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div className="flex h-full w-full flex-col items-start gap-1">
-                    <h5 className="font-medium">{courseBlock.title}</h5>
+                    <h5 className="font-medium">{chapter.title}</h5>
                     <label className="flex items-center gap-1 rounded-lg bg-neutral-300/20 px-2 py-1 text-xs text-neutral-300">
                       <PlayCircleIcon className="w-3" />
                       Video
