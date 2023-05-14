@@ -105,9 +105,10 @@ export default function CourseLayoutR({ children }: { children: ReactNode }) {
         </div>
         <Link
           href={`/course/${id}`}
-          className="flex min-w-[7rem] items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
+          className="flex min-w-[8rem] items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
         >
-          <GlobeAltIcon className="w-4" /> Course Public Page
+          <GlobeAltIcon className="w-4" />
+          Public Page
         </Link>
       </div>
       <div className="hidden border-b border-neutral-700 text-center text-sm font-medium text-neutral-400 sm:block">

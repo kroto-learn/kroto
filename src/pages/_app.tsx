@@ -3,7 +3,7 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { api } from "@/utils/api";
 
-import NextNProgress from "nextjs-progressbar";
+import NextProgress from "next-progress";
 import { useEffect, type ReactNode } from "react";
 import { type NextComponentType } from "next";
 import { Toaster } from "react-hot-toast";
@@ -32,10 +32,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
   return (
     <SessionProvider session={session}>
-      <NextNProgress
-        showOnShallow={false}
-        options={{ showSpinner: false }}
+      <NextProgress
+        delay={300}
         color="#db2777"
+        options={{
+          showSpinner: false,
+        }}
       />
       <Toaster />
       <Analytics />
