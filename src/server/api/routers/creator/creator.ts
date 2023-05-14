@@ -37,8 +37,7 @@ export const creatorRouter = createTRPCRouter({
             include: {
               _count: {
                 select: {
-                  courseBlockMds: true,
-                  courseBlockVideos: true,
+                  chapters: true,
                 },
               },
             },

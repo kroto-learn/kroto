@@ -16,6 +16,7 @@ import Link from "next/link";
 import { type ParsedUrlQuery } from "querystring";
 import { useState } from "react";
 import CoursePreviewModal from "@/components/CoursePreviewModal";
+import { useRouter } from "next/router";
 
 type Props = {
   courseId: string;
@@ -31,6 +32,7 @@ const Index = ({ courseId }: Props) => {
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
   const [previewOpen, setPreviewOpen] = useState(false);
+  const router = useRouter();
 
   if (course instanceof TRPCError || !course)
     return (
@@ -92,23 +94,29 @@ const Index = ({ courseId }: Props) => {
                 className="object-cover"
               />
             </div>
-            <h2 className="mb-2 text-xl font-semibold">{course?.title}</h2>
+            <h2 className="text-xl font-semibold">{course?.title}</h2>
 
-            <Link
-              href={`/${course?.creator?.creatorProfile ?? ""}`}
-              className="group flex items-center gap-2"
-            >
-              <Image
-                src={course?.creator?.image ?? ""}
-                alt={course?.creator?.name ?? ""}
-                className="aspect-square rounded-full"
-                width={18}
-                height={18}
-              />
-              <p className="text-sm text-neutral-300 duration-150 group-hover:text-neutral-200 group-hover:underline">
-                {course?.creator?.name}
+            <div className="flex w-full items-center gap-6">
+              <p className="mb-1 text-sm text-neutral-300">
+                {course?.chapters.length} Chapters
               </p>
-            </Link>
+
+              <Link
+                href={`/${course?.creator?.creatorProfile ?? ""}`}
+                className="group flex items-center gap-1"
+              >
+                <Image
+                  src={course?.creator?.image ?? ""}
+                  alt={course?.creator?.name ?? ""}
+                  className="aspect-square rounded-full"
+                  width={22}
+                  height={22}
+                />
+                <p className="text-sm text-neutral-300 duration-150 group-hover:text-neutral-200 group-hover:underline">
+                  {course?.creator?.name}
+                </p>
+              </Link>
+            </div>
 
             {session.data?.user.id !== course?.creator?.id ? (
               isEnrolled ? (
@@ -125,6 +133,12 @@ const Index = ({ courseId }: Props) => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={async () => {
+                      if (!session.data) {
+                        void router.push(
+                          `/auth/sign-in/?redirect=/course/${courseId}`
+                        );
+                        return;
+                      }
                       await enrollMutation(
                         { courseId: course?.id },
                         {
@@ -181,13 +195,17 @@ const Index = ({ courseId }: Props) => {
             delay={0.1}
             className="flex h-[calc(100vh-10rem)] w-full flex-col gap-2 overflow-y-auto pr-2"
           >
-            {course?.courseBlocks?.map((courseBlock, index) => (
+            {course?.chapters?.map((chapter, index) => (
               <button
                 onClick={() => {
-                  setPreviewOpen(true);
+                  if (isEnrolled)
+                    void router.push(
+                      `/course/play/${course?.id}/${chapter?.id}`
+                    );
+                  else setPreviewOpen(true);
                 }}
-                className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                key={courseBlock?.id}
+                className="flex w-full items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
+                key={chapter?.id}
               >
                 <p className="text-sm text-neutral-300">{index + 1}</p>
                 <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
@@ -199,63 +217,7 @@ const Index = ({ courseId }: Props) => {
                   />
                 </div>
                 <div className="flex h-full w-full flex-col items-start gap-1">
-                  <h5 className="text-left font-medium">
-                    {courseBlock?.title}
-                  </h5>
-                  <p className="text-xs text-neutral-400">
-                    {course?.creator?.name}
-                  </p>
-                </div>
-              </button>
-            ))}
-            {course?.courseBlocks?.map((courseBlock, index) => (
-              <button
-                onClick={() => {
-                  setPreviewOpen(true);
-                }}
-                className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                key={courseBlock?.id}
-              >
-                <p className="text-sm text-neutral-300">{index + 1}</p>
-                <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
-                  <Image
-                    src={course?.thumbnail ?? ""}
-                    alt={course?.title ?? ""}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex h-full w-full flex-col items-start gap-1">
-                  <h5 className="text-left font-medium">
-                    {courseBlock?.title}
-                  </h5>
-                  <p className="text-xs text-neutral-400">
-                    {course?.creator?.name}
-                  </p>
-                </div>
-              </button>
-            ))}
-            {course?.courseBlocks?.map((courseBlock, index) => (
-              <button
-                onClick={() => {
-                  setPreviewOpen(true);
-                }}
-                className="flex items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                key={courseBlock?.id}
-              >
-                <p className="text-sm text-neutral-300">{index + 1}</p>
-                <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
-                  <Image
-                    src={course?.thumbnail ?? ""}
-                    alt={course?.title ?? ""}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex h-full w-full flex-col items-start gap-1">
-                  <h5 className="text-left font-medium">
-                    {courseBlock?.title}
-                  </h5>
+                  <h5 className="text-left font-medium">{chapter?.title}</h5>
                   <p className="text-xs text-neutral-400">
                     {course?.creator?.name}
                   </p>

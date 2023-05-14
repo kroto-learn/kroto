@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import Head from "next/head";
 import { PlayerLayout } from ".";
+import { useEffect } from "react";
+import Link from "next/link";
 
 const Index = () => {
   const router = useRouter();
@@ -21,6 +23,14 @@ const Index = () => {
     id: course_id,
   });
 
+  const { mutateAsync: updateCourseProgressMutation } =
+    api.course.updateCourseProgress.useMutation();
+
+  const { mutateAsync: updateChapterProgressMutation } =
+    api.courseChapter.updateChapterProgress.useMutation();
+
+  const ctx = api.useContext();
+
   const youtubeOpts = {
     height: "100%",
     width: "100%",
@@ -34,7 +44,29 @@ const Index = () => {
     },
   };
 
-  if (chapterLoading || courseLoading)
+  useEffect(() => {
+    if (chapter_id && course_id) {
+      console.log("ran twice");
+      void updateCourseProgressMutation({
+        courseId: course_id,
+        lastChapterId: chapter_id,
+      });
+
+      void updateChapterProgressMutation(
+        {
+          chapterId: chapter_id,
+        },
+        {
+          onSuccess: () => {
+            void ctx.course.get.invalidate();
+          },
+        }
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chapter_id, course_id]);
+
+  if (chapterLoading || courseLoading || !chapter_id || !course_id)
     return (
       <div className="flex min-h-screen w-full items-center justify-center">
         <Head>
@@ -56,8 +88,8 @@ const Index = () => {
       </div>
     );
 
-  const position = course.courseBlocks.findIndex(
-    (block) => block.id === chapter.id
+  const position = course.chapters.findIndex(
+    (chapter) => chapter.id === chapter.id
   );
 
   return (
@@ -75,10 +107,10 @@ const Index = () => {
               videoId={chapter?.ytId ?? ""}
               opts={youtubeOpts}
               onEnd={() => {
-                if (position < course.courseBlocks.length - 1)
+                if (position < course.chapters.length - 1)
                   void router.push(
                     `/course/play/${course_id}/${
-                      course.courseBlocks[position + 1]?.id ?? ""
+                      course.chapters[position + 1]?.id ?? ""
                     }`
                   );
               }}
@@ -88,7 +120,10 @@ const Index = () => {
           <></>
         )}
         <h3 className="mx-4 mt-2 text-lg font-medium">{chapter?.title}</h3>
-        <div className="mx-4 mt-2 flex items-center gap-2">
+        <Link
+          href={`/${chapter?.creator.creatorProfile ?? ""}`}
+          className="group mx-4 mt-2 flex items-center gap-2"
+        >
           <Image
             src={chapter?.creator?.image ?? ""}
             alt={chapter?.creator?.name}
@@ -96,10 +131,10 @@ const Index = () => {
             height={30}
             className="rounded-full"
           />
-          <p className="font-medium text-neutral-300">
+          <p className="font-medium text-neutral-300 duration-150 group-hover:text-neutral-200">
             {chapter?.creator?.name}
           </p>
-        </div>
+        </Link>
         <div className="mt-4 flex w-full flex-col rounded-lg border border-neutral-700 bg-neutral-200/5 backdrop-blur-sm">
           <div className="flex w-full items-center gap-2 border-b border-neutral-700 p-2 px-6">
             <DocumentTextIcon className="w-4" />

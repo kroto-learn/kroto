@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 import { getVideoDataService } from "@/server/services/youtube";
 
 export const courseChapterRouter = createTRPCRouter({
@@ -8,36 +9,25 @@ export const courseChapterRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
-      const [chapterText, chapterVideo] = await Promise.all([
-        prisma.courseBlockMd.findUnique({
-          where: {
-            id: input.id,
-          },
-          include: {
-            creator: true,
-            course: true,
-          },
-        }),
-        prisma.courseBlockVideo.findUnique({
-          where: {
-            id: input.id,
-          },
-          include: {
-            creator: true,
-            course: true,
-          },
-        }),
-      ]);
+      const chapter = await prisma.chapter.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          creator: true,
+          course: true,
+        },
+      });
 
-      if (chapterVideo) {
-        if (chapterVideo.ytId)
-          return {
-            ...chapterVideo,
-            description: (await getVideoDataService(chapterVideo.ytId))
-              ?.description,
-          };
-        return chapterVideo;
-      } else return chapterText;
+      if (!chapter) return new TRPCError({ code: "NOT_FOUND" });
+      const description = chapter.ytId
+        ? (await getVideoDataService(chapter?.ytId))?.description
+        : chapter.description;
+
+      return {
+        ...chapter,
+        description,
+      };
     }),
 
   // update: protectedProcedure
@@ -107,6 +97,49 @@ export const courseChapterRouter = createTRPCRouter({
   //     return event;
   //   }),
 
+  updateChapterProgress: protectedProcedure
+    .input(
+      z.object({
+        chapterId: z.string(),
+        videoProgress: z.number().default(0),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const chapterProgress = await prisma.chapterProgress.findFirst({
+        where: {
+          watchedById: ctx.session.user.id,
+          chapterId: input.chapterId,
+        },
+      });
+
+      if (chapterProgress) {
+        const updatedChapterProgress = await prisma.chapterProgress.update({
+          where: {
+            id: chapterProgress.id,
+          },
+          data: {
+            videoProgress: input.videoProgress,
+          },
+        });
+        return updatedChapterProgress;
+      } else {
+        try {
+          const newChapterProgress = await prisma.chapterProgress.create({
+            data: {
+              watchedById: ctx.session.user.id,
+              chapterId: input.chapterId,
+            },
+          });
+          return newChapterProgress;
+        } catch (err) {
+          console.log(err);
+          return null;
+        }
+      }
+    }),
+
   delete: protectedProcedure
     .input(
       z.object({
@@ -117,17 +150,7 @@ export const courseChapterRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
-      if (input.type === "TEXT") {
-        const course = await prisma.courseBlockMd.delete({
-          where: {
-            id: input.id,
-          },
-        });
-
-        return course;
-      }
-
-      const course = await prisma.courseBlockVideo.delete({
+      const course = await prisma.chapter.delete({
         where: {
           id: input.id,
         },

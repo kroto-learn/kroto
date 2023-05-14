@@ -34,7 +34,7 @@ export default function EventPage({ eventId }: Props) {
     id: eventId,
   });
 
-  const { data: session } = useSession();
+  const session = useSession();
 
   const date = event?.datetime ?? new Date();
   const ctx = api.useContext();
@@ -64,7 +64,7 @@ export default function EventPage({ eventId }: Props) {
       new Date().getTime() + 3600000 &&
     (event?.endTime ?? new Date()).getTime() >= new Date().getTime();
 
-  const isYourEvent = event?.creatorId === session?.user?.id;
+  const isYourEvent = event?.creatorId === session?.data?.user?.id;
 
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
     api.emailSender.sendCalendarInvite.useMutation();
@@ -244,11 +244,11 @@ export default function EventPage({ eventId }: Props) {
                 <button
                   onClick={async () => {
                     setLoading(true);
-                    if (!session) {
-                      errorToast("You're not logged in!");
+                    if (!session.data) {
                       void router.push(
                         `/auth/sign-in/?redirect=/event/${eventId}`
                       );
+                      return;
                     }
                     await registerMuatioan(
                       { eventId },

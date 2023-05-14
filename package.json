@@ -47,6 +47,7 @@
     "daisyui": "^2.51.5",
     "formik": "^2.2.9",
     "framer-motion": "^10.12.9",
+    "googleapis": "^118.0.0",
     "handlebars": "^4.7.7",
     "ical-generator": "^4.0.0",
     "is-base64": "^1.1.0",
