@@ -2,56 +2,119 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
 import Image from "next/image";
-import youtubeBranding from "public/developed-with-youtube-sentence-case-light.png";
+import { EnvelopeIcon } from "@heroicons/react/20/solid";
 
 export default function Footer() {
   return (
-    <footer className="border-neutral-800/50 bg-neutral-950">
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-y-4 px-4 py-12 sm:px-6 md:justify-between lg:flex-row lg:px-8">
-        <div className="text-center font-medium text-neutral-400">
+    <footer className="display mt-4 flex w-full justify-center bg-neutral-950 px-4 py-8">
+      <div className="flex w-full max-w-6xl flex-col items-center">
+        <div className="mb-4 flex w-full items-center justify-between gap-4 sm:items-start">
+          <div className="flex flex-col items-start gap-1">
+            <Link href="/">
+              <div className="flex items-center">
+                <div className="relative aspect-square h-12 sm:h-16">
+                  <Image src="/kroto-logo.png" alt="logo" fill />
+                </div>
+                <h2 className="hidden -translate-x-3 text-5xl font-medium text-white sm:flex">
+                  roto
+                </h2>
+              </div>
+            </Link>
+            <div className="mb-4 ml-3 hidden text-sm text-neutral-400 sm:block">
+              Created by{" "}
+              <span className="text-neutral-200">Kroto Kreator Labs</span>
+            </div>
+          </div>
+          <div className="hidden items-start gap-12 sm:flex">
+            <div className="flex flex-col items-start justify-center gap-2">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-neutral-400">
+                Contact
+              </h3>
+              <Link
+                href="https://twitter.com/RoseKamalLove1"
+                className="flex items-center gap-2 text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+              >
+                <FontAwesomeIcon icon={faTwitter} /> Twitter
+              </Link>
+              <Link
+                href="https://discord.com/invite/e5SnnVP3ad"
+                className="flex items-center gap-2 text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+              >
+                <FontAwesomeIcon icon={faDiscord} /> Discord
+              </Link>
+              <Link
+                href="mailto:kamal@kroto.in"
+                className="flex items-center gap-2 text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+              >
+                <EnvelopeIcon className="w-4" /> kamal@kroto.in
+              </Link>
+            </div>
+            <div className=" flex flex-col items-start gap-2">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-neutral-400">
+                About
+              </h3>
+              <Link
+                className="text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+                href="/terms-and-conditions"
+              >
+                Terms & Conditions
+              </Link>
+              <Link
+                className="text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+                href="/privacy"
+              >
+                Privacy Policy
+              </Link>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 sm:hidden">
+            <Link
+              href="https://twitter.com/RoseKamalLove1"
+              className="flex items-center gap-2 text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+            >
+              <FontAwesomeIcon icon={faTwitter} />
+            </Link>
+            <Link
+              href="https://discord.com/invite/e5SnnVP3ad"
+              className="flex items-center gap-2 text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+            >
+              <FontAwesomeIcon icon={faDiscord} />
+            </Link>
+            <Link
+              href="mailto:kamal@kroto.in"
+              className="flex items-center gap-2 text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+            >
+              <EnvelopeIcon className="w-4" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="mb-4 text-sm text-neutral-400 sm:hidden">
           Created by{" "}
-          <span className="text-neutral-200">Kroto Kreator Labs</span>
+          <span className="font-medium text-neutral-200">
+            Kroto Kreator Labs
+          </span>
         </div>
-        <nav className="flex flex-wrap justify-center" aria-label="Footer">
-          <div className="px-5 py-2">
-            <Link
-              className="text-base text-neutral-500 transition duration-300 hover:text-neutral-400"
-              href="/terms-and-conditions"
-            >
-              Terms & Conditions
-            </Link>
-          </div>
-          <div className="px-5 py-2">
-            <Link
-              className="text-base text-neutral-500 transition duration-300 hover:text-neutral-400"
-              href="/privacy"
-            >
-              Privacy Policy
-            </Link>
-          </div>
-        </nav>
-        <Image
-          src={youtubeBranding}
-          alt="Developed with YouTube"
-          width={224}
-          height={80}
-        />
-        <div className="flex items-center justify-center space-x-6">
+
+        <div className="flex flex-col items-center gap-2 sm:hidden">
           <Link
-            href="https://twitter.com/RoseKamalLove1"
-            className="text-base text-neutral-400 transition duration-300 hover:text-neutral-200"
+            className="text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+            href="/terms-and-conditions"
           >
-            <FontAwesomeIcon icon={faTwitter} />
+            Terms & Conditions
           </Link>
           <Link
-            href="https://discord.com/invite/e5SnnVP3ad"
-            className="text-base text-neutral-400 transition duration-300 hover:text-neutral-200"
+            className="text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+            href="/privacy"
           >
-            <FontAwesomeIcon icon={faDiscord} />
+            Privacy Policy
           </Link>
         </div>
-        <p className="text-center text-neutral-400">
-          © 2023 Kroto Kreator Labs, All rights reserved.
+
+        <div className="mb-6 w-40 border-t border-neutral-700"></div>
+
+        <p className="text-center text-xs text-neutral-500 sm:text-sm">
+          © 2023 Kroto Kreator Labs Private Limited, All rights reserved.
         </p>
       </div>
     </footer>

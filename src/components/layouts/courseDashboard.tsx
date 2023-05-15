@@ -7,14 +7,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import { type ReactNode, Fragment } from "react";
+import { Loader } from "../Loader";
 
 export default function CourseLayoutR({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  const { data: course } = api.course.get.useQuery({ id });
+  const { data: course, isLoading: courseLoading } = api.course.get.useQuery({
+    id,
+  });
 
   const pathname = usePathname();
+
+  if (courseLoading)
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center p-8">
+        <Loader size="lg" />
+      </div>
+    );
 
   if (course instanceof TRPCError || !course) return <></>;
 
