@@ -9,9 +9,8 @@ import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { type ParsedUrlQuery } from "querystring";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import useToast from "@/hooks/useToast";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { Loader } from "@/components/Loader";
 import { UserGroupIcon } from "@heroicons/react/20/solid";
@@ -49,7 +48,6 @@ export default function EventPage({ eventId }: Props) {
   });
 
   const { errorToast } = useToast();
-  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
   const isEventOver =
@@ -245,9 +243,9 @@ export default function EventPage({ eventId }: Props) {
                   onClick={async () => {
                     setLoading(true);
                     if (!session.data) {
-                      void router.push(
-                        `/auth/sign-in/?redirect=/event/${eventId}`
-                      );
+                      void signIn("google", {
+                        callbackUrl: `/event/${eventId}`,
+                      });
                       return;
                     }
                     await registerMuatioan(

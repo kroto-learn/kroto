@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import { getVideoDataService } from "@/server/services/youtube";
 
 export const courseChapterRouter = createTRPCRouter({
   get: protectedProcedure
@@ -20,14 +19,8 @@ export const courseChapterRouter = createTRPCRouter({
       });
 
       if (!chapter) return new TRPCError({ code: "NOT_FOUND" });
-      const description = chapter.ytId
-        ? (await getVideoDataService(chapter?.ytId))?.description
-        : chapter.description;
 
-      return {
-        ...chapter,
-        description,
-      };
+      return chapter;
     }),
 
   // update: protectedProcedure
@@ -138,6 +131,32 @@ export const courseChapterRouter = createTRPCRouter({
           return null;
         }
       }
+    }),
+
+  deleteChapterProgress: protectedProcedure
+    .input(
+      z.object({
+        chapterId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const chapterProgress = await prisma.chapterProgress.findFirst({
+        where: {
+          watchedById: ctx.session.user.id,
+          chapterId: input.chapterId,
+        },
+      });
+
+      if (chapterProgress)
+        await prisma.chapterProgress.delete({
+          where: {
+            id: chapterProgress.id,
+          },
+        });
+
+      return chapterProgress;
     }),
 
   delete: protectedProcedure
