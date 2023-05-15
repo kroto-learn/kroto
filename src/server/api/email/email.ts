@@ -14,6 +14,9 @@ export const emailRouter = createTRPCRouter({
       include: {
         recipients: true,
       },
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
 
     return emails;
