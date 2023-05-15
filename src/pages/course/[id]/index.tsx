@@ -8,7 +8,7 @@ import { ArrowLeftIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { TRPCError } from "@trpc/server";
 import { type GetStaticPropsContext } from "next";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -134,9 +134,9 @@ const Index = ({ courseId }: Props) => {
                   <button
                     onClick={async () => {
                       if (!session.data) {
-                        void router.push(
-                          `/auth/sign-in/?redirect=/course/${courseId}`
-                        );
+                        void signIn("google", {
+                          callbackUrl: `/course/${courseId}`,
+                        });
                         return;
                       }
                       await enrollMutation(
