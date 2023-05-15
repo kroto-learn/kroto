@@ -175,15 +175,18 @@ model Feedback {
   id       String  @id @default(cuid())
   rating   Int
   comment  String
-  eventId  String
+  eventId  String?
   userId   String
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Event    Event   @relation(fields: [eventId], references: [id])
   courseId String?
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event    Event?  @relation(fields: [eventId], references: [id])
+  course   Course? @relation(fields: [courseId], references: [id])
 
   @@unique([eventId, userId])
+  @@unique([courseId, userId])
   @@index([eventId])
   @@index([userId])
+  @@index([courseId])
 }
 
 model Testimonial {
@@ -211,6 +214,7 @@ model Course {
   enrollments    Enrollment[]
   courseProgress CourseProgress[]
   chapters       Chapter[]
+  feedbacks      Feedback[]
 
   @@index([creatorId])
 }

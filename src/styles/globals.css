@@ -108,3 +108,8 @@ select:-webkit-autofill {
 .hide-scroll::-webkit-scrollbar {
   display: none !important;
 }
+
+.hide-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

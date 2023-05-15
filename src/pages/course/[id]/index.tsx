@@ -50,9 +50,14 @@ const Index = ({ courseId }: Props) => {
       </div>
     );
 
+  const dynamicOgImage = `https://kroto.in/api/og/course?title=${
+    course?.title ?? ""
+  }&chapters=${course?.chapters.length ?? 0}&creatorName=${
+    course?.creator?.name ?? ""
+  }`;
+
   return (
     <>
-      {" "}
       <Layout>
         <Head>
           <title>{course?.title}</title>
@@ -61,12 +66,15 @@ const Index = ({ courseId }: Props) => {
           {/* Google SEO */}
           <meta itemProp="name" content={course?.title ?? ""} />
           <meta itemProp="description" content={course?.description ?? ""} />
-          {/* <meta itemProp="image" content={course?.ogImage ?? dynamicOgImage} /> */}
+          <meta itemProp="image" content={course?.ogImage ?? dynamicOgImage} />
           {/* Facebook meta */}
           <meta property="og:title" content={course?.title ?? ""} />
           <meta property="og:description" content={course?.description ?? ""} />
-          {/* <meta property="og:image" content={course?.ogImage ?? dynamicOgImage} /> */}
-          {/* <meta property="image" content={course?.ogImage ?? dynamicOgImage} /> */}
+          <meta
+            property="og:image"
+            content={course?.ogImage ?? dynamicOgImage}
+          />
+          <meta property="image" content={course?.ogImage ?? dynamicOgImage} />
           <meta
             property="og:url"
             content={`https://kroto.in/course/${course?.id ?? ""}`}
@@ -78,10 +86,10 @@ const Index = ({ courseId }: Props) => {
             name="twitter:description"
             content={course?.description ?? ""}
           />
-          {/* <meta
-          name="twitter:image"
-          content={course?.ogImage ?? dynamicOgImage}
-        /> */}
+          <meta
+            name="twitter:image"
+            content={course?.ogImage ?? dynamicOgImage}
+          />
           <meta name="twitter:card" content="summary_large_image" />
         </Head>
         <main className="hide-scroll mx-auto mb-8 mt-16 flex h-[80vh] w-full max-w-4xl gap-4 overflow-x-hidden">
