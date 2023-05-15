@@ -156,7 +156,7 @@ const CoursePreviewModal = ({
                           <button
                             onClick={async () => {
                               if (!session.data) {
-                                void signIn("google", {
+                                void signIn(undefined, {
                                   callbackUrl: `/course/${courseId}`,
                                 });
                                 return;
