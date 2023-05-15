@@ -134,9 +134,10 @@ const Index = ({ courseId }: Props) => {
                   <button
                     onClick={async () => {
                       if (!session.data) {
-                        void signIn("google", {
+                        void signIn(undefined, {
                           callbackUrl: `/course/${courseId}`,
                         });
+
                         return;
                       }
                       await enrollMutation(

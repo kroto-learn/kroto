@@ -168,11 +168,11 @@ const CourseOverview = () => {
           <button
             onClick={() => {
               void syncImportMutation(
-                { id: course.id },
+                { id: course?.id },
                 {
                   onSuccess: () => {
                     void ctx.course.get.invalidate();
-                    void revalidate(`/course/${course.id}`);
+                    void revalidate(`/course/${course?.id}`);
                     successToast("Course synced from YouTube successfully!");
                   },
                 }
@@ -198,14 +198,14 @@ const CourseOverview = () => {
               </label>
             </div>
             <div className="h-[calc(100vh-30rem)] overflow-y-auto pr-4">
-              {course.chapters.map((chapter, index) => (
+              {course?.chapters?.map((chapter, index) => (
                 <button
                   onClick={() => {
                     setPreviewPos(index);
                     setPreviewOpen(true);
                   }}
                   className="flex w-full items-center gap-2 rounded-xl p-2 duration-150 hover:bg-neutral-800"
-                  key={chapter.title + index.toString()}
+                  key={chapter?.title + index.toString()}
                 >
                   <p className="text-sm text-neutral-300">{index + 1}</p>
                   <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
@@ -217,8 +217,8 @@ const CourseOverview = () => {
                     />
                   </div>
                   <div className="flex h-full w-full flex-col items-start gap-1">
-                    <h5 className="text-left font-medium">{chapter.title}</h5>
-                    {chapter.duration ? (
+                    <h5 className="text-left font-medium">{chapter?.title}</h5>
+                    {chapter?.duration ? (
                       <label className="flex items-center gap-1 text-xs text-neutral-300">
                         <ClockIcon className="w-3" />
                         {chapter?.duration} min

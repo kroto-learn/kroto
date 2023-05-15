@@ -1,21 +1,24 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
+import Image from "next/image";
+import youtubeBranding from "public/developed-with-youtube-sentence-case-light.png";
 
 export default function Footer() {
   return (
     <footer className="border-neutral-800/50 bg-neutral-950">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-y-4 px-4 py-12 sm:px-6 md:justify-between lg:flex-row lg:px-8">
         <div className="text-center font-medium text-neutral-400">
-          Created by <span className="text-neutral-200">Kroto Kreator Labs</span>
+          Created by{" "}
+          <span className="text-neutral-200">Kroto Kreator Labs</span>
         </div>
         <nav className="flex flex-wrap justify-center" aria-label="Footer">
           <div className="px-5 py-2">
             <Link
               className="text-base text-neutral-500 transition duration-300 hover:text-neutral-400"
-              href="/info/terms-of-service"
+              href="/terms-and-conditions"
             >
-              Terms of Service
+              Terms & Conditions
             </Link>
           </div>
           <div className="px-5 py-2">
@@ -27,6 +30,12 @@ export default function Footer() {
             </Link>
           </div>
         </nav>
+        <Image
+          src={youtubeBranding}
+          alt="Developed with YouTube"
+          width={224}
+          height={80}
+        />
         <div className="flex items-center justify-center space-x-6">
           <Link
             href="https://twitter.com/RoseKamalLove1"

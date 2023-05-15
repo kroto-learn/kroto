@@ -3,7 +3,7 @@ import logo from "public/kroto-logo.png";
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Loader } from "./Loader";
@@ -42,7 +42,9 @@ export function ClaimLink({ profile }: { profile?: string }) {
               void router.push(`/creator/dashboard/settings`);
           } else void router.push(`/creator/dashboard/settings`);
         } else {
-          void router.push(`/auth/sign-in?creatorProfile=${creatorProfile}`);
+          void signIn(undefined, {
+            callbackUrl: `/creator/login-flow/redirect?creatorProfile=${creatorProfile}`,
+          });
         }
       }}
       className="relative flex max-w-sm items-center"
@@ -110,7 +112,9 @@ export function ClaimLinkLanding({ profile }: { profile?: string }) {
               void router.push(`/creator/dashboard/settings`);
           } else void router.push(`/creator/dashboard/settings`);
         } else {
-          void router.push(`/auth/sign-in?creatorProfile=${creatorProfile}`);
+          void signIn(undefined, {
+            callbackUrl: `/creator/login-flow/redirect?creatorProfile=${creatorProfile}`,
+          });
         }
       }}
       className="flex gap-3"
