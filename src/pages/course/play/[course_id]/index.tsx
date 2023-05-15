@@ -84,7 +84,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex min-h-screen w-full gap-3 p-4">
       {children}
-      <div className="sticky top-4 flex h-[calc(100vh-2rem)] w-full max-w-sm flex-col rounded-lg border border-neutral-700 bg-neutral-200/5 backdrop-blur-sm">
+      <div className="sticky top-4 flex h-[calc(100vh-2rem)] w-full max-w-sm flex-col overflow-hidden rounded-lg border border-neutral-700 bg-neutral-200/5 backdrop-blur-sm">
         <div className="flex w-full flex-col gap-2 border-b border-neutral-700 p-4 px-6">
           <div className="flex items-center justify-between gap-2">
             <Link
@@ -113,22 +113,22 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             • <p>{course?.chapters?.length} Chapters</p>
           </div>
         </div>
-        <div className="flex w-full items-center gap-2 border-b border-neutral-700 p-2 px-4 [&.chartjs-legend]:hidden">
+        <div className="flex w-full items-center gap-4 border-b border-neutral-700 p-2 [&.chartjs-legend]:hidden">
           <div className="flex h-24 w-24 items-center justify-center">
             <Pie data={data} options={options} />
           </div>
           <div className="flex flex-col gap-5">
             <div className="flex items-center gap-4">
-              <div className="m-0 flex items-end p-0 text-sm leading-3 text-neutral-300">
+              <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
                 <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-green-600">
-                  {(chaptersWatched / course.chapters.length) * 100}
+                  {Math.ceil((chaptersWatched / course.chapters.length) * 100)}
                   <span className="m-0 p-0 text-sm font-normal leading-3">
                     %
                   </span>
                 </span>{" "}
                 completed
               </div>
-              <div className="m-0 flex items-center p-0 text-sm leading-3 text-neutral-300">
+              <div className="m-0 flex items-center p-0 text-xs leading-3 text-neutral-300">
                 <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-neutral-200">
                   {minutesWatched}
                   <span className="m-0 p-0 text-sm font-normal leading-3">
@@ -139,7 +139,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="m-0 flex items-end p-0 text-sm leading-3 text-neutral-300">
+              <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
                 <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-green-600">
                   {chaptersWatched}
                   <span className="m-0 p-0 text-sm font-normal leading-3">
@@ -148,7 +148,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                 </span>{" "}
                 watched
               </div>
-              <div className="m-0 flex items-end p-0 text-sm leading-3 text-neutral-300">
+              <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
                 <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-neutral-400">
                   {course.chapters.length - chaptersWatched}
                   <span className="m-0 p-0 text-sm font-normal leading-3">
@@ -207,7 +207,7 @@ const CoursePlayerChapterTile = ({ chapter, idx }: CPCTProps) => {
       className={`flex w-full max-w-lg items-center gap-3 border-b border-neutral-700 ${
         !(chapter.id === chapter_id)
           ? chapter.chapterProgress
-            ? "bg-green-950/30 hover:bg-green-800/30"
+            ? "!bg-green-950/30 hover:!bg-green-800/30"
             : "hover:bg-neutral-200/10"
           : " bg-pink-900/10 hover:bg-pink-900/20"
       }  bg-transparent p-2 px-4 backdrop-blur-sm duration-150 `}

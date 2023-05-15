@@ -62,7 +62,11 @@ const Index = () => {
   }, [chapter_id, course_id]);
 
   useEffect(() => {
-    if (player && progress / player.getDuration() >= 0.8)
+    setProgress(0);
+  }, [chapter_id]);
+
+  useEffect(() => {
+    if (player && progress && progress / player.getDuration() >= 0.8)
       void updateChapterProgressMutation(
         { chapterId: chapter_id },
         {
