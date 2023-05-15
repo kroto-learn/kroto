@@ -19,6 +19,7 @@ import { faYoutube } from "@fortawesome/free-brands-svg-icons";
 import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
 import { ClockIcon } from "@heroicons/react/24/outline";
+import youtubeBranding from "public/developed-with-youtube-sentence-case-light.png";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -98,6 +99,8 @@ const Index = () => {
       playlistId,
     });
 
+  const { data: courses } = api.course.getAll.useQuery();
+
   const {
     mutateAsync: importCourseMutation,
     isLoading: importCourseMutationLoading,
@@ -148,9 +151,11 @@ const Index = () => {
 
             <MagnifyingGlassIcon className="absolute ml-2 w-4 text-pink-500/50 duration-300 peer-hover:text-pink-500/80 peer-focus:text-pink-500" />
           </div>
+
           <p className="text-sm text-neutral-400">
             Import your YouTube playlist to create course.
           </p>
+
           {!playlists || playlists instanceof TRPCError || !searchFocused ? (
             <></>
           ) : (
@@ -158,6 +163,10 @@ const Index = () => {
               {playlists.map((playlist) => (
                 <button
                   onClick={() => {
+                    if (courses?.find((c) => c.ytId === playlist.playlistId)) {
+                      errorToast("This playlist has already been imported!");
+                      return;
+                    }
                     setPlaylistId(playlist.playlistId ?? "");
                     methods.setValue("ytId", playlist.playlistId ?? undefined);
                     setSearchFocused(false);
@@ -293,15 +302,23 @@ const Index = () => {
               )}
             </div>
           </div>
+          <div className="flex w-full flex-col items-center">
+            <button
+              className={`group inline-flex w-full items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
+              type="submit"
+              disabled={methods.formState.isSubmitting}
+            >
+              {importCourseMutationLoading && <Loader white />}
+              Import Course
+            </button>
 
-          <button
-            className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
-            type="submit"
-            disabled={methods.formState.isSubmitting}
-          >
-            {importCourseMutationLoading && <Loader white />}
-            Import Course
-          </button>
+            <Image
+              src={youtubeBranding}
+              alt="Developed with YouTube"
+              width={224}
+              height={80}
+            />
+          </div>
         </form>
       </div>
     </Layout>

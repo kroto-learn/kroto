@@ -76,7 +76,7 @@ export default function Navbar({ status }: { status: string }) {
                 <button
                   className="transition-all duration-300 hover:text-neutral-400"
                   onClick={() =>
-                    void signIn("google", { callbackUrl: router.asPath })
+                    void signIn(undefined, { callbackUrl: router.asPath })
                   }
                 >
                   Sign In
