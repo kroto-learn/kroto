@@ -10,7 +10,6 @@ import {
   searchYoutubePlaylistsService,
 } from "@/server/services/youtube";
 import { importCourseFormSchema } from "@/pages/course/import";
-import { exclude } from "@/server/helpers/util";
 
 export const courseRouter = createTRPCRouter({
   get: protectedProcedure
@@ -80,12 +79,12 @@ export const courseRouter = createTRPCRouter({
 
       chapters.sort((a, b) => a.position - b.position);
 
+      const previewChapter = chapters[0];
+
+      // TODO: exclude ytId and videoUrl from chapters
       return {
         ...course,
-        chapters: chapters.map((chapter) =>
-          exclude(chapter, ["videoUrl", "ytId"])
-        ),
-        previewChapter: chapters[0],
+        previewChapter,
       };
     }),
 
@@ -147,14 +146,18 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      const chapters = await prisma.chapter.createMany({
-        data: input.chapters.map((cb, position) => ({
-          ...cb,
-          courseId: course.id,
-          creatorId: ctx.session.user.id,
-          position,
-        })),
-      });
+      const chapters = await Promise.all(
+        input.chapters.map(async (cb, position) => {
+          return await prisma.chapter.create({
+            data: {
+              ...cb,
+              courseId: course.id,
+              creatorId: ctx.session.user.id,
+              position,
+            },
+          });
+        })
+      );
 
       // const ogImageRes = await axios({
       //   url: OG_URL,
@@ -215,6 +218,22 @@ export const courseRouter = createTRPCRouter({
 
       const chapters = course.chapters;
 
+      // delete removed chapters
+      await Promise.all(
+        chapters.map(async (chapter) => {
+          const chapterExists = playlistData.videos.find(
+            (video) => chapter.ytId === video.ytId
+          );
+
+          if (!chapterExists)
+            await prisma.chapter.delete({
+              where: {
+                id: chapter.id,
+              },
+            });
+        })
+      );
+
       const updatedChapters = await Promise.all(
         playlistData.videos.map(async (video, idx) => {
           const chapterExists = chapters.find(
@@ -230,6 +249,8 @@ export const courseRouter = createTRPCRouter({
                 title: video.title,
                 thumbnail: video.thumbnail,
                 position: idx,
+                description: video.description,
+                duration: video.duration,
               },
             });
             return updatedChapter;
@@ -243,6 +264,8 @@ export const courseRouter = createTRPCRouter({
                 ytId: video.ytId,
                 videoUrl: `https://www.youtube.com/watch?v=${video.ytId}`,
                 courseId: course.id,
+                description: video.description,
+                duration: video.duration,
               },
             });
             return newChapter;

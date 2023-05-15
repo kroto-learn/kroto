@@ -1,6 +1,6 @@
 import Layout from "@/components/layouts/main";
 import { generateRandomGradientImages } from "@/helpers/randomGradientImages";
-import { MagnifyingGlassIcon, PlayCircleIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { type MDEditorProps } from "@uiw/react-md-editor";
 // import dynamic from "next/dynamic";
@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons";
 import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
+import { ClockIcon } from "@heroicons/react/24/outline";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -38,6 +39,8 @@ export const importCourseFormSchema = z.object({
       thumbnail: z.string(),
       videoUrl: z.string(),
       ytId: z.string(),
+      description: z.string(),
+      duration: z.number(),
     })
   ),
   ytId: z.string().optional(),
@@ -276,9 +279,9 @@ const Index = () => {
                     </div>
                     <div className="flex h-full w-full flex-col items-start gap-1">
                       <h5 className="font-medium">{chapter.title}</h5>
-                      <label className="flex items-center gap-1 rounded-lg bg-neutral-300/20 px-2 py-1 text-xs text-neutral-300">
-                        <PlayCircleIcon className="w-3" />
-                        Video
+                      <label className="flex items-center gap-1 text-xs text-neutral-300">
+                        <ClockIcon className="w-4" />
+                        {chapter?.duration} min
                       </label>
                     </div>
                   </div>
