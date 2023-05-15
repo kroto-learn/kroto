@@ -12,6 +12,7 @@ const ProtectedRoutes = () => {
       "/",
       "/privacy",
       "/terms-of-service",
+      "/terms-and-conditions",
       "/auth/sign-in",
       "/[creator_id]",
       "/event/[id]",
