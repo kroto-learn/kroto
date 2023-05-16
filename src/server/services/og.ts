@@ -60,6 +60,8 @@ export const generateStaticEventOgImage = async ({
 export const generateStaticCourseOgImage = async ({
   ogUrl,
   title,
+  thumbnail,
+
   creatorName,
   chapters,
 }: {
@@ -67,6 +69,7 @@ export const generateStaticCourseOgImage = async ({
   creatorName: string;
   chapters: number;
   title: string;
+  thumbnail: string;
 }) => {
   try {
     const ogImageRes = await axios({
@@ -76,6 +79,7 @@ export const generateStaticCourseOgImage = async ({
         title,
         chapters,
         creatorName,
+        thumbnail,
       },
     });
     return ogImageRes as AxiosResponse<ImageResponse>;

@@ -172,6 +172,7 @@ export const courseRouter = createTRPCRouter({
         title: course.title,
         creatorName: ctx.session.user.name ?? "",
         chapters: chapters.length,
+        thumbnail: course.thumbnail ?? "",
       });
 
       const ogImage = ogImageRes
@@ -285,6 +286,7 @@ export const courseRouter = createTRPCRouter({
         title: updatedCourse.title,
         creatorName: ctx.session.user.name ?? "",
         chapters: updatedChapters.length,
+        thumbnail: updatedCourse.thumbnail ?? "",
       });
 
       const ogImage = ogImageRes

@@ -165,7 +165,11 @@ export const creatorRouter = createTRPCRouter({
           .array()
           .optional(),
         topmateUrl: z.string().url().optional().or(z.literal("")),
-        mobileNumber: z.string(),
+        mobileNumber: z.union([
+          z.string().min(10).max(10),
+          z.undefined(),
+          z.string().optional(),
+        ]),
         image: z.string().nonempty(),
       })
     )
