@@ -62,7 +62,6 @@ const Index = ({ courseId }: Props) => {
         <Head>
           <title>{course?.title}</title>
           <meta name="description" content={course?.description ?? ""} />
-
           {/* Google SEO */}
           <meta itemProp="name" content={course?.title ?? ""} />
           <meta itemProp="description" content={course?.description ?? ""} />

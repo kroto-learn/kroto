@@ -6,7 +6,7 @@ import { EnvelopeIcon } from "@heroicons/react/20/solid";
 
 export default function Footer() {
   return (
-    <footer className="display mt-4 flex w-full justify-center bg-neutral-950 px-4 py-8">
+    <footer className="display mt-12 flex w-full justify-center bg-neutral-950 px-4 py-8">
       <div className="flex w-full max-w-6xl flex-col items-center">
         <div className="mb-4 flex w-full items-center justify-between gap-4 sm:items-start">
           <div className="flex flex-col items-start gap-1">
@@ -49,23 +49,6 @@ export default function Footer() {
                 <EnvelopeIcon className="w-4" /> kamal@kroto.in
               </Link>
             </div>
-            <div className=" flex flex-col items-start gap-2">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-neutral-400">
-                About
-              </h3>
-              <Link
-                className="text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
-                href="/terms-and-conditions"
-              >
-                Terms & Conditions
-              </Link>
-              <Link
-                className="text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
-                href="/privacy"
-              >
-                Privacy Policy
-              </Link>
-            </div>
           </div>
           <div className="flex items-center gap-3 sm:hidden">
             <Link
@@ -96,22 +79,20 @@ export default function Footer() {
           </span>
         </div>
 
-        <div className="flex flex-col items-center gap-2 sm:hidden">
+        <div className="mb-3 flex flex-col items-center gap-8 sm:flex-row">
           <Link
-            className="text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+            className="text-sm text-neutral-400 transition duration-300 hover:text-neutral-200"
             href="/terms-and-conditions"
           >
             Terms & Conditions
           </Link>
           <Link
-            className="text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
+            className="text-sm text-neutral-400 transition duration-300 hover:text-neutral-200"
             href="/privacy"
           >
             Privacy Policy
           </Link>
         </div>
-
-        <div className="mb-6 w-40 border-t border-neutral-700"></div>
 
         <p className="text-center text-xs text-neutral-500 sm:text-sm">
           © 2023 Kroto Kreator Labs Private Limited, All rights reserved.
