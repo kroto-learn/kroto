@@ -93,8 +93,9 @@ model Event {
   hosts            Host[]
   feedbacks        Feedback[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  audienceMember AudienceMember[]
 
   @@index([creatorId])
 }
@@ -123,10 +124,15 @@ model AudienceMember {
   emailClickRate     Int?
   eventsParticipated Int?
   eventId            String?
+  courseId           String?
   creatorId          String
   creator            User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  course             Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  event              Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@index([creatorId])
+  @@index([courseId])
+  @@index([eventId])
 }
 
 model ImportedAudieceMember {
@@ -215,6 +221,7 @@ model Course {
   courseProgress CourseProgress[]
   chapters       Chapter[]
   feedbacks      Feedback[]
+  audienceMember AudienceMember[]
 
   @@index([creatorId])
 }
