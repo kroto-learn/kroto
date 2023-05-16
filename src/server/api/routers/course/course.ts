@@ -177,8 +177,8 @@ export const courseRouter = createTRPCRouter({
       const ogImage = ogImageRes
         ? await ogImageUpload(
             ogImageRes.data as AWS.S3.Body,
-            ctx.session.user.id,
-            "creator"
+            course.id,
+            "course"
           )
         : undefined;
 
@@ -290,8 +290,8 @@ export const courseRouter = createTRPCRouter({
       const ogImage = ogImageRes
         ? await ogImageUpload(
             ogImageRes.data as AWS.S3.Body,
-            ctx.session.user.id,
-            "creator"
+            course.id,
+            "course"
           )
         : undefined;
 
