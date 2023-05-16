@@ -182,7 +182,7 @@ export const courseRouter = createTRPCRouter({
           )
         : undefined;
 
-      const updatedCourse = await prisma.event.update({
+      const updatedCourse = await prisma.course.update({
         where: {
           id: course.id,
         },
@@ -417,7 +417,7 @@ export const courseRouter = createTRPCRouter({
             name: user.name,
             userId: user.id,
             creatorId: course.creatorId,
-            eventId: course.id,
+            courseId: course.id,
           },
         });
       }
