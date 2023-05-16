@@ -66,7 +66,7 @@ export const imageUpload = async (
 export const ogImageUpload = async (
   body: AWS.S3.Body,
   id: string,
-  variant: "event" | "creator"
+  variant: "event" | "creator" | "course"
 ): Promise<string> => {
   // Configure AWS with your access and secret key.
   const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET } = env;
