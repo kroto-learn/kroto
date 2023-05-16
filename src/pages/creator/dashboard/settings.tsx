@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Loader } from "@/components/Loader";
 import { DashboardLayout } from ".";
 import { useEffect, useState } from "react";
-import { array, object, string, literal, type z } from "zod";
+import { array, object, string, literal, z, union } from "zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useToast from "@/hooks/useToast";
@@ -16,13 +16,15 @@ import {
   CloudIcon,
 } from "@heroicons/react/20/solid";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 const bioLimit = 180;
 
 export const creatorEditSchema = object({
   name: string().nonempty("Please enter your name."),
   creatorProfile: string().nonempty("Please enter your unique username."),
-  number: string().min(10).max(10),
+  number: union([string().min(10).max(10), z.undefined(), string().optional()]),
   bio: string().max(bioLimit).nonempty("Please enter your bio."),
   socialLinks: array(
     object({
@@ -32,7 +34,7 @@ export const creatorEditSchema = object({
     })
   ),
   image: string().nonempty("Please upload your profile image."),
-  topmateUrl: string().url().optional().or(literal("")), 
+  topmateUrl: string().url().optional().or(literal("")),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
@@ -370,16 +372,25 @@ const Settings = () => {
             <div className="mt-5 flex flex-col gap-5 md:flex-row">
               <div className="w-full">
                 <label className="mb-2 block font-medium text-neutral-400">
-                  Number
+                  Mobile Number
                 </label>
-                <input
-                  type="number"
-                  {...methods.register("number")}
-                  className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 placeholder-neutral-400 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-                  placeholder="Enter Mobile Number"
-                  defaultValue={(creator && creator.topmateUrl) ?? ""}
-                />
-                <p className=" m-1 font-medium text-xs text-neutral-400">For WhatsApp notification</p>
+                <div className="relative flex w-full items-center">
+                  <input
+                    type="number"
+                    {...methods.register("number")}
+                    className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-11 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    placeholder="0000000000"
+                    defaultValue={(creator && creator.mobileNumber) ?? ""}
+                  />
+                  <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                    +91
+                  </p>
+                </div>
+
+                <p className="m-1 flex items-center gap-1 text-sm text-neutral-400">
+                  For <FontAwesomeIcon icon={faWhatsapp} /> WhatsApp
+                  notifications.
+                </p>
                 {methods.formState.errors.number?.message && (
                   <p className="text-red-700">
                     {methods.formState.errors.number?.message}
