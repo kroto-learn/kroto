@@ -40,7 +40,7 @@ const Index = () => {
             ) : (
               <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
                 <div className="relative aspect-square w-40 object-contain">
-                  <Image src="/empty/event_empty.svg" alt="empty" fill />
+                  <Image src="/empty/course_empty.svg" alt="empty" fill />
                 </div>
                 <p className="mb-2 text-neutral-400">
                   You have not enrolled in any course.
