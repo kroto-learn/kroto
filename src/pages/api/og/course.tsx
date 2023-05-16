@@ -16,8 +16,8 @@ export default async function handler(request: NextRequest) {
     const fontData = await font;
     const { searchParams } = new URL(request.url);
     const hasTitle = searchParams.has("title");
-    const hasChapters = searchParams.has("datetime");
-    const hasCreatorName = searchParams.has("host");
+    const hasChapters = searchParams.has("chapters");
+    const hasCreatorName = searchParams.has("creatorName");
 
     const title = hasTitle
       ? searchParams.get("title")?.slice(0, 100)
