@@ -12,6 +12,7 @@ import Link from "next/link";
 import { GlobeAltIcon } from "@heroicons/react/20/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
+import EnrolledCourseCard from "@/components/EnrolledCourseCard";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -19,6 +20,8 @@ export default function Dashboard() {
   const { data: profile, isLoading } = api.creator.getProfile.useQuery();
   const { data: pastRegisteredEvents, isLoading: isPastLoading } =
     api.creator.getPastEvents.useQuery();
+  const { data: enrollments, isLoading: enrollmentsLoading } =
+    api.course.getEnrollments.useQuery();
 
   const isPastTab = router.query.events === "past";
   const upcomingEvents = profile?.registrations;
@@ -69,6 +72,40 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+        <div className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8">
+          <h1 className="text-2xl text-neutral-200">Enrolled Courses</h1>
+          <div className="flex w-full flex-col items-center">
+            {enrollmentsLoading ? (
+              <div className="flex h-64 items-center justify-center">
+                <Loader size="lg" />
+              </div>
+            ) : (
+              <>
+                {enrollments && enrollments?.length > 0 ? (
+                  <>
+                    <div className="my-2 flex flex-col gap-2">
+                      {enrollments?.map((enrollment) => (
+                        <EnrolledCourseCard
+                          key={enrollment.id}
+                          enrollment={enrollment}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+                    <div className="relative aspect-square w-40 object-contain">
+                      <Image src="/empty/event_empty.svg" alt="empty" fill />
+                    </div>
+                    <p className="mb-2 text-neutral-400">
+                      You have not enrolled in any course.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
         <div className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8">

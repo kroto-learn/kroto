@@ -18,10 +18,10 @@ import UserPlusIcon from "@heroicons/react/20/solid/UserPlusIcon";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 import { useRouter } from "next/router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChalkboardTeacher } from "@fortawesome/free-solid-svg-icons";
 import { PresentationChartLineIcon } from "@heroicons/react/24/solid";
 import { PresentationChartLineIcon as PresentationChartBarIcon0 } from "@heroicons/react/24/outline";
+import { PlayIcon, RectangleStackIcon } from "@heroicons/react/20/solid";
+import { RectangleStackIcon as RectangleStackIconO } from "@heroicons/react/24/outline";
 
 export default function Dashboard() {
   return <div />;
@@ -109,8 +109,20 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
             >
               <span className="w-1/3" />
               <div className="flex  w-full items-center gap-2">
-                <FontAwesomeIcon icon={faChalkboardTeacher} />
-
+                <RectangleStackIconO
+                  className={`w-6 ${
+                    pathname && pathname.startsWith("/creator/dashboard/course")
+                      ? "hidden"
+                      : ""
+                  }`}
+                />{" "}
+                <RectangleStackIcon
+                  className={`w-6 ${
+                    pathname && pathname.startsWith("/creator/dashboard/course")
+                      ? "flex"
+                      : "hidden"
+                  }`}
+                />{" "}
                 <span className="hidden md:block">Courses</span>
               </div>
               <span
@@ -293,6 +305,19 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                       leaveTo="transform opacity-0 scale-95"
                     >
                       <Menu.Items className="flex w-full flex-col overflow-hidden rounded-lg bg-neutral-800 transition-all duration-300">
+                        <Link
+                          href="/creator/dashboard/enrolled-courses"
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <PlayIcon className="w-4" />{" "}
+                              <span className="hidden md:block">
+                                Enrolled Courses
+                              </span>
+                            </div>
+                          </Menu.Item>
+                        </Link>
                         <Link
                           href="/creator/dashboard/registered-events"
                           className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"

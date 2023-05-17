@@ -6,11 +6,10 @@ import { Loader } from "./Loader";
 import { TRPCError } from "@trpc/server";
 import YouTube from "react-youtube";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import useToast from "@/hooks/useToast";
 import Link from "next/link";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/router";
 
 const CoursePreviewModal = ({
   isOpen,
@@ -42,7 +41,6 @@ const CoursePreviewModal = ({
   const { data: isEnrolled } = api.course.isEnrolled.useQuery({ courseId });
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
-  const router = useRouter();
 
   if (course instanceof TRPCError || !course) return <>Course not found!</>;
 
@@ -158,9 +156,9 @@ const CoursePreviewModal = ({
                           <button
                             onClick={async () => {
                               if (!session.data) {
-                                void router.push(
-                                  `/auth/sign-in/?redirect=/course/${courseId}`
-                                );
+                                void signIn("google", {
+                                  callbackUrl: `/course/${courseId}`,
+                                });
                                 return;
                               }
                               await enrollMutation(

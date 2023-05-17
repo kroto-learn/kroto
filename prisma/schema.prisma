@@ -67,7 +67,7 @@ model User {
   feedbacks             Feedback[]
   testimonials          Testimonial[]
   importedAudieceMember ImportedAudieceMember[]
-  Enrollment            Enrollment[]
+  enrollments           Enrollment[]
   Email                 Email[]
   courseProgress        CourseProgress[]
   chapterProgress       ChapterProgress[]
@@ -222,8 +222,9 @@ model Chapter {
   thumbnail       String?
   text            String?
   videoUrl        String?
-  description     String?
+  description     String?           @db.Text
   ytId            String?
+  duration        Int?
   type            ChapterType       @default(YTVIDEO)
   creatorId       String
   creator         User              @relation(fields: [creatorId], references: [id])

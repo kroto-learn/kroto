@@ -17,13 +17,14 @@ import {
   LinkedinShareButton,
   LinkedinIcon,
 } from "next-share";
-import { LinkIcon, PlayCircleIcon } from "@heroicons/react/20/solid";
+import { LinkIcon } from "@heroicons/react/20/solid";
 import dynamic from "next/dynamic";
 import { TRPCError } from "@trpc/server";
 import ChapterManagePreviewModal from "@/components/ChapterManagePreviewModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotate } from "@fortawesome/free-solid-svg-icons";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
+import { ClockIcon } from "@heroicons/react/24/outline";
 
 const CourseLayoutR = dynamic(
   () => import("@/components/layouts/courseDashboard"),
@@ -216,11 +217,15 @@ const CourseOverview = () => {
                     />
                   </div>
                   <div className="flex h-full w-full flex-col items-start gap-1">
-                    <h5 className="font-medium">{chapter.title}</h5>
-                    <label className="flex items-center gap-1 rounded-lg bg-neutral-300/20 px-2 py-1 text-xs text-neutral-300">
-                      <PlayCircleIcon className="w-3" />
-                      Video
-                    </label>
+                    <h5 className="text-left font-medium">{chapter.title}</h5>
+                    {chapter.duration ? (
+                      <label className="flex items-center gap-1 text-xs text-neutral-300">
+                        <ClockIcon className="w-3" />
+                        {chapter?.duration} min
+                      </label>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </button>
               ))}
