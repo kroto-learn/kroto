@@ -18,6 +18,7 @@ import CourseCard from "@/components/CourseCard";
 import TestimonialDisclosure from "@/components/TestimonialDisclosure";
 import { Tooltip } from "antd";
 import AnimatedSection from "@/components/AnimatedSection";
+import { prisma } from "@/server/db";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -25,9 +26,12 @@ type CreatorPageProps = {
 
 const Index = ({ creatorProfile }: CreatorPageProps) => {
   const { data: creator, isLoading: isCreatorLoading } =
-    api.creator.getPublicProfile.useQuery({
-      creatorProfile,
-    });
+    api.creator.getPublicProfile.useQuery(
+      {
+        creatorProfile,
+      },
+      { refetchOnMount: false, refetchOnWindowFocus: false }
+    );
 
   const dynamicOgImage = `https://kroto.in/api/og/creator?name=${
     creator?.name ?? ""
@@ -282,28 +286,43 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   );
 };
 
-// export const getStaticPaths = () => {
-//   return { paths: [], fallback: "blocking" };
-// };
+export const getStaticPaths = async () => {
+  const creators = await prisma.user.findMany({
+    where: {
+      isCreator: true,
+    },
+    select: {
+      creatorProfile: true,
+    },
+  });
+  return {
+    paths: creators.map((creator) => ({
+      params: {
+        creator_id: creator.creatorProfile,
+      },
+    })),
+    fallback: "blocking",
+  };
+};
 
-// interface CParams extends ParsedUrlQuery {
-//   creator_id: string;
-// }
+interface CParams extends ParsedUrlQuery {
+  creator_id: string;
+}
 
-// export async function getStaticProps(context: GetStaticPropsContext) {
-//   const ssg = generateSSGHelper();
-//   const creatorProfile = (context.params as CParams).creator_id;
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const ssg = generateSSGHelper();
+  const creatorProfile = (context.params as CParams).creator_id;
 
-//   if (typeof creatorProfile !== "string") throw new Error("no slug");
+  if (typeof creatorProfile !== "string") throw new Error("no slug");
 
-//   await ssg.creator.getPublicProfile.prefetch({ creatorProfile });
+  await ssg.creator.getPublicProfile.prefetch({ creatorProfile });
 
-//   return {
-//     props: {
-//       trpcState: ssg.dehydrate(),
-//       creatorProfile,
-//     },
-//   };
-// }
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      creatorProfile,
+    },
+  };
+}
 
 export default Index;
