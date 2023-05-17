@@ -51,7 +51,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
 
   const chaptersWatched = course.chapters.filter(
     (ch) => !!ch.chapterProgress
-  ).length;
+  )?.length;
 
   const minutesWatched = course.chapters
     .filter((ch) => !!ch.chapterProgress)
@@ -65,7 +65,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     labels: ["Watched", "Not watched"],
     datasets: [
       {
-        data: [chaptersWatched, course.chapters.length - chaptersWatched],
+        data: [chaptersWatched, course.chapters?.length - chaptersWatched],
         backgroundColor: ["#16a34a", "rgba(255,255,255,0.1)"],
         borderColor: ["#16a34a", "rgba(255,255,255,0.1)"],
         borderWidth: 0.5,
@@ -117,7 +117,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             <div className="flex items-center gap-4">
               <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
                 <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-green-600">
-                  {Math.ceil((chaptersWatched / course.chapters.length) * 100)}
+                  {Math.ceil((chaptersWatched / course.chapters?.length) * 100)}
                   <span className="m-0 p-0 text-sm font-normal leading-3">
                     %
                   </span>
@@ -146,7 +146,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
               </div>
               <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
                 <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-neutral-400">
-                  {course.chapters.length - chaptersWatched}
+                  {course.chapters?.length - chaptersWatched}
                   <span className="m-0 p-0 text-sm font-normal leading-3">
                     chs
                   </span>
