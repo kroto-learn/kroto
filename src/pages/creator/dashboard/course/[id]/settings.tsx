@@ -148,10 +148,10 @@ export function DeleteCourseModal({
                               onSuccess: () => {
                                 void ctx.course.getAll.invalidate();
                                 void ctx.course.get.invalidate();
+                                void revalidate(`/course/${courseId}`);
                                 void router.replace(
                                   "/creator/dashboard/courses"
                                 );
-                                void revalidate(`/course/${courseId}`);
                               },
                               onError: () => {
                                 errorToast("Error in deleting course!");
