@@ -15,7 +15,6 @@ import {
 import Navbar from "@/components/Navbar";
 import { useSession } from "next-auth/react";
 import { getServerAuthSession } from "@/server/auth";
-import landingOg from "public/landing/og.png";
 import Footer from "@/components/Footer";
 import { MixPannelTracking } from "@/analytics/mixpanel";
 import { useEffect, useState } from "react";
@@ -43,6 +42,8 @@ const Home: NextPage = () => {
     };
   }, []);
 
+  const ogImage = `https://www.kroto.in/landing/og.png`;
+
   return (
     <>
       <Head>
@@ -58,15 +59,15 @@ const Home: NextPage = () => {
           itemProp="description"
           content="Collective learning with the creators you love."
         />
-        <meta itemProp="image" content={landingOg.src} />
+        <meta itemProp="image" content={ogImage} />
         {/* Facebook meta */}
         <meta property="og:title" content="Kroto - Learn Collectively" />
         <meta
           property="og:description"
           content="Collective learning with the creators you love."
         />
-        <meta property="og:image" content={landingOg.src} />
-        <meta property="image" content={landingOg.src} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="image" content={ogImage} />
         <meta property="og:url" content="https://kroto.in" />
         <meta property="og:type" content="website" />
         {/* twitter meta */}
@@ -75,7 +76,7 @@ const Home: NextPage = () => {
           name="twitter:description"
           content="Collective learning with the creators you love."
         />
-        <meta name="twitter:image" content={landingOg.src} />
+        <meta name="twitter:image" content={ogImage} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <nav>
