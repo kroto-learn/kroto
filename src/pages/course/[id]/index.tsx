@@ -17,6 +17,7 @@ import { type ParsedUrlQuery } from "querystring";
 import { useState } from "react";
 import CoursePreviewModal from "@/components/CoursePreviewModal";
 import { useRouter } from "next/router";
+import { prisma } from "@/server/db";
 
 type Props = {
   courseId: string;
@@ -244,14 +245,19 @@ const Index = ({ courseId }: Props) => {
   );
 };
 
-export default Index;
-
-export function getStaticPaths() {
+export const getStaticPaths = async () => {
+  const courses = await prisma.course.findMany({
+    select: {
+      id: true,
+    },
+  });
   return {
-    paths: [],
+    paths: courses.map((course) => ({
+      params: { id: course.id },
+    })),
     fallback: "blocking",
   };
-}
+};
 
 interface CParams extends ParsedUrlQuery {
   id: string;
@@ -272,3 +278,5 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     },
   };
 }
+
+export default Index;

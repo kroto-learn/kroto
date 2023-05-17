@@ -18,6 +18,7 @@ import CourseCard from "@/components/CourseCard";
 import TestimonialDisclosure from "@/components/TestimonialDisclosure";
 import { Tooltip } from "antd";
 import AnimatedSection from "@/components/AnimatedSection";
+import { prisma } from "@/server/db";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -25,9 +26,12 @@ type CreatorPageProps = {
 
 const Index = ({ creatorProfile }: CreatorPageProps) => {
   const { data: creator, isLoading: isCreatorLoading } =
-    api.creator.getPublicProfile.useQuery({
-      creatorProfile,
-    });
+    api.creator.getPublicProfile.useQuery(
+      {
+        creatorProfile,
+      },
+      { refetchOnMount: false, refetchOnWindowFocus: false }
+    );
 
   const dynamicOgImage = `https://kroto.in/api/og/creator?name=${
     creator?.name ?? ""
@@ -224,7 +228,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                     <Image src="/empty/event_empty.svg" alt="empty" fill />
                   </div>
                   <p className="mb-2 text-neutral-400">
-                    The creator has not created any events.
+                    The creater has not created any events.
                   </p>
                 </div>
               )
@@ -248,16 +252,8 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                     />
                   </div>
                   <p className="mb-2 text-neutral-400">
-                    The creator has not got any testimonials.
+                    The creater has not got any testimonials.
                   </p>
-                  <Link
-                    id="testimonial"
-                    href={`/${creator?.creatorProfile ?? ""}/testimonial`}
-                    className="group mt-2 flex w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 backdrop-blur-sm transition-all duration-300 hover:bg-pink-500/80 hover:text-neutral-200"
-                  >
-                    <FontAwesomeIcon icon={faQuoteLeft} /> Write a Testimonial
-                    for me
-                  </Link>
                 </div>
               )
             ) : creator.courses && creator.courses.length > 0 ? (
@@ -269,10 +265,10 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
             ) : (
               <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
                 <div className="relative aspect-square w-40 object-contain">
-                  <Image src="/empty/course_empty.svg" alt="empty" fill />
+                  <Image src="/empty/event_empty.svg" alt="empty" fill />
                 </div>
                 <p className="mb-2 text-neutral-400">
-                  The creator has not created any courses.
+                  The creater has not created any courses.
                 </p>
               </div>
             )}
@@ -290,8 +286,23 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   );
 };
 
-export const getStaticPaths = () => {
-  return { paths: [], fallback: "blocking" };
+export const getStaticPaths = async () => {
+  const creators = await prisma.user.findMany({
+    where: {
+      isCreator: true,
+    },
+    select: {
+      creatorProfile: true,
+    },
+  });
+  return {
+    paths: creators.map((creator) => ({
+      params: {
+        creator_id: creator.creatorProfile,
+      },
+    })),
+    fallback: "blocking",
+  };
 };
 
 interface CParams extends ParsedUrlQuery {
