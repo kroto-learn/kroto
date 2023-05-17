@@ -17,6 +17,18 @@ const OG_URL = `${
 }${NEXTAUTH_URL}/api/og/creator`;
 
 export const creatorRouter = createTRPCRouter({
+  getAllCreators: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const creators = await prisma.user.findMany({
+      where: {
+        isCreator: true,
+      },
+    });
+
+    return creators;
+  }),
+
   getPublicProfile: publicProcedure
     .input(
       z.object({
@@ -165,7 +177,11 @@ export const creatorRouter = createTRPCRouter({
           .array()
           .optional(),
         topmateUrl: z.string().url().optional().or(z.literal("")),
-        mobileNumber: z.string(),
+        mobileNumber: z.union([
+          z.string().min(10).max(10),
+          z.undefined(),
+          z.string().optional(),
+        ]),
         image: z.string().nonempty(),
       })
     )

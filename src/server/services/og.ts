@@ -56,3 +56,35 @@ export const generateStaticEventOgImage = async ({
     return null;
   }
 };
+
+export const generateStaticCourseOgImage = async ({
+  ogUrl,
+  title,
+  thumbnail,
+
+  creatorName,
+  chapters,
+}: {
+  ogUrl: string;
+  creatorName: string;
+  chapters: number;
+  title: string;
+  thumbnail: string;
+}) => {
+  try {
+    const ogImageRes = await axios({
+      url: ogUrl,
+      responseType: "arraybuffer",
+      params: {
+        title,
+        chapters,
+        creatorName,
+        thumbnail,
+      },
+    });
+    return ogImageRes as AxiosResponse<ImageResponse>;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};

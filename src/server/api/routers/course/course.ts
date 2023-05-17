@@ -10,6 +10,14 @@ import {
   searchYoutubePlaylistsService,
 } from "@/server/services/youtube";
 import { importCourseFormSchema } from "@/pages/course/import";
+import { generateStaticCourseOgImage } from "@/server/services/og";
+import { env } from "@/env.mjs";
+import { ogImageUpload } from "@/server/helpers/base64ToS3";
+const { NEXTAUTH_URL } = env;
+
+const OG_URL = `${
+  process.env.VERCEL ? "https://" : ""
+}${NEXTAUTH_URL}/api/og/course`;
 
 export const courseRouter = createTRPCRouter({
   get: protectedProcedure
@@ -159,32 +167,32 @@ export const courseRouter = createTRPCRouter({
         })
       );
 
-      // const ogImageRes = await axios({
-      //   url: OG_URL,
-      //   responseType: "arraybuffer",
-      //   params: {
-      //     title: input.title,
-      //     datetime: input.datetime.getTime(),
-      //     host: ctx.session.user.name ?? "",
-      //   },
-      // });
+      const ogImageRes = await generateStaticCourseOgImage({
+        ogUrl: OG_URL,
+        title: course.title,
+        creatorName: ctx.session.user.name ?? "",
+        chapters: chapters.length,
+        thumbnail: course.thumbnail ?? "",
+      });
 
-      // const ogImage = await ogImageUpload(
-      //   ogImageRes.data as AWS.S3.Body,
-      //   event.id,
-      //   "event"
-      // );
+      const ogImage = ogImageRes
+        ? await ogImageUpload(
+            ogImageRes.data as AWS.S3.Body,
+            course.id,
+            "course"
+          )
+        : undefined;
 
-      // const updatedEvent = await prisma.event.update({
-      //   where: {
-      //     id: event.id,
-      //   },
-      //   data: {
-      //     ogImage,
-      //   },
-      // });
+      const updatedCourse = await prisma.course.update({
+        where: {
+          id: course.id,
+        },
+        data: {
+          ogImage,
+        },
+      });
 
-      return { ...course, chapters };
+      return { ...updatedCourse, chapters };
     }),
 
   syncImport: protectedProcedure
@@ -273,7 +281,32 @@ export const courseRouter = createTRPCRouter({
         })
       );
 
-      return { ...updatedCourse, chapters: updatedChapters };
+      const ogImageRes = await generateStaticCourseOgImage({
+        ogUrl: OG_URL,
+        title: updatedCourse.title,
+        creatorName: ctx.session.user.name ?? "",
+        chapters: updatedChapters.length,
+        thumbnail: updatedCourse.thumbnail ?? "",
+      });
+
+      const ogImage = ogImageRes
+        ? await ogImageUpload(
+            ogImageRes.data as AWS.S3.Body,
+            course.id,
+            "course"
+          )
+        : undefined;
+
+      const ogUpdatedCourse = await prisma.course.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          ogImage,
+        },
+      });
+
+      return { ...ogUpdatedCourse, chapters: updatedChapters };
     }),
 
   // update: protectedProcedure
@@ -386,7 +419,7 @@ export const courseRouter = createTRPCRouter({
             name: user.name,
             userId: user.id,
             creatorId: course.creatorId,
-            eventId: course.id,
+            courseId: course.id,
           },
         });
       }

@@ -243,7 +243,7 @@ export default function EventPage({ eventId }: Props) {
                   onClick={async () => {
                     setLoading(true);
                     if (!session.data) {
-                      void signIn("google", {
+                      void signIn(undefined, {
                         callbackUrl: `/event/${eventId}`,
                       });
                       return;

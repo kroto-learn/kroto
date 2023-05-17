@@ -67,7 +67,7 @@ export default async function handler(request: NextRequest) {
             />
             <div tw="flex flex-col items-start">
               <div tw="max-w-[34rem] overflow-hidden flex items-start">
-                <h1 tw="tracking-wide font-bold text-5xl text-neutral-200 font-black uppercase">
+                <h1 tw="tracking-wide text-5xl text-neutral-200 font-black uppercase">
                   {name}
                 </h1>
               </div>

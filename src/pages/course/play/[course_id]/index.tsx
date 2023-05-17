@@ -1,10 +1,6 @@
 import { Loader } from "@/components/Loader";
 import { api } from "@/utils/api";
-import {
-  CheckIcon,
-  ChevronRightIcon,
-  PlayIcon,
-} from "@heroicons/react/20/solid";
+import { CheckIcon, PlayIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { type Chapter, type ChapterProgress } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -98,7 +94,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                 href="/dashboard"
                 className="aspect-square rounded-full bg-neutral-800 p-1 text-neutral-400 duration-150 hover:bg-neutral-700 hover:text-neutral-300"
               >
-                <ChevronRightIcon className="w-6 " />
+                <XMarkIcon className="w-5" />
               </Link>
             </Tooltip>
           </div>
@@ -209,7 +205,7 @@ const CoursePlayerChapterTile = ({ chapter, idx }: CPCTProps) => {
           ? chapter.chapterProgress
             ? "!bg-green-950/30 hover:!bg-green-800/30"
             : "hover:bg-neutral-200/10"
-          : " bg-pink-900/10 hover:bg-pink-900/20"
+          : " !bg-pink-900/10 hover:!bg-pink-900/20"
       }  bg-transparent p-2 px-4 backdrop-blur-sm duration-150 `}
       key={chapter?.id}
     >

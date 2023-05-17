@@ -19,6 +19,7 @@ import { faYoutube } from "@fortawesome/free-brands-svg-icons";
 import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
 import { ClockIcon } from "@heroicons/react/24/outline";
+import youtubeBranding from "public/developed-with-youtube-sentence-case-light.png";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -29,10 +30,7 @@ const titleLimit = 100;
 export const importCourseFormSchema = z.object({
   thumbnail: z.string().nonempty("Please upload a cover"),
   title: z.string().max(titleLimit).nonempty("Please enter course title."),
-  description: z
-    .string()
-    .max(3000)
-    .nonempty("Please enter course description."),
+  description: z.string().max(3000).optional(),
   chapters: z.array(
     z.object({
       title: z.string(),
@@ -43,7 +41,7 @@ export const importCourseFormSchema = z.object({
       duration: z.number(),
     })
   ),
-  ytId: z.string().optional(),
+  ytId: z.string(),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
@@ -98,6 +96,8 @@ const Index = () => {
       playlistId,
     });
 
+  const { data: courses } = api.course.getAll.useQuery();
+
   const {
     mutateAsync: importCourseMutation,
     isLoading: importCourseMutationLoading,
@@ -126,8 +126,8 @@ const Index = () => {
       <div className="relative mx-auto my-12 flex min-h-screen w-full max-w-2xl flex-col gap-8">
         <div className="flex flex-col gap-2">
           <h3 className="text-xl font-medium">
-            Import <FontAwesomeIcon icon={faYoutube} className="mx-1" /> YouTube
-            playlist
+            Import your <FontAwesomeIcon icon={faYoutube} className="ml-1" />{" "}
+            YouTube playlist
           </h3>
           <div className="relative flex items-center">
             <input
@@ -148,56 +148,74 @@ const Index = () => {
 
             <MagnifyingGlassIcon className="absolute ml-2 w-4 text-pink-500/50 duration-300 peer-hover:text-pink-500/80 peer-focus:text-pink-500" />
           </div>
-          <p className="text-sm text-neutral-400">
-            Import your YouTube playlist to create course.
-          </p>
+
+          <Image
+            src={youtubeBranding}
+            alt="Developed with YouTube"
+            width={168}
+            height={60}
+            className="my-2"
+          />
+
           {!playlists || playlists instanceof TRPCError || !searchFocused ? (
             <></>
           ) : (
             <div className="absolute top-20 z-10 mt-2 flex w-full flex-col overflow-hidden rounded-xl border border-neutral-700 backdrop-blur">
-              {playlists.map((playlist) => (
-                <button
-                  onClick={() => {
-                    setPlaylistId(playlist.playlistId ?? "");
-                    methods.setValue("ytId", playlist.playlistId ?? undefined);
-                    setSearchFocused(false);
-                  }}
-                  className="group flex w-full items-center gap-2 border-b border-neutral-700 bg-neutral-800/80 px-4 py-3 duration-150 hover:bg-neutral-800/90"
-                  key={playlist.playlistId}
-                >
-                  <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
-                    <Image
-                      src={playlist?.thumbnail ?? ""}
-                      alt={playlist?.title ?? ""}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="group flex h-full w-full flex-col items-start justify-start gap-1">
-                    <h5 className="font-medium">{playlist?.title}</h5>
-                    <p className="text-xs text-neutral-400">
-                      {playlist?.channelTitle} • {playlist?.videoCount} videos
-                    </p>
-                  </div>
-                  <div
-                    className={`inline-flex items-center justify-center gap-[0.15rem] rounded-lg bg-pink-500/20 px-4 py-1 text-center text-xs font-medium text-pink-500 transition-all duration-300 group-hover:bg-pink-500 group-hover:text-neutral-200`}
+              {playlists.length > 0 ? (
+                playlists.map((playlist) => (
+                  <button
+                    onClick={() => {
+                      if (
+                        courses?.find((c) => c.ytId === playlist.playlistId)
+                      ) {
+                        errorToast("This playlist has already been imported!");
+                        return;
+                      }
+                      setPlaylistId(playlist.playlistId ?? "");
+                      methods.setValue("ytId", playlist.playlistId ?? "");
+                      setSearchFocused(false);
+                    }}
+                    className="group flex w-full items-center gap-2 border-b border-neutral-700 bg-neutral-800/80 px-4 py-3 duration-150 hover:bg-neutral-800/90"
+                    key={playlist.playlistId}
                   >
-                    {false ? (
-                      <div>
-                        <Loader white />
-                      </div>
-                    ) : (
-                      <>Import</>
-                    )}
-                  </div>
-                </button>
-              ))}
+                    <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
+                      <Image
+                        src={playlist?.thumbnail ?? ""}
+                        alt={playlist?.title ?? ""}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="group flex h-full w-full flex-col items-start justify-start gap-1">
+                      <h5 className="font-medium">{playlist?.title}</h5>
+                      <p className="text-xs text-neutral-400">
+                        {playlist?.channelTitle} • {playlist?.videoCount} videos
+                      </p>
+                    </div>
+                    <div
+                      className={`inline-flex items-center justify-center gap-[0.15rem] rounded-lg bg-pink-500/20 px-4 py-1 text-center text-xs font-medium text-pink-500 transition-all duration-300 group-hover:bg-pink-500 group-hover:text-neutral-200`}
+                    >
+                      {false ? (
+                        <div>
+                          <Loader white />
+                        </div>
+                      ) : (
+                        <>Import</>
+                      )}
+                    </div>
+                  </button>
+                ))
+              ) : (
+                <p className="p-2 text-sm text-neutral-400">
+                  {"🥲"} No public playlist found in your YouTube account.
+                </p>
+              )}
             </div>
           )}
         </div>
         <form
           onSubmit={methods.handleSubmit(async (values) => {
-            console.log(values);
+            console.log("this ran", values);
             await importCourseMutation(values, {
               onSuccess: (courseCreated) => {
                 if (courseCreated && !(courseCreated instanceof TRPCError))
@@ -288,20 +306,21 @@ const Index = () => {
                 ))
               ) : (
                 <p className="text-sm text-neutral-400">
-                  Import your Youtube playlist above to populate chapters.
+                  Import your Youtube playlist above to populate chapters here.
                 </p>
               )}
             </div>
           </div>
-
-          <button
-            className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
-            type="submit"
-            disabled={methods.formState.isSubmitting}
-          >
-            {importCourseMutationLoading && <Loader white />}
-            Import Course
-          </button>
+          <div className="flex w-full flex-col items-center">
+            <button
+              className={`group inline-flex w-full items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
+              type="submit"
+              disabled={methods.formState.isSubmitting}
+            >
+              {importCourseMutationLoading && <Loader white />}
+              Import Course
+            </button>
+          </div>
         </form>
       </div>
     </Layout>

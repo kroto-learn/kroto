@@ -9,6 +9,7 @@ import { hostRouter } from "./routers/event/host";
 import { courseRouter } from "./routers/course/course";
 import { courseChapterRouter } from "./routers/course/chapter";
 import { emailRouter } from "./email/email";
+import { courseFeedbacksRouter } from "./routers/course/feedback";
 
 /**
  * This is the primary router for your server.
@@ -21,6 +22,7 @@ export const appRouter = createTRPCRouter({
 
   course: courseRouter,
   courseChapter: courseChapterRouter,
+  courseFeedback: courseFeedbacksRouter,
 
   event: eventRouter,
   eventFeedback: feedbacksRouter,

@@ -17,6 +17,7 @@ import { type ParsedUrlQuery } from "querystring";
 import { useState } from "react";
 import CoursePreviewModal from "@/components/CoursePreviewModal";
 import { useRouter } from "next/router";
+import { prisma } from "@/server/db";
 
 type Props = {
   courseId: string;
@@ -50,23 +51,30 @@ const Index = ({ courseId }: Props) => {
       </div>
     );
 
+  const dynamicOgImage = `https://kroto.in/api/og/course?title=${
+    course?.title ?? ""
+  }&chapters=${course?.chapters.length ?? 0}&creatorName=${
+    course?.creator?.name ?? ""
+  }`;
+
   return (
     <>
-      {" "}
       <Layout>
         <Head>
           <title>{course?.title}</title>
           <meta name="description" content={course?.description ?? ""} />
-
           {/* Google SEO */}
           <meta itemProp="name" content={course?.title ?? ""} />
           <meta itemProp="description" content={course?.description ?? ""} />
-          {/* <meta itemProp="image" content={course?.ogImage ?? dynamicOgImage} /> */}
+          <meta itemProp="image" content={course?.ogImage ?? dynamicOgImage} />
           {/* Facebook meta */}
           <meta property="og:title" content={course?.title ?? ""} />
           <meta property="og:description" content={course?.description ?? ""} />
-          {/* <meta property="og:image" content={course?.ogImage ?? dynamicOgImage} /> */}
-          {/* <meta property="image" content={course?.ogImage ?? dynamicOgImage} /> */}
+          <meta
+            property="og:image"
+            content={course?.ogImage ?? dynamicOgImage}
+          />
+          <meta property="image" content={course?.ogImage ?? dynamicOgImage} />
           <meta
             property="og:url"
             content={`https://kroto.in/course/${course?.id ?? ""}`}
@@ -78,10 +86,10 @@ const Index = ({ courseId }: Props) => {
             name="twitter:description"
             content={course?.description ?? ""}
           />
-          {/* <meta
-          name="twitter:image"
-          content={course?.ogImage ?? dynamicOgImage}
-        /> */}
+          <meta
+            name="twitter:image"
+            content={course?.ogImage ?? dynamicOgImage}
+          />
           <meta name="twitter:card" content="summary_large_image" />
         </Head>
         <main className="hide-scroll mx-auto mb-8 mt-16 flex h-[80vh] w-full max-w-4xl gap-4 overflow-x-hidden">
@@ -134,9 +142,10 @@ const Index = ({ courseId }: Props) => {
                   <button
                     onClick={async () => {
                       if (!session.data) {
-                        void signIn("google", {
+                        void signIn(undefined, {
                           callbackUrl: `/course/${courseId}`,
                         });
+
                         return;
                       }
                       await enrollMutation(
@@ -236,14 +245,19 @@ const Index = ({ courseId }: Props) => {
   );
 };
 
-export default Index;
-
-export function getStaticPaths() {
+export const getStaticPaths = async () => {
+  const courses = await prisma.course.findMany({
+    select: {
+      id: true,
+    },
+  });
   return {
-    paths: [],
+    paths: courses.map((course) => ({
+      params: { id: course.id },
+    })),
     fallback: "blocking",
   };
-}
+};
 
 interface CParams extends ParsedUrlQuery {
   id: string;
@@ -264,3 +278,5 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     },
   };
 }
+
+export default Index;
