@@ -9,7 +9,6 @@ import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
 import { ClaimLinkBanner } from "..";
 import Link from "next/link";
-import AnimatedSection from "@/components/AnimatedSection";
 import { GlobeAltIcon } from "@heroicons/react/20/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
