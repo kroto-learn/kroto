@@ -92,8 +92,8 @@ const Index = ({ courseId }: Props) => {
           />
           <meta name="twitter:card" content="summary_large_image" />
         </Head>
-        <main className="hide-scroll mx-auto mb-8 mt-16 flex h-[80vh] w-full max-w-4xl gap-4 overflow-x-hidden">
-          <AnimatedSection className="flex h-full w-[30rem] flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm">
+        <div className="hide-scroll mx-auto mb-8 mt-16 flex w-full max-w-4xl flex-col gap-4 overflow-x-hidden p-4 sm:h-[80vh] sm:flex-row">
+          <AnimatedSection className="flex h-full w-full flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm sm:w-[30rem]">
             <div className="relative aspect-video w-full content-center overflow-hidden rounded-xl">
               <Image
                 src={course?.thumbnail ?? ""}
@@ -196,13 +196,13 @@ const Index = ({ courseId }: Props) => {
               </Link>
             )}
 
-            <p className="hide-scroll max-h-52 overflow-y-scroll text-sm text-neutral-300">
+            <p className="hide-scroll max-h-24 overflow-y-scroll text-xs text-neutral-300 sm:max-h-52 sm:text-sm">
               {course?.description}
             </p>
           </AnimatedSection>
           <AnimatedSection
             delay={0.1}
-            className="flex h-[calc(100vh-10rem)] w-full flex-col gap-2 overflow-y-auto pr-2"
+            className="flex h-full w-full flex-col gap-2 pr-2 sm:h-[calc(100vh-10rem)]"
           >
             {course?.chapters?.map((chapter, index) => (
               <button
@@ -226,7 +226,9 @@ const Index = ({ courseId }: Props) => {
                   />
                 </div>
                 <div className="flex h-full w-full flex-col items-start gap-1">
-                  <h5 className="text-left font-medium">{chapter?.title}</h5>
+                  <h5 className="max-h-8 overflow-hidden text-ellipsis text-left text-xs font-medium sm:max-h-12 sm:text-base">
+                    {chapter?.title}
+                  </h5>
                   <p className="text-xs text-neutral-400">
                     {course?.creator?.name}
                   </p>
@@ -234,7 +236,7 @@ const Index = ({ courseId }: Props) => {
               </button>
             ))}
           </AnimatedSection>
-        </main>
+        </div>
       </Layout>
       <CoursePreviewModal
         courseId={courseId}
