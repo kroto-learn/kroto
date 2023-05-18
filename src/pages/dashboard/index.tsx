@@ -7,6 +7,7 @@ import Image from "next/image";
 import Layout from "@/components/layouts/main";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
+import AnimatedSection from "@/components/AnimatedSection";
 import { ClaimLinkBanner } from "..";
 import Link from "next/link";
 import { GlobeAltIcon } from "@heroicons/react/20/solid";
@@ -31,6 +32,7 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
+        <AnimatedSection delay={0.2}>
         <div className="my-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
           <div className="flex items-center justify-between">
             <div className="flex w-full items-center justify-between gap-5">
@@ -74,6 +76,8 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+        </AnimatedSection>
+        <AnimatedSection delay={0.5}>
         <div className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8">
           <h1 className="text-2xl text-neutral-200">Enrolled Courses</h1>
           <div className="flex w-full flex-col items-center">
@@ -108,6 +112,8 @@ export default function Dashboard() {
             )}
           </div>
         </div>
+      </AnimatedSection>
+      <AnimatedSection delay={0.8}>
         <div className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8">
           <div className="flex w-full items-center justify-between">
             <h1 className="text-2xl text-neutral-200">Registered Events</h1>
@@ -181,6 +187,7 @@ export default function Dashboard() {
             </>
           )}
         </div>
+        </AnimatedSection>
         <ClaimLinkBanner />
       </div>
     </Layout>
