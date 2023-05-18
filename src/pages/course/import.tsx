@@ -20,6 +20,7 @@ import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import youtubeBranding from "public/developed-with-youtube-sentence-case-light.png";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -71,6 +72,8 @@ const Index = () => {
   const [searchFocused, setSearchFocused] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
   const [playlistId, setPlaylistId] = useState("");
+  const revalidate = useRevalidateSSG();
+
   // const [playlistDetailInit, setPlaylistDetailInit] = useState(false);
 
   const { errorToast } = useToast();
@@ -218,10 +221,12 @@ const Index = () => {
             console.log("this ran", values);
             await importCourseMutation(values, {
               onSuccess: (courseCreated) => {
-                if (courseCreated && !(courseCreated instanceof TRPCError))
+                if (courseCreated && !(courseCreated instanceof TRPCError)) {
                   void router.push(
                     `/creator/dashboard/course/${courseCreated?.id}`
                   );
+                  void revalidate(`/course/${courseCreated?.id}`);
+                }
               },
               onError: () => {
                 errorToast("Error in importing course from YouTube!");
