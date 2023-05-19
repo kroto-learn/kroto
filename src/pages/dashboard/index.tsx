@@ -14,6 +14,7 @@ import { GlobeAltIcon } from "@heroicons/react/20/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 import EnrolledCourseCard from "@/components/EnrolledCourseCard";
+import Head from "next/head";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -32,6 +33,9 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
+        <Head>
+          <title>Dashboard | Kroto</title>
+        </Head>
         <AnimatedSection delay={0.2}>
           <div className="my-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
             <div className="flex items-center justify-between">
