@@ -75,8 +75,8 @@ const CourseOverview = () => {
         </Head>
 
         <div className="mx-auto flex w-full flex-col items-start gap-2">
-          <div className="mb-2 flex w-full items-start gap-4 rounded-xl bg-neutral-800 p-4">
-            <div className="flex w-1/3 flex-col gap-4">
+          <div className="mb-2 flex w-full flex-col items-start gap-4 rounded-xl bg-neutral-800 p-4 sm:flex-row">
+            <div className="flex w-full flex-col gap-4 sm:w-1/3">
               <div className="relative flex aspect-video w-full  items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
                 <Image
                   src={course?.thumbnail ?? ""}
@@ -85,7 +85,7 @@ const CourseOverview = () => {
                   className="object-cover"
                 />
               </div>
-              <div className="flex w-full items-center justify-evenly gap-2">
+              <div className="flex items-center gap-2 sm:w-full sm:justify-evenly">
                 <button
                   className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
                   onClick={() => {
@@ -143,14 +143,14 @@ const CourseOverview = () => {
               </div>
             </div>
 
-            <div className="w-2/3">
+            <div className="w-full sm:w-2/3">
               <label
                 htmlFor="title"
                 className="text-xs font-medium uppercase tracking-wider text-neutral-400"
               >
                 Title
               </label>
-              <p className="w-full text-sm font-medium text-neutral-200 duration-300 sm:text-base">
+              <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm font-medium text-neutral-200 duration-300 sm:text-base">
                 {course?.title}
               </p>
 
@@ -178,7 +178,7 @@ const CourseOverview = () => {
                 }
               );
             }}
-            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800`}
+            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800 sm:text-xs`}
           >
             {syncImportLoading ? (
               <Loader />
@@ -194,10 +194,10 @@ const CourseOverview = () => {
                 htmlFor="description"
                 className="text-lg  text-neutral-200"
               >
-                Chapters
+                {course?.chapters?.length} Chapters
               </label>
             </div>
-            <div className="h-[calc(100vh-30rem)] overflow-y-auto pr-4">
+            <div className="h-[calc(100vh-41rem)] overflow-y-auto pr-1 sm:h-[calc(100vh-30rem)] sm:pr-4">
               {course?.chapters?.map((chapter, index) => (
                 <button
                   onClick={() => {
@@ -217,7 +217,9 @@ const CourseOverview = () => {
                     />
                   </div>
                   <div className="flex h-full w-full flex-col items-start gap-1">
-                    <h5 className="text-left font-medium">{chapter?.title}</h5>
+                    <h5 className="line-clamp-2 overflow-hidden text-ellipsis text-left text-xs font-medium sm:max-h-12 sm:text-base">
+                      {chapter?.title}
+                    </h5>
                     {chapter?.duration ? (
                       <label className="flex items-center gap-1 text-xs text-neutral-300">
                         <ClockIcon className="w-3" />

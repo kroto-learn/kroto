@@ -121,7 +121,7 @@ const Index = () => {
       </Head>
       <div className="flex w-full flex-col items-start gap-2">
         {chapter.type !== "TEXT" ? (
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-neutral-700">
+          <div className="relative aspect-video max-h-[92vh] w-full overflow-hidden rounded-lg border border-neutral-700">
             <YouTube
               className="absolute bottom-0 left-0 right-0 top-0 h-full w-full"
               videoId={chapter?.ytId ?? ""}

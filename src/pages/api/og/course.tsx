@@ -58,8 +58,8 @@ export default async function handler(request: NextRequest) {
               LEARN ON
             </p>
             <img
-              width={165}
-              height={69}
+              width={96}
+              height={40}
               src="https://res.cloudinary.com/dvisf70pm/image/upload/v1682458030/kroto-f-n-200_pl12tc.png"
               alt="Kroto"
             />
@@ -68,7 +68,7 @@ export default async function handler(request: NextRequest) {
             style={{
               boxShadow: "-8px 8px 0px 0px rgba(219,39,119,1)",
             }}
-            tw="flex items-center mb-8 rounded-xl relative h-[150px] w-[267px] overflow-hidden border-2 border-pink-600"
+            tw="flex items-center mb-4 rounded-xl relative h-[300px] w-[531px] overflow-hidden border-2 border-pink-600"
           >
             <img
               src={thumbnail ?? ""}
@@ -77,11 +77,9 @@ export default async function handler(request: NextRequest) {
             />
           </div>
 
-          <div tw="max-h-[13rem] overflow-hidden px-48 flex">
-            <h1 tw="tracking-wide font-black text-5xl text-neutral-200 text-center uppercase">
-              {title}
-            </h1>
-          </div>
+          <h1 tw="tracking-wide max-h-[2rem] text-ellipsis overflow-hidden font-black text-3xl max-w-4xl text-neutral-200 text-center uppercase">
+            {title}
+          </h1>
           <div tw="flex w-full absolute bottom-12 p-4 border-t border-neutral-300 justify-center items-center">
             <div tw="w-full max-w-3xl flex items-center justify-between">
               <div tw="flex uppercase text-xl items-end text-neutral-200">
