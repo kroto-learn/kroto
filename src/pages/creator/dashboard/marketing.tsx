@@ -161,7 +161,7 @@ const Marketing = () => {
             className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-xl flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
               createEmailModal ? "translate-x-0" : "translate-x-full"
             }`}
-          >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
+          >
             <button
               onClick={() => {
                 setCreateEmail(false);
