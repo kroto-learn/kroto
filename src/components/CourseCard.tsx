@@ -34,21 +34,23 @@ const CourseCard = ({ course, manage, lg }: Props) => {
         />
       </div>
       <div className="flex h-full w-full flex-col items-start gap-1">
-        <h5 className={`font-medium ${lg ? "text-lg" : ""}`}>
+        <h5
+          className={`line-clamp-2 overflow-hidden text-ellipsis text-xs font-medium sm:max-h-12 sm:text-base ${
+            lg ? "text-lg" : ""
+          }`}
+        >
           {course?.title}
         </h5>
         <p
           className={`flex items-center text-xs text-neutral-300 ${
-            lg ? "!text-sm" : ""
+            lg ? "!sm:text-sm text-xs" : ""
           }`}
         >
           {course._count.chapters} Chapters
         </p>
         {!manage ? (
           <p
-            className={`text-sm font-semibold uppercase tracking-widest text-green-500/80 ${
-              lg ? "text-sm" : ""
-            }`}
+            className={`text-xs font-semibold uppercase tracking-widest text-green-500/80 sm:text-sm`}
           >
             free
           </p>
