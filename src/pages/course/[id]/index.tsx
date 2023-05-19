@@ -202,7 +202,7 @@ const Index = ({ courseId }: Props) => {
           </AnimatedSection>
           <AnimatedSection
             delay={0.1}
-            className="flex h-full w-full flex-col gap-2 pr-2 sm:h-[calc(100vh-10rem)]"
+            className="flex h-full w-full flex-col gap-2 overflow-y-auto pr-2 sm:h-[calc(100vh-10rem)]"
           >
             {course?.chapters?.map((chapter, index) => (
               <button
