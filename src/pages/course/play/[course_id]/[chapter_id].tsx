@@ -153,7 +153,12 @@ const Index = () => {
         ) : (
           <></>
         )}
-        <h3 className="mx-4 mt-2 text-lg font-medium">{chapter?.title}</h3>
+        <h3 className="mx-4 mt-2 text-lg font-medium">
+          <span className="mr-2 rounded border border-pink-500/30 bg-pink-500/10 p-1 text-sm font-bold text-pink-500">
+            Ch. {chapter.position + 1}{" "}
+          </span>
+          {chapter?.title}
+        </h3>
         <Link
           href={`/${chapter?.creator.creatorProfile ?? ""}`}
           className="group mx-4 mt-2 flex items-center gap-2"

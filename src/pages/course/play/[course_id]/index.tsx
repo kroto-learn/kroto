@@ -54,10 +54,12 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
   const { data: course } = api.course?.get.useQuery({ id: course_id });
   const [sideDrawerCollapsed, setSideDrawerCollapsed] = useState(false);
   const chaptersNavRef = useRef<HTMLDivElement | null>(null);
+  const [navbarScrollInit, setNavbarScrollInit] = useState(false);
 
   useEffect(() => {
     //TODO: scroll to chapter link, this doesn't work
-    if (chaptersNavRef.current) {
+    if (chaptersNavRef.current && !!course && !navbarScrollInit) {
+      setNavbarScrollInit(true);
       const buttonToScrollTo = chaptersNavRef.current.querySelector(
         `#${chapter_id}`
       );
@@ -68,7 +70,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
           block: "nearest",
         });
     }
-  }, [chapter_id]);
+  }, [chapter_id, course, navbarScrollInit]);
 
   useEffect(() => {
     function handleResize() {
@@ -119,7 +121,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     <div className="flex min-h-screen w-full flex-col-reverse justify-end gap-3 p-4 sm:flex-row sm:justify-start">
       {children}
       <div
-        className={`flex overflow-hidden rounded-lg border border-neutral-700 bg-neutral-950/80 backdrop-blur-sm sm:bg-neutral-200/5 ${
+        className={`flex rounded-lg border border-neutral-700 bg-neutral-950/80 backdrop-blur-sm sm:bg-neutral-200/5 ${
           sideDrawerCollapsed
             ? "right-4 top-4 flex-row-reverse sm:sticky sm:h-[calc(100vh-2rem)] sm:max-w-[5rem] sm:flex-col"
             : "fixed right-4 top-4 h-[calc(100vh-2rem)] w-4/5 max-w-sm flex-col sm:sticky sm:w-full"
@@ -186,7 +188,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
           )}
         </div>
         <div
-          className={`flex items-center gap-4 border-neutral-700 p-2 [&.chartjs-legend]:hidden ${
+          className={`flex items-center gap-4 overflow-hidden border-neutral-700 p-1 sm:p-2 [&.chartjs-legend]:hidden ${
             sideDrawerCollapsed
               ? "border-l sm:w-full sm:border-b sm:border-l-0"
               : "w-full border-b"
@@ -196,7 +198,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             className={`flex items-center justify-center ${
               sideDrawerCollapsed
                 ? "hidden h-16 w-16 sm:flex"
-                : "h-20 w-20 sm:h-24 sm:w-24"
+                : "h-24 w-24 sm:h-24 sm:w-24"
             }`}
           >
             <Pie data={data} options={options} />
@@ -204,7 +206,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
           <h5
             className={`${sideDrawerCollapsed ? "block sm:hidden " : "hidden"}`}
           >
-            <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-green-600">
+            <span className="m-0 p-0 text-xl font-bold text-green-600">
               {Math.ceil((chaptersWatched / course.chapters?.length) * 100)}
               <span className="m-0 p-0 text-sm font-normal leading-3">%</span>
             </span>
@@ -257,7 +259,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
           ref={chaptersNavRef}
           className={`flex w-full justify-start overflow-auto  ${
             sideDrawerCollapsed
-              ? "flex-row items-center sm:max-h-[calc(100vh-8rem)] sm:flex-col"
+              ? "hide-scroll flex-row items-center sm:max-h-[calc(100vh-8rem)] sm:flex-col"
               : "max-h-[calc(100vh-8rem)] flex-col"
           }`}
         >

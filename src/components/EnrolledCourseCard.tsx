@@ -25,7 +25,7 @@ const EnrolledCourseCard = ({ enrollment }: Props) => {
   return (
     <Link
       href={`/course/play/${enrollment?.course.id}`}
-      className="group flex w-full max-w-lg gap-3 rounded-xl p-2 backdrop-blur-sm duration-150 hover:bg-neutral-200/10"
+      className="group flex w-full max-w-xl gap-3 rounded-xl p-2 backdrop-blur-sm duration-150 hover:bg-neutral-200/10"
       key={enrollment?.id}
     >
       <div className={`relative aspect-video w-40 overflow-hidden rounded-lg`}>
@@ -37,7 +37,11 @@ const EnrolledCourseCard = ({ enrollment }: Props) => {
         />
       </div>
       <div className="group flex h-full w-full flex-col items-start gap-1">
-        <h5 className={`font-medium`}>{enrollment?.course?.title}</h5>
+        <h5
+          className={`line-clamp-1 w-full overflow-hidden text-ellipsis text-xs font-medium sm:text-base`}
+        >
+          {enrollment?.course?.title}
+        </h5>
         <p className={`flex items-center text-xs text-neutral-300`}>
           {enrollment.course._count.chapters} Chapters
         </p>
