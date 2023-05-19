@@ -226,7 +226,7 @@ const Index = ({ courseId }: Props) => {
                   />
                 </div>
                 <div className="flex h-full w-full flex-col items-start gap-1">
-                  <h5 className="max-h-8 overflow-hidden text-ellipsis text-left text-xs font-medium sm:max-h-12 sm:text-base">
+                  <h5 className="line-clamp-2 overflow-hidden text-ellipsis text-left text-xs font-medium sm:max-h-12 sm:text-base">
                     {chapter?.title}
                   </h5>
                   <p className="text-xs text-neutral-400">
