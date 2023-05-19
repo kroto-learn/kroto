@@ -144,12 +144,16 @@ export function DeleteEventModal({
                             { id },
                             {
                               onSuccess: () => {
-                                void ctx.event.getAll.invalidate();
-                                void ctx.event.get.invalidate();
-                                void router.replace(
-                                  "/creator/dashboard/events"
-                                );
-                                void revalidate(`/event/${eventId}`);
+                                const fxn = async () => {
+                                  await ctx.event.getAll.invalidate();
+                                  await ctx.event.get.invalidate();
+                                  await revalidate(`/event/${eventId}`);
+                                  void router.replace(
+                                    "/creator/dashboard/events"
+                                  );
+                                };
+
+                                void fxn();
                               },
                               onError: () => {
                                 errorToast("Error in deleting event!");

@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Transition, Dialog } from "@headlessui/react";
 import Papa from "papaparse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AnimatedSection from "@/components/AnimatedSection";
 import { faFileCsv, faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
 import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
@@ -118,41 +119,43 @@ const Audience = () => {
         <title>Audience | Dashboard</title>
       </Head>
       <div className="mx-2 my-8 min-h-[80%] w-full px-6">
-        <h3 className="mb-4 text-2xl font-medium">Audience</h3>
-        <div className="mb-6 flex w-full items-start justify-between gap-2">
-          <div className="flex flex-col items-start">
-            <p className="text-3xl text-neutral-200">
-              {audienceData?.length ?? "-"}
-            </p>
+        <AnimatedSection delay={0.0}>
+          <h3 className="mb-4 text-2xl font-medium">Audience</h3>
+          <div className="mb-6 flex w-full items-start justify-between gap-2">
+            <div className="flex flex-col items-start">
+              <p className="text-3xl text-neutral-200">
+                {audienceData?.length ?? "-"}
+              </p>
+            </div>
+            <div className="flex w-full flex-col items-end gap-2 sm:w-auto sm:flex-row sm:items-center">
+              <button
+                type="button"
+                className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
+                onClick={() => {
+                  setUploadCSVModal(true);
+                }}
+              >
+                <FontAwesomeIcon icon={faFileArrowUp} /> Upload CSV
+              </button>
+              <button
+                disabled={audienceData?.length === 0 || !audienceData}
+                type="button"
+                className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
+                onClick={() => {
+                  getCSV(
+                    audienceData?.map((r) => ({
+                      NAME: r.name,
+                      EMAIL: r.email,
+                      IMAGE: r.image,
+                    })) ?? []
+                  );
+                }}
+              >
+                <FontAwesomeIcon icon={faFileCsv} /> Download CSV
+              </button>
+            </div>
           </div>
-          <div className="flex w-full flex-col items-end gap-2 sm:w-auto sm:flex-row sm:items-center">
-            <button
-              type="button"
-              className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
-              onClick={() => {
-                setUploadCSVModal(true);
-              }}
-            >
-              <FontAwesomeIcon icon={faFileArrowUp} /> Upload CSV
-            </button>
-            <button
-              disabled={audienceData?.length === 0 || !audienceData}
-              type="button"
-              className="mb-2 mr-2 flex items-center gap-2 rounded-lg border border-pink-500 px-4 py-2 text-center text-sm font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-400 disabled:bg-transparent disabled:text-neutral-400 disabled:opacity-50 disabled:hover:border-neutral-400 disabled:hover:bg-transparent disabled:hover:text-neutral-400"
-              onClick={() => {
-                getCSV(
-                  audienceData?.map((r) => ({
-                    NAME: r.name,
-                    EMAIL: r.email,
-                    IMAGE: r.image,
-                  })) ?? []
-                );
-              }}
-            >
-              <FontAwesomeIcon icon={faFileCsv} /> Download CSV
-            </button>
-          </div>
-        </div>
+        </AnimatedSection>
         <div className="flex w-full justify-start">
           <div className="mb-6 border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
             <ul className="-mb-px flex flex-wrap">
@@ -184,18 +187,125 @@ const Audience = () => {
             </ul>
           </div>
         </div>
+        <AnimatedSection delay={0.2}>
+          {!isImportedTab ? (
+            audienceData && audienceData.length > 0 ? (
+              <div className="h-[80vh] overflow-scroll">
+                <table
+                  {...getTableProps()}
+                  className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
+                >
+                  <thead>
+                    {
+                      // Loop over the header rows
+                      headerGroups.map((headerGroup) => (
+                        // Apply the header row props
+                        // eslint-disable-next-line react/jsx-key
+                        <tr
+                          className="border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400"
+                          {...headerGroup.getHeaderGroupProps()}
+                        >
+                          {
+                            // Loop over the headers in each row
+                            headerGroup.headers.map((column) => (
+                              // Apply the header cell props
+                              // eslint-disable-next-line react/jsx-key
+                              <th
+                                className="px-6 py-3"
+                                {...column.getHeaderProps()}
+                              >
+                                {
+                                  // Render the header
+                                  column.render("Header")
+                                }
+                              </th>
+                            ))
+                          }
+                        </tr>
+                      ))
+                    }
+                  </thead>
 
-        {!isImportedTab ? (
-          audienceData && audienceData.length > 0 ? (
+                  <tbody {...getTableBodyProps()}>
+                    {
+                      // Loop over the table rows
+                      rows.map((row) => {
+                        // Prepare the row for display
+                        prepareRow(row);
+                        return (
+                          // Apply the row props
+                          // eslint-disable-next-line react/jsx-key
+                          <tr
+                            className="border border-neutral-800 bg-neutral-900 even:bg-neutral-800"
+                            {...row.getRowProps()}
+                          >
+                            {
+                              // Loop over the rows cells
+                              row.cells.map((cell) => {
+                                // Apply the cell props
+                                if (cell.column.id === "img")
+                                  return (
+                                    <td className="py-4 pl-6 pr-2">
+                                      <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
+                                        <Image
+                                          fill
+                                          src={(cell?.value as string) ?? ""}
+                                          alt="image"
+                                        />
+                                      </div>
+                                    </td>
+                                  );
+                                return (
+                                  // eslint-disable-next-line react/jsx-key
+                                  <td
+                                    className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
+                                    {...cell.getCellProps()}
+                                  >
+                                    {
+                                      // Render the cell contents
+                                      cell.render("Cell")
+                                    }
+                                  </td>
+                                );
+                              })
+                            }
+                          </tr>
+                        );
+                      })
+                    }
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+                <div className="relative aspect-square w-40 object-contain">
+                  <Image src="/empty/users_empty.svg" alt="empty" fill />
+                </div>
+                <p className="text-neutral-400">
+                  You don&apos;t have any audience yet.
+                </p>
+                <p className="text-neutral-400">
+                  Do events to gather audience data.
+                </p>
+                <br />
+                <Link
+                  href="/event/create"
+                  className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
+                >
+                  <PlusIcon className="w-5" /> Create Event
+                </Link>
+              </div>
+            )
+          ) : importedAudienceData && importedAudienceData.length > 0 ? (
             <div className="h-[80vh] overflow-scroll">
               <table
-                {...getTableProps()}
+                {...getImpTableProps()}
                 className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
               >
                 <thead>
                   {
                     // Loop over the header rows
-                    headerGroups.map((headerGroup) => (
+                    impHeaderGroups.map((headerGroup) => (
                       // Apply the header row props
                       // eslint-disable-next-line react/jsx-key
                       <tr
@@ -223,12 +333,12 @@ const Audience = () => {
                   }
                 </thead>
 
-                <tbody {...getTableBodyProps()}>
+                <tbody {...getImpTableBodyProps()}>
                   {
                     // Loop over the table rows
-                    rows.map((row) => {
+                    impRows.map((row) => {
                       // Prepare the row for display
-                      prepareRow(row);
+                      prepareImpRows(row);
                       return (
                         // Apply the row props
                         // eslint-disable-next-line react/jsx-key
@@ -238,33 +348,18 @@ const Audience = () => {
                         >
                           {
                             // Loop over the rows cells
-                            row.cells.map((cell) => {
-                              // Apply the cell props
-                              if (cell.column.id === "img")
-                                return (
-                                  <td className="py-4 pl-6 pr-2">
-                                    <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
-                                      <Image
-                                        fill
-                                        src={(cell?.value as string) ?? ""}
-                                        alt="image"
-                                      />
-                                    </div>
-                                  </td>
-                                );
-                              return (
-                                // eslint-disable-next-line react/jsx-key
-                                <td
-                                  className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
-                                  {...cell.getCellProps()}
-                                >
-                                  {
-                                    // Render the cell contents
-                                    cell.render("Cell")
-                                  }
-                                </td>
-                              );
-                            })
+                            row.cells.map((cell) => (
+                              // eslint-disable-next-line react/jsx-key
+                              <td
+                                className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
+                                {...cell.getCellProps()}
+                              >
+                                {
+                                  // Render the cell contents
+                                  cell.render("Cell")
+                                }
+                              </td>
+                            ))
                           }
                         </tr>
                       );
@@ -292,99 +387,8 @@ const Audience = () => {
                 <PlusIcon className="w-5" /> Create Event
               </Link>
             </div>
-          )
-        ) : importedAudienceData && importedAudienceData.length > 0 ? (
-          <div className="h-[80vh] overflow-scroll">
-            <table
-              {...getImpTableProps()}
-              className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
-            >
-              <thead>
-                {
-                  // Loop over the header rows
-                  impHeaderGroups.map((headerGroup) => (
-                    // Apply the header row props
-                    // eslint-disable-next-line react/jsx-key
-                    <tr
-                      className="border-neutral-600 bg-neutral-700 text-xs uppercase tracking-wider text-neutral-400"
-                      {...headerGroup.getHeaderGroupProps()}
-                    >
-                      {
-                        // Loop over the headers in each row
-                        headerGroup.headers.map((column) => (
-                          // Apply the header cell props
-                          // eslint-disable-next-line react/jsx-key
-                          <th
-                            className="px-6 py-3"
-                            {...column.getHeaderProps()}
-                          >
-                            {
-                              // Render the header
-                              column.render("Header")
-                            }
-                          </th>
-                        ))
-                      }
-                    </tr>
-                  ))
-                }
-              </thead>
-
-              <tbody {...getImpTableBodyProps()}>
-                {
-                  // Loop over the table rows
-                  impRows.map((row) => {
-                    // Prepare the row for display
-                    prepareImpRows(row);
-                    return (
-                      // Apply the row props
-                      // eslint-disable-next-line react/jsx-key
-                      <tr
-                        className="border border-neutral-800 bg-neutral-900 even:bg-neutral-800"
-                        {...row.getRowProps()}
-                      >
-                        {
-                          // Loop over the rows cells
-                          row.cells.map((cell) => (
-                            // eslint-disable-next-line react/jsx-key
-                            <td
-                              className="whitespace-nowrap px-6 py-4 font-medium text-neutral-200"
-                              {...cell.getCellProps()}
-                            >
-                              {
-                                // Render the cell contents
-                                cell.render("Cell")
-                              }
-                            </td>
-                          ))
-                        }
-                      </tr>
-                    );
-                  })
-                }
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
-            <div className="relative aspect-square w-40 object-contain">
-              <Image src="/empty/users_empty.svg" alt="empty" fill />
-            </div>
-            <p className="text-neutral-400">
-              You don&apos;t have any audience yet.
-            </p>
-            <p className="text-neutral-400">
-              Do events to gather audience data.
-            </p>
-            <br />
-            <Link
-              href="/event/create"
-              className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
-            >
-              <PlusIcon className="w-5" /> Create Event
-            </Link>
-          </div>
-        )}
+          )}
+        </AnimatedSection>
       </div>
       <UploadCSVModal isOpen={uploadCSVModal} setIsOpen={setUploadCSVModal} />
     </>

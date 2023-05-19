@@ -2,14 +2,20 @@ export const Loader = ({
   size,
   white,
 }: {
-  size?: "md" | "lg";
+  size?: "md" | "lg" | "sm";
   white?: boolean;
 }) => (
   <div role="status">
     <svg
       aria-hidden="true"
       className={`mr-2 aspect-square animate-spin  ${
-        size === "lg" ? "h-8" : size === "md" ? "h-6" : "h-4"
+        size === "lg"
+          ? "h-8"
+          : size === "md"
+          ? "h-6"
+          : size === "sm"
+          ? "h-3"
+          : "h-4"
       } ${
         white
           ? "fill-neutral-200 text-neutral-200/10"
