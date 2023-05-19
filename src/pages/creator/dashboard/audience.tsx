@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Transition, Dialog } from "@headlessui/react";
 import Papa from "papaparse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AnimatedSection from "@/components/AnimatedSection";
 import { faFileCsv, faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
 import useToast from "@/hooks/useToast";
 import { useRouter } from "next/router";
@@ -118,6 +119,7 @@ const Audience = () => {
         <title>Audience | Dashboard</title>
       </Head>
       <div className="mx-2 my-8 min-h-[80%] w-full px-6">
+       <AnimatedSection delay={0.0}>
         <h3 className="mb-4 text-2xl font-medium">Audience</h3>
         <div className="mb-6 flex w-full items-start justify-between gap-2">
           <div className="flex flex-col items-start">
@@ -153,6 +155,7 @@ const Audience = () => {
             </button>
           </div>
         </div>
+        </AnimatedSection>
         <div className="flex w-full justify-start">
           <div className="mb-6 border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
             <ul className="-mb-px flex flex-wrap">
@@ -184,7 +187,7 @@ const Audience = () => {
             </ul>
           </div>
         </div>
-
+        <AnimatedSection delay={0.2}>
         {!isImportedTab ? (
           audienceData && audienceData.length > 0 ? (
             <div className="h-[80vh] overflow-scroll">
@@ -385,6 +388,7 @@ const Audience = () => {
             </Link>
           </div>
         )}
+    </AnimatedSection>
       </div>
       <UploadCSVModal isOpen={uploadCSVModal} setIsOpen={setUploadCSVModal} />
     </>

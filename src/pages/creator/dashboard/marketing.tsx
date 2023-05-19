@@ -2,12 +2,12 @@
 import Head from "next/head";
 import { DashboardLayout } from ".";
 import { api } from "@/utils/api";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Loader } from "@/components/Loader";
 import {
   PlusCircleIcon,
-  PencilIcon,
   PaperAirplaneIcon,
+  PencilIcon,
   DocumentDuplicateIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
@@ -16,22 +16,36 @@ import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import AnimatedSection from "@/components/AnimatedSection";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { type MDEditorProps } from "@uiw/react-md-editor";
 import { Tooltip } from "antd";
+import { Email, Recipient } from "@prisma/client";
 
 const Marketing = () => {
   const { data: audienceData, isLoading: isAudienceLoading } =
     api.creator.audience.getAudienceMembers.useQuery();
 
-  const { data: emailList, isLoading: emailListLoading } =
-    api.email.getAll.useQuery();
+  const {
+    data: emailList,
+    isLoading: emailListLoading,
+    refetch: refetchEmails,
+  } = api.email.getAll.useQuery();
 
-  const [createEmail, setCreateEmail] = useState<boolean>(false);
+  const [createEmailModal, setCreateEmail] = useState<boolean>(false);
+  const [editEmail, setEditEmail] = useState<
+    | (Email & {
+        recipients: Recipient[];
+      })
+    | null
+  >(null);
 
   const { data: importedAudienceData, isLoading: isImpAudLoading } =
     api.creator.audience.getImportedAudience.useQuery();
+
+  const { mutateAsync: createEmail, isLoading: createEmailLoader } =
+    api.email.create.useMutation();
 
   const isLoading = isImpAudLoading || isAudienceLoading;
 
@@ -71,6 +85,7 @@ const Marketing = () => {
       </Head>
       <div className="flex flex-col">
         <div className="mx-2 my-8 min-h-[80%] w-full px-6">
+        <AnimatedSection delay={0.0}>
           <div className="mb-6 flex w-full items-start justify-between gap-2">
             <div className="flex items-baseline gap-2">
               <p className="text-3xl text-neutral-200">
@@ -90,6 +105,8 @@ const Marketing = () => {
               </button>
             </div>
           </div>
+       </AnimatedSection>
+       <AnimatedSection delay={0.2}>
           <div className="mt-10 rounded-xl border border-neutral-900 bg-neutral-900/60 py-1 backdrop-blur">
             <div className="divide-y divide-neutral-800">
               {emailList?.map((d) => (
@@ -100,13 +117,28 @@ const Marketing = () => {
                       <Tooltip title="Duplicate">
                         <button
                           className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-800`}
+                          onClick={async () => {
+                            await createEmail({
+                              subject: d.subject,
+                              body: d.body,
+                            });
+                            await refetchEmails();
+                          }}
                         >
-                          <DocumentDuplicateIcon className="w-3" />
+                          {createEmailLoader ? (
+                            <Loader size="sm" />
+                          ) : (
+                            <DocumentDuplicateIcon className="w-3" />
+                          )}
                         </button>
                       </Tooltip>
                       <Tooltip title="Edit">
                         <button
                           className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-800`}
+                          onClick={() => {
+                            setEditEmail(d);
+                            setCreateEmail(true);
+                          }}
                         >
                           <PencilIcon className="w-3" />
                         </button>
@@ -129,11 +161,12 @@ const Marketing = () => {
               ))}
             </div>
           </div>
+          </AnimatedSection>
           <div
             className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-xl flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
-              createEmail ? "translate-x-0" : "translate-x-full"
+              createEmailModal ? "translate-x-0" : "translate-x-full"
             }`}
-          >
+          >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
             <button
               onClick={() => {
                 setCreateEmail(false);
@@ -142,7 +175,7 @@ const Marketing = () => {
             >
               <XMarkIcon className="w-5" />
             </button>
-            <CreateEmail />
+            <CreateEmail editEmail={editEmail} setEditEmail={setEditEmail} />
           </div>
         </div>
       </div>
@@ -174,7 +207,16 @@ function useZodForm<TSchema extends z.ZodType>(
   return form;
 }
 
-export const CreateEmail = () => {
+export const CreateEmail = ({
+  editEmail, setEditEmail
+}: {
+  editEmail:
+    | (Email & {
+        recipients: Recipient[];
+      })
+    | null;
+  setEditEmail: Dispatch<SetStateAction<(Email & { recipients: Recipient[]; }) | null>>
+}) => {
   const ctx = api.useContext();
   const methods = useZodForm({
     schema: sendUpdateFormSchema,
@@ -183,22 +225,36 @@ export const CreateEmail = () => {
   const { mutateAsync: createEmail, isLoading: creatingEmail } =
     api.email.create.useMutation();
 
-  // const { mutateAsync: sendPreview, isLoading: sendingUpdatePreview } =
-  //   api.emailSender.sendUpdatePreview.useMutation();
+  const { mutateAsync: updateEmail, isLoading: updatingEmail } = api.email.update.useMutation();
 
   return (
     <form
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       onSubmit={methods.handleSubmit(async (values) => {
-        await createEmail(
-          { ...values },
+        if (editEmail) {
+          await updateEmail({
+            subject: values.subject,
+            body: values.body,
+            emailUniqueId: editEmail.id,
+          },
           {
             onSuccess: () => {
               void ctx.email.getAll.invalidate();
             },
-          }
-        );
-        methods.reset();
+          },
+          );
+          setEditEmail(null)
+        } else {
+          await createEmail(
+            { ...values },
+            {
+              onSuccess: () => {
+                void ctx.email.getAll.invalidate();
+              },
+            }
+          ),
+          methods.reset();
+        }
       })}
       className="mx-auto my-4 flex w-full max-w-2xl flex-col gap-8"
     >
@@ -208,6 +264,7 @@ export const CreateEmail = () => {
         </label>
         <input
           {...methods.register("subject")}
+          defaultValue={editEmail?.subject ?? ""}
           placeholder="Subject"
           className="w-full rounded-lg bg-neutral-800 px-3 py-2 text-sm font-medium  text-neutral-200 outline outline-1 outline-neutral-600 transition-all duration-300 hover:outline-neutral-500 focus:outline-neutral-400 sm:text-lg"
         />
@@ -217,7 +274,6 @@ export const CreateEmail = () => {
           </p>
         )}
       </div>
-
       <div className="flex flex-col gap-3">
         <label htmlFor="description" className="text-lg  text-neutral-200">
           Body
@@ -237,24 +293,22 @@ export const CreateEmail = () => {
           </p>
         )}
       </div>
-
       <div className="flex w-full flex-col md:flex-row">
-        <button
+        {
+          editEmail ?  <button
           className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
           type="submit"
         >
-          {creatingEmail && <Loader size="md" />}Create Email{" "}
+          {updatingEmail && <Loader size="md" />}Update Email{""}
           <PlusCircleIcon className="ml-1 w-5" />
-        </button>
-        {/* <button
-          onClick={async () => {
-            // await sendPreview({ ...methods.getValues() });
-          }}
-          className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl px-[1.5rem]  py-2  text-center font-medium text-neutral-200 transition-all duration-300 hover:underline disabled:text-neutral-300`}
+        </button> :  <button
+          className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
           type="submit"
         >
-          Send preview
-        </button> */}
+          {creatingEmail && <Loader size="md" />}Create Email{""}
+          <PlusCircleIcon className="ml-1 w-5" />
+        </button>
+        }
       </div>
     </form>
   );

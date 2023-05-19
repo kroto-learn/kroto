@@ -2,13 +2,11 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { api } from "@/utils/api";
-
 import NextProgress from "next-progress";
 import { useEffect, type ReactNode } from "react";
 import { type NextComponentType } from "next";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
-
 import "@/styles/globals.css";
 import ProtectedRoutes from "@/components/ProtectedRoutes";
 import "@fortawesome/fontawesome-svg-core/styles.css";
