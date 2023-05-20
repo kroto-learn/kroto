@@ -135,7 +135,7 @@ const Settings = () => {
                     {
                       onSuccess: () => {
                         void ctx.creator.getProfile.invalidate();
-                        void revalidate(`/${creator?.id ?? ""}`);
+                        void revalidate(`/${creator?.creatorProfile ?? ""}`);
                       },
                       onError: () => {
                         errorToast("Error updating your profile!");

@@ -11,33 +11,36 @@ export default function Navbar({ status }: { status: string }) {
   const router = useRouter();
   const creator_id = router.query.creator_id as string;
 
-  
-  const { data: creator, isLoading: creatorLoader } = api.creator.getProfile.useQuery();
-  const { data: UnknownCreator } = api.creator.getPublicProfile.useQuery({creatorProfile:creator_id});
-
+  const { data: creator, isLoading: creatorLoader } =
+    api.creator.getProfile.useQuery();
+  const { data: UnknownCreator } = api.creator.getPublicProfile.useQuery({
+    creatorProfile: creator_id,
+  });
 
   return (
     <div className="fixed top-0 z-40 w-full border-b border-neutral-800/50 bg-neutral-950/50 font-medium backdrop-blur-lg">
       <div className="mx-auto max-w-7xl">
         <div className="flex items-center justify-between gap-5 px-5 py-2">
           <div className="flex items-center gap-5">
-            {
-              router.asPath === `/${creator_id}` ? <Link
-          href={`/${UnknownCreator?.creatorProfile ?? ""}`}
-          className="group mx-4 mt-2 flex items-center gap-2"
-        >
-          <Image
-            src={UnknownCreator?.image ?? ""}
-            alt={UnknownCreator?.name as string}
-            width={30}
-            height={30}
-            className="rounded-full"
-          />
-          <p className="font-medium text-neutral-300 duration-150 group-hover:text-neutral-200">
-            {UnknownCreator?.name}
-          </p>
-        </Link> : <KrotoLogo />
-            }
+            {router.asPath === `/${creator_id}` ? (
+              <Link
+                href={`/${UnknownCreator?.creatorProfile ?? ""}`}
+                className="group mx-4 mt-2 flex items-center gap-2"
+              >
+                <Image
+                  src={UnknownCreator?.image ?? ""}
+                  alt={UnknownCreator?.name as string}
+                  width={30}
+                  height={30}
+                  className="rounded-full"
+                />
+                <p className="font-medium text-neutral-300 duration-150 group-hover:text-neutral-200">
+                  {UnknownCreator?.name}
+                </p>
+              </Link>
+            ) : (
+              <KrotoLogo />
+            )}
           </div>
           {status === "authenticated" && !creatorLoader ? (
             <Menu as="div" className="relative inline-block text-left">
