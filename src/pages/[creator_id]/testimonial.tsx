@@ -1,4 +1,5 @@
 import { Loader } from "@/components/Loader";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import useToast from "@/hooks/useToast";
 import { api } from "@/utils/api";
 import {
@@ -83,6 +84,8 @@ const Index = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [testimonial, testimonialExists]);
 
+  const revalidate = useRevalidateSSG();
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
       {isLoading ? (
@@ -115,10 +118,11 @@ const Index = () => {
                   creatorProfile: creator_id,
                 },
                 {
-                  onSuccess: () => {
+                  onSuccess: (testimonialGen) => {
                     successToast("Testimonial submitted successfully");
                     setSubmitted(true);
                     void ctx.testimonial.getOne.invalidate();
+                    void revalidate(`/${testimonialGen.creatorProfile}`);
                   },
                   onError: () => {
                     errorToast("Error in submitting testimonial");
@@ -136,6 +140,7 @@ const Index = () => {
                     successToast("Testimonial submitted successfully");
                     setSubmitted(true);
                     void ctx.testimonial.getOne.invalidate();
+                    void revalidate(`/${testimonial.creatorProfile}`);
                   },
                   onError: () => {
                     errorToast("Error in submitting testimonial");

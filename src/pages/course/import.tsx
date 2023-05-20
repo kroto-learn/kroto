@@ -226,6 +226,9 @@ const Index = () => {
                     `/creator/dashboard/course/${courseCreated?.id}`
                   );
                   void revalidate(`/course/${courseCreated?.id}`);
+                  void revalidate(
+                    `/${courseCreated?.creator?.creatorProfile ?? ""}`
+                  );
                 }
               },
               onError: () => {

@@ -185,15 +185,26 @@ const Index = ({ courseId }: Props) => {
                 </div>
               )
             ) : (
-              <Link
-                href={`/creator/dashboard/course/${course?.id}`}
-                className={`group my-4 inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/10 px-6 py-1  text-center font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200`}
-              >
-                <>
-                  <AdjustmentsHorizontalIcon className="w-4" />
-                  <span>Manage</span>
-                </>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/course/play/${course?.id}`}
+                  className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                >
+                  <>
+                    <PlayIcon className="w-4" />
+                    <span>Play</span>
+                  </>
+                </Link>
+                <Link
+                  href={`/creator/dashboard/course/${course?.id}`}
+                  className={`group my-4 inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/10 px-6 py-1  text-center font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200`}
+                >
+                  <>
+                    <AdjustmentsHorizontalIcon className="w-4" />
+                    <span>Manage</span>
+                  </>
+                </Link>
+              </div>
             )}
 
             <p className="hide-scroll max-h-24 overflow-y-scroll text-xs text-neutral-300 sm:max-h-52 sm:text-sm">

@@ -15,12 +15,16 @@ export const courseChapterRouter = createTRPCRouter({
         include: {
           creator: true,
           course: true,
+          chapterProgress: {
+            where: { watchedById: ctx.session.user.id },
+            take: 1,
+          },
         },
       });
 
       if (!chapter) return new TRPCError({ code: "NOT_FOUND" });
 
-      return chapter;
+      return { ...chapter, chapterProgress: chapter.chapterProgress[0] };
     }),
 
   // update: protectedProcedure

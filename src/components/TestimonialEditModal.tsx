@@ -10,6 +10,7 @@ import "@uiw/react-markdown-preview/markdown.css";
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import { Loader } from "./Loader";
 import { type Testimonial } from "@prisma/client";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 const contentLimit = 500;
 
@@ -55,6 +56,7 @@ const EventEditModal = ({ testimonial, setModalOpen }: Props) => {
     mutateAsync: updateTestimonialMutation,
     isLoading: updateTestimonialLoading,
   } = api.testimonial.update.useMutation();
+  const revalidate = useRevalidateSSG();
 
   return (
     <form
@@ -68,6 +70,7 @@ const EventEditModal = ({ testimonial, setModalOpen }: Props) => {
             onSuccess: () => {
               successToast("Testimonial update successfully");
               void ctx.testimonial.getAllUser.invalidate();
+              void revalidate(`/${testimonial.creatorProfile}`);
               setModalOpen(null);
             },
             onError: () => {

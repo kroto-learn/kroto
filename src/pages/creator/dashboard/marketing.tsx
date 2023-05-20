@@ -112,7 +112,7 @@ const Marketing = () => {
                 {emailList?.map((d) => (
                   <div key={d.id} className="">
                     <div className="mx-5 my-2 flex justify-between rounded p-2 text-xl">
-                      <p>{d.subject}</p>
+                      <p className="line-clamp-1 text-ellipsis overflow-hidden">{d.subject}</p>
                       <div className="flex gap-2">
                         <Tooltip title="Duplicate">
                           <button
