@@ -173,6 +173,7 @@ const CourseOverview = () => {
                   onSuccess: () => {
                     void ctx.course.get.invalidate();
                     void revalidate(`/course/${course?.id}`);
+                    void revalidate(`/${course?.creator.creatorProfile ?? ""}`);
                     successToast("Course synced from YouTube successfully!");
                   },
                 }

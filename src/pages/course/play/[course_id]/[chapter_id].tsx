@@ -134,9 +134,9 @@ const Index = () => {
       </Head>
       <div className="flex w-full flex-col items-start gap-2">
         {chapter.type !== "TEXT" ? (
-          <div className="flex aspect-video max-h-[85vh] w-full flex-col overflow-hidden rounded-lg border border-neutral-700">
+          <div className="flex max-h-[85vh] w-full flex-col overflow-hidden rounded-lg border border-neutral-700">
             <YouTube
-              className="bottom-0 left-0 right-0 top-0 h-full w-full border-b border-neutral-700"
+              className="bottom-0 left-0 right-0 top-0 aspect-video h-full w-full border-b border-neutral-700"
               videoId={chapter?.ytId ?? ""}
               opts={youtubeOpts}
               onStateChange={(event) => {
@@ -205,7 +205,7 @@ const Index = () => {
                     }}
                   />
                 </ConfigProvider>
-                <p>Mark as watched</p>
+                <p className="text-xs sm:text-base">Mark as watched</p>
               </div>
               <div className="flex items-center gap-2 text-sm dark:border-neutral-600">
                 {position > 0 ? (
@@ -218,7 +218,7 @@ const Index = () => {
                         }`
                       );
                     }}
-                    className="flex items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-1 px-3 text-center text-sm font-semibold text-neutral-400 duration-300 hover:text-neutral-200 active:scale-95 disabled:hidden"
+                    className="flex items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-1 px-2 text-center text-xs font-semibold text-neutral-400 duration-300 hover:text-neutral-200 active:scale-95 disabled:hidden sm:px-3 sm:text-sm"
                   >
                     <ChevronLeftIcon className="w-4" /> Previous
                   </button>
@@ -235,7 +235,7 @@ const Index = () => {
                         }`
                       );
                     }}
-                    className="flex items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-1 px-3 text-center text-sm font-semibold text-neutral-400 duration-300 hover:text-neutral-200 active:scale-95 disabled:hidden"
+                    className="flex items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-1 px-2 text-center text-xs font-semibold text-neutral-400 duration-300 hover:text-neutral-200 active:scale-95 disabled:hidden sm:px-3 sm:text-sm"
                   >
                     Next <ChevronRightIcon className="w-4" />
                   </button>

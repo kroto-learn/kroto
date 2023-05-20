@@ -53,6 +53,7 @@ const EventSettings = () => {
         setIsOpen={setDeleteModalOpen}
         eventTitle={event?.title ?? ""}
         eventId={event?.id ?? ""}
+        creatorProfile={event?.creator?.creatorProfile ?? ""}
       />
     </>
   );
@@ -63,11 +64,13 @@ export function DeleteEventModal({
   setIsOpen,
   eventTitle,
   eventId,
+  creatorProfile,
 }: {
   eventTitle: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   eventId: string;
+  creatorProfile: string;
 }) {
   const { mutateAsync: deleteEventMutation, isLoading } =
     api.event.delete.useMutation();
@@ -148,6 +151,8 @@ export function DeleteEventModal({
                                   await ctx.event.getAll.invalidate();
                                   await ctx.event.get.invalidate();
                                   await revalidate(`/event/${eventId}`);
+                                  void revalidate(`/${creatorProfile}`);
+
                                   void router.replace(
                                     "/creator/dashboard/events"
                                   );

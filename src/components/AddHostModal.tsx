@@ -27,6 +27,7 @@ export default function AddHostModal({
   const { mutateAsync: addHostMutation, isLoading } =
     api.eventHost.addHost.useMutation();
   const revalidate = useRevalidateSSG();
+  const ctx = api.useContext();
 
   const handleSubmit = async () => {
     await addHostMutation(
@@ -35,6 +36,7 @@ export default function AddHostModal({
         onSuccess: () => {
           successToast("Host added successfully!");
           void revalidate(`/event/${eventId}`);
+          void ctx.event.get.invalidate();
         },
         onError: () => {
           errorToast("Error in adding host!");

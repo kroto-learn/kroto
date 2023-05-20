@@ -146,10 +146,10 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
       <div className="flex w-full  flex-col-reverse justify-end gap-6 p-4 pt-3 sm:flex-row sm:justify-start">
         {children}
         <div
-          className={`flex rounded-lg backdrop-blur-sm sm:bg-neutral-200/5 ${
+          className={`flex rounded-lg backdrop-blur-sm md:bg-neutral-200/5 ${
             sideDrawerCollapsed
               ? "right-4 top-16 flex-row-reverse border-neutral-700 sm:sticky sm:h-[calc(100vh-5rem)] sm:max-w-[5rem] sm:flex-col sm:border sm:bg-neutral-950/80"
-              : "fixed right-4 top-16 h-[calc(100vh-5rem)] w-4/5 max-w-sm flex-col border border-neutral-700 bg-neutral-950/80 sm:sticky sm:w-full"
+              : "fixed right-4 top-16 h-[calc(100vh-5rem)] w-4/5 max-w-sm flex-col border border-neutral-700 bg-neutral-950/80 sm:w-full md:sticky"
           }`}
         >
           <button
@@ -205,7 +205,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
               className={`${sideDrawerCollapsed ? "px-2 sm:hidden" : "hidden"}`}
               onClick={() => setSideDrawerCollapsed(!sideDrawerCollapsed)}
             >
-              <ListBulletIcon className="w-6 text-pink-500" />
+              <ListBulletIcon className="w-6" />
             </button>
           }
           <div

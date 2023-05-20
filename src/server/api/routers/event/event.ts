@@ -173,6 +173,9 @@ export const eventRouter = createTRPCRouter({
           thumbnail,
           ogImage,
         },
+        include: {
+          creator: true,
+        },
       });
 
       return updatedEvent;
