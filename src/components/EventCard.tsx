@@ -49,7 +49,7 @@ const EventCardId = ({ eventId, manage }: Props) => {
         />
       </div>
       <div className="flex w-full flex-col items-start gap-2 xs:w-3/5">
-        <h5 className="text-base font-medium tracking-tight text-neutral-200 transition-all xs:text-sm sm:text-base lg:text-lg">
+        <h5 className="line-clamp-1 overflow-hidden text-ellipsis text-base font-medium tracking-tight text-neutral-200 transition-all xs:text-sm sm:text-base lg:text-lg">
           {event?.title}
         </h5>
 
@@ -131,7 +131,7 @@ export const EventCard = ({
         />
       </div>
       <div className="flex w-full flex-col items-start gap-2 xs:w-3/5">
-        <h5 className="text-base font-medium tracking-tight text-neutral-200 transition-all xs:text-sm sm:text-base lg:text-lg">
+        <h5 className="line-clamp-2 overflow-hidden text-ellipsis text-base font-medium tracking-tight text-neutral-200 transition-all xs:text-sm sm:text-base lg:text-lg">
           {event?.title}
         </h5>
 

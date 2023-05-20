@@ -7,6 +7,7 @@ import { type Dispatch, type SetStateAction } from "react";
 import { Loader } from "./Loader";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 type Props = {
   setIsHostModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -27,6 +28,9 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
     api.eventHost.removeHost.useMutation();
 
   const { errorToast } = useToast();
+
+  const revalidate = useRevalidateSSG();
+  const ctx = api.useContext();
 
   if (event instanceof TRPCError || !event) return <></>;
 
@@ -86,6 +90,10 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
                                 id: host?.id ?? "",
                               },
                               {
+                                onSuccess: () => {
+                                  void revalidate(`/event/${id}`);
+                                  void ctx.event.get.invalidate();
+                                },
                                 onError: () => {
                                   errorToast("Error in removing host!");
                                 },

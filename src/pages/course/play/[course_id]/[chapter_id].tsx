@@ -10,6 +10,8 @@ import { PlayerLayout } from ".";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ReactLinkify from "react-linkify";
+import { Checkbox, ConfigProvider, theme } from "antd";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 
 const Index = () => {
   const router = useRouter();
@@ -88,6 +90,16 @@ const Index = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progress, paused]);
 
+  const [watchChecked, setWatchChecked] = useState(false);
+
+  const { mutateAsync: deleteChapterProgressMutation } =
+    api.courseChapter.deleteChapterProgress.useMutation();
+
+  useEffect(() => {
+    if (!(chapter instanceof TRPCError) && chapter)
+      setWatchChecked(!!chapter?.chapterProgress);
+  }, [chapter]);
+
   if (chapterLoading || courseLoading || !chapter_id || !course_id)
     return (
       <div className="flex min-h-screen w-full items-center justify-center">
@@ -111,6 +123,7 @@ const Index = () => {
     );
 
   const position = course.chapters.findIndex((ch) => ch.id === chapter.id);
+  const { darkAlgorithm } = theme;
 
   return (
     <>
@@ -121,9 +134,9 @@ const Index = () => {
       </Head>
       <div className="flex w-full flex-col items-start gap-2">
         {chapter.type !== "TEXT" ? (
-          <div className="relative aspect-video max-h-[92vh] w-full overflow-hidden rounded-lg border border-neutral-700">
+          <div className="flex max-h-[85vh] w-full flex-col overflow-hidden rounded-lg border border-neutral-700">
             <YouTube
-              className="absolute bottom-0 left-0 right-0 top-0 h-full w-full"
+              className="bottom-0 left-0 right-0 top-0 aspect-video h-full w-full border-b border-neutral-700"
               videoId={chapter?.ytId ?? ""}
               opts={youtubeOpts}
               onStateChange={(event) => {
@@ -149,12 +162,94 @@ const Index = () => {
                   );
               }}
             />
+            <div className="flex w-full items-center justify-between gap-4 p-2 px-4 backdrop-blur-lg">
+              <div className="flex items-center gap-2">
+                <ConfigProvider
+                  theme={{
+                    algorithm: darkAlgorithm,
+                    token: {
+                      colorPrimary: "#16a34a",
+                    },
+                  }}
+                >
+                  <Checkbox
+                    checked={watchChecked}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setWatchChecked(!watchChecked);
+
+                      if (!!chapter.chapterProgress)
+                        void deleteChapterProgressMutation(
+                          {
+                            chapterId: chapter.id,
+                          },
+                          {
+                            onSuccess: () => {
+                              void ctx.course.get.invalidate();
+                              void ctx.courseChapter.get.invalidate();
+                            },
+                          }
+                        );
+                      else
+                        void updateChapterProgressMutation(
+                          {
+                            chapterId: chapter.id,
+                          },
+                          {
+                            onSuccess: () => {
+                              void ctx.course.get.invalidate();
+                              void ctx.courseChapter.get.invalidate();
+                            },
+                          }
+                        );
+                    }}
+                  />
+                </ConfigProvider>
+                <p className="text-xs sm:text-base">Mark as watched</p>
+              </div>
+              <div className="flex items-center gap-2 text-sm dark:border-neutral-600">
+                {position > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void router.push(
+                        `/course/play/${course_id}/${
+                          course?.chapters[position - 1]?.id ?? ""
+                        }`
+                      );
+                    }}
+                    className="flex items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-1 px-2 text-center text-xs font-semibold text-neutral-400 duration-300 hover:text-neutral-200 active:scale-95 disabled:hidden sm:px-3 sm:text-sm"
+                  >
+                    <ChevronLeftIcon className="w-4" /> Previous
+                  </button>
+                ) : (
+                  <></>
+                )}
+                {position < course.chapters.length - 1 ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void router.push(
+                        `/course/play/${course_id}/${
+                          course?.chapters[position + 1]?.id ?? ""
+                        }`
+                      );
+                    }}
+                    className="flex items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-1 px-2 text-center text-xs font-semibold text-neutral-400 duration-300 hover:text-neutral-200 active:scale-95 disabled:hidden sm:px-3 sm:text-sm"
+                  >
+                    Next <ChevronRightIcon className="w-4" />
+                  </button>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </div>
           </div>
         ) : (
           <></>
         )}
         <h3 className="mx-4 mt-2 text-lg font-medium">
-          <span className="mr-2 rounded border border-pink-500/30 bg-pink-500/10 p-1 text-sm font-bold text-pink-500">
+          <span className="m-0 mr-2 rounded border border-pink-500/30 bg-pink-500/10 p-1 text-sm font-bold text-pink-500">
             Ch. {chapter.position + 1}{" "}
           </span>
           {chapter?.title}

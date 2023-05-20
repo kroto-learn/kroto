@@ -22,6 +22,7 @@ import { TimePicker, DatePicker, ConfigProvider, theme } from "antd";
 import dayjs from "dayjs";
 import { PhotoIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
+import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -104,6 +105,8 @@ const CreateEvent = () => {
   const { mutateAsync: eventCreateMutation, isLoading: loading } =
     api.event.create.useMutation();
 
+  const revalidate = useRevalidateSSG();
+
   useEffect(() => {
     methods.setValue("thumbnail", generateRandomGradientImages());
   }, [methods]);
@@ -160,10 +163,14 @@ const CreateEvent = () => {
                 },
                 {
                   onSuccess: (createdEvent) => {
-                    if (!(createdEvent instanceof TRPCError))
+                    if (!(createdEvent instanceof TRPCError)) {
                       void router.push(
                         `/creator/dashboard/event/${createdEvent.id}`
                       );
+                      void revalidate(
+                        `/${createdEvent?.creator?.creatorProfile ?? ""}`
+                      );
+                    }
                   },
                   onError: () => {
                     errorToast("Error in creating event!");

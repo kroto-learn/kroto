@@ -190,6 +190,9 @@ export const courseRouter = createTRPCRouter({
         data: {
           ogImage,
         },
+        include: {
+          creator: true,
+        },
       });
 
       return { ...updatedCourse, chapters };
