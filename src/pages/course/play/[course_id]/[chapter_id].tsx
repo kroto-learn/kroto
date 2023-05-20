@@ -121,7 +121,7 @@ const Index = () => {
       </Head>
       <div className="flex w-full flex-col items-start gap-2">
         {chapter.type !== "TEXT" ? (
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-neutral-700">
+          <div className="relative aspect-video max-h-[92vh] w-full overflow-hidden rounded-lg border border-neutral-700">
             <YouTube
               className="absolute bottom-0 left-0 right-0 top-0 h-full w-full"
               videoId={chapter?.ytId ?? ""}
@@ -153,7 +153,12 @@ const Index = () => {
         ) : (
           <></>
         )}
-        <h3 className="mx-4 mt-2 text-lg font-medium">{chapter?.title}</h3>
+        <h3 className="mx-4 mt-2 text-lg font-medium">
+          <span className="mr-2 rounded border border-pink-500/30 bg-pink-500/10 p-1 text-sm font-bold text-pink-500">
+            Ch. {chapter.position + 1}{" "}
+          </span>
+          {chapter?.title}
+        </h3>
         <Link
           href={`/${chapter?.creator.creatorProfile ?? ""}`}
           className="group mx-4 mt-2 flex items-center gap-2"

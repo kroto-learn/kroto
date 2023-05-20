@@ -29,11 +29,11 @@ const Index = () => {
         <title>Courses | Dashboard</title>
       </Head>
       <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-        <div className="flex w-full items-center justify-between gap-4 px-4">
+        <div className="flex w-full items-center justify-between gap-4 sm:px-4">
           <h1 className="text-2xl text-neutral-200">Courses</h1>
           <Link
             href="/course/import"
-            className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
+            className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-xs font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:text-sm"
           >
             <PlusIcon className="w-5" /> Import Course
           </Link>

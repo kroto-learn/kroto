@@ -55,6 +55,7 @@ const Index = () => {
         setIsOpen={setDeleteModalOpen}
         courseTitle={course?.title ?? ""}
         courseId={course?.id ?? ""}
+        creatorProfile={course?.creator?.creatorProfile ?? ""}
       />
     </>
   );
@@ -65,11 +66,13 @@ export function DeleteCourseModal({
   setIsOpen,
   courseTitle,
   courseId,
+  creatorProfile,
 }: {
   courseTitle: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   courseId: string;
+  creatorProfile: string;
 }) {
   const { mutateAsync: deleteCourseMutation, isLoading } =
     api.course.delete.useMutation();
@@ -146,12 +149,18 @@ export function DeleteCourseModal({
                             { id },
                             {
                               onSuccess: () => {
-                                void ctx.course.getAll.invalidate();
-                                void ctx.course.get.invalidate();
-                                void router.replace(
-                                  "/creator/dashboard/courses"
-                                );
-                                void revalidate(`/course/${courseId}`);
+                                const fxn = async () => {
+                                  await ctx.course.getAll.invalidate();
+                                  await ctx.course.get.invalidate();
+                                  await revalidate(`/course/${courseId}`);
+                                  await revalidate(`/${creatorProfile}`);
+
+                                  void router.replace(
+                                    "/creator/dashboard/courses"
+                                  );
+                                };
+
+                                void fxn();
                               },
                               onError: () => {
                                 errorToast("Error in deleting course!");

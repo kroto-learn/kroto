@@ -16,6 +16,7 @@ import {
   CloudIcon,
 } from "@heroicons/react/20/solid";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
+import AnimatedSection from "@/components/AnimatedSection";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
@@ -152,6 +153,7 @@ const Settings = () => {
           })}
           className="my-5 flex flex-col items-center rounded-xl p-5"
         >
+          <AnimatedSection delay={0.0}>
           <div className="relative mb-5">
             <div
               className={`relative mb-5 aspect-square w-28 overflow-hidden rounded-full border border-neutral-900 outline outline-neutral-800 transition-all`}
@@ -192,7 +194,9 @@ const Settings = () => {
               </p>
             )}
           </div>
+          </AnimatedSection>
           <div className="w-full">
+          <AnimatedSection delay={0.1}>
             <div className="flex w-full flex-col gap-5 sm:flex-row">
               <div className="w-full">
                 <label className="mb-2 block font-medium text-neutral-400">
@@ -361,7 +365,6 @@ const Settings = () => {
                     defaultValue={(creator && creator.topmateUrl) ?? ""}
                   />
                 </div>
-
                 {methods.formState.errors.topmateUrl?.message && (
                   <p className="text-red-700">
                     {methods.formState.errors.topmateUrl?.message}
@@ -386,7 +389,6 @@ const Settings = () => {
                     +91
                   </p>
                 </div>
-
                 <p className="m-1 flex items-center gap-1 text-sm text-neutral-400">
                   For <FontAwesomeIcon icon={faWhatsapp} /> WhatsApp
                   notifications.
@@ -432,6 +434,7 @@ const Settings = () => {
               {updating ? <Loader white /> : <CloudIcon className="w-5" />} Save
               Changes
             </button>
+            </AnimatedSection>
           </div>
         </form>
       </div>
