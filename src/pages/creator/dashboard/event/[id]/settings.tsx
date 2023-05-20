@@ -33,7 +33,7 @@ const EventSettings = () => {
       </Head>
       <div className="w-full rounded-xl bg-neutral-900 p-8">
         <div className="flex flex-col items-start gap-3">
-          <label className="text-lg font-medium">
+          <label className="text-lg font-medium line-clamp-2 text-ellipsis overflow-hidden">
             Delete &quot;{event?.title ?? ""}&quot; event ?
           </label>
           <button
