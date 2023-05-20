@@ -23,7 +23,6 @@ export default function EventLayoutR({ children }: { children: ReactNode }) {
       <div className="flex w-full flex-col items-start justify-between gap-4 px-4 md:flex-row">
         <div className="flex w-full items-center justify-between gap-2">
           <h1 className="truncate text-xl text-neutral-200">{event?.title}</h1>
-
           <div className="flex flex-col items-end sm:hidden">
             <Menu>
               {({ open }) => (
