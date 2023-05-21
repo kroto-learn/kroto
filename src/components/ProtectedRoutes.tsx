@@ -4,13 +4,18 @@ import React, { useEffect } from "react";
 
 const ProtectedRoutes = () => {
   const router = useRouter();
-
   const { data: session, status } = useSession();
 
   useEffect(() => {
+    // const timeout = setTimeout(() => {
+    //   if (status === "loading" && router.asPath !== "/")
+    //     void router.push(`/cold-loading?path=${router.asPath}`);
+    // }, 2000);
+
     const publicRoutes = [
       "/",
       "/privacy",
+      "/cold-loading",
       "/terms-of-service",
       "/terms-and-conditions",
       "/auth/sign-in",
