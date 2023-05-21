@@ -22,7 +22,7 @@ export default function Navbar({ status }: { status: string }) {
       <div className="mx-auto max-w-7xl">
         <div className="flex items-center justify-between gap-5 px-5 py-2">
           <div className="flex items-center gap-5">
-            {router.asPath === `/${creator_id}` ? (
+            {router.asPath.includes(`${creator_id}`) ? (
               <Link
                 href={`/${UnknownCreator?.creatorProfile ?? ""}`}
                 className="group mx-4 mt-2 flex items-center gap-2"
