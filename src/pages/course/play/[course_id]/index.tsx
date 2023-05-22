@@ -19,7 +19,14 @@ import { useRouter } from "next/router";
 import { type ReactNode, useEffect, useState, useRef } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip as TooltipC } from "chart.js";
 import { Pie } from "react-chartjs-2";
-import useToast from "@/hooks/useToast";
+import dynamic from "next/dynamic";
+const ShareCourseModal = dynamic(
+  () => import("@/components/ShareCourseModal"),
+  {
+    ssr: false,
+  }
+);
+// import ShareCourseModal from "@/components/ShareCourseModal";
 
 ChartJS.register(ArcElement, TooltipC);
 
@@ -90,7 +97,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const { successToast } = useToast();
+  const [shareModal, setShareModal] = useState(false);
 
   if (course instanceof TRPCError || !course) return <></>;
 
@@ -122,23 +129,20 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     radius: sideDrawerCollapsed ? 25 : 40,
   };
 
-  const courseUrl = `https://kroto.in/course/${course?.id ?? ""}`;
-
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <div className="sticky top-0 z-10 flex w-full justify-between gap-4 bg-gradient-to-b from-neutral-950 via-neutral-950/70 to-transparent p-4 text-neutral-400 duration-150 hover:text-neutral-300">
+      <div className="sticky top-0 z-10 flex w-full justify-between gap-4 bg-gradient-to-b from-neutral-950 via-neutral-950/70 to-transparent p-4 text-neutral-400 duration-150">
         <Link
           href="/dashboard"
-          className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider sm:text-sm"
+          className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider hover:text-neutral-300 sm:text-sm"
         >
           <ArrowLeftIcon className="w-4" /> Back to dashboard
         </Link>
         <button
           onClick={() => {
-            void navigator.clipboard.writeText(courseUrl);
-            successToast("Course link copied to clipboard!");
+            setShareModal(true);
           }}
-          className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider sm:text-sm"
+          className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider hover:text-neutral-300 sm:text-sm"
         >
           <ShareIcon className="w-3" /> Share Course
         </button>
@@ -299,6 +303,12 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
           </div>
         </div>
       </div>
+      <ShareCourseModal
+        isOpen={shareModal}
+        setIsOpen={setShareModal}
+        courseId={course?.id ?? ""}
+        courseTitle={course?.title ?? ""}
+      />
     </div>
   );
 };

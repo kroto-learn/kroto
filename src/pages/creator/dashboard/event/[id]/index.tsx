@@ -204,7 +204,7 @@ const EventOverview = () => {
                   </FacebookShareButton>
                   <TwitterShareButton
                     url={`https://kroto.in/event/${event?.id ?? ""}`}
-                    title={`Join the "${event?.title ?? ""}" event on Kroto.in`}
+                    title={`Join the "${event?.title ?? ""}" event on Kroto`}
                   >
                     <TwitterIcon
                       size={28}
