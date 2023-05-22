@@ -98,7 +98,7 @@ const Index = () => {
           <div className="relative aspect-square w-40 object-contain">
             <Image src="/empty/testimonial_empty.svg" alt="empty" fill />
           </div>
-          <p className="mb-2 text-sm text-neutral-400 sm:text-base">
+          <p className="mb-2 text-sm text-neutral-400 sm:text-base text-center">
             You have not wrote any testimonials.
           </p>
         </div>

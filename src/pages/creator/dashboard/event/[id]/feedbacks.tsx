@@ -74,7 +74,7 @@ const Index = () => {
           <div className="relative aspect-square w-40 object-contain">
             <Image src="/empty/feedback_empty.svg" alt="empty" fill />
           </div>
-          <p className="mb-2 text-sm text-neutral-400 sm:text-base">
+          <p className="mb-2 text-sm text-neutral-400 sm:text-base text-center">
             You have not got any feedbacks yet.
           </p>
           <button className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200">
