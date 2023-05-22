@@ -281,10 +281,10 @@ const Audience = () => {
                 <div className="relative aspect-square w-40 object-contain">
                   <Image src="/empty/users_empty.svg" alt="empty" fill />
                 </div>
-                <p className="text-neutral-400">
+                <p className="text-neutral-400 text-center">
                   You don&apos;t have any audience yet.
                 </p>
-                <p className="text-neutral-400">
+                <p className="text-neutral-400 text-center">
                   Do events to gather audience data.
                 </p>
                 <br />
@@ -373,10 +373,10 @@ const Audience = () => {
               <div className="relative aspect-square w-40 object-contain">
                 <Image src="/empty/users_empty.svg" alt="empty" fill />
               </div>
-              <p className="text-neutral-400">
+              <p className="text-neutral-400 text-center">
                 You don&apos;t have any audience yet.
               </p>
-              <p className="text-neutral-400">
+              <p className="text-neutral-400 text-center">
                 Do events to gather audience data.
               </p>
               <br />

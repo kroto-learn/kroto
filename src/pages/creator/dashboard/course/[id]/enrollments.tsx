@@ -206,10 +206,10 @@ const Index = () => {
                 <div className="relative aspect-square w-40 object-contain">
                   <Image src="/empty/users_empty.svg" alt="empty" fill />
                 </div>
-                <p className="text-neutral-400">
+                <p className="text-neutral-400 text-center">
                   Nobody enrolled to your course yet.
                 </p>
-                <p className="mb-2 text-neutral-400">
+                <p className="mb-2 text-neutral-400 text-center">
                   Share the course in your community.
                 </p>
                 <div className="flex items-center gap-2">
@@ -246,7 +246,7 @@ const Index = () => {
                     url={courseUrl}
                     title={`Enroll for the "${
                       course?.title ?? ""
-                    }" course on Kroto.in`}
+                    }" course on Kroto`}
                   >
                     <TwitterIcon
                       size={28}

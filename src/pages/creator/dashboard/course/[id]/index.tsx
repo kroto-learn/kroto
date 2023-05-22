@@ -17,7 +17,7 @@ import {
   LinkedinShareButton,
   LinkedinIcon,
 } from "next-share";
-import { LinkIcon } from "@heroicons/react/20/solid";
+import { LinkIcon, PlayIcon } from "@heroicons/react/20/solid";
 import dynamic from "next/dynamic";
 import { TRPCError } from "@trpc/server";
 import ChapterManagePreviewModal from "@/components/ChapterManagePreviewModal";
@@ -25,6 +25,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotate } from "@fortawesome/free-solid-svg-icons";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import { ClockIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 const CourseLayoutR = dynamic(
   () => import("@/components/layouts/courseDashboard"),
@@ -90,7 +91,7 @@ const CourseOverview = () => {
                   className="aspect-square rounded-full bg-neutral-700 p-2 grayscale duration-300 hover:bg-neutral-600 hover:grayscale-0"
                   onClick={() => {
                     void navigator.clipboard.writeText(courseUrl);
-                    successToast("Event URL copied to clipboard!");
+                    successToast("Course URL copied to clipboard!");
                   }}
                 >
                   <LinkIcon className="w-3" />
@@ -117,9 +118,7 @@ const CourseOverview = () => {
                 </FacebookShareButton>
                 <TwitterShareButton
                   url={courseUrl}
-                  title={`Enroll the "${
-                    course?.title ?? ""
-                  }" event on Kroto.in`}
+                  title={`Enroll the "${course?.title ?? ""}" course on Kroto`}
                 >
                   <TwitterIcon
                     size={28}
@@ -165,29 +164,41 @@ const CourseOverview = () => {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => {
-              void syncImportMutation(
-                { id: course?.id },
-                {
-                  onSuccess: () => {
-                    void ctx.course.get.invalidate();
-                    void revalidate(`/course/${course?.id}`);
-                    void revalidate(`/${course?.creator.creatorProfile ?? ""}`);
-                    successToast("Course synced from YouTube successfully!");
-                  },
-                }
-              );
-            }}
-            className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800 sm:text-xs`}
-          >
-            {syncImportLoading ? (
-              <Loader />
-            ) : (
-              <FontAwesomeIcon icon={faRotate} />
-            )}
-            Sync from YouTube
-          </button>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <button
+              onClick={() => {
+                void syncImportMutation(
+                  { id: course?.id },
+                  {
+                    onSuccess: () => {
+                      void ctx.course.get.invalidate();
+                      void revalidate(`/course/${course?.id}`);
+                      void revalidate(
+                        `/${course?.creator.creatorProfile ?? ""}`
+                      );
+                      successToast("Course synced from YouTube successfully!");
+                    },
+                  }
+                );
+              }}
+              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800 sm:text-xs`}
+            >
+              {syncImportLoading ? (
+                <Loader />
+              ) : (
+                <FontAwesomeIcon icon={faRotate} />
+              )}
+              Sync from YouTube
+            </button>
+
+            <Link
+              href={`/course/play/${course?.id}`}
+              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800 sm:text-xs`}
+            >
+              {syncImportLoading ? <Loader /> : <PlayIcon className="w-3" />}
+              View in Course Player
+            </Link>
+          </div>
 
           <div className="mt-4 flex flex-col gap-3">
             <div className="flex w-full justify-between">
