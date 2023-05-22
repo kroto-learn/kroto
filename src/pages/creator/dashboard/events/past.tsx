@@ -43,7 +43,7 @@ const PastEvents = () => {
           <div className="relative aspect-square w-40 object-contain">
             <Image src="/empty/event_empty.svg" alt="empty" fill />
           </div>
-          <p className="mb-2 text-neutral-400">
+          <p className="mb-2 text-neutral-400 text-center">
             You don&apos;t have any past events.
           </p>
         </div>

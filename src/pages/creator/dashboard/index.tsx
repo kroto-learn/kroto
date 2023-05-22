@@ -14,7 +14,8 @@ import { Cog6ToothIcon as Cog6ToothIconO } from "@heroicons/react/24/outline";
 import Bars3Icon from "@heroicons/react/20/solid/Bars3Icon";
 import ChevronDownIcon from "@heroicons/react/20/solid/ChevronDownIcon";
 import ArrowLeftOnRectangleIcon from "@heroicons/react/20/solid/ArrowLeftOnRectangleIcon";
-import UserPlusIcon from "@heroicons/react/20/solid/UserPlusIcon";
+import WindowIcon from "@heroicons/react/20/solid/WindowIcon";
+import UserIcon from "@heroicons/react/20/solid/UserIcon";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 import { useRouter } from "next/router";
@@ -305,7 +306,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                       leaveTo="transform opacity-0 scale-95"
                     >
                       <Menu.Items className="flex w-full flex-col overflow-hidden rounded-lg bg-neutral-800 transition-all duration-300">
-                        <Link
+                        {/* <Link
                           href="/creator/dashboard/enrolled-courses"
                           className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
                         >
@@ -366,11 +367,36 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                               />
                             </div>
                           </Menu.Item>
+                        </Link> */}
+                         <Link
+                          href={`/dashboard`}
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-6"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <WindowIcon className="w-4" />{" "}
+                              <span className="hidden md:block">
+                              Learner’s Dashboard
+                              </span>{" "}
+                            </div>
+                          </Menu.Item>
                         </Link>
-
+                        <Link
+                          href={`/${creator?.creatorProfile ?? ""}`}
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-6"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <UserIcon className="w-4" />{" "}
+                              <span className="hidden md:block">
+                                Public Profile
+                              </span>{" "}
+                            </div>
+                          </Menu.Item>
+                        </Link>
                         <button
                           onClick={() => void signOut({ callbackUrl: "/" })}
-                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-6"
                         >
                           <Menu.Item>
                             <div className="flex items-center gap-2 text-xl md:text-sm">
@@ -379,19 +405,6 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                             </div>
                           </Menu.Item>
                         </button>
-                        <Link
-                          href={`/${creator?.creatorProfile ?? ""}`}
-                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:pl-12 md:pr-8"
-                        >
-                          <Menu.Item>
-                            <div className="flex items-center gap-2 text-xl md:text-sm">
-                              <UserPlusIcon className="w-4" />{" "}
-                              <span className="hidden md:block">
-                                Public Profile
-                              </span>{" "}
-                            </div>
-                          </Menu.Item>
-                        </Link>
                       </Menu.Items>
                     </Transition>
                   </div>
