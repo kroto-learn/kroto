@@ -90,7 +90,7 @@ const RegisteredEvents = () => {
                 <div className="relative aspect-square w-40 object-contain">
                   <Image src="/empty/event_empty.svg" alt="empty" fill />
                 </div>
-                <p className="mb-2 text-neutral-400">
+                <p className="mb-2 text-neutral-400 text-center">
                   {isPastTab
                     ? "You don't have any past registered events."
                     : "You don't have any upcoming registered events."}

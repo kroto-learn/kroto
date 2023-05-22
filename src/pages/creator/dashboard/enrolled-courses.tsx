@@ -42,7 +42,7 @@ const Index = () => {
                 <div className="relative aspect-square w-40 object-contain">
                   <Image src="/empty/course_empty.svg" alt="empty" fill />
                 </div>
-                <p className="mb-2 text-neutral-400">
+                <p className="mb-2 text-neutral-400 text-center">
                   You have not enrolled in any course.
                 </p>
               </div>

@@ -227,7 +227,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                   <div className="relative aspect-square w-40 object-contain">
                     <Image src="/empty/event_empty.svg" alt="empty" fill />
                   </div>
-                  <p className="mb-2 text-neutral-400">
+                  <p className="mb-2 text-neutral-400 text-center">
                     The creater has not created any events.
                   </p>
                 </div>
@@ -251,7 +251,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                       fill
                     />
                   </div>
-                  <p className="mb-2 text-neutral-400">
+                  <p className="mb-2 text-neutral-400 text-center">
                     The creater has not got any testimonials.
                   </p>
                 </div>
@@ -267,7 +267,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                 <div className="relative aspect-square w-40 object-contain">
                 <Image src="/empty/course_empty.svg" alt="empty" fill />
                 </div>
-                <p className="mb-2 text-neutral-400">
+                <p className="mb-2 text-neutral-400 text-center">
                   The creater has not created any courses.
                 </p>
               </div>

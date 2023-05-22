@@ -45,11 +45,11 @@ const Index = () => {
             ))}
           </div>
         ) : (
-          <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+          <div className="flex w-full flex-col items-center justify-center text-center gap-2 p-4">
             <div className="relative aspect-square w-40 object-contain">
               <Image src="/empty/course_empty.svg" alt="empty" fill />
             </div>
-            <p className="mb-2 text-sm text-neutral-400 sm:text-base">
+            <p className="mb-2 text-sm text-neutral-400 sm:text-base text-center">
               You have not created any course yet.
             </p>
             <Link
