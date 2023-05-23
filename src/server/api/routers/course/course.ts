@@ -53,6 +53,12 @@ export const courseRouter = createTRPCRouter({
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
 
+      if (
+        !course.enrollments.find((er) => er.userId === ctx.session.user.id) &&
+        course.creatorId !== ctx.session.user.id
+      )
+        return new TRPCError({ code: "BAD_REQUEST" });
+
       const courseProgress = course.courseProgress[0];
 
       const chapters = course.chapters.map((chapter) => ({
@@ -89,9 +95,16 @@ export const courseRouter = createTRPCRouter({
 
       const previewChapter = chapters[0];
 
-      // TODO: exclude ytId and videoUrl from chapters
+      const chaptersPublic = chapters.map((c) => ({
+        ...c,
+        ytId: undefined,
+        videoUrl: undefined,
+      }));
+
       return {
         ...course,
+        ytId: undefined,
+        chapters: chaptersPublic,
         previewChapter,
       };
     }),
