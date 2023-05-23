@@ -223,6 +223,9 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
+      if (course?.creatorId !== ctx.session.user.id)
+        return new TRPCError({ code: "BAD_REQUEST" });
+
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
       const playlistData = await getPlaylistDataService(course?.ytId ?? "");
 
