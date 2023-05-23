@@ -26,6 +26,7 @@ import { faRotate } from "@fortawesome/free-solid-svg-icons";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import AnimatedSection from "@/components/AnimatedSection";
 
 const CourseLayoutR = dynamic(
   () => import("@/components/layouts/courseDashboard"),
@@ -76,7 +77,10 @@ const CourseOverview = () => {
         </Head>
 
         <div className="mx-auto flex w-full flex-col items-start gap-2">
-          <div className="mb-2 flex w-full flex-col items-start gap-4 rounded-xl bg-neutral-800 p-4 sm:flex-row">
+          <AnimatedSection
+            delay={0.1}
+            className="mb-2 flex w-full flex-col items-start gap-4 rounded-xl bg-neutral-800 p-4 sm:flex-row"
+          >
             <div className="flex w-full flex-col gap-4 sm:w-1/3">
               <div className="relative flex aspect-video w-full  items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
                 <Image
@@ -163,8 +167,11 @@ const CourseOverview = () => {
                 {course?.description}
               </p>
             </div>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          </AnimatedSection>
+          <AnimatedSection
+            delay={0.2}
+            className="flex flex-col gap-2 sm:flex-row sm:items-center"
+          >
             <button
               onClick={() => {
                 void syncImportMutation(
@@ -198,9 +205,9 @@ const CourseOverview = () => {
               {syncImportLoading ? <Loader /> : <PlayIcon className="w-3" />}
               View in Course Player
             </Link>
-          </div>
+          </AnimatedSection>
 
-          <div className="mt-4 flex flex-col gap-3">
+          <AnimatedSection delay={0.3} className="mt-4 flex flex-col gap-3">
             <div className="flex w-full justify-between">
               <label
                 htmlFor="description"
@@ -244,7 +251,7 @@ const CourseOverview = () => {
                 </button>
               ))}
             </div>
-          </div>
+          </AnimatedSection>
         </div>
 
         <ChapterManagePreviewModal

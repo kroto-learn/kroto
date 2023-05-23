@@ -108,7 +108,10 @@ const EventOverview = () => {
           <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
         <EventStateBanner setStartEventModal={setStartEventModal} />
-        <AnimatedSection delay={0.2} className="flex w-full max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4">
+        <AnimatedSection
+          delay={0.2}
+          className="flex w-full max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4"
+        >
           <div className="flex w-full flex-col items-start gap-8 sm:flex-row">
             <div className="flex w-full flex-col items-start gap-4">
               <div
@@ -286,7 +289,10 @@ const EventOverview = () => {
         />
 
         {!isEventOver ? (
-          <AnimatedSection delay={0.2} className="flex w-full flex-col gap-2 md:flex-row">
+          <AnimatedSection
+            delay={0.2}
+            className="flex w-full flex-col gap-2 md:flex-row"
+          >
             <button
               onClick={() => {
                 setSendUpdate(true);

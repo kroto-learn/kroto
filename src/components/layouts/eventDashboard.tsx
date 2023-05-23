@@ -20,8 +20,8 @@ export default function EventLayoutR({ children }: { children: ReactNode }) {
   if (event instanceof TRPCError || !event) return <></>;
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <AnimatedSection delay={0.1} className="flex w-full flex-col items-start justify-between gap-4 px-4 md:flex-row">
+    <AnimatedSection className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
+      <div className="flex w-full flex-col items-start justify-between gap-4 px-4 md:flex-row">
         <div className="flex w-full items-center justify-between gap-2">
           <h1 className="line-clamp-1 w-full overflow-hidden text-ellipsis text-xl text-neutral-200">
             {event?.title}
@@ -113,7 +113,7 @@ export default function EventLayoutR({ children }: { children: ReactNode }) {
           <GlobeAltIcon className="w-4" />
           Public Page
         </Link>
-      </AnimatedSection>
+      </div>
       <div className="hidden border-b border-neutral-700 text-center text-sm font-medium text-neutral-400 sm:block">
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-1 sm:mr-2">
@@ -170,6 +170,6 @@ export default function EventLayoutR({ children }: { children: ReactNode }) {
         </ul>
       </div>
       {children}
-    </div>
+    </AnimatedSection>
   );
 }
