@@ -3,6 +3,7 @@ import { DashboardLayout } from "..";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import { Loader } from "@/components/Loader";
+import AnimatedSection from "@/components/AnimatedSection";
 import { api } from "@/utils/api";
 import Image from "next/image";
 import CourseCard from "@/components/CourseCard";
@@ -29,7 +30,7 @@ const Index = () => {
         <title>Courses | Dashboard</title>
       </Head>
       <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-        <div className="flex w-full items-center justify-between gap-4 sm:px-4">
+        <AnimatedSection delay={0.1} className="flex w-full items-center justify-between gap-4 sm:px-4">
           <h1 className="text-2xl text-neutral-200">Courses</h1>
           <Link
             href="/course/import"
@@ -37,15 +38,15 @@ const Index = () => {
           >
             <PlusIcon className="w-5" /> Import Course
           </Link>
-        </div>
+        </AnimatedSection>
         {courses && courses.length > 0 ? (
-          <div className="mt-8 flex w-full flex-col items-start gap-4">
+          <AnimatedSection delay={0.2} className="mt-8 flex w-full flex-col items-start gap-4">
             {courses?.map((course) => (
               <CourseCard course={course} key={course.id} manage />
             ))}
-          </div>
+          </AnimatedSection>
         ) : (
-          <div className="flex w-full flex-col items-center justify-center text-center gap-2 p-4">
+          <AnimatedSection delay={0.2} className="flex w-full flex-col items-center justify-center text-center gap-2 p-4">
             <div className="relative aspect-square w-40 object-contain">
               <Image src="/empty/course_empty.svg" alt="empty" fill />
             </div>
@@ -58,7 +59,7 @@ const Index = () => {
             >
               <PlusIcon className="w-5" /> Import Course
             </Link>
-          </div>
+          </AnimatedSection>
         )}
       </div>
     </>
