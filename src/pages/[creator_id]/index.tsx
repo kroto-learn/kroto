@@ -17,7 +17,6 @@ import Layout from "@/components/layouts/main";
 import CourseCard from "@/components/CourseCard";
 import TestimonialDisclosure from "@/components/TestimonialDisclosure";
 import { Tooltip } from "antd";
-import AnimatedSection from "@/components/AnimatedSection";
 import { prisma } from "@/server/db";
 
 type CreatorPageProps = {
@@ -65,7 +64,6 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   }
 
   return (
-    <AnimatedSection delay={0}>
       <Layout>
         <Head>
           <title>{`${creator?.name ?? ""} - Kroto`}</title>
@@ -282,7 +280,6 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           </Link>
         </main>
       </Layout>
-    </AnimatedSection>
   );
 };
 

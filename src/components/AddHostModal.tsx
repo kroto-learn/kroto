@@ -3,6 +3,7 @@ import useToast from "@/hooks/useToast";
 import { type RouterOutputs, api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
 import { UserPlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import AnimatedSection from "./AnimatedSection";
 import { TRPCError } from "@trpc/server";
 import Image from "next/image";
 import { type Dispatch, Fragment, type SetStateAction, useState } from "react";
@@ -65,8 +66,7 @@ export default function AddHostModal({
           >
             <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
           </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
+          <AnimatedSection delay={0.3} className="fixed inset-0 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-6 text-center">
               <Transition.Child
                 as={Fragment}
@@ -151,7 +151,7 @@ export default function AddHostModal({
                 </Dialog.Panel>
               </Transition.Child>
             </div>
-          </div>
+          </AnimatedSection>
         </Dialog>
       </Transition>
     </>

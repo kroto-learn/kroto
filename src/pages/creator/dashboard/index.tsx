@@ -16,12 +16,11 @@ import ChevronDownIcon from "@heroicons/react/20/solid/ChevronDownIcon";
 import ArrowLeftOnRectangleIcon from "@heroicons/react/20/solid/ArrowLeftOnRectangleIcon";
 import WindowIcon from "@heroicons/react/20/solid/WindowIcon";
 import UserIcon from "@heroicons/react/20/solid/UserIcon";
-import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 import { useRouter } from "next/router";
 import { PresentationChartLineIcon } from "@heroicons/react/24/solid";
 import { PresentationChartLineIcon as PresentationChartBarIcon0 } from "@heroicons/react/24/outline";
-import { PlayIcon, RectangleStackIcon } from "@heroicons/react/20/solid";
+import { RectangleStackIcon } from "@heroicons/react/20/solid";
 import { RectangleStackIcon as RectangleStackIconO } from "@heroicons/react/24/outline";
 
 export default function Dashboard() {

@@ -3,6 +3,7 @@ import Head from "next/head";
 import React, { type ReactNode } from "react";
 import { DashboardLayout } from "..";
 import { usePathname } from "next/navigation";
+import AnimatedSection from "@/components/AnimatedSection";
 import Link from "next/link";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
@@ -31,11 +32,11 @@ const UpcomingEvents = () => {
         <title>Events | Dashboard</title>
       </Head>
       {events && events.length > 0 ? (
-        <div className="flex w-full flex-col items-start gap-4">
+        <AnimatedSection delay={0.2} className="flex w-full flex-col items-start gap-4">
           {events?.map((event) => (
             <EventCard key={event?.id ?? ""} manage event={event} />
           ))}
-        </div>
+        </AnimatedSection>
       ) : (
         <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
           <div className="relative aspect-square w-40 object-contain">
@@ -74,7 +75,7 @@ function EventsLayoutR({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <div className="flex w-full items-center justify-between gap-4 px-4">
+      <AnimatedSection delay={0.1} className="flex w-full items-center justify-between gap-4 px-4">
         <h1 className="text-2xl text-neutral-200">Events</h1>
         <Link
           href="/event/create"
@@ -82,8 +83,8 @@ function EventsLayoutR({ children }: { children: ReactNode }) {
         >
           <PlusIcon className="w-5" /> Create Event
         </Link>
-      </div>
-      <div className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
+      </AnimatedSection>
+      <AnimatedSection delay={0.1} className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-2">
             <Link
@@ -111,7 +112,7 @@ function EventsLayoutR({ children }: { children: ReactNode }) {
             </Link>
           </li>
         </ul>
-      </div>
+      </AnimatedSection>
       {children}
     </div>
   );
