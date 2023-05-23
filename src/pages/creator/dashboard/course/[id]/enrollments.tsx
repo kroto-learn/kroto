@@ -246,7 +246,7 @@ const Index = () => {
                     url={courseUrl}
                     title={`Enroll for the "${
                       course?.title ?? ""
-                    }" course on Kroto.in`}
+                    }" course on Kroto`}
                   >
                     <TwitterIcon
                       size={28}
