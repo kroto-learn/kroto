@@ -2,10 +2,10 @@ import { api } from "@/utils/api";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
-import AnimatedSection from "../AnimatedSection";
 import { TRPCError } from "@trpc/server";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import AnimatedSection from "../AnimatedSection";
 import { useRouter } from "next/router";
 import { type ReactNode, Fragment } from "react";
 
@@ -20,13 +20,12 @@ export default function EventLayoutR({ children }: { children: ReactNode }) {
   if (event instanceof TRPCError || !event) return <></>;
 
   return (
-    <AnimatedSection className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <div className="flex w-full flex-col items-start justify-between gap-4 px-4 md:flex-row">
+    <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
+      <AnimatedSection className="flex w-full flex-col items-start justify-between gap-4 px-4 md:flex-row">
         <div className="flex w-full items-center justify-between gap-2">
           <h1 className="line-clamp-1 w-full overflow-hidden text-ellipsis text-xl text-neutral-200">
             {event?.title}
           </h1>
-
           <div className="flex flex-col items-end sm:hidden">
             <Menu>
               {({ open }) => (
@@ -113,8 +112,8 @@ export default function EventLayoutR({ children }: { children: ReactNode }) {
           <GlobeAltIcon className="w-4" />
           Public Page
         </Link>
-      </div>
-      <div className="hidden border-b border-neutral-700 text-center text-sm font-medium text-neutral-400 sm:block">
+      </AnimatedSection>
+      <AnimatedSection className="hidden border-b border-neutral-700 text-center text-sm font-medium text-neutral-400 sm:block">
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-1 sm:mr-2">
             <Link
@@ -168,8 +167,8 @@ export default function EventLayoutR({ children }: { children: ReactNode }) {
             </Link>
           </li>
         </ul>
-      </div>
+      </AnimatedSection>
       {children}
-    </AnimatedSection>
+    </div>
   );
 }

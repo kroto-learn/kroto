@@ -23,6 +23,7 @@ import {
   WhatsappIcon,
 } from "next-share";
 import useToast from "@/hooks/useToast";
+import AnimatedSection from "@/components/AnimatedSection";
 import { Loader } from "@/components/Loader";
 import { TRPCError } from "@trpc/server";
 
@@ -90,7 +91,7 @@ const Index = () => {
       </Head>
       <div className="min-h-[80%] w-full p-6">
         <h3 className="mb-4 text-lg font-medium  sm:text-2xl">Enrollments</h3>
-        <div className="mb-4 flex w-full items-start justify-between">
+        <AnimatedSection delay={0.1} className="mb-4 flex w-full items-start justify-between">
           <div className="flex flex-col items-start">
             <p className="text-3xl text-neutral-200">
               {course?.enrollments.length ?? "-"}
@@ -112,9 +113,9 @@ const Index = () => {
           >
             <FolderArrowDownIcon className="w-5" /> Download CSV
           </button>
-        </div>
+        </AnimatedSection>
         {course?.enrollments && course.enrollments.length > 0 && !isLoading ? (
-          <div className="h-[55vh] overflow-scroll">
+          <AnimatedSection delay={0.2} className="h-[55vh] overflow-scroll">
             <table
               {...getTableProps()}
               className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
@@ -194,9 +195,9 @@ const Index = () => {
                 }
               </tbody>
             </table>
-          </div>
+          </AnimatedSection>
         ) : (
-          <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+          <AnimatedSection delay={0.2} className="flex w-full flex-col items-center justify-center gap-2 p-4">
             {isLoading ? (
               <div className="my-10">
                 <Loader size="lg" />
@@ -270,7 +271,7 @@ const Index = () => {
                 </div>
               </>
             )}
-          </div>
+          </AnimatedSection>
         )}
       </div>
     </>

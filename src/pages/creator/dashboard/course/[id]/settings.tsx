@@ -9,6 +9,7 @@ import React, {
 import { CourseNestedLayout } from ".";
 import { api } from "@/utils/api";
 import { TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import AnimatedSection from "@/components/AnimatedSection";
 import { Transition, Dialog } from "@headlessui/react";
 import { Loader } from "@/components/Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
@@ -33,7 +34,7 @@ const Index = () => {
       <Head>
         <title>{(course?.title ?? "Course") + " | Settings"}</title>
       </Head>
-      <div className="w-full rounded-xl bg-neutral-900 p-8">
+      <AnimatedSection delay={0.2} className="w-full rounded-xl bg-neutral-900 p-8">
         <div className="flex flex-col items-start gap-3">
           <label className="text-lg font-medium">
             Delete &quot;{course?.title ?? ""}&quot; course ?
@@ -48,7 +49,7 @@ const Index = () => {
             Delete Course
           </button>
         </div>
-      </div>
+      </AnimatedSection>
 
       <DeleteCourseModal
         isOpen={deleteModalOpen}

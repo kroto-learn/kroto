@@ -26,6 +26,7 @@ import {
 import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
 import { TRPCError } from "@trpc/server";
+import AnimatedSection from "@/components/AnimatedSection";
 
 const EventRegistrations = () => {
   const router = useRouter();
@@ -90,7 +91,7 @@ const EventRegistrations = () => {
       </Head>
       <div className="min-h-[80%] w-full p-6">
         <h3 className="mb-4 text-lg font-medium  sm:text-2xl">Registrations</h3>
-        <div className="mb-4 flex w-full items-start justify-between">
+        <AnimatedSection delay={0.2} className="mb-4 flex w-full items-start justify-between">
           <div className="flex flex-col items-start">
             <p className="text-3xl text-neutral-200">
               {event?.registrations.length ?? "-"}
@@ -112,11 +113,11 @@ const EventRegistrations = () => {
           >
             <FolderArrowDownIcon className="w-5" /> Download CSV
           </button>
-        </div>
+        </AnimatedSection>
         {event?.registrations &&
         event.registrations.length > 0 &&
         !isLoading ? (
-          <div className="h-[55vh] overflow-scroll">
+          <AnimatedSection delay={0.3} className="h-[55vh] overflow-scroll">
             <table
               {...getTableProps()}
               className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
@@ -196,9 +197,9 @@ const EventRegistrations = () => {
                 }
               </tbody>
             </table>
-          </div>
+          </AnimatedSection>
         ) : (
-          <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+          <AnimatedSection delay={0.3} className="flex w-full flex-col items-center justify-center gap-2 p-4">
             {isLoading ? (
               <div className="my-10">
                 <Loader size="lg" />
@@ -270,7 +271,7 @@ const EventRegistrations = () => {
                 </div>
               </>
             )}
-          </div>
+          </AnimatedSection>
         )}
       </div>
     </>

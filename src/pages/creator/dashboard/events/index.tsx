@@ -38,7 +38,7 @@ const UpcomingEvents = () => {
           ))}
         </AnimatedSection>
       ) : (
-        <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+        <AnimatedSection delay={0.2} className="flex w-full flex-col items-center justify-center gap-2 p-4">
           <div className="relative aspect-square w-40 object-contain">
             <Image src="/empty/event_empty.svg" alt="empty" fill />
           </div>
@@ -51,7 +51,7 @@ const UpcomingEvents = () => {
           >
             <PlusIcon className="w-5" /> Create Event
           </Link>
-        </div>
+        </AnimatedSection>
       )}
     </>
   );

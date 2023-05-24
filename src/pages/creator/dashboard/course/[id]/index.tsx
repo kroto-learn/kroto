@@ -75,10 +75,9 @@ const CourseOverview = () => {
         <Head>
           <title>{`${course?.title ?? "Course"} | Overview`}</title>
         </Head>
-
         <div className="mx-auto flex w-full flex-col items-start gap-2">
           <AnimatedSection
-            delay={0.1}
+            delay={0.2}
             className="mb-2 flex w-full flex-col items-start gap-4 rounded-xl bg-neutral-800 p-4 sm:flex-row"
           >
             <div className="flex w-full flex-col gap-4 sm:w-1/3">
@@ -206,7 +205,6 @@ const CourseOverview = () => {
               View in Course Player
             </Link>
           </AnimatedSection>
-
           <AnimatedSection delay={0.3} className="mt-4 flex flex-col gap-3">
             <div className="flex w-full justify-between">
               <label

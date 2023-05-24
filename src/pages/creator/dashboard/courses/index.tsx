@@ -30,7 +30,7 @@ const Index = () => {
         <title>Courses | Dashboard</title>
       </Head>
       <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-        <AnimatedSection delay={0.1} className="flex w-full items-center justify-between gap-4 sm:px-4">
+        <AnimatedSection className="flex w-full items-center justify-between gap-4 sm:px-4">
           <h1 className="text-2xl text-neutral-200">Courses</h1>
           <Link
             href="/course/import"
