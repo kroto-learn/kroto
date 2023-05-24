@@ -274,7 +274,7 @@ const Audience = () => {
                 </table>
               </AnimatedSection>
             ) : (
-              <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+              <AnimatedSection delay={0.2} className="flex w-full flex-col items-center justify-center gap-2 p-4">
                 <div className="relative aspect-square w-40 object-contain">
                   <Image src="/empty/users_empty.svg" alt="empty" fill />
                 </div>
@@ -291,10 +291,10 @@ const Audience = () => {
                 >
                   <PlusIcon className="w-5" /> Create Event
                 </Link>
-              </div>
+              </AnimatedSection>
             )
           ) : importedAudienceData && importedAudienceData.length > 0 ? (
-            <div className="h-[80vh] overflow-scroll">
+            <AnimatedSection delay={0.2} className="h-[80vh] overflow-scroll">
               <table
                 {...getImpTableProps()}
                 className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
@@ -364,9 +364,9 @@ const Audience = () => {
                   }
                 </tbody>
               </table>
-            </div>
+            </AnimatedSection>
           ) : (
-            <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+            <AnimatedSection delay={0.2} className="flex w-full flex-col items-center justify-center gap-2 p-4">
               <div className="relative aspect-square w-40 object-contain">
                 <Image src="/empty/users_empty.svg" alt="empty" fill />
               </div>
@@ -383,7 +383,7 @@ const Audience = () => {
               >
                 <PlusIcon className="w-5" /> Create Event
               </Link>
-            </div>
+            </AnimatedSection>
           )}
       </div>
       <UploadCSVModal isOpen={uploadCSVModal} setIsOpen={setUploadCSVModal} />
