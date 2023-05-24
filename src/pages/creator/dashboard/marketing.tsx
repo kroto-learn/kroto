@@ -85,8 +85,7 @@ const Marketing = () => {
       </Head>
       <div className="flex flex-col">
         <div className="mx-2 my-8 min-h-[80%] w-full px-6">
-          <AnimatedSection delay={0.0}>
-            <div className="mb-6 flex w-full items-start justify-between gap-2">
+            <AnimatedSection className="mb-6 flex w-full items-start justify-between gap-2">
               <div className="flex items-baseline gap-2">
                 <p className="text-3xl text-neutral-200">
                   {audienceData?.length ??
@@ -104,10 +103,8 @@ const Marketing = () => {
                   <PlusCircleIcon className="h-4" /> Create Email
                 </button>
               </div>
-            </div>
-          </AnimatedSection>
-          <AnimatedSection delay={0.2}>
-            <div className="mt-10 rounded-xl border border-neutral-900 bg-neutral-900/60 py-1 backdrop-blur">
+            </AnimatedSection>
+            <AnimatedSection delay={0.2} className="mt-10 rounded-xl border border-neutral-900 bg-neutral-900/60 py-1 backdrop-blur">
               <div className="divide-y divide-neutral-800">
                 {emailList?.map((d) => (
                   <div key={d.id} className="">
@@ -160,8 +157,7 @@ const Marketing = () => {
                   </div>
                 ))}
               </div>
-            </div>
-          </AnimatedSection>
+            </AnimatedSection>
           <div
             className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-xl flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
               createEmailModal ? "translate-x-0" : "translate-x-full"

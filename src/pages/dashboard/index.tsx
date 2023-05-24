@@ -36,8 +36,7 @@ export default function Dashboard() {
         <Head>
           <title>Dashboard | Kroto</title>
         </Head>
-        <AnimatedSection delay={0.2}>
-          <div className="my-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
+          <AnimatedSection delay={0.2} className="my-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5">
             <div className="flex items-center justify-between">
               <div className="flex w-full flex-col items-center justify-between gap-5 sm:flex-row">
                 <div className="flex flex-col items-center gap-5 sm:flex-row">
@@ -77,10 +76,8 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          </div>
-        </AnimatedSection>
-        <AnimatedSection delay={0.5}>
-          <div className="mb-10 flex flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-3 sm:gap-4  sm:p-8">
+          </AnimatedSection>
+          <AnimatedSection delay={0.5} className="mb-10 flex flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-3 sm:gap-4  sm:p-8">
             <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
               Enrolled Courses
             </h1>
@@ -115,10 +112,8 @@ export default function Dashboard() {
                 </>
               )}
             </div>
-          </div>
-        </AnimatedSection>
-        <AnimatedSection delay={0.8}>
-          <div className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8">
+          </AnimatedSection>
+          <AnimatedSection delay={0.8} className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8">
             <div className="flex w-full flex-col items-start justify-between sm:flex-row sm:items-center">
               <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
                 Registered Events
@@ -192,8 +187,7 @@ export default function Dashboard() {
                 )}
               </>
             )}
-          </div>
-        </AnimatedSection>
+          </AnimatedSection>
         <ClaimLinkBanner />
       </div>
     </Layout>

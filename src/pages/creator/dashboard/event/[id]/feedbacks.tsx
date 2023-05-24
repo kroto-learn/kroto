@@ -12,6 +12,7 @@ import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { type Feedback, type User } from "@prisma/client";
 import { Loader } from "@/components/Loader";
+import AnimatedSection from "@/components/AnimatedSection";
 
 const Index = () => {
   const router = useRouter();
@@ -21,7 +22,7 @@ const Index = () => {
     api.eventFeedback.getFeedbacks.useQuery({ eventId: id });
 
   return (
-    <div className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6">
+    <AnimatedSection delay={0.2} className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6">
       <h3 className="mb-6 text-lg font-medium  sm:text-2xl">Feedbacks</h3>
       {feedbacksLoading ? (
         <div className="flex h-64 w-full items-center justify-center">
@@ -82,7 +83,7 @@ const Index = () => {
           </button>
         </div>
       )}
-    </div>
+    </AnimatedSection>
   );
 };
 

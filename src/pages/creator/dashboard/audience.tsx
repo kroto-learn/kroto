@@ -119,9 +119,8 @@ const Audience = () => {
         <title>Audience | Dashboard</title>
       </Head>
       <div className="mx-2 my-8 min-h-[80%] w-full px-6">
-        <AnimatedSection delay={0.0}>
           <h3 className="mb-4 text-2xl font-medium">Audience</h3>
-          <div className="mb-6 flex w-full items-start justify-between gap-2">
+          <AnimatedSection className="mb-6 flex w-full items-start justify-between gap-2">
             <div className="flex flex-col items-start">
               <p className="text-3xl text-neutral-200">
                 {audienceData?.length ?? "-"}
@@ -154,8 +153,7 @@ const Audience = () => {
                 <FontAwesomeIcon icon={faFileCsv} /> Download CSV
               </button>
             </div>
-          </div>
-        </AnimatedSection>
+          </AnimatedSection>
         <div className="flex w-full justify-start">
           <div className="mb-6 border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
             <ul className="-mb-px flex flex-wrap">
@@ -187,10 +185,9 @@ const Audience = () => {
             </ul>
           </div>
         </div>
-        <AnimatedSection delay={0.2}>
           {!isImportedTab ? (
             audienceData && audienceData.length > 0 ? (
-              <div className="h-[80vh] overflow-scroll">
+              <AnimatedSection delay={0.2} className="h-[80vh] overflow-scroll">
                 <table
                   {...getTableProps()}
                   className="block w-full border-collapse overflow-auto text-left text-sm text-neutral-300 md:table"
@@ -275,16 +272,16 @@ const Audience = () => {
                     }
                   </tbody>
                 </table>
-              </div>
+              </AnimatedSection>
             ) : (
               <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
                 <div className="relative aspect-square w-40 object-contain">
                   <Image src="/empty/users_empty.svg" alt="empty" fill />
                 </div>
-                <p className="text-neutral-400 text-center">
+                <p className="text-neutral-400">
                   You don&apos;t have any audience yet.
                 </p>
-                <p className="text-neutral-400 text-center">
+                <p className="text-neutral-400">
                   Do events to gather audience data.
                 </p>
                 <br />
@@ -373,10 +370,10 @@ const Audience = () => {
               <div className="relative aspect-square w-40 object-contain">
                 <Image src="/empty/users_empty.svg" alt="empty" fill />
               </div>
-              <p className="text-neutral-400 text-center">
+              <p className="text-neutral-400">
                 You don&apos;t have any audience yet.
               </p>
-              <p className="text-neutral-400 text-center">
+              <p className="text-neutral-400">
                 Do events to gather audience data.
               </p>
               <br />
@@ -388,7 +385,6 @@ const Audience = () => {
               </Link>
             </div>
           )}
-        </AnimatedSection>
       </div>
       <UploadCSVModal isOpen={uploadCSVModal} setIsOpen={setUploadCSVModal} />
     </>
