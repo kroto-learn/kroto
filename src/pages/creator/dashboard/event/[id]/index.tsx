@@ -31,6 +31,7 @@ import {
 } from "@heroicons/react/20/solid";
 import dynamic from "next/dynamic";
 import { TRPCError } from "@trpc/server";
+import AnimatedSection from "@/components/AnimatedSection";
 const CalenderBox = dynamic(() => import("@/components/CalenderBox"), {
   ssr: false,
 });
@@ -106,9 +107,11 @@ const EventOverview = () => {
         <Head>
           <title>{`${event?.title ?? "Event"} | Overview`}</title>
         </Head>
-
         <EventStateBanner setStartEventModal={setStartEventModal} />
-        <div className="flex w-full max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4">
+        <AnimatedSection
+          delay={0.2}
+          className="flex w-full max-w-3xl flex-col justify-start gap-4 rounded-xl bg-neutral-800 p-4"
+        >
           <div className="flex w-full flex-col items-start gap-8 sm:flex-row">
             <div className="flex w-full flex-col items-start gap-4">
               <div
@@ -276,7 +279,7 @@ const EventOverview = () => {
           ) : (
             <></>
           )}
-        </div>
+        </AnimatedSection>
 
         {/* start event confirmation modal */}
         <StartEventModal
@@ -286,7 +289,10 @@ const EventOverview = () => {
         />
 
         {!isEventOver ? (
-          <div className="flex w-full flex-col gap-2 md:flex-row">
+          <AnimatedSection
+            delay={0.2}
+            className="flex w-full flex-col gap-2 md:flex-row"
+          >
             <button
               onClick={() => {
                 setSendUpdate(true);
@@ -306,7 +312,7 @@ const EventOverview = () => {
               {addingToCalendar ? <Loader /> : <CalendarIcon className="w-3" />}
               Send calendar invite
             </button>
-          </div>
+          </AnimatedSection>
         ) : (
           <></>
         )}
@@ -395,7 +401,6 @@ const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
           >
             <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
           </Transition.Child>
-
           <div className="fixed inset-0 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-6 text-center">
               <Transition.Child

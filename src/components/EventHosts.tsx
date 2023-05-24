@@ -8,6 +8,7 @@ import { Loader } from "./Loader";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
+import AnimatedSection from "./AnimatedSection";
 
 type Props = {
   setIsHostModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -38,7 +39,7 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
 
   return (
     <>
-      <div className="w-full">
+      <AnimatedSection delay={0.3} className="w-full">
         <div className="mb-2 mt-5 flex w-full items-center justify-between">
           <h3 className="text-2xl font-medium text-neutral-200">Hosts</h3>
           {!isEventOver ? (
@@ -118,7 +119,7 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
                 );
               })}
         </ul>
-      </div>
+      </AnimatedSection>
     </>
   );
 };

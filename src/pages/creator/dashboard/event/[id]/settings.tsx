@@ -16,6 +16,7 @@ import { Loader } from "@/components/Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import useToast from "@/hooks/useToast";
 import { TRPCError } from "@trpc/server";
+import AnimatedSection from "@/components/AnimatedSection";
 
 const EventSettings = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const EventSettings = () => {
       <Head>
         <title>{(event?.title ?? "Event") + " | Settings"}</title>
       </Head>
-      <div className="w-full rounded-xl bg-neutral-900 p-8">
+      <AnimatedSection delay={0.2} className="w-full rounded-xl bg-neutral-900 p-8">
         <div className="flex flex-col items-start gap-3">
           <label className="text-lg font-medium line-clamp-2 text-ellipsis overflow-hidden">
             Delete &quot;{event?.title ?? ""}&quot; event ?
@@ -46,7 +47,7 @@ const EventSettings = () => {
             Delete Event
           </button>
         </div>
-      </div>
+      </AnimatedSection>
 
       <DeleteEventModal
         isOpen={deleteModalOpen}

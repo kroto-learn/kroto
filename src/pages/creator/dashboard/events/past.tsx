@@ -3,6 +3,7 @@ import { DashboardLayout } from "..";
 import { EventsLayout } from ".";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
+import AnimatedSection from "@/components/AnimatedSection";
 import Head from "next/head";
 import { EventCard } from "@/components/EventCard";
 import Image from "next/image";
@@ -33,20 +34,20 @@ const PastEvents = () => {
         <title>Events | Dashboard</title>
       </Head>
       {events && events.length > 0 ? (
-        <div className="flex w-full flex-col items-start gap-4">
+        <AnimatedSection delay={0.2} className="flex w-full flex-col items-start gap-4">
           {events?.map((event) => (
             <EventCard key={event?.id ?? ""} manage event={event} />
           ))}
-        </div>
+        </AnimatedSection>
       ) : (
-        <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+        <AnimatedSection delay={0.2} className="flex w-full flex-col items-center justify-center gap-2 p-4">
           <div className="relative aspect-square w-40 object-contain">
             <Image src="/empty/event_empty.svg" alt="empty" fill />
           </div>
           <p className="mb-2 text-neutral-400 text-center">
             You don&apos;t have any past events.
           </p>
-        </div>
+        </AnimatedSection>
       )}
     </>
   );
