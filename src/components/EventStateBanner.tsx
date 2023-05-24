@@ -2,6 +2,7 @@ import { api } from "@/utils/api";
 import { ArrowUpRightIcon, EnvelopeIcon } from "@heroicons/react/20/solid";
 import { TRPCError } from "@trpc/server";
 import { useRouter } from "next/router";
+import AnimatedSection from "./AnimatedSection";
 
 type Props = {
   setStartEventModal: (value: boolean) => void;
@@ -33,7 +34,10 @@ const EventStateBanner = ({ setStartEventModal }: Props) => {
       {isEventLoading ? (
         <></>
       ) : isEventLive ? (
-        <div className="flex w-full flex-col items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2 sm:flex-row">
+        <AnimatedSection
+          delay={0.1}
+          className="flex w-full flex-col items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2 sm:flex-row"
+        >
           <div className="flex items-center gap-2">
             <span className="relative flex h-3 w-3 items-center justify-center">
               <span className="absolute h-full w-full animate-ping rounded-full bg-pink-500 opacity-75"></span>
@@ -53,9 +57,12 @@ const EventStateBanner = ({ setStartEventModal }: Props) => {
           ) : (
             <></>
           )}
-        </div>
+        </AnimatedSection>
       ) : isEventIn10min ? (
-        <div className="flex w-full items-center justify-between gap-4 rounded-xl bg-yellow-500/20 px-3 py-2 text-yellow-500">
+        <AnimatedSection
+          delay={0.1}
+          className="flex w-full items-center justify-between gap-4 rounded-xl bg-yellow-500/20 px-3 py-2 text-yellow-500"
+        >
           <div className="flex items-center gap-2">
             <span className="relative flex h-3 w-3 items-center justify-center">
               <span className="absolute h-full w-full animate-ping rounded-full bg-yellow-500 opacity-75"></span>
@@ -63,9 +70,12 @@ const EventStateBanner = ({ setStartEventModal }: Props) => {
             </span>
             The Event is about to start.
           </div>
-        </div>
+        </AnimatedSection>
       ) : isEventOver ? (
-        <div className="flex w-full flex-col items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2 sm:flex-row">
+        <AnimatedSection
+          delay={0.1}
+          className="flex w-full flex-col items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2 sm:flex-row"
+        >
           <div className="flex items-center gap-2">
             The Event has concluded.
           </div>
@@ -78,7 +88,7 @@ const EventStateBanner = ({ setStartEventModal }: Props) => {
             <EnvelopeIcon className="w-3" />
             Ask for feedback
           </button>
-        </div>
+        </AnimatedSection>
       ) : (
         <></>
       )}

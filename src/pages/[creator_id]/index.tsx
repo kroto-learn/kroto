@@ -17,8 +17,8 @@ import Layout from "@/components/layouts/main";
 import CourseCard from "@/components/CourseCard";
 import TestimonialDisclosure from "@/components/TestimonialDisclosure";
 import { Tooltip } from "antd";
-import AnimatedSection from "@/components/AnimatedSection";
 import { prisma } from "@/server/db";
+import AnimatedSection from "@/components/AnimatedSection";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -65,7 +65,6 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   }
 
   return (
-    <AnimatedSection delay={0}>
       <Layout>
         <Head>
           <title>{`${creator?.name ?? ""} - Kroto`}</title>
@@ -103,7 +102,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
         </Head>
         <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
           <div className="relative mt-6 flex w-full max-w-4xl flex-col items-center">
-            <div className="absolute z-[2]">
+            <AnimatedSection className="absolute z-[2]">
               <div
                 className={`relative aspect-square w-28 overflow-hidden  rounded-3xl border-4 border-neutral-950 transition-all`}
               >
@@ -113,17 +112,20 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                   fill
                 />
               </div>
-            </div>
+            </AnimatedSection>
             <div
               className={`mt-[3.7rem] flex w-full flex-col items-center justify-between gap-1 rounded-3xl bg-neutral-900 px-16 pb-32 pt-16 backdrop-blur-lg transition-all duration-300`}
             >
-              <h1
+              <div>
+                
+              </div>
+              <AnimatedSection
                 className={`text-center text-2xl font-medium text-neutral-200 transition-all duration-300 lg:text-left`}
               >
                 {creator?.name}
-              </h1>
+              </AnimatedSection>
 
-              <h3
+              <AnimatedSection
                 className={`mb-3 text-center text-neutral-300 transition-all duration-300 lg:text-left`}
               >
                 {/* <span className="font-medium text-pink-500">@</span> */}
@@ -132,13 +134,13 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                   className="mr-[0.15rem] text-sm text-pink-500"
                 />
                 {creator?.creatorProfile}
-              </h3>
-              <p
+              </AnimatedSection>
+              <AnimatedSection delay={0.1}
                 className={`mb-5 max-w-xl text-center text-sm text-neutral-400 transition-all duration-300  sm:text-base`}
               >
                 {creator?.bio}
-              </p>
-              <div className="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              </AnimatedSection>
+              <AnimatedSection delay={0.2} className="mb-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                 {creator?.socialLinks?.map((link) => (
                   <SocialLink
                     collapsed={true}
@@ -167,11 +169,11 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                 ) : (
                   <></>
                 )}
-              </div>
+              </AnimatedSection>
             </div>
           </div>
           <div className="flex w-full max-w-4xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-gradient-to-b from-neutral-800 via-neutral-800 to-transparent p-8 pb-24 backdrop-blur-sm">
-            <div className="mb-4 flex items-center gap-8">
+            <AnimatedSection delay={0.3} className="mb-4 flex items-center gap-8">
               <Link
                 href={`/${creator.creatorProfile ?? ""}#courses`}
                 className={`relative flex justify-center text-sm font-medium uppercase tracking-widest text-neutral-200 duration-150 hover:text-neutral-300 active:scale-95 ${
@@ -211,26 +213,26 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                   }`}
                 />
               </Link>
-            </div>
+            </AnimatedSection>
 
             {isCreatorLoading ? (
               <Loader size="lg" />
             ) : isEventsTab ? (
               creator.events && creator.events.length > 0 ? (
-                <div className="flex w-full flex-col items-center gap-4">
+                <AnimatedSection delay={0.4} className="flex w-full flex-col items-center gap-4">
                   {creator?.events?.map((event) => (
                     <EventCard key={event?.id ?? ""} event={event} />
                   ))}
-                </div>
+                </AnimatedSection>
               ) : (
-                <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+                <AnimatedSection delay={0.4} className="flex w-full flex-col items-center justify-center gap-2 p-4">
                   <div className="relative aspect-square w-40 object-contain">
                     <Image src="/empty/event_empty.svg" alt="empty" fill />
                   </div>
                   <p className="mb-2 text-neutral-400 text-center">
                     The creater has not created any events.
                   </p>
-                </div>
+                </AnimatedSection>
               )
             ) : isTestimonialsTab ? (
               creator.testimonials && creator.testimonials.length > 0 ? (
@@ -243,7 +245,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                   ))}
                 </div>
               ) : (
-                <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+                <AnimatedSection delay={0.4} className="flex w-full flex-col items-center justify-center gap-2 p-4">
                   <div className="relative aspect-square w-40 object-contain">
                     <Image
                       src="/empty/testimonial_empty.svg"
@@ -254,23 +256,23 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                   <p className="mb-2 text-neutral-400 text-center">
                     The creater has not got any testimonials.
                   </p>
-                </div>
+                </AnimatedSection>
               )
             ) : creator.courses && creator.courses.length > 0 ? (
-              <div className="flex w-full flex-col items-center gap-4">
+              <AnimatedSection delay={0.4} className="flex w-full flex-col items-center gap-4">
                 {creator?.courses?.map((course) => (
                   <CourseCard key={course?.id ?? ""} course={course} lg />
                 ))}
-              </div>
+              </AnimatedSection>
             ) : (
-              <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+              <AnimatedSection delay={0.4} className="flex w-full flex-col items-center justify-center gap-2 p-4">
                 <div className="relative aspect-square w-40 object-contain">
                 <Image src="/empty/course_empty.svg" alt="empty" fill />
                 </div>
                 <p className="mb-2 text-neutral-400 text-center">
                   The creater has not created any courses.
                 </p>
-              </div>
+              </AnimatedSection>
             )}
           </div>
           <Link
@@ -282,7 +284,6 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           </Link>
         </main>
       </Layout>
-    </AnimatedSection>
   );
 };
 
