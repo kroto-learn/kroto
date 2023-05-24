@@ -77,7 +77,7 @@ export default function ShareCourseModal({
                     </div>
                   </Dialog.Title>
                   <div className="flex flex-col gap-4 p-6">
-                    <p className="text-center text-neutral-300 sm:text-left">
+                    <p className="text-center text-neutral-300">
                       Share the <span className="font-bold">{courseTitle}</span>{" "}
                       course among your friends!
                     </p>

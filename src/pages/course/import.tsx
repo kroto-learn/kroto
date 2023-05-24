@@ -157,7 +157,7 @@ const Index = () => {
             alt="Developed with YouTube"
             width={168}
             height={60}
-            className="my-2"
+            className="mt-1"
           />
 
           {!playlists || playlists instanceof TRPCError || !searchFocused ? (
@@ -236,7 +236,7 @@ const Index = () => {
               },
             });
           })}
-          className="mt-12s mx-auto flex w-full flex-col gap-8"
+          className="mt-12s mx-auto flex w-full flex-col gap-4"
         >
           <div className="flex w-full items-start gap-4">
             <div className="relative flex aspect-video w-1/3 items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
@@ -278,6 +278,8 @@ const Index = () => {
                 htmlFor="description"
                 className="text-lg  text-neutral-200"
               >
+                {methods.watch()?.chapters.length !== 0 &&
+                  methods.watch()?.chapters.length}{" "}
                 Chapters
               </label>
               {/* <button
@@ -287,7 +289,7 @@ const Index = () => {
                 <PlusIcon className="w-4" /> Add Course block
               </button> */}
             </div>
-            <div className="max-h-[20rem] overflow-y-auto pr-2">
+            <div className="max-h-[18rem] overflow-y-auto pr-2">
               {methods.watch()?.chapters.length > 0 ? (
                 methods.watch()?.chapters.map((chapter, index) => (
                   <div
