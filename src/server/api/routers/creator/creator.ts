@@ -208,8 +208,9 @@ export const creatorRouter = createTRPCRouter({
       }
 
       let image = input.image;
-      if (isBase64(input.image, { allowMime: true }))
-        image = await imageUpload(input.image, ctx.session.user.id, "event");
+      if (isBase64(input.image, { allowMime: true })) {
+        image = await imageUpload(input.image, ctx.session.user.id, "creator");
+      }
 
       const ogImageRes = await generateStaticCreatorOgImage({
         ogUrl: OG_URL,

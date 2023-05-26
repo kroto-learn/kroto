@@ -8,7 +8,6 @@ import { array, object, string, literal, z, union } from "zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useToast from "@/hooks/useToast";
-import fileToBase64 from "@/helpers/file";
 import {
   ArrowUpTrayIcon,
   MinusIcon,
@@ -26,7 +25,7 @@ export const creatorEditSchema = object({
   name: string().nonempty("Please enter your name."),
   creatorProfile: string().nonempty("Please enter your unique username."),
   number: union([string().min(10).max(10), z.undefined(), string().optional()]),
-  bio: string().max(bioLimit).nonempty("Please enter your bio."),
+  bio: string().max(bioLimit).optional(),
   socialLinks: array(
     object({
       id: string(),
@@ -126,7 +125,7 @@ const Settings = () => {
                     {
                       name: values.name,
                       mobileNumber: values.number,
-                      bio: values.bio,
+                      bio: values?.bio ?? "",
                       creatorProfile: values.creatorProfile,
                       socialLink: values.socialLinks,
                       topmateUrl: values?.topmateUrl ?? "",
@@ -174,11 +173,11 @@ const Settings = () => {
                   onChange={(e) => {
                     if (e.currentTarget.files && e.currentTarget.files[0]) {
                       if (e.currentTarget.files[0].size <= 1024000) {
-                        fileToBase64(e.currentTarget.files[0])
-                          .then((b64) => {
-                            if (b64) methods.setValue("image", b64);
-                          })
-                          .catch((err) => console.log(err));
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          methods.setValue("image", reader.result as string);
+                        };
+                        reader.readAsDataURL(e.currentTarget.files[0]);
                       } else {
                         warningToast("Upload cover image upto 1 MB of size.");
                       }
