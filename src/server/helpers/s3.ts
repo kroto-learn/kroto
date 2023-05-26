@@ -112,3 +112,27 @@ export const ogImageUpload = async (
     throw new Error("Image upload failed");
   }
 };
+
+export const deleteS3Image = async ({ key }: { key: string }) => {
+  const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET } = env;
+
+  AWS.config.setPromisesDependency(Promise);
+  AWS.config.update({
+    accessKeyId: ACCESS_KEY_ID,
+    secretAccessKey: SECRET_ACCESS_KEY,
+    region: AWS_REGION,
+  });
+
+  const s3 = new AWS.S3();
+
+  const params = {
+    Bucket: S3_BUCKET,
+    Key: key,
+  };
+
+  try {
+    await s3.deleteObject(params).promise();
+  } catch (err) {
+    console.log("Error in deleting image", err);
+  }
+};
