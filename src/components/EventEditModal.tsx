@@ -1,4 +1,3 @@
-import fileToBase64 from "@/helpers/file";
 import useToast from "@/hooks/useToast";
 import { type RouterInputs, api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -217,13 +216,13 @@ const EventEditModal = () => {
                   warningToast(
                     "Image is too big, try a smaller (<1MB) image for performance purposes."
                   );
-                if (e.currentTarget.files[0].size <= 3072000)
-                  fileToBase64(e.currentTarget.files[0])
-                    .then((b64) => {
-                      if (b64) methods.setValue("thumbnail", b64);
-                    })
-                    .catch((err) => console.log(err));
-                else {
+                if (e.currentTarget.files[0].size <= 3072000) {
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    methods.setValue("thumbnail", reader.result as string);
+                  };
+                  reader.readAsDataURL(e.currentTarget.files[0]);
+                } else {
                   warningToast("Upload cover image upto 3 MB of size.");
                 }
               }
