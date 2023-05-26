@@ -334,8 +334,6 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
     api.courseChapter.deleteChapterProgress.useMutation();
 
   const [watchChecked, setWatchChecked] = useState(false);
-  const [isplayHover,setplayHover]= useState<string>("hidden");
-  const [isHover,setHover]= useState<string>("block")
 
 
   useEffect(() => {
@@ -348,11 +346,9 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
 
   return (
     <Link
-      onMouseOver={()=> {setplayHover("block"), setHover("hidden")}}
-      onMouseOut={()=>{setplayHover("hidden"), setHover("block")}}
       href={`/course/play/${chapter?.courseId}/${chapter?.id}`}
       id={`${chapter?.id}`}
-      className={`flex items-center border-neutral-700 last:rounded-b ${
+      className={`flex items-center group border-neutral-700 last:rounded-b ${
         !(chapter.id === chapter_id)
           ? chapter.chapterProgress
             ? "!bg-green-950/30 hover:!bg-green-800/30"
@@ -407,7 +403,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
         />
       </ConfigProvider>
 
-      <p className={`text-xs text-neutral-300`}>
+      <p className={`text-xs group text-neutral-300`}>
         {chapter_id === chapter?.id ? (
           <PlayIcon
             className={`text-pink-500 ${collapsed ? "w-5" : "w-5 pr-2"}`}
@@ -415,8 +411,8 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
         ) : ( 
           <>
           <div
-            className={`aspect-square hover: ${isHover} ${
-              collapsed ? "w-5 text-xl font-medium" : "w-5"
+            className={`aspect-square ${
+              collapsed ? "w-5 text-xl group-hover:hidden font-medium" : "w-5 group-hover:hidden"
             }`}
           >
             {collapsed ? (
@@ -427,7 +423,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
             {idx + 1}
           </div>
           <PlayIcon
-            className={`text-neutral-400 hover: ${isplayHover} ${collapsed ? "w-5" : "w-5 pr-2"}`}
+            className={`text-neutral-400 group-hover:block hidden ${collapsed ? "w-5" : "w-5 pr-2"}`}
           />
           </>
         )}
