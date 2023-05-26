@@ -10,7 +10,7 @@ import {
 } from "@/server/api/trpc";
 import { createFormSchema } from "@/pages/event/create";
 import { TRPCError } from "@trpc/server";
-import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
+import { deleteS3Image, imageUpload, ogImageUpload } from "@/server/helpers/s3";
 import isBase64 from "is-base64";
 import { sendRegistrationConfirmation } from "@/server/helpers/emailHelper";
 import { generateStaticEventOgImage } from "@/server/services/og";
@@ -347,6 +347,14 @@ export const eventRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+      });
+
+      await deleteS3Image({
+        key: event.thumbnail?.split("amazonaws.com/")[1] ?? "",
+      });
+
+      await deleteS3Image({
+        key: event.ogImage?.split("amazonaws.com/")[1] ?? "",
       });
 
       return event;
