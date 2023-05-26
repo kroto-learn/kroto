@@ -2,7 +2,6 @@ import React, { type ChangeEvent, useEffect, useState } from "react";
 import { object, string, date, literal } from "zod";
 import LinkIcon from "@heroicons/react/20/solid/LinkIcon";
 import { zodResolver } from "@hookform/resolvers/zod";
-import fileToBase64 from "@/helpers/file";
 import { generateRandomGradientImages } from "@/helpers/randomGradientImages";
 import Image from "next/image";
 import Head from "next/head";
@@ -206,11 +205,11 @@ const CreateEvent = () => {
                     );
 
                   if (e.currentTarget.files[0].size <= 3072000) {
-                    fileToBase64(e.currentTarget.files[0])
-                      .then((b64) => {
-                        if (b64) methods.setValue("thumbnail", b64);
-                      })
-                      .catch((err) => console.log(err));
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      methods.setValue("thumbnail", reader.result as string);
+                    };
+                    reader.readAsDataURL(e.currentTarget.files[0]);
                   } else {
                     warningToast("Upload cover image upto 3 MB of size.");
                   }
