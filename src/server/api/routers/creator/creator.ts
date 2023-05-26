@@ -5,7 +5,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
-import { imageUpload, ogImageUpload } from "@/server/helpers/base64ToS3";
+import { imageUpload, ogImageUpload } from "@/server/helpers/s3";
 import isBase64 from "is-base64";
 import { audienceRouter } from "./audience";
 import { env } from "@/env.mjs";

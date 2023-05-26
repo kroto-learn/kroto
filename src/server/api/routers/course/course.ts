@@ -12,7 +12,7 @@ import {
 import { importCourseFormSchema } from "@/pages/course/import";
 import { generateStaticCourseOgImage } from "@/server/services/og";
 import { env } from "@/env.mjs";
-import { ogImageUpload } from "@/server/helpers/base64ToS3";
+import { ogImageUpload } from "@/server/helpers/s3";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
