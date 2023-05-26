@@ -335,6 +335,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
 
   const [watchChecked, setWatchChecked] = useState(false);
 
+
   useEffect(() => {
     setWatchChecked(!!chapter.chapterProgress);
   }, [chapter.chapterProgress]);
@@ -347,7 +348,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
     <Link
       href={`/course/play/${chapter?.courseId}/${chapter?.id}`}
       id={`${chapter?.id}`}
-      className={`flex items-center border-neutral-700 last:rounded-b ${
+      className={`flex items-center group border-neutral-700 last:rounded-b ${
         !(chapter.id === chapter_id)
           ? chapter.chapterProgress
             ? "!bg-green-950/30 hover:!bg-green-800/30"
@@ -402,15 +403,16 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
         />
       </ConfigProvider>
 
-      <p className={`text-xs text-neutral-300`}>
+      <p className={`text-xs group text-neutral-300`}>
         {chapter_id === chapter?.id ? (
           <PlayIcon
             className={`text-pink-500 ${collapsed ? "w-5" : "w-5 pr-2"}`}
           />
-        ) : (
+        ) : ( 
+          <>
           <div
             className={`aspect-square ${
-              collapsed ? "w-5 text-xl font-medium" : "w-5"
+              collapsed ? "w-5 text-xl group-hover:hidden font-medium" : "w-5 group-hover:hidden"
             }`}
           >
             {collapsed ? (
@@ -420,6 +422,10 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
             )}
             {idx + 1}
           </div>
+          <PlayIcon
+            className={`text-neutral-400 group-hover:block hidden ${collapsed ? "w-5" : "w-5 pr-2"}`}
+          />
+          </>
         )}
       </p>
       {collapsed ? (
