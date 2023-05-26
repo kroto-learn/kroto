@@ -206,9 +206,18 @@ export const eventRouter = createTRPCRouter({
           message: "You didn't create this event",
         });
 
+      const event = await prisma.event.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!event) return new TRPCError({ code: "BAD_REQUEST" });
+
       let thumbnail = input.thumbnail;
-      if (isBase64(input.thumbnail, { allowMime: true }))
+      if (isBase64(input.thumbnail, { allowMime: true })) {
         thumbnail = await imageUpload(input.thumbnail, input.id, "event");
+      }
 
       const ogImageRes = await generateStaticEventOgImage({
         ogUrl: OG_URL,
@@ -221,7 +230,7 @@ export const eventRouter = createTRPCRouter({
         ? await ogImageUpload(ogImageRes.data as AWS.S3.Body, input.id, "event")
         : undefined;
 
-      const event = await prisma.event.update({
+      const updatedEvent = await prisma.event.update({
         where: {
           id: input.id,
         },
@@ -240,7 +249,7 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      return event;
+      return updatedEvent;
     }),
 
   register: protectedProcedure
@@ -349,11 +358,11 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      await deleteS3Image({
+      void deleteS3Image({
         key: event.thumbnail?.split("amazonaws.com/")[1] ?? "",
       });
 
-      await deleteS3Image({
+      void deleteS3Image({
         key: event.ogImage?.split("amazonaws.com/")[1] ?? "",
       });
 
