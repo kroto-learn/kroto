@@ -334,6 +334,9 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
     api.courseChapter.deleteChapterProgress.useMutation();
 
   const [watchChecked, setWatchChecked] = useState(false);
+  const [isplayHover,setplayHover]= useState<string>("hidden");
+  const [isHover,setHover]= useState<string>("block")
+
 
   useEffect(() => {
     setWatchChecked(!!chapter.chapterProgress);
@@ -345,6 +348,8 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
 
   return (
     <Link
+      onMouseOver={()=> {setplayHover("block"), setHover("hidden")}}
+      onMouseOut={()=>{setplayHover("hidden"), setHover("block")}}
       href={`/course/play/${chapter?.courseId}/${chapter?.id}`}
       id={`${chapter?.id}`}
       className={`flex items-center border-neutral-700 last:rounded-b ${
@@ -407,9 +412,10 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
           <PlayIcon
             className={`text-pink-500 ${collapsed ? "w-5" : "w-5 pr-2"}`}
           />
-        ) : (
+        ) : ( 
+          <>
           <div
-            className={`aspect-square ${
+            className={`aspect-square hover: ${isHover} ${
               collapsed ? "w-5 text-xl font-medium" : "w-5"
             }`}
           >
@@ -420,6 +426,10 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
             )}
             {idx + 1}
           </div>
+          <PlayIcon
+            className={`text-neutral-400 hover: ${isplayHover} ${collapsed ? "w-5" : "w-5 pr-2"}`}
+          />
+          </>
         )}
       </p>
       {collapsed ? (
