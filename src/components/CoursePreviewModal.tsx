@@ -181,9 +181,15 @@ const CoursePreviewModal = ({
                             {enrollLoading ? <Loader white /> : <></>}
                             <span>Enroll now</span>
                           </button>
-                          <span className="uppercase tracking-wider text-green-600">
-                            FREE
-                          </span>
+                          {course?.price === 0 ? (
+                            <span className="uppercase tracking-wider text-green-600">
+                              FREE
+                            </span>
+                          ) : (
+                            <span className="font-bold uppercase tracking-wider text-white">
+                              ₹ {course?.price}
+                            </span>
+                          )}
                         </div>
 
                         <p className="text-sm text-neutral-400">

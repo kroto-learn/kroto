@@ -49,11 +49,19 @@ const CourseCard = ({ course, manage, lg }: Props) => {
           {course._count.chapters} Chapters
         </p>
         {!manage ? (
-          <p
-            className={`text-xs font-semibold uppercase tracking-widest text-green-500/80 sm:text-sm`}
-          >
-            free
-          </p>
+          course?.price === 0 ? (
+            <p
+              className={`text-xs font-semibold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+            >
+              free
+            </p>
+          ) : (
+            <p
+              className={`text-xs font-semibold uppercase tracking-widest sm:text-sm`}
+            >
+              ₹ {course?.price}
+            </p>
+          )
         ) : (
           <></>
         )}

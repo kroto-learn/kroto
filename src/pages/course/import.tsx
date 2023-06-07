@@ -350,16 +350,22 @@ const Index = () => {
             </label>
             <div className="flex items-center gap-2">
               <div
-                className={`flex cursor-pointer items-center gap-1 rounded-lg border p-1 px-3 ${
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
                   methods.watch().price === "0"
-                    ? "border-green-500 bg-green-500/70"
-                    : "border-neutral-400 text-neutral-400"
+                    ? "border-green-600 bg-green-600/40"
+                    : "border-neutral-500 text-neutral-500"
                 }`}
                 onClick={() => {
                   methods.setValue("price", "0");
                 }}
               >
-                <div className="h-3 w-3 rounded-full border border-neutral-300 p-[1px]">
+                <div
+                  className={`flex h-3 w-3 items-center rounded-full border ${
+                    methods.watch().price === "0"
+                      ? "border-neutral-300"
+                      : "border-neutral-500"
+                  }`}
+                >
                   {methods.watch().price === "0" ? (
                     <div className="h-full w-full rounded-full bg-neutral-300" />
                   ) : (
@@ -370,16 +376,22 @@ const Index = () => {
               </div>
 
               <div
-                className={`flex cursor-pointer items-center gap-1 rounded-lg border p-1 px-3 ${
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
                   methods.watch().price !== "0"
-                    ? "border-pink-600 bg-pink-600/70"
-                    : "border-neutral-400 text-neutral-400"
+                    ? "border-pink-600 bg-pink-600/40"
+                    : "border-neutral-500 text-neutral-500"
                 }`}
                 onClick={() => {
                   methods.setValue("price", "50");
                 }}
               >
-                <div className="h-3 w-3 rounded-full border border-neutral-300 p-[1px]">
+                <div
+                  className={`flex h-3 w-3 items-center justify-center rounded-full border ${
+                    methods.watch().price !== "0"
+                      ? "border-neutral-300"
+                      : "border-neutral-500"
+                  }`}
+                >
                   {methods.watch().price !== "0" ? (
                     <div className="h-full w-full rounded-full bg-neutral-300" />
                   ) : (
