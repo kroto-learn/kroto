@@ -1,7 +1,7 @@
 import Layout from "@/components/layouts/main";
 import Head from "next/head";
 
-export default function PrivacyPage() {
+export default function TAC() {
   return (
     <Layout>
       <Head>
