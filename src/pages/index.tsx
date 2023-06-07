@@ -1,7 +1,7 @@
 import { type GetServerSidePropsContext, type NextPage } from "next";
 import Head from "next/head";
 import { ClaimLink, ClaimLinkLanding } from "@/components/ClaimLink";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import { useRouter } from "next/router";
 import CalenderDaysIcon from "@heroicons/react/20/solid/CalendarDaysIcon";
 import creatorPageImage from "public/creator-page.png";
@@ -170,7 +170,7 @@ export function Hero({ word }: { word: number }) {
             />
           </div> */}
           {/* <div className=""> */}
-          <Image
+          <ImageWF
             src="/landing/hero_image.png"
             alt="crap"
             width={1500}
@@ -243,7 +243,7 @@ export const Features = () => {
           </dl>
         </div>
         <div className="mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
-          <Image
+          <ImageWF
             src="/landing/courses.png"
             alt="courses"
             width={1000}
@@ -300,7 +300,7 @@ export const Features = () => {
             className="relative mt-10 px-4 lg:col-start-1 lg:mt-0 lg:pl-0 lg:pr-8"
             aria-hidden="true"
           >
-            <Image
+            <ImageWF
               src="/landing/audience.png"
               alt="audience"
               width={1000}
@@ -353,7 +353,7 @@ export const Features = () => {
           </dl>
         </div>
         <div className="relative mt-10 px-4 lg:mt-0 lg:px-0" aria-hidden="true">
-          <Image
+          <ImageWF
             src="/landing/newsletter.png"
             alt="Newsletter"
             width={1000}
@@ -414,7 +414,7 @@ export const ClaimLinkBanner = () => {
       <ClaimLink profile={creatorProfile} />
       <div className="absolute bottom-0 right-0 hidden xl:block">
         <div className="relative">
-          <Image
+          <ImageWF
             src={creatorPageImage}
             width={1024 / 5}
             height={1024 / 6}

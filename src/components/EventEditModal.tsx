@@ -2,7 +2,7 @@ import useToast from "@/hooks/useToast";
 import { type RouterInputs, api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
-import Image from "next/image";
+import ImageWF from "./ImageWF";
 import { useRouter } from "next/router";
 import React, { useEffect, useState, memo, type ChangeEvent } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
@@ -198,7 +198,7 @@ const EventEditModal = () => {
     >
       <div className="relative flex aspect-[18/9] w-full items-end justify-start overflow-hidden rounded-xl bg-neutral-700 text-sm">
         {!!methods.getValues("thumbnail") && (
-          <Image
+          <ImageWF
             src={methods.watch()?.thumbnail ?? ""}
             alt="thumbnail"
             fill

@@ -1,6 +1,6 @@
 import { api } from "@/utils/api";
 import Head from "next/head";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import { Loader } from "@/components/Loader";
 import { DashboardLayout } from ".";
 import { useEffect, useState } from "react";
@@ -156,9 +156,9 @@ const Settings = () => {
             <div
               className={`relative mb-5 aspect-square w-28 overflow-hidden rounded-full border border-neutral-900 outline outline-neutral-800 transition-all`}
             >
-              <Image
+              <ImageWF
                 // src={methods.getValues("image")}
-                src={methods.watch().image ?? ""}
+                src={methods.watch().image ?? "/empty/courses.svg"}
                 alt={methods.getValues("name")}
                 fill
               />
@@ -347,7 +347,7 @@ const Settings = () => {
                 <div className="flex">
                   <span className="inline-flex items-center rounded-l-xl border border-r-0 border-neutral-600 bg-neutral-700 px-3 font-medium text-neutral-400">
                     <div className="group relative h-4 w-4">
-                      <Image
+                      <ImageWF
                         src="/topmate_logo.png"
                         alt="topmate"
                         fill

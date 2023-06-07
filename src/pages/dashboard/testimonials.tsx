@@ -10,7 +10,7 @@ import {
 import { type Testimonial } from "@prisma/client";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
@@ -56,7 +56,7 @@ const Index = () => {
                       <Disclosure.Button className="z-2 flex w-full items-center justify-between rounded-xl bg-neutral-800 px-4 py-2">
                         <div className="flex items-center gap-2">
                           <span>For</span>
-                          <Image
+                          <ImageWF
                             src={testimonial.user.image ?? ""}
                             height={25}
                             width={25}
@@ -97,9 +97,9 @@ const Index = () => {
           ) : (
             <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
               <div className="relative aspect-square w-40 object-contain">
-                <Image src="/empty/testimonial_empty.svg" alt="empty" fill />
+                <ImageWF src="/empty/testimonial_empty.svg" alt="empty" fill />
               </div>
-              <p className="mb-2 text-sm text-neutral-400 sm:text-base text-center">
+              <p className="mb-2 text-center text-sm text-neutral-400 sm:text-base">
                 You have not wrote any testimonials.
               </p>
             </div>

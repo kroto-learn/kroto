@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
-import Image from "next/image";
+import ImageWF from "./ImageWF";
 import { EnvelopeIcon } from "@heroicons/react/20/solid";
 
 export default function Footer() {
@@ -13,7 +13,7 @@ export default function Footer() {
             <Link href="/">
               <div className="flex items-center">
                 <div className="relative aspect-square h-12 sm:h-16">
-                  <Image src="/kroto-logo.png" alt="logo" fill />
+                  <ImageWF src="/kroto-logo.png" alt="logo" fill />
                 </div>
                 <h2 className="hidden -translate-x-3 text-5xl font-medium text-white sm:flex">
                   roto

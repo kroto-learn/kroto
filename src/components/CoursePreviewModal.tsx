@@ -5,7 +5,7 @@ import { type Dispatch, Fragment, type SetStateAction } from "react";
 import { Loader } from "./Loader";
 import { TRPCError } from "@trpc/server";
 import YouTube from "react-youtube";
-import Image from "next/image";
+import ImageWF from "./ImageWF";
 import { signIn, useSession } from "next-auth/react";
 import useToast from "@/hooks/useToast";
 import Link from "next/link";
@@ -126,7 +126,7 @@ const CoursePreviewModal = ({
                       </div>
 
                       <div className="flex items-center gap-1">
-                        <Image
+                        <ImageWF
                           src={course?.creator?.image ?? ""}
                           alt={course?.creator?.name}
                           width={25}

@@ -1,7 +1,7 @@
 import { api } from "@/utils/api";
 import { Menu, Transition } from "@headlessui/react";
 import { signOut } from "next-auth/react";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment, useEffect, type ReactNode } from "react";
@@ -55,7 +55,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                   <div
                     className={`relative h-full w-full overflow-hidden rounded-full`}
                   >
-                    <Image
+                    <ImageWF
                       src={creator?.image ?? ""}
                       alt={creator?.name ?? ""}
                       fill
@@ -66,7 +66,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                   <div
                     className={`relative aspect-square h-[2.5rem] overflow-hidden rounded-full`}
                   >
-                    <Image
+                    <ImageWF
                       src={creator?.image ?? ""}
                       alt={creator?.name ?? ""}
                       fill
@@ -367,7 +367,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                             </div>
                           </Menu.Item>
                         </Link> */}
-                         <Link
+                        <Link
                           href={`/dashboard`}
                           className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-6"
                         >
@@ -375,7 +375,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                             <div className="flex items-center gap-2 text-xl md:text-sm">
                               <WindowIcon className="w-4" />{" "}
                               <span className="hidden md:block">
-                              Learner’s Dashboard
+                                Learner’s Dashboard
                               </span>{" "}
                             </div>
                           </Menu.Item>

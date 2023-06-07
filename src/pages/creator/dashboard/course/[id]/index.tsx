@@ -6,7 +6,7 @@ import { api } from "@/utils/api";
 import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
 import { useRouter } from "next/router";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import {
   FacebookShareButton,
   FacebookIcon,
@@ -82,7 +82,7 @@ const CourseOverview = () => {
           >
             <div className="flex w-full flex-col gap-4 sm:w-1/3">
               <div className="relative flex aspect-video w-full  items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
-                <Image
+                <ImageWF
                   src={course?.thumbnail ?? ""}
                   alt="thumbnail"
                   fill
@@ -226,7 +226,7 @@ const CourseOverview = () => {
                 >
                   <p className="text-sm text-neutral-300">{index + 1}</p>
                   <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
-                    <Image
+                    <ImageWF
                       src={chapter?.thumbnail ?? ""}
                       alt={chapter?.title ?? ""}
                       fill

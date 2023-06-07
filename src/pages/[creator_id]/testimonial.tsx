@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -153,7 +153,7 @@ const Index = () => {
         >
           <div className="flex items-center justify-center gap-2 text-lg md:text-xl lg:justify-start lg:text-2xl">
             <span>Write a testimonial for</span>
-            <Image
+            <ImageWF
               src={creator?.image ?? ""}
               width={30}
               height={30}

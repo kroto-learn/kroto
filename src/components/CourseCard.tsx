@@ -1,5 +1,5 @@
 import { type Course } from "@prisma/client";
-import Image from "next/image";
+import ImageWF from "./ImageWF";
 import Link from "next/link";
 
 type Props = {
@@ -26,7 +26,7 @@ const CourseCard = ({ course, manage, lg }: Props) => {
           lg ? "w-60" : ""
         }`}
       >
-        <Image
+        <ImageWF
           src={course?.thumbnail ?? ""}
           alt={course?.title ?? ""}
           fill

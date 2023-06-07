@@ -5,7 +5,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { type Creator } from "interfaces/Creator";
 import { getCreatorsClient } from "mock/getCreatorsClient";
-import Image from "next/image";
+import ImageWF from "./ImageWF";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, type ReactNode, useState } from "react";
@@ -114,7 +114,7 @@ const DashboardNavWrapper = ({ children }: Props) => {
               <div
                 className={`relative aspect-square w-12 overflow-hidden  rounded-full`}
               >
-                <Image src={creator.image_url} alt={creator.name} fill />
+                <ImageWF src={creator.image_url} alt={creator.name} fill />
               </div>
               <div className="group flex flex-col gap-1">
                 <p className="text-sm font-medium text-neutral-200">

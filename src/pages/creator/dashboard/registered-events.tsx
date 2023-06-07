@@ -4,7 +4,7 @@ import React from "react";
 import { Loader } from "@/components/Loader";
 import { api } from "@/utils/api";
 import { DashboardLayout } from ".";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -88,9 +88,9 @@ const RegisteredEvents = () => {
             ) : (
               <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
                 <div className="relative aspect-square w-40 object-contain">
-                  <Image src="/empty/event_empty.svg" alt="empty" fill />
+                  <ImageWF src="/empty/event_empty.svg" alt="empty" fill />
                 </div>
-                <p className="mb-2 text-neutral-400 text-center">
+                <p className="mb-2 text-center text-neutral-400">
                   {isPastTab
                     ? "You don't have any past registered events."
                     : "You don't have any upcoming registered events."}

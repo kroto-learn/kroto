@@ -1,7 +1,7 @@
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
@@ -30,7 +30,7 @@ export function KrotoLogo() {
       <Link href="/">
         <div className="flex">
           <div>
-            <Image
+            <ImageWF
               src="/kroto-logo.png"
               width={512 / 13}
               height={512 / 13}
