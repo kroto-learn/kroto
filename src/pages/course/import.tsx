@@ -124,7 +124,6 @@ const Index = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playlistData]);
-
   return (
     <Layout>
       <Head>
