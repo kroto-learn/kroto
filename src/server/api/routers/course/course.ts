@@ -151,6 +151,7 @@ export const courseRouter = createTRPCRouter({
           thumbnail: input.thumbnail,
           creatorId: ctx.session.user.id,
           ytId: input.ytId,
+          price: input.price,
         },
       });
 
