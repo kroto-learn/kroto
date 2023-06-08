@@ -23,6 +23,7 @@ import youtubeBranding from "public/developed-with-youtube-sentence-case-light.p
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import { CheckmarkIcon } from "react-hot-toast";
 import ImageWF from "@/components/ImageWF";
+import { signIn } from "next-auth/react";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -129,7 +130,7 @@ const Index = () => {
       <Head>
         <title>Import Course</title>
       </Head>
-      <div className="relative mx-auto my-12 flex min-h-screen w-full max-w-2xl flex-col gap-8">
+      <div className="relative mx-auto my-12 flex min-h-screen w-full max-w-2xl flex-col gap-8 px-4">
         <div className="mt-4 flex w-full items-center justify-center text-neutral-500">
           <p
             className={`mr-1 flex items-center text-sm font-bold uppercase tracking-wider ${
@@ -150,6 +151,35 @@ const Index = () => {
           </p>
         </div>
         <div className="flex flex-col gap-2">
+          <div className="mb-1 flex items-center gap-2">
+            Click below and grant us permission to access your YouTube playlist.
+          </div>
+          <button
+            className="mb-4 flex w-44 items-center gap-1 bg-[#4285F4] pr-2 text-sm font-bold drop-shadow"
+            onClick={() => {
+              void signIn(
+                "google",
+                {
+                  callbackUrl: `/course/import`,
+                },
+                {
+                  scope: `openid ${[
+                    "https://www.googleapis.com/auth/youtube.readonly",
+                    "https://www.googleapis.com/auth/userinfo.email",
+                    "https://www.googleapis.com/auth/userinfo.profile",
+                  ].join(" ")}`,
+                }
+              );
+            }}
+          >
+            <ImageWF
+              src="/btn_google_dark_normal_ios.svg"
+              alt="Google"
+              height={30}
+              width={30}
+            />
+            Sign in with Google
+          </button>
           <h3 className="text-xl font-medium">
             Select your <FontAwesomeIcon icon={faYoutube} className="ml-1" />{" "}
             YouTube playlist
@@ -185,7 +215,7 @@ const Index = () => {
           {!playlists || playlists instanceof TRPCError || !searchFocused ? (
             <></>
           ) : (
-            <div className="absolute top-36 z-10 mt-2 flex max-h-[65vh] w-full flex-col overflow-y-auto overflow-x-hidden rounded-xl border border-neutral-700 backdrop-blur">
+            <div className="absolute top-60 z-10 mt-2 flex max-h-[65vh] w-full flex-col overflow-y-auto overflow-x-hidden rounded-xl border border-neutral-700 backdrop-blur">
               {playlists.length > 0 ? (
                 playlists.map((playlist) => (
                   <button
@@ -232,7 +262,8 @@ const Index = () => {
                 ))
               ) : (
                 <p className="p-2 text-sm text-neutral-400">
-                  {"🥲"} No public playlist found in your YouTube account.
+                  {"🥲"} No public playlist found in your YouTube account. Make
+                  sure you have granted sufficient permissions.
                 </p>
               )}
             </div>
