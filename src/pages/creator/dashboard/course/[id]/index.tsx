@@ -156,15 +156,37 @@ const CourseOverview = () => {
                 {course?.title}
               </p>
 
+              {course?.description && course?.description !== "" ? (
+                <>
+                  <label
+                    htmlFor="description"
+                    className="mt-2 text-xs font-medium uppercase tracking-wider text-neutral-400"
+                  >
+                    Description
+                  </label>
+                  <p className="hide-scroll max-h-20 overflow-y-auto text-xs text-neutral-300 sm:text-sm">
+                    {course?.description}
+                  </p>
+                </>
+              ) : (
+                <></>
+              )}
+
               <label
-                htmlFor="description"
-                className="mt-2 text-xs font-medium uppercase tracking-wider text-neutral-400"
+                htmlFor="price"
+                className="text-xs font-medium uppercase tracking-wider text-neutral-400"
               >
-                Description
+                Price
               </label>
-              <p className="hide-scroll max-h-20 overflow-y-auto text-xs text-neutral-300 sm:text-sm">
-                {course?.description}
-              </p>
+              {course?.price === 0 ? (
+                <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm text-green-600 duration-300 sm:text-base">
+                  Free
+                </p>
+              ) : (
+                <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm font-bold text-neutral-200 duration-300 sm:text-base">
+                  ₹ {course?.price}
+                </p>
+              )}
             </div>
           </AnimatedSection>
           <AnimatedSection

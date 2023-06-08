@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import { EnvelopeIcon } from "@heroicons/react/20/solid";
 
 export default function Footer() {

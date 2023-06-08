@@ -2,7 +2,7 @@ import { Loader } from "@/components/Loader";
 import YouTube from "react-youtube";
 import { api } from "@/utils/api";
 import { TRPCError } from "@trpc/server";
-import ImageWF from "@components/ImageWF";
+import ImageWF from "@/components/ImageWF";
 import { useRouter } from "next/router";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import Head from "next/head";

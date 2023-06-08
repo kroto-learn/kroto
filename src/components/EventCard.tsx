@@ -1,4 +1,4 @@
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import React from "react";
 import CalenderBox from "./CalenderBox";
 import Link from "next/link";

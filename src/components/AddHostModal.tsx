@@ -5,9 +5,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { UserPlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import AnimatedSection from "./AnimatedSection";
 import { TRPCError } from "@trpc/server";
-import ImageWF from "./ImageWF";
 import { type Dispatch, Fragment, type SetStateAction, useState } from "react";
 import { Loader } from "./Loader";
+import ImageWF from "@/components/ImageWF";
 
 export default function AddHostModal({
   eventId,

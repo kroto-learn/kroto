@@ -1,6 +1,6 @@
 import { PlayIcon } from "@heroicons/react/20/solid";
 import { type CourseProgress, type Course, type Chapter } from "@prisma/client";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 
 type Props = {

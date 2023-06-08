@@ -3,7 +3,7 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import { type Dispatch, Fragment, type SetStateAction } from "react";
 
 import { type Course } from "@prisma/client";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 
 export default function CheckoutModal({
   course,

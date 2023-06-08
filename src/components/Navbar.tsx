@@ -3,7 +3,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { api } from "@/utils/api";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import { Fragment } from "react";
 import { useRouter } from "next/router";
 

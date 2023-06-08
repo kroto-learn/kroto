@@ -6,7 +6,7 @@ import Link from "next/link";
 import { type Dispatch, type SetStateAction } from "react";
 import { Loader } from "./Loader";
 import { useRouter } from "next/router";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import AnimatedSection from "./AnimatedSection";
 

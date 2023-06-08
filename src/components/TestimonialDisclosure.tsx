@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { type Testimonial, type User } from "@prisma/client";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 
 type Props = {
   testimonial: Testimonial & { user: User };

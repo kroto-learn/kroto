@@ -5,7 +5,7 @@ import { type Dispatch, Fragment, type SetStateAction } from "react";
 import { Loader } from "./Loader";
 import { TRPCError } from "@trpc/server";
 import YouTube from "react-youtube";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import { signIn, useSession } from "next-auth/react";
 import useToast from "@/hooks/useToast";
 import Link from "next/link";
@@ -15,9 +15,11 @@ const CoursePreviewModal = ({
   isOpen,
   setIsOpen,
   courseId,
+  setCheckoutModalOpen,
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  setCheckoutModalOpen: Dispatch<SetStateAction<boolean>>;
   courseId: string;
 }) => {
   const { data: course, isLoading: courseLoading } =
@@ -161,20 +163,24 @@ const CoursePreviewModal = ({
                                 });
                                 return;
                               }
-                              await enrollMutation(
-                                { courseId: course?.id },
-                                {
-                                  onSuccess: () => {
-                                    void ctx.course.isEnrolled.invalidate();
-                                    successToast(
-                                      "Successfully enrolled in course!"
-                                    );
-                                  },
-                                  onError: () => {
-                                    errorToast("Error in enrolling in course!");
-                                  },
-                                }
-                              );
+                              if (course.price === 0)
+                                await enrollMutation(
+                                  { courseId: course?.id },
+                                  {
+                                    onSuccess: () => {
+                                      void ctx.course.isEnrolled.invalidate();
+                                      successToast(
+                                        "Successfully enrolled in course!"
+                                      );
+                                    },
+                                    onError: () => {
+                                      errorToast(
+                                        "Error in enrolling in course!"
+                                      );
+                                    },
+                                  }
+                                );
+                              else setCheckoutModalOpen(true);
                             }}
                             className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
                           >

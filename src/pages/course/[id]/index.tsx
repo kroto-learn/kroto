@@ -248,8 +248,8 @@ const Index = ({ courseId }: Props) => {
                 <p className="text-sm text-neutral-300">{index + 1}</p>
                 <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
                   <Image
-                    src={course?.thumbnail ?? ""}
-                    alt={course?.title ?? ""}
+                    src={chapter?.thumbnail ?? ""}
+                    alt={chapter?.title ?? ""}
                     fill
                     className="object-cover"
                   />
@@ -271,6 +271,7 @@ const Index = ({ courseId }: Props) => {
         courseId={courseId}
         isOpen={previewOpen}
         setIsOpen={setPreviewOpen}
+        setCheckoutModalOpen={setCheckoutModalOpen}
       />
       <CheckoutModal
         course={{

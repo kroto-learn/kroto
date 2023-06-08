@@ -5,7 +5,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { type Creator } from "interfaces/Creator";
 import { getCreatorsClient } from "mock/getCreatorsClient";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, type ReactNode, useState } from "react";

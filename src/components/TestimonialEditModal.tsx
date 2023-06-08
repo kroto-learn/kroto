@@ -1,7 +1,7 @@
 import useToast from "@/hooks/useToast";
 import { api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import React, { memo } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";

@@ -2,7 +2,7 @@ import useToast from "@/hooks/useToast";
 import { type RouterInputs, api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import { useRouter } from "next/router";
 import React, { useEffect, useState, memo, type ChangeEvent } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";

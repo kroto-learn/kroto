@@ -1,6 +1,5 @@
-import ImageWF from "./ImageWF";
+import ImageWF from "@/components/ImageWF";
 import logo from "public/kroto-logo.png";
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
