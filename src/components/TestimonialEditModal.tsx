@@ -1,7 +1,7 @@
 import useToast from "@/hooks/useToast";
 import { api } from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import React, { memo } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
@@ -83,7 +83,7 @@ const EventEditModal = ({ testimonial, setModalOpen }: Props) => {
     >
       <div className="flex items-center justify-center gap-2 text-lg md:text-xl lg:justify-start lg:text-2xl">
         <span>Write a testimonial for</span>
-        <Image
+        <ImageWF
           src={creator?.image ?? ""}
           width={30}
           height={30}

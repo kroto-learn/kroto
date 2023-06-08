@@ -6,7 +6,7 @@ import { api } from "@/utils/api";
 import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
 import { useRouter } from "next/router";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import {
   FacebookShareButton,
   FacebookIcon,
@@ -82,7 +82,7 @@ const CourseOverview = () => {
           >
             <div className="flex w-full flex-col gap-4 sm:w-1/3">
               <div className="relative flex aspect-video w-full  items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
-                <Image
+                <ImageWF
                   src={course?.thumbnail ?? ""}
                   alt="thumbnail"
                   fill
@@ -156,15 +156,37 @@ const CourseOverview = () => {
                 {course?.title}
               </p>
 
+              {course?.description && course?.description !== "" ? (
+                <>
+                  <label
+                    htmlFor="description"
+                    className="mt-2 text-xs font-medium uppercase tracking-wider text-neutral-400"
+                  >
+                    Description
+                  </label>
+                  <p className="hide-scroll max-h-20 overflow-y-auto text-xs text-neutral-300 sm:text-sm">
+                    {course?.description}
+                  </p>
+                </>
+              ) : (
+                <></>
+              )}
+
               <label
-                htmlFor="description"
-                className="mt-2 text-xs font-medium uppercase tracking-wider text-neutral-400"
+                htmlFor="price"
+                className="text-xs font-medium uppercase tracking-wider text-neutral-400"
               >
-                Description
+                Price
               </label>
-              <p className="hide-scroll max-h-20 overflow-y-auto text-xs text-neutral-300 sm:text-sm">
-                {course?.description}
-              </p>
+              {course?.price === 0 ? (
+                <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm text-green-600 duration-300 sm:text-base">
+                  Free
+                </p>
+              ) : (
+                <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm font-bold text-neutral-200 duration-300 sm:text-base">
+                  ₹ {course?.price}
+                </p>
+              )}
             </div>
           </AnimatedSection>
           <AnimatedSection
@@ -226,7 +248,7 @@ const CourseOverview = () => {
                 >
                   <p className="text-sm text-neutral-300">{index + 1}</p>
                   <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
-                    <Image
+                    <ImageWF
                       src={chapter?.thumbnail ?? ""}
                       alt={chapter?.title ?? ""}
                       fill

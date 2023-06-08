@@ -1,4 +1,4 @@
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import React from "react";
 import CalenderBox from "./CalenderBox";
 import Link from "next/link";
@@ -40,7 +40,7 @@ const EventCardId = ({ eventId, manage }: Props) => {
       <div
         className={`relative aspect-[18/9] w-full object-cover transition-all xs:w-2/5`}
       >
-        <Image
+        <ImageWF
           src={event?.thumbnail ?? ""}
           alt={event?.title ?? ""}
           fill
@@ -122,7 +122,7 @@ export const EventCard = ({
       <div
         className={`relative aspect-[18/9] w-full object-cover transition-all xs:w-2/5`}
       >
-        <Image
+        <ImageWF
           src={event?.thumbnail ?? ""}
           alt={event?.title ?? ""}
           fill

@@ -3,7 +3,7 @@ import React from "react";
 import { Loader } from "@/components/Loader";
 import { api } from "@/utils/api";
 import { DashboardLayout } from ".";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import EnrolledCourseCard from "@/components/EnrolledCourseCard";
 
 const Index = () => {
@@ -40,9 +40,9 @@ const Index = () => {
             ) : (
               <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
                 <div className="relative aspect-square w-40 object-contain">
-                  <Image src="/empty/course_empty.svg" alt="empty" fill />
+                  <ImageWF src="/empty/course_empty.svg" alt="empty" fill />
                 </div>
-                <p className="mb-2 text-neutral-400 text-center">
+                <p className="mb-2 text-center text-neutral-400">
                   You have not enrolled in any course.
                 </p>
               </div>

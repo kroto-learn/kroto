@@ -6,7 +6,7 @@ import Link from "next/link";
 import { type Dispatch, type SetStateAction } from "react";
 import { Loader } from "./Loader";
 import { useRouter } from "next/router";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import AnimatedSection from "./AnimatedSection";
 
@@ -63,7 +63,7 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
                   <li key={host?.id} className="py-3 sm:py-2">
                     <div className="flex w-full items-center space-x-4">
                       <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
-                        <Image
+                        <ImageWF
                           className="rounded-full"
                           src={host?.user?.image ?? ""}
                           alt="host img"

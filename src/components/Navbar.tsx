@@ -3,7 +3,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { api } from "@/utils/api";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import { Fragment } from "react";
 import { useRouter } from "next/router";
 
@@ -27,7 +27,7 @@ export default function Navbar({ status }: { status: string }) {
                 href={`/${UnknownCreator?.creatorProfile ?? ""}`}
                 className="group mx-4 mt-2 flex items-center gap-2"
               >
-                <Image
+                <ImageWF
                   src={UnknownCreator?.image ?? ""}
                   alt={UnknownCreator?.name as string}
                   width={30}
@@ -48,7 +48,7 @@ export default function Navbar({ status }: { status: string }) {
                 <div className="flex flex-col items-end">
                   <Menu.Button>
                     <div className="relative h-9 w-9 rounded-full">
-                      <Image
+                      <ImageWF
                         src={creator?.image ?? ""}
                         alt="Profile Image"
                         className={`rounded-full transition-all ${

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { CourseNestedLayout } from ".";
 import { api } from "@/utils/api";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import getCSV from "@/helpers/downloadCSV";
 import { type Column, useTable } from "react-table";
 import {
@@ -91,7 +91,10 @@ const Index = () => {
       </Head>
       <div className="min-h-[80%] w-full p-6">
         <h3 className="mb-4 text-lg font-medium  sm:text-2xl">Enrollments</h3>
-        <AnimatedSection delay={0.1} className="mb-4 flex w-full items-start justify-between">
+        <AnimatedSection
+          delay={0.1}
+          className="mb-4 flex w-full items-start justify-between"
+        >
           <div className="flex flex-col items-start">
             <p className="text-3xl text-neutral-200">
               {course?.enrollments.length ?? "-"}
@@ -168,7 +171,7 @@ const Index = () => {
                               return (
                                 <td className="py-4 pl-6 pr-2">
                                   <div className="relative aspect-square h-4 w-4 overflow-hidden rounded-full object-cover">
-                                    <Image
+                                    <ImageWF
                                       fill
                                       src={(cell?.value as string) ?? ""}
                                       alt="image"
@@ -197,7 +200,10 @@ const Index = () => {
             </table>
           </AnimatedSection>
         ) : (
-          <AnimatedSection delay={0.2} className="flex w-full flex-col items-center justify-center gap-2 p-4">
+          <AnimatedSection
+            delay={0.2}
+            className="flex w-full flex-col items-center justify-center gap-2 p-4"
+          >
             {isLoading ? (
               <div className="my-10">
                 <Loader size="lg" />
@@ -205,12 +211,12 @@ const Index = () => {
             ) : (
               <>
                 <div className="relative aspect-square w-40 object-contain">
-                  <Image src="/empty/users_empty.svg" alt="empty" fill />
+                  <ImageWF src="/empty/users_empty.svg" alt="empty" fill />
                 </div>
-                <p className="text-neutral-400 text-center">
+                <p className="text-center text-neutral-400">
                   Nobody enrolled to your course yet.
                 </p>
-                <p className="mb-2 text-neutral-400 text-center">
+                <p className="mb-2 text-center text-neutral-400">
                   Share the course in your community.
                 </p>
                 <div className="flex items-center gap-2">

@@ -5,6 +5,7 @@ import React, {
   type Dispatch,
   Fragment,
   type SetStateAction,
+  useEffect,
 } from "react";
 import { CourseNestedLayout } from ".";
 import { api } from "@/utils/api";
@@ -15,6 +16,27 @@ import { Loader } from "@/components/Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import useToast from "@/hooks/useToast";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { useForm, type UseFormProps } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+export const settingsFormSchema = z.object({
+  price: z.string().nonempty("Please enter course price."),
+  id: z.string(),
+});
+
+function useZodForm<TSchema extends z.ZodType>(
+  props: Omit<UseFormProps<TSchema["_input"]>, "resolver"> & {
+    schema: TSchema;
+  }
+) {
+  const form = useForm<TSchema["_input"]>({
+    ...props,
+    resolver: zodResolver(props.schema, undefined),
+  });
+
+  return form;
+}
 
 const Index = () => {
   const router = useRouter();
@@ -25,6 +47,31 @@ const Index = () => {
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
+  const methods = useZodForm({
+    schema: settingsFormSchema,
+    defaultValues: {
+      price: "0",
+    },
+  });
+
+  const { mutateAsync: priceUpdateMutation, isLoading: priceMutateLoading } =
+    api.course.updatePrice.useMutation();
+
+  const [initPrice, setInitPrice] = useState(false);
+
+  const ctx = api.useContext();
+
+  const revalidate = useRevalidateSSG();
+
+  useEffect(() => {
+    if (!(course instanceof TRPCError) && course && !initPrice) {
+      setInitPrice(true);
+      methods.setValue("price", course?.price?.toString());
+      methods.setValue("id", course?.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [course]);
+
   if (courseLoading) return <></>;
 
   if (course instanceof TRPCError || !course) return <>Not Found</>;
@@ -34,7 +81,99 @@ const Index = () => {
       <Head>
         <title>{(course?.title ?? "Course") + " | Settings"}</title>
       </Head>
-      <AnimatedSection delay={0.2} className="w-full rounded-xl bg-neutral-900 p-8">
+      <AnimatedSection
+        delay={0.2}
+        className="w-full rounded-xl bg-neutral-900 p-8"
+      >
+        <form
+          onSubmit={methods.handleSubmit(async (values) => {
+            await priceUpdateMutation(values, {
+              onSuccess: () => {
+                void ctx.course.get.invalidate();
+                void ctx.course.getCourse.invalidate();
+                void revalidate(`/course/${course?.id}`);
+                void revalidate(`/${course?.creator?.creatorProfile ?? ""}`);
+              },
+            });
+          })}
+          className="mb-12 mt-1 flex flex-col items-start gap-3"
+        >
+          <label htmlFor="description" className="text-lg  text-neutral-200">
+            Price
+          </label>
+          <div className="flex items-center gap-2">
+            <div
+              className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
+                methods.watch().price === "0"
+                  ? "border-green-600 bg-green-600/40"
+                  : "border-neutral-500 text-neutral-500"
+              }`}
+              onClick={() => {
+                methods.setValue("price", "0");
+              }}
+            >
+              <div
+                className={`flex h-3 w-3 items-center rounded-full border ${
+                  methods.watch().price === "0"
+                    ? "border-neutral-300"
+                    : "border-neutral-500"
+                }`}
+              >
+                {methods.watch().price === "0" ? (
+                  <div className="h-full w-full rounded-full bg-neutral-300" />
+                ) : (
+                  <></>
+                )}
+              </div>{" "}
+              Free
+            </div>
+
+            <div
+              className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
+                methods.watch().price !== "0"
+                  ? "border-pink-600 bg-pink-600/40"
+                  : "border-neutral-500 text-neutral-500"
+              }`}
+              onClick={() => {
+                methods.setValue("price", "50");
+              }}
+            >
+              <div
+                className={`flex h-3 w-3 items-center justify-center rounded-full border ${
+                  methods.watch().price !== "0"
+                    ? "border-neutral-300"
+                    : "border-neutral-500"
+                }`}
+              >
+                {methods.watch().price !== "0" ? (
+                  <div className="h-full w-full rounded-full bg-neutral-300" />
+                ) : (
+                  <></>
+                )}
+              </div>{" "}
+              Paid
+            </div>
+          </div>
+          {methods.watch().price !== "0" ? (
+            <div className="relative flex w-full max-w-[7rem] items-center">
+              <input
+                type="number"
+                {...methods.register("price")}
+                className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                placeholder="00"
+                defaultValue={50}
+              />
+              <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                ₹
+              </p>
+            </div>
+          ) : (
+            <></>
+          )}
+          <button className="flex items-center gap-1 rounded-lg bg-pink-500 px-4 py-2 text-sm font-bold duration-150 hover:bg-pink-600">
+            {priceMutateLoading ? <Loader white /> : <></>} Update Price
+          </button>
+        </form>
         <div className="flex flex-col items-start gap-3">
           <label className="text-lg font-medium">
             Delete &quot;{course?.title ?? ""}&quot; course ?

@@ -5,7 +5,7 @@ import Head from "next/head";
 import { Loader } from "@/components/Loader";
 import AnimatedSection from "@/components/AnimatedSection";
 import { api } from "@/utils/api";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import CourseCard from "@/components/CourseCard";
 
 const Index = () => {
@@ -40,17 +40,23 @@ const Index = () => {
           </Link>
         </AnimatedSection>
         {courses && courses.length > 0 ? (
-          <AnimatedSection delay={0.2} className="mt-8 flex w-full flex-col items-start gap-4">
+          <AnimatedSection
+            delay={0.2}
+            className="mt-8 flex w-full flex-col items-start gap-4"
+          >
             {courses?.map((course) => (
               <CourseCard course={course} key={course.id} manage />
             ))}
           </AnimatedSection>
         ) : (
-          <AnimatedSection delay={0.2} className="flex w-full flex-col items-center justify-center text-center gap-2 p-4">
+          <AnimatedSection
+            delay={0.2}
+            className="flex w-full flex-col items-center justify-center gap-2 p-4 text-center"
+          >
             <div className="relative aspect-square w-40 object-contain">
-              <Image src="/empty/course_empty.svg" alt="empty" fill />
+              <ImageWF src="/empty/course_empty.svg" alt="empty" fill />
             </div>
-            <p className="mb-2 text-sm text-neutral-400 sm:text-base text-center">
+            <p className="mb-2 text-center text-sm text-neutral-400 sm:text-base">
               You have not created any course yet.
             </p>
             <Link

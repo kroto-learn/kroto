@@ -65,110 +65,6 @@ export const searchYoutubePlaylistsService = async ({
   }
 };
 
-// export const getPlaylistDataService = async (id: string) => {
-//   const playlistDetailsConfig = {
-//     id: [id],
-//     part: ["snippet"],
-//     key: YOUTUBE_API_KEY,
-//   };
-
-//   try {
-//     const yt = google.youtube({ version: "v3" });
-//     // Send request for playlist details
-//     const res = await yt.playlists.list(playlistDetailsConfig);
-
-//     if (!res || res.status !== 200) {
-//       console.log("error in getting playlist details!", res?.data);
-//       return null;
-//     }
-
-//     if (!res?.data?.items || !res?.data?.items[0]) return null;
-
-//     const playlistTitle: string = res?.data?.items[0]?.snippet?.title ?? "";
-//     const playlistDescription: string =
-//       res?.data?.items[0]?.snippet?.description ?? "";
-//     const playlistThumbnail: string =
-//       res?.data?.items[0]?.snippet?.thumbnails?.high?.url ?? "";
-
-//     // Define playlist items request config
-//     const playlistItemsConfig = {
-//       playlistId: id,
-//       part: ["snippet", "contentDetails"],
-//       key: YOUTUBE_API_KEY,
-//       maxResults: 50,
-//     };
-
-//     // Send request for playlist items
-//     let piRes = await yt.playlistItems.list(playlistItemsConfig);
-
-//     if (!piRes || piRes.status !== 200) {
-//       console.log("error in getting playlist items!", piRes?.data);
-//       return null;
-//     }
-
-//     const allVidoes: {
-//       title: string;
-//       thumbnail: string;
-//       videoUrl: string;
-//       ytId: string;
-//       description: string;
-//       // duration: number;
-//     }[] = [];
-
-//     while (piRes) {
-//       // Do something with the results on this page
-
-//       console.log("pires", piRes?.data?.items);
-
-//       piRes?.data?.items
-//         ? piRes?.data?.items?.forEach((video) => {
-//             const videoTitle = video?.snippet?.title ?? "";
-//             const videoThumbnail = video?.snippet?.thumbnails?.high?.url ?? "";
-//             const videoUrl = `https://www.youtube.com/watch?v=${
-//               video?.snippet?.resourceId?.videoId ?? ""
-//             }`;
-//             const ytId = video?.snippet?.resourceId?.videoId ?? "";
-//             const description = video?.snippet?.description ?? "";
-//             // const duration = video?.contentDetails
-//             //   ? video?.contentDetails?.duration?.seconds
-//             //   : 0;
-
-//             allVidoes.push({
-//               title: videoTitle,
-//               thumbnail: videoThumbnail,
-//               videoUrl,
-//               ytId,
-//               description,
-//             });
-//           })
-//         : [];
-
-//       // Check if there are more pages
-//       if (piRes?.data?.nextPageToken) {
-//         // Request the next page of results
-//         const requestNextPage = await yt.playlistItems.list({
-//           ...playlistItemsConfig,
-//           pageToken: piRes?.data?.nextPageToken,
-//         });
-//         piRes = requestNextPage;
-//       } else {
-//         // No more pages, end the loop
-//         break;
-//       }
-//     }
-
-//     return {
-//       title: playlistTitle,
-//       description: playlistDescription,
-//       thumbnail: playlistThumbnail,
-//       videos: allVidoes,
-//     };
-//   } catch (error) {
-//     console.log(error);
-//     return null;
-//   }
-// };
-
 export const getPlaylistDataService = async (id: string) => {
   const playlistDetailsConfig = {
     id: [id],
@@ -239,8 +135,6 @@ export const getPlaylistDataService = async (id: string) => {
     while (piRes && vdRes) {
       // Do something with the results on this page
 
-      console.log("pires", piRes?.data?.items);
-
       piRes?.data?.items
         ? piRes?.data?.items
             ?.filter((video) => video?.snippet?.title !== "Deleted video")
@@ -306,8 +200,6 @@ export const getPlaylistDataService = async (id: string) => {
         break;
       }
     }
-
-    console.log(allVideos);
 
     return {
       title: playlistTitle,

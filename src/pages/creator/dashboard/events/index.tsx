@@ -8,7 +8,7 @@ import Link from "next/link";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 
 const UpcomingEvents = () => {
   const { data: events, isLoading: isEventsLoading } =
@@ -32,17 +32,23 @@ const UpcomingEvents = () => {
         <title>Events | Dashboard</title>
       </Head>
       {events && events.length > 0 ? (
-        <AnimatedSection delay={0.2} className="flex w-full flex-col items-start gap-4">
+        <AnimatedSection
+          delay={0.2}
+          className="flex w-full flex-col items-start gap-4"
+        >
           {events?.map((event) => (
             <EventCard key={event?.id ?? ""} manage event={event} />
           ))}
         </AnimatedSection>
       ) : (
-        <AnimatedSection delay={0.2} className="flex w-full flex-col items-center justify-center gap-2 p-4">
+        <AnimatedSection
+          delay={0.2}
+          className="flex w-full flex-col items-center justify-center gap-2 p-4"
+        >
           <div className="relative aspect-square w-40 object-contain">
-            <Image src="/empty/event_empty.svg" alt="empty" fill />
+            <ImageWF src="/empty/event_empty.svg" alt="empty" fill />
           </div>
-          <p className="mb-2 text-sm text-neutral-400 sm:text-base text-center">
+          <p className="mb-2 text-center text-sm text-neutral-400 sm:text-base">
             You have not created any events yet.
           </p>
           <Link
@@ -75,7 +81,10 @@ function EventsLayoutR({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <AnimatedSection delay={0.1} className="flex w-full items-center justify-between gap-4 px-4">
+      <AnimatedSection
+        delay={0.1}
+        className="flex w-full items-center justify-between gap-4 px-4"
+      >
         <h1 className="text-2xl text-neutral-200">Events</h1>
         <Link
           href="/event/create"
@@ -84,7 +93,10 @@ function EventsLayoutR({ children }: { children: ReactNode }) {
           <PlusIcon className="w-5" /> Create Event
         </Link>
       </AnimatedSection>
-      <AnimatedSection delay={0.1} className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
+      <AnimatedSection
+        delay={0.1}
+        className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400"
+      >
         <ul className="-mb-px flex flex-wrap">
           <li className="mr-2">
             <Link

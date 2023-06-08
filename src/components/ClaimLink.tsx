@@ -1,6 +1,5 @@
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import logo from "public/kroto-logo.png";
-
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { signIn, useSession } from "next-auth/react";
@@ -51,7 +50,7 @@ export function ClaimLink({ profile }: { profile?: string }) {
     >
       <div className="absolute left-4">
         <div className="relative">
-          <Image src={logo} width={512 / 18} height={512 / 18} alt="logo" />
+          <ImageWF src={logo} width={512 / 18} height={512 / 18} alt="logo" />
         </div>
       </div>
       <span className="absolute left-10 text-xl">roto.in/</span>
@@ -122,7 +121,7 @@ export function ClaimLinkLanding({ profile }: { profile?: string }) {
       <div className="relative flex max-w-sm items-center md:max-w-md">
         <div className="absolute left-3 sm:left-5">
           <div className="relative aspect-square h-8">
-            <Image src={logo} alt="logo" fill />
+            <ImageWF src={logo} alt="logo" fill />
           </div>
         </div>
         <span className="absolute left-10 text-lg sm:left-12 md:text-2xl">

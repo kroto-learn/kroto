@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Disclosure } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { type Testimonial, type User } from "@prisma/client";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 
 type Props = {
   testimonial: Testimonial & { user: User };
@@ -16,7 +16,7 @@ const TestimonialDisclosure = ({ testimonial }: Props) => {
         <>
           <Disclosure.Button className="z-2 flex w-full items-center justify-between rounded-xl bg-neutral-700 px-4 py-2 backdrop-blur-sm">
             <div className="flex items-center gap-2">
-              <Image
+              <ImageWF
                 src={testimonial.user.image ?? ""}
                 height={25}
                 width={25}

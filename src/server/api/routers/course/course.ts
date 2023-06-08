@@ -13,6 +13,7 @@ import { importCourseFormSchema } from "@/pages/course/import";
 import { generateStaticCourseOgImage } from "@/server/services/og";
 import { env } from "@/env.mjs";
 import { ogImageUpload } from "@/server/helpers/s3";
+import { settingsFormSchema } from "../../../../pages/creator/dashboard/course/[id]/settings";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -151,6 +152,7 @@ export const courseRouter = createTRPCRouter({
           thumbnail: input.thumbnail,
           creatorId: ctx.session.user.id,
           ytId: input.ytId,
+          price: parseInt(input.price),
         },
       });
 
@@ -310,6 +312,19 @@ export const courseRouter = createTRPCRouter({
       });
 
       return { ...ogUpdatedCourse, chapters: updatedChapters };
+    }),
+
+  updatePrice: protectedProcedure
+    .input(settingsFormSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const updatedCourse = await prisma.course.update({
+        where: { id: input.id },
+        data: { price: parseInt(input.price) },
+      });
+
+      return updatedCourse;
     }),
 
   // update: protectedProcedure

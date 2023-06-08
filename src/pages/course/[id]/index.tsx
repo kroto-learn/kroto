@@ -18,6 +18,8 @@ import { useState } from "react";
 import CoursePreviewModal from "@/components/CoursePreviewModal";
 import { useRouter } from "next/router";
 import { prisma } from "@/server/db";
+import CheckoutModal from "@/components/CheckoutModal";
+import { type Course } from "@prisma/client";
 
 type Props = {
   courseId: string;
@@ -33,6 +35,7 @@ const Index = ({ courseId }: Props) => {
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [checkoutModalOpen, setCheckoutModalOpen] = useState<boolean>(false);
   const router = useRouter();
 
   if (course instanceof TRPCError || !course)
@@ -120,7 +123,7 @@ const Index = ({ courseId }: Props) => {
                   width={22}
                   height={22}
                 />
-                <p className="text-sm text-neutral-300 duration-150 group-hover:text-neutral-200 group-hover:underline">
+                <p className="text-sm text-neutral-300 duration-150 group-hover:text-neutral-200">
                   {course?.creator?.name}
                 </p>
               </Link>
@@ -138,51 +141,66 @@ const Index = ({ courseId }: Props) => {
                   </>
                 </Link>
               ) : (
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={async () => {
-                      if (!session.data) {
-                        void signIn(undefined, {
-                          callbackUrl: `/course/${courseId}`,
-                        });
+                <>
+                  {course?.price === 0 ? (
+                    <span className="uppercase tracking-wider text-green-600">
+                      FREE
+                    </span>
+                  ) : (
+                    <span className="font-bold uppercase tracking-wider text-white">
+                      ₹ {course?.price}
+                    </span>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={async () => {
+                        if (!session.data) {
+                          void signIn(undefined, {
+                            callbackUrl: `/course/${courseId}`,
+                          });
 
-                        return;
-                      }
-                      await enrollMutation(
-                        { courseId: course?.id },
-                        {
-                          onSuccess: () => {
-                            void ctx.course.isEnrolled.invalidate();
-                            successToast("Successfully enrolled in course!");
-                          },
-                          onError: () => {
-                            errorToast("Error in enrolling in course!");
-                          },
+                          return;
                         }
-                      );
-                    }}
-                    className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
-                  >
-                    {enrollLoading ? (
-                      <div>
-                        <Loader white />
-                      </div>
-                    ) : (
+                        if (course.price === 0)
+                          await enrollMutation(
+                            { courseId: course?.id },
+                            {
+                              onSuccess: () => {
+                                void ctx.course.isEnrolled.invalidate();
+                                successToast(
+                                  "Successfully enrolled in course!"
+                                );
+                              },
+                              onError: () => {
+                                errorToast("Error in enrolling in course!");
+                              },
+                            }
+                          );
+                        else setCheckoutModalOpen(true);
+                      }}
+                      className={`group my-1 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                    >
+                      {enrollLoading ? (
+                        <div>
+                          <Loader white />
+                        </div>
+                      ) : (
+                        <>
+                          <span>Enroll now</span>
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => setPreviewOpen(true)}
+                      className={`group my-1 inline-flex items-center justify-center gap-[0.15rem] rounded-xl border border-pink-500 px-6  py-1 text-center font-medium text-pink-500 transition-all duration-300 hover:border-pink-600 hover:bg-pink-600/10 hover:text-pink-600`}
+                    >
                       <>
-                        <span>Enroll now</span>
+                        <PlayIcon className="w-4" />
+                        <span>Preview</span>
                       </>
-                    )}
-                  </button>
-                  <button
-                    onClick={() => setPreviewOpen(true)}
-                    className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl border border-pink-500 px-6  py-1 text-center font-medium text-pink-500 transition-all duration-300 hover:border-pink-600 hover:bg-pink-600/10 hover:text-pink-600`}
-                  >
-                    <>
-                      <PlayIcon className="w-4" />
-                      <span>Preview</span>
-                    </>
-                  </button>
-                </div>
+                    </button>
+                  </div>
+                </>
               )
             ) : (
               <div className="flex items-center gap-2">
@@ -230,8 +248,8 @@ const Index = ({ courseId }: Props) => {
                 <p className="text-sm text-neutral-300">{index + 1}</p>
                 <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
                   <Image
-                    src={course?.thumbnail ?? ""}
-                    alt={course?.title ?? ""}
+                    src={chapter?.thumbnail ?? ""}
+                    alt={chapter?.title ?? ""}
                     fill
                     className="object-cover"
                   />
@@ -253,6 +271,15 @@ const Index = ({ courseId }: Props) => {
         courseId={courseId}
         isOpen={previewOpen}
         setIsOpen={setPreviewOpen}
+        setCheckoutModalOpen={setCheckoutModalOpen}
+      />
+      <CheckoutModal
+        course={{
+          ...(course as Course),
+          _count: { chapters: course?.chapters.length },
+        }}
+        isOpen={checkoutModalOpen}
+        setIsOpen={setCheckoutModalOpen}
       />
     </>
   );
