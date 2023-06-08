@@ -33,7 +33,6 @@ export class MixPannelTracking {
   }
 
   public pageViewed(data: { pagePath: string }) {
-    console.log("pageViewed", data);
     this.track("pageViewed", data);
   }
 }

@@ -72,8 +72,6 @@ export const getPlaylistDataService = async (id: string) => {
     key: YOUTUBE_API_KEY,
   };
 
-  console.log("get pl data called");
-
   try {
     const yt = google.youtube({ version: "v3" });
     // Send request for playlist details
@@ -83,8 +81,6 @@ export const getPlaylistDataService = async (id: string) => {
       console.log("error in getting playlist details!", res?.data);
       return null;
     }
-
-    console.log("got pl data", res.data);
 
     if (!res?.data?.items || !res?.data?.items[0]) return null;
 
@@ -138,8 +134,6 @@ export const getPlaylistDataService = async (id: string) => {
 
     while (piRes && vdRes) {
       // Do something with the results on this page
-
-      console.log("pires", piRes?.data?.items);
 
       piRes?.data?.items
         ? piRes?.data?.items
@@ -206,8 +200,6 @@ export const getPlaylistDataService = async (id: string) => {
         break;
       }
     }
-
-    console.log(allVideos);
 
     return {
       title: playlistTitle,
