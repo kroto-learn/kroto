@@ -114,7 +114,6 @@ export const ogImageUpload = async (
 };
 
 export const deleteS3Image = async ({ key }: { key: string }) => {
-  console.log("delete called", key);
   const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET } = env;
 
   AWS.config.setPromisesDependency(Promise);

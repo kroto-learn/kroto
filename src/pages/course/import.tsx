@@ -1,6 +1,6 @@
 import Layout from "@/components/layouts/main";
 import { generateRandomGradientImages } from "@/helpers/randomGradientImages";
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon, PlusCircleIcon } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { type MDEditorProps } from "@uiw/react-md-editor";
 // import dynamic from "next/dynamic";
@@ -21,6 +21,9 @@ import { useRouter } from "next/router";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import youtubeBranding from "public/developed-with-youtube-sentence-case-light.png";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
+import { CheckmarkIcon } from "react-hot-toast";
+import ImageWF from "@/components/ImageWF";
+import { signIn } from "next-auth/react";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -42,6 +45,7 @@ export const importCourseFormSchema = z.object({
       duration: z.number(),
     })
   ),
+  price: z.string().nonempty("Please enter course price."),
   ytId: z.string(),
 });
 
@@ -66,6 +70,7 @@ const Index = () => {
       description: "Your course description...",
       thumbnail: "",
       chapters: [],
+      price: "0",
     },
   });
   const [searchQuery, setSearchQuery] = useState("");
@@ -120,16 +125,63 @@ const Index = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playlistData]);
-
   return (
     <Layout>
       <Head>
         <title>Import Course</title>
       </Head>
-      <div className="relative mx-auto my-12 flex min-h-screen w-full max-w-2xl flex-col gap-8">
+      <div className="relative mx-auto my-12 flex min-h-screen w-full max-w-2xl flex-col gap-8 px-4">
+        <div className="mt-4 flex w-full items-center justify-center text-neutral-500">
+          <p
+            className={`mr-1 flex items-center text-sm font-bold uppercase tracking-wider ${
+              playlistData ? "text-green-500" : ""
+            }`}
+          >
+            {playlistData ? <CheckmarkIcon className="mr-1" /> : "1."} Select
+            Playlist
+          </p>
+          <div
+            className={`w-4 border-b border-neutral-600 ${
+              playlistData ? "border-green-500" : ""
+            }`}
+          />
+          <div className="w-4 border-b border-neutral-600" />
+          <p className="ml-1 text-sm font-bold uppercase tracking-wider">
+            2. Import Course
+          </p>
+        </div>
         <div className="flex flex-col gap-2">
+          <div className="mb-1 flex items-center gap-2">
+            Click below and grant us permission to access your YouTube playlist.
+          </div>
+          <button
+            className="mb-4 flex w-44 items-center gap-1 bg-[#4285F4] pr-2 text-sm font-bold drop-shadow"
+            onClick={() => {
+              void signIn(
+                "google",
+                {
+                  callbackUrl: `/course/import`,
+                },
+                {
+                  scope: `openid ${[
+                    "https://www.googleapis.com/auth/youtube.readonly",
+                    "https://www.googleapis.com/auth/userinfo.email",
+                    "https://www.googleapis.com/auth/userinfo.profile",
+                  ].join(" ")}`,
+                }
+              );
+            }}
+          >
+            <ImageWF
+              src="/btn_google_dark_normal_ios.svg"
+              alt="Google"
+              height={30}
+              width={30}
+            />
+            Sign in with Google
+          </button>
           <h3 className="text-xl font-medium">
-            Import your <FontAwesomeIcon icon={faYoutube} className="ml-1" />{" "}
+            Select your <FontAwesomeIcon icon={faYoutube} className="ml-1" />{" "}
             YouTube playlist
           </h3>
           <div className="relative flex items-center">
@@ -163,7 +215,7 @@ const Index = () => {
           {!playlists || playlists instanceof TRPCError || !searchFocused ? (
             <></>
           ) : (
-            <div className="absolute top-20 z-10 mt-2 flex w-full flex-col overflow-hidden rounded-xl border border-neutral-700 backdrop-blur">
+            <div className="absolute top-60 z-10 mt-2 flex max-h-[65vh] w-full flex-col overflow-y-auto overflow-x-hidden rounded-xl border border-neutral-700 backdrop-blur">
               {playlists.length > 0 ? (
                 playlists.map((playlist) => (
                   <button
@@ -182,7 +234,7 @@ const Index = () => {
                     key={playlist.playlistId}
                   >
                     <div className="relative aspect-video w-40 overflow-hidden rounded-lg">
-                      <Image
+                      <ImageWF
                         src={playlist?.thumbnail ?? ""}
                         alt={playlist?.title ?? ""}
                         fill
@@ -203,14 +255,15 @@ const Index = () => {
                           <Loader white />
                         </div>
                       ) : (
-                        <>Import</>
+                        <>Select</>
                       )}
                     </div>
                   </button>
                 ))
               ) : (
                 <p className="p-2 text-sm text-neutral-400">
-                  {"🥲"} No public playlist found in your YouTube account.
+                  {"🥲"} No public playlist found in your YouTube account. Make
+                  sure you have granted sufficient permissions.
                 </p>
               )}
             </div>
@@ -218,7 +271,6 @@ const Index = () => {
         </div>
         <form
           onSubmit={methods.handleSubmit(async (values) => {
-            console.log("this ran", values);
             await importCourseMutation(values, {
               onSuccess: (courseCreated) => {
                 if (courseCreated && !(courseCreated instanceof TRPCError)) {
@@ -289,7 +341,7 @@ const Index = () => {
                 <PlusIcon className="w-4" /> Add Course block
               </button> */}
             </div>
-            <div className="max-h-[18rem] overflow-y-auto pr-2">
+            <div className="max-h-[24rem] overflow-y-auto pr-2">
               {methods.watch()?.chapters.length > 0 ? (
                 methods.watch()?.chapters.map((chapter, index) => (
                   <div
@@ -316,10 +368,85 @@ const Index = () => {
                 ))
               ) : (
                 <p className="text-sm text-neutral-400">
-                  Import your Youtube playlist above to populate chapters here.
+                  Select your Youtube playlist above to populate chapters here.
                 </p>
               )}
             </div>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-3">
+            <label htmlFor="description" className="text-lg  text-neutral-200">
+              Price
+            </label>
+            <div className="flex items-center gap-2">
+              <div
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
+                  methods.watch().price === "0"
+                    ? "border-green-600 bg-green-600/40"
+                    : "border-neutral-500 text-neutral-500"
+                }`}
+                onClick={() => {
+                  methods.setValue("price", "0");
+                }}
+              >
+                <div
+                  className={`flex h-3 w-3 items-center rounded-full border ${
+                    methods.watch().price === "0"
+                      ? "border-neutral-300"
+                      : "border-neutral-500"
+                  }`}
+                >
+                  {methods.watch().price === "0" ? (
+                    <div className="h-full w-full rounded-full bg-neutral-300" />
+                  ) : (
+                    <></>
+                  )}
+                </div>{" "}
+                Free
+              </div>
+
+              <div
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
+                  methods.watch().price !== "0"
+                    ? "border-pink-600 bg-pink-600/40"
+                    : "border-neutral-500 text-neutral-500"
+                }`}
+                onClick={() => {
+                  methods.setValue("price", "50");
+                }}
+              >
+                <div
+                  className={`flex h-3 w-3 items-center justify-center rounded-full border ${
+                    methods.watch().price !== "0"
+                      ? "border-neutral-300"
+                      : "border-neutral-500"
+                  }`}
+                >
+                  {methods.watch().price !== "0" ? (
+                    <div className="h-full w-full rounded-full bg-neutral-300" />
+                  ) : (
+                    <></>
+                  )}
+                </div>{" "}
+                Paid
+              </div>
+            </div>
+            {methods.watch().price !== "0" ? (
+              <div className="relative flex w-full max-w-[7rem] items-center">
+                <input
+                  type="number"
+                  {...methods.register("price")}
+                  className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  placeholder="00"
+                  defaultValue={50}
+                />
+                <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                  ₹
+                </p>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
           <div className="flex w-full flex-col items-center">
             <button
@@ -327,7 +454,11 @@ const Index = () => {
               type="submit"
               disabled={methods.formState.isSubmitting}
             >
-              {importCourseMutationLoading && <Loader white />}
+              {importCourseMutationLoading ? (
+                <Loader white />
+              ) : (
+                <PlusCircleIcon className="mr-1 w-5" />
+              )}
               Import Course
             </button>
           </div>

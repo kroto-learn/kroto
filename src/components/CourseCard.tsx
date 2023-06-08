@@ -1,5 +1,5 @@
 import { type Course } from "@prisma/client";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 
 type Props = {
@@ -26,7 +26,7 @@ const CourseCard = ({ course, manage, lg }: Props) => {
           lg ? "w-60" : ""
         }`}
       >
-        <Image
+        <ImageWF
           src={course?.thumbnail ?? ""}
           alt={course?.title ?? ""}
           fill
@@ -49,11 +49,19 @@ const CourseCard = ({ course, manage, lg }: Props) => {
           {course._count.chapters} Chapters
         </p>
         {!manage ? (
-          <p
-            className={`text-xs font-semibold uppercase tracking-widest text-green-500/80 sm:text-sm`}
-          >
-            free
-          </p>
+          course?.price === 0 ? (
+            <p
+              className={`text-xs font-semibold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+            >
+              free
+            </p>
+          ) : (
+            <p
+              className={`text-xs font-semibold uppercase tracking-widest sm:text-sm`}
+            >
+              ₹ {course?.price}
+            </p>
+          )
         ) : (
           <></>
         )}

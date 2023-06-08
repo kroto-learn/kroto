@@ -2,7 +2,7 @@ import { Loader } from "@/components/Loader";
 import YouTube from "react-youtube";
 import { api } from "@/utils/api";
 import { TRPCError } from "@trpc/server";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import { useRouter } from "next/router";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import Head from "next/head";
@@ -248,7 +248,7 @@ const Index = () => {
         ) : (
           <></>
         )}
-        <h3 className="mx-4 mt-2 text-lg font-medium">
+        <h3 className="mt-2 text-lg font-medium">
           <span className="m-0 mr-2 rounded border border-pink-500/30 bg-pink-500/10 p-1 text-sm font-bold text-pink-500">
             Ch. {chapter.position + 1}{" "}
           </span>
@@ -256,9 +256,9 @@ const Index = () => {
         </h3>
         <Link
           href={`/${chapter?.creator.creatorProfile ?? ""}`}
-          className="group mx-4 mt-2 flex items-center gap-2"
+          className="group mt-2 flex items-center gap-2"
         >
-          <Image
+          <ImageWF
             src={chapter?.creator?.image ?? ""}
             alt={chapter?.creator?.name}
             width={30}

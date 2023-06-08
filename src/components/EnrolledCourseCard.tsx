@@ -1,6 +1,6 @@
 import { PlayIcon } from "@heroicons/react/20/solid";
 import { type CourseProgress, type Course, type Chapter } from "@prisma/client";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 
 type Props = {
@@ -29,7 +29,7 @@ const EnrolledCourseCard = ({ enrollment }: Props) => {
       key={enrollment?.id}
     >
       <div className={`relative aspect-video w-40 overflow-hidden rounded-lg`}>
-        <Image
+        <ImageWF
           src={enrollment?.course?.thumbnail ?? ""}
           alt={enrollment?.course?.title ?? ""}
           fill

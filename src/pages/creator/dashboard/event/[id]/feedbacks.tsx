@@ -7,7 +7,7 @@ import {
   EnvelopeIcon,
   StarIcon,
 } from "@heroicons/react/20/solid";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import { api } from "@/utils/api";
 import { useRouter } from "next/router";
 import { type Feedback, type User } from "@prisma/client";
@@ -22,7 +22,10 @@ const Index = () => {
     api.eventFeedback.getFeedbacks.useQuery({ eventId: id });
 
   return (
-    <AnimatedSection delay={0.2} className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6">
+    <AnimatedSection
+      delay={0.2}
+      className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6"
+    >
       <h3 className="mb-6 text-lg font-medium  sm:text-2xl">Feedbacks</h3>
       {feedbacksLoading ? (
         <div className="flex h-64 w-full items-center justify-center">
@@ -48,7 +51,7 @@ const Index = () => {
                       {feedback?.rating}
                       <StarIcon className="w-4 text-yellow-500" />
                     </span>
-                    <Image
+                    <ImageWF
                       src={feedback.user.image ?? ""}
                       height={25}
                       width={25}
@@ -73,9 +76,9 @@ const Index = () => {
       ) : (
         <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
           <div className="relative aspect-square w-40 object-contain">
-            <Image src="/empty/feedback_empty.svg" alt="empty" fill />
+            <ImageWF src="/empty/feedback_empty.svg" alt="empty" fill />
           </div>
-          <p className="mb-2 text-sm text-neutral-400 sm:text-base text-center">
+          <p className="mb-2 text-center text-sm text-neutral-400 sm:text-base">
             You have not got any feedbacks yet.
           </p>
           <button className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200">

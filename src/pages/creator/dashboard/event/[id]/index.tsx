@@ -8,7 +8,7 @@ import { type RouterOutputs, api } from "@/utils/api";
 import useToast from "@/hooks/useToast";
 import { Loader } from "@/components/Loader";
 import { useRouter } from "next/router";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 import {
   FacebookShareButton,
   FacebookIcon,
@@ -117,7 +117,7 @@ const EventOverview = () => {
               <div
                 className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
               >
-                <Image
+                <ImageWF
                   src={(event?.thumbnail as string) ?? ""}
                   alt={event?.title ?? ""}
                   fill
