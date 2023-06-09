@@ -23,7 +23,6 @@ import youtubeBranding from "public/developed-with-youtube-sentence-case-light.p
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import { CheckmarkIcon } from "react-hot-toast";
 import ImageWF from "@/components/ImageWF";
-import { signIn } from "next-auth/react";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -47,9 +46,9 @@ export const adminImportCourseFormSchema = z.object({
   ),
   price: z.string().nonempty("Please enter course price."),
   ytId: z.string(),
-  channelName: z.string(),
-  channelImage: z.string(),
-  channelId: z.string(),
+  ytChannelName: z.string(),
+  ytChannelImage: z.string(),
+  ytChannelId: z.string(),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
@@ -98,12 +97,12 @@ const Index = () => {
     methods.setValue("thumbnail", generateRandomGradientImages());
   }, [methods]);
 
-  const { data: playlists } = api.course.searchYoutubePlaylists.useQuery({
+  const { data: playlists } = api.course.searchYoutubePlaylistsAdmin.useQuery({
     searchQuery: debouncedQuery,
   });
 
   const { data: playlistData, isLoading: playlistLoading } =
-    api.course.getYoutubePlaylist.useQuery({
+    api.course.getYoutubePlaylistAdmin.useQuery({
       playlistId,
     });
 
@@ -112,7 +111,7 @@ const Index = () => {
   const {
     mutateAsync: importCourseMutation,
     isLoading: importCourseMutationLoading,
-  } = api.course.import.useMutation();
+  } = api.course.adminImport.useMutation();
 
   const router = useRouter();
 
@@ -123,6 +122,10 @@ const Index = () => {
       methods.setValue("title", playlistData.title);
       methods.setValue("description", playlistData.description);
       methods.setValue("thumbnail", playlistData.thumbnail);
+      methods.setValue("ytChannelId", playlistData.ytChannelId);
+      methods.setValue("ytChannelName", playlistData.ytChannelName);
+      methods.setValue("ytChannelImage", playlistData.ytChannelImage);
+
       // }
       methods.setValue("chapters", playlistData.videos);
     }
@@ -218,7 +221,7 @@ const Index = () => {
                     <div className="group flex h-full w-full flex-col items-start justify-start gap-1">
                       <h5 className="font-medium">{playlist?.title}</h5>
                       <p className="text-xs text-neutral-400">
-                        {playlist?.channelTitle} • {playlist?.videoCount} videos
+                        {playlist?.channelTitle}
                       </p>
                     </div>
                     <div
@@ -237,39 +240,8 @@ const Index = () => {
               ) : (
                 <div className="flex flex-col gap-2 p-2 text-sm">
                   <p className="text-neutral-300">
-                    {"🥲"} No public playlist found in your YouTube account.
-                    Make sure you have granted sufficient permissions.
+                    {"🥲"} No matching public playlist.
                   </p>
-                  <div className="mb-1 flex items-center gap-2">
-                    Click below and grant us permission to access your YouTube
-                    playlist.
-                  </div>
-                  <button
-                    className="mb-4 flex w-44 items-center gap-1 bg-[#4285F4] pr-2 text-sm font-bold drop-shadow"
-                    onClick={() => {
-                      void signIn(
-                        "google",
-                        {
-                          callbackUrl: `/course/import`,
-                        },
-                        {
-                          scope: `openid ${[
-                            "https://www.googleapis.com/auth/youtube.readonly",
-                            "https://www.googleapis.com/auth/userinfo.email",
-                            "https://www.googleapis.com/auth/userinfo.profile",
-                          ].join(" ")}`,
-                        }
-                      );
-                    }}
-                  >
-                    <ImageWF
-                      src="/btn_google_dark_normal_ios.svg"
-                      alt="Google"
-                      height={30}
-                      width={30}
-                    />
-                    Sign in with Google
-                  </button>
                 </div>
               )}
             </div>
@@ -284,9 +256,6 @@ const Index = () => {
                     `/creator/dashboard/course/${courseCreated?.id}`
                   );
                   void revalidate(`/course/${courseCreated?.id}`);
-                  void revalidate(
-                    `/${courseCreated?.creator?.creatorProfile ?? ""}`
-                  );
                 }
               },
               onError: () => {

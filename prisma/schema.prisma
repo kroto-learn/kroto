@@ -71,7 +71,6 @@ model User {
   Email                 Email[]
   courseProgress        CourseProgress[]
   chapterProgress       ChapterProgress[]
-  chapters              Chapter[]
 }
 
 model Event {
@@ -241,16 +240,14 @@ model Chapter {
   ytId            String?
   duration        Int?
   type            ChapterType       @default(YTVIDEO)
-  creatorId       String
-  creator         User              @relation(fields: [creatorId], references: [id])
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   courseId        String
   course          Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseProgress  CourseProgress[]
   chapterProgress ChapterProgress[]
+  userId          String?
 
-  @@index([creatorId])
   @@index([courseId])
 }
 

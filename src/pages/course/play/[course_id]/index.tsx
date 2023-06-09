@@ -195,9 +195,10 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             ) : (
               <div className="flex items-center gap-2 text-sm text-neutral-300">
                 <Link
-                  href={`/${
-                    course?.creator?.creatorProfile ??
-                    `https://www.youtube.com/@${course?.ytChannelId ?? ""}`
+                  href={`${
+                    course?.creator
+                      ? `/${course?.creator?.creatorProfile ?? ""}`
+                      : `https://www.youtube.com/${course?.ytChannelId ?? ""}`
                   }`}
                   target={!course?.creator ? "_blank" : undefined}
                   className="duration-150 hover:text-neutral-200"
@@ -351,7 +352,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
     <Link
       href={`/course/play/${chapter?.courseId}/${chapter?.id}`}
       id={`${chapter?.id}`}
-      className={`group flex items-center border-neutral-700 last:rounded-b ${
+      className={`group flex items-center border-neutral-700 text-xs last:rounded-b ${
         !(chapter.id === chapter_id)
           ? chapter.chapterProgress
             ? "!bg-green-950/30 hover:!bg-green-800/30"
@@ -360,7 +361,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
       }  bg-transparent backdrop-blur-sm duration-150 ${
         collapsed
           ? "mx-1 h-12 gap-2 rounded-lg border p-1 px-2 sm:m-0 sm:aspect-square sm:h-auto sm:min-h-[4rem] sm:w-full sm:max-w-lg sm:rounded-none sm:border-0 sm:border-b sm:border-r-0 sm:p-2 sm:px-4"
-          : "min-h-[4rem] w-full max-w-lg gap-3 border-b p-2 px-4"
+          : "min-h-[4.5rem] w-full max-w-lg gap-3 border-b p-2 px-4"
       }`}
       key={chapter?.id}
     >

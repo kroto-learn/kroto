@@ -83,9 +83,10 @@ const Index = () => {
           </h1>
           <Link
             className="text-medium group mt-8 flex items-center text-xl text-pink-500"
-            href={`/${
-              course?.creator?.creatorProfile ??
-              `https://www.youtube.com/@${course?.ytChannelId ?? ""}`
+            href={`${
+              course?.creator
+                ? `/${course?.creator?.creatorProfile ?? ""}`
+                : `https://www.youtube.com/${course?.ytChannelId ?? ""}`
             }`}
             target={!course?.creator ? "_blank" : undefined}
           >

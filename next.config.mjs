@@ -23,6 +23,7 @@ const config = {
       {
         hostname: "i.ytimg.com",
       },
+      { hostname: "yt3.ggpht.com" },
     ],
   },
 };

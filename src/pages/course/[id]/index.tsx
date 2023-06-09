@@ -113,9 +113,10 @@ const Index = ({ courseId }: Props) => {
               </p>
 
               <Link
-                href={`/${
-                  course?.creator?.creatorProfile ??
-                  `https://www.youtube.com/@${course?.ytChannelId ?? ""}`
+                href={`${
+                  course?.creator
+                    ? `/${course?.creator?.creatorProfile ?? ""}`
+                    : `https://www.youtube.com/${course?.ytChannelId ?? ""}`
                 }`}
                 target={!course?.creator ? "_blank" : undefined}
                 className="group flex items-center gap-1"
