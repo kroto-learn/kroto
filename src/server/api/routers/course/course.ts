@@ -14,6 +14,7 @@ import { generateStaticCourseOgImage } from "@/server/services/og";
 import { env } from "@/env.mjs";
 import { ogImageUpload } from "@/server/helpers/s3";
 import { settingsFormSchema } from "../../../../pages/creator/dashboard/course/[id]/settings";
+import { adminImportCourseFormSchema } from "@/pages/course/admin-import";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -140,6 +141,68 @@ export const courseRouter = createTRPCRouter({
 
   import: protectedProcedure
     .input(importCourseFormSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const course = await prisma.course.create({
+        data: {
+          title: input.title,
+          description: input.description,
+          thumbnail: input.thumbnail,
+          creatorId: ctx.session.user.id,
+          ytId: input.ytId,
+          price: parseInt(input.price),
+        },
+      });
+
+      const chapters = await Promise.all(
+        input.chapters.map(async (cb, position) => {
+          return await prisma.chapter.create({
+            data: {
+              ...cb,
+              courseId: course.id,
+              creatorId: ctx.session.user.id,
+              position,
+            },
+          });
+        })
+      );
+
+      const ogImageRes = await generateStaticCourseOgImage({
+        ogUrl: OG_URL,
+        title: course.title,
+        creatorName: ctx.session.user.name ?? "",
+        chapters: chapters.length,
+        thumbnail: course.thumbnail ?? "",
+      });
+
+      const ogImage = ogImageRes
+        ? await ogImageUpload(
+            ogImageRes.data as AWS.S3.Body,
+            course.id,
+            "course"
+          )
+        : undefined;
+
+      const updatedCourse = await prisma.course.update({
+        where: {
+          id: course.id,
+        },
+        data: {
+          ogImage,
+        },
+        include: {
+          creator: true,
+        },
+      });
+
+      return { ...updatedCourse, chapters };
+    }),
+
+  adminImport: protectedProcedure
+    .input(adminImportCourseFormSchema)
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
 
@@ -424,7 +487,7 @@ export const courseRouter = createTRPCRouter({
       const audienceMember = await prisma.audienceMember.findFirst({
         where: {
           email: user.email,
-          creatorId: course.creatorId,
+          creatorId: course.creatorId ?? "",
         },
       });
 
@@ -436,7 +499,7 @@ export const courseRouter = createTRPCRouter({
             email: user.email,
             name: user.name,
             userId: user.id,
-            creatorId: course.creatorId,
+            creatorId: course.creatorId ?? "",
             courseId: course.id,
           },
         });

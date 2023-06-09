@@ -31,7 +31,7 @@ import { signIn } from "next-auth/react";
 
 const titleLimit = 100;
 
-export const importCourseFormSchema = z.object({
+export const adminImportCourseFormSchema = z.object({
   thumbnail: z.string().nonempty("Please upload a cover"),
   title: z.string().max(titleLimit).nonempty("Please enter course title."),
   description: z.string().max(3000).optional(),
@@ -47,6 +47,9 @@ export const importCourseFormSchema = z.object({
   ),
   price: z.string().nonempty("Please enter course price."),
   ytId: z.string(),
+  channelName: z.string(),
+  channelImage: z.string(),
+  channelId: z.string(),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
@@ -64,7 +67,7 @@ function useZodForm<TSchema extends z.ZodType>(
 
 const Index = () => {
   const methods = useZodForm({
-    schema: importCourseFormSchema,
+    schema: adminImportCourseFormSchema,
     defaultValues: {
       title: "Your course title",
       description: "Your course description...",

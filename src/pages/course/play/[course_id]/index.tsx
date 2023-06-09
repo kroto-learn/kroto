@@ -195,10 +195,14 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             ) : (
               <div className="flex items-center gap-2 text-sm text-neutral-300">
                 <Link
-                  href={`/${course?.creator?.creatorProfile ?? ""}`}
+                  href={`/${
+                    course?.creator?.creatorProfile ??
+                    `https://www.youtube.com/@${course?.ytChannelId ?? ""}`
+                  }`}
+                  target={!course?.creator ? "_blank" : undefined}
                   className="duration-150 hover:text-neutral-200"
                 >
-                  {course?.creator?.name}
+                  {course?.creator?.name ?? course?.ytChannelName ?? ""}
                 </Link>{" "}
                 • <p>{course?.chapters?.length} Chapters</p>
               </div>
@@ -335,7 +339,6 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
 
   const [watchChecked, setWatchChecked] = useState(false);
 
-
   useEffect(() => {
     setWatchChecked(!!chapter.chapterProgress);
   }, [chapter.chapterProgress]);
@@ -348,7 +351,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
     <Link
       href={`/course/play/${chapter?.courseId}/${chapter?.id}`}
       id={`${chapter?.id}`}
-      className={`flex items-center group border-neutral-700 last:rounded-b ${
+      className={`group flex items-center border-neutral-700 last:rounded-b ${
         !(chapter.id === chapter_id)
           ? chapter.chapterProgress
             ? "!bg-green-950/30 hover:!bg-green-800/30"
@@ -403,28 +406,32 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
         />
       </ConfigProvider>
 
-      <p className={`text-xs group text-neutral-300`}>
+      <p className={`group text-xs text-neutral-300`}>
         {chapter_id === chapter?.id ? (
           <PlayIcon
             className={`text-pink-500 ${collapsed ? "w-5" : "w-5 pr-2"}`}
           />
-        ) : ( 
+        ) : (
           <>
-          <div
-            className={`aspect-square ${
-              collapsed ? "w-5 text-xl group-hover:hidden font-medium" : "w-5 group-hover:hidden"
-            }`}
-          >
-            {collapsed ? (
-              <span className="text-xs uppercase text-neutral-400">#</span>
-            ) : (
-              <></>
-            )}
-            {idx + 1}
-          </div>
-          <PlayIcon
-            className={`text-neutral-400 group-hover:block hidden ${collapsed ? "w-5" : "w-5 pr-2"}`}
-          />
+            <div
+              className={`aspect-square ${
+                collapsed
+                  ? "w-5 text-xl font-medium group-hover:hidden"
+                  : "w-5 group-hover:hidden"
+              }`}
+            >
+              {collapsed ? (
+                <span className="text-xs uppercase text-neutral-400">#</span>
+              ) : (
+                <></>
+              )}
+              {idx + 1}
+            </div>
+            <PlayIcon
+              className={`hidden text-neutral-400 group-hover:block ${
+                collapsed ? "w-5" : "w-5 pr-2"
+              }`}
+            />
           </>
         )}
       </p>

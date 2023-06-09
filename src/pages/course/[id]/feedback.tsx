@@ -83,9 +83,14 @@ const Index = () => {
           </h1>
           <Link
             className="text-medium group mt-8 flex items-center text-xl text-pink-500"
-            href={`/${course?.creator?.creatorProfile ?? ""}`}
+            href={`/${
+              course?.creator?.creatorProfile ??
+              `https://www.youtube.com/@${course?.ytChannelId ?? ""}`
+            }`}
+            target={!course?.creator ? "_blank" : undefined}
           >
-            See more courses and events by {course?.creator?.name ?? ""}{" "}
+            See more courses and events by{" "}
+            {course?.creator?.name ?? course?.ytChannelName ?? ""}{" "}
             <ArrowSmallRightIcon className="ml-2 w-8 transition-transform duration-150 group-hover:translate-x-1" />
           </Link>
         </div>

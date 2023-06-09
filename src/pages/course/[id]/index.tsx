@@ -57,7 +57,7 @@ const Index = ({ courseId }: Props) => {
   const dynamicOgImage = `https://kroto.in/api/og/course?title=${
     course?.title ?? ""
   }&chapters=${course?.chapters.length ?? 0}&creatorName=${
-    course?.creator?.name ?? ""
+    course?.creator?.name ?? course?.ytChannelName ?? ""
   }`;
 
   return (
@@ -113,18 +113,22 @@ const Index = ({ courseId }: Props) => {
               </p>
 
               <Link
-                href={`/${course?.creator?.creatorProfile ?? ""}`}
+                href={`/${
+                  course?.creator?.creatorProfile ??
+                  `https://www.youtube.com/@${course?.ytChannelId ?? ""}`
+                }`}
+                target={!course?.creator ? "_blank" : undefined}
                 className="group flex items-center gap-1"
               >
                 <Image
-                  src={course?.creator?.image ?? ""}
-                  alt={course?.creator?.name ?? ""}
+                  src={course?.creator?.image ?? course?.ytChannelImage ?? ""}
+                  alt={course?.creator?.name ?? course?.ytChannelName ?? ""}
                   className="aspect-square rounded-full"
                   width={22}
                   height={22}
                 />
                 <p className="text-sm text-neutral-300 duration-150 group-hover:text-neutral-200">
-                  {course?.creator?.name}
+                  {course?.creator?.name ?? course?.ytChannelName ?? ""}
                 </p>
               </Link>
             </div>
@@ -259,7 +263,7 @@ const Index = ({ courseId }: Props) => {
                     {chapter?.title}
                   </h5>
                   <p className="text-xs text-neutral-400">
-                    {course?.creator?.name}
+                    {course?.creator?.name ?? course?.ytChannelName ?? ""}
                   </p>
                 </div>
               </button>

@@ -92,7 +92,8 @@ const Index = () => {
                 void ctx.course.get.invalidate();
                 void ctx.course.getCourse.invalidate();
                 void revalidate(`/course/${course?.id}`);
-                void revalidate(`/${course?.creator?.creatorProfile ?? ""}`);
+                if (course?.creator)
+                  void revalidate(`/${course?.creator?.creatorProfile ?? ""}`);
               },
             });
           })}
@@ -293,7 +294,8 @@ export function DeleteCourseModal({
                                   await ctx.course.getAll.invalidate();
                                   await ctx.course.get.invalidate();
                                   await revalidate(`/course/${courseId}`);
-                                  await revalidate(`/${creatorProfile}`);
+                                  if (creatorProfile && creatorProfile !== "")
+                                    await revalidate(`/${creatorProfile}`);
 
                                   void router.replace(
                                     "/creator/dashboard/courses"
