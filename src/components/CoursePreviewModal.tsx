@@ -129,14 +129,20 @@ const CoursePreviewModal = ({
 
                       <div className="flex items-center gap-1">
                         <ImageWF
-                          src={course?.creator?.image ?? ""}
-                          alt={course?.creator?.name}
+                          src={
+                            course?.creator?.image ??
+                            course?.ytChannelImage ??
+                            ""
+                          }
+                          alt={
+                            course?.creator?.name ?? course?.ytChannelName ?? ""
+                          }
                           width={25}
                           height={25}
                           className="rounded-full"
                         />
                         <p className="text-sm font-medium text-neutral-400">
-                          {course?.creator?.name}
+                          {course?.creator?.name ?? course?.ytChannelName ?? ""}
                         </p>
                       </div>
                     </div>

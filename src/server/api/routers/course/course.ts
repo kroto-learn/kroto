@@ -6,7 +6,9 @@ import {
 } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import {
+  getPlaylistDataAdminService,
   getPlaylistDataService,
+  searchYoutubePlaylistsAdminService,
   searchYoutubePlaylistsService,
 } from "@/server/services/youtube";
 import { importCourseFormSchema } from "@/pages/course/import";
@@ -14,6 +16,8 @@ import { generateStaticCourseOgImage } from "@/server/services/og";
 import { env } from "@/env.mjs";
 import { ogImageUpload } from "@/server/helpers/s3";
 import { settingsFormSchema } from "../../../../pages/creator/dashboard/course/[id]/settings";
+import { adminImportCourseFormSchema } from "@/pages/course/admin-import";
+import { isAdmin } from "@/server/helpers/admin";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -53,6 +57,12 @@ export const courseRouter = createTRPCRouter({
       });
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+
+      if (
+        course.creatorId !== ctx.session.user.id &&
+        !isAdmin(ctx.session.user.email ?? "")
+      )
+        return new TRPCError({ code: "BAD_REQUEST" });
 
       const courseProgress = course.courseProgress[0];
 
@@ -130,10 +140,35 @@ export const courseRouter = createTRPCRouter({
       return playlists;
     }),
 
+  searchYoutubePlaylistsAdmin: protectedProcedure
+    .input(z.object({ searchQuery: z.string() }))
+    .query(async ({ ctx, input }) => {
+      if (!ctx.session.user.token)
+        return new TRPCError({ code: "BAD_REQUEST" });
+
+      if (!isAdmin(ctx.session.user.email as string))
+        return new TRPCError({ code: "BAD_REQUEST" });
+
+      const playlists = await searchYoutubePlaylistsAdminService({
+        searchQuery: input.searchQuery,
+      });
+
+      return playlists;
+    }),
+
   getYoutubePlaylist: publicProcedure
     .input(z.object({ playlistId: z.string() }))
     .query(async ({ input }) => {
       const playlist = await getPlaylistDataService(input.playlistId);
+
+      return playlist;
+    }),
+
+  getYoutubePlaylistAdmin: publicProcedure
+    .input(z.object({ playlistId: z.string() }))
+    .query(async ({ input }) => {
+      console.log("trpc router reached!");
+      const playlist = await getPlaylistDataAdminService(input.playlistId);
 
       return playlist;
     }),
@@ -162,7 +197,6 @@ export const courseRouter = createTRPCRouter({
             data: {
               ...cb,
               courseId: course.id,
-              creatorId: ctx.session.user.id,
               position,
             },
           });
@@ -194,6 +228,71 @@ export const courseRouter = createTRPCRouter({
         },
         include: {
           creator: true,
+        },
+      });
+
+      return { ...updatedCourse, chapters };
+    }),
+
+  adminImport: protectedProcedure
+    .input(adminImportCourseFormSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+
+      if (!isAdmin(ctx.session.user.email ?? ""))
+        return new TRPCError({ code: "BAD_REQUEST" });
+
+      const course = await prisma.course.create({
+        data: {
+          title: input.title,
+          description: input.description,
+          thumbnail: input.thumbnail,
+          // creatorId: ctx.session.user.id,
+          ytId: input.ytId,
+          price: parseInt(input.price),
+          ytChannelId: input.ytChannelId,
+          ytChannelName: input.ytChannelName,
+          ytChannelImage: input.ytChannelImage,
+        },
+      });
+
+      const chapters = await Promise.all(
+        input.chapters.map(async (cb, position) => {
+          return await prisma.chapter.create({
+            data: {
+              ...cb,
+              courseId: course.id,
+              // creatorId: ctx.session.user.id,
+              position,
+            },
+          });
+        })
+      );
+
+      const ogImageRes = await generateStaticCourseOgImage({
+        ogUrl: OG_URL,
+        title: course.title,
+        creatorName: course.ytChannelName ?? "",
+        chapters: chapters.length,
+        thumbnail: course.thumbnail ?? "",
+      });
+
+      const ogImage = ogImageRes
+        ? await ogImageUpload(
+            ogImageRes.data as AWS.S3.Body,
+            course.id,
+            "course"
+          )
+        : undefined;
+
+      const updatedCourse = await prisma.course.update({
+        where: {
+          id: course.id,
+        },
+        data: {
+          ogImage,
         },
       });
 
@@ -272,7 +371,6 @@ export const courseRouter = createTRPCRouter({
               data: {
                 title: video.title,
                 thumbnail: video.thumbnail,
-                creatorId: ctx.session.user.id,
                 position: idx,
                 ytId: video.ytId,
                 videoUrl: `https://www.youtube.com/watch?v=${video.ytId}`,
@@ -424,7 +522,7 @@ export const courseRouter = createTRPCRouter({
       const audienceMember = await prisma.audienceMember.findFirst({
         where: {
           email: user.email,
-          creatorId: course.creatorId,
+          creatorId: course.creatorId ?? "",
         },
       });
 
@@ -436,7 +534,7 @@ export const courseRouter = createTRPCRouter({
             email: user.email,
             name: user.name,
             userId: user.id,
-            creatorId: course.creatorId,
+            creatorId: course.creatorId ?? "",
             courseId: course.id,
           },
         });
