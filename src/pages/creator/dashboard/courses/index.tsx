@@ -7,10 +7,14 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { api } from "@/utils/api";
 import ImageWF from "@/components/ImageWF";
 import CourseCard from "@/components/CourseCard";
+import { isAdmin } from "@/server/helpers/admin";
+import { useSession } from "next-auth/react";
 
 const Index = () => {
   const { data: courses, isLoading: couresesLoading } =
     api.course.getAll.useQuery();
+
+  const session = useSession();
 
   if (couresesLoading)
     return (
@@ -32,12 +36,24 @@ const Index = () => {
       <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
         <AnimatedSection className="flex w-full items-center justify-between gap-4 sm:px-4">
           <h1 className="text-2xl text-neutral-200">Courses</h1>
-          <Link
-            href="/course/import"
-            className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-xs font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:text-sm"
-          >
-            <PlusIcon className="w-5" /> Import Course
-          </Link>
+          <div className="flex items-center gap-2">
+            {isAdmin(session?.data?.user?.email ?? "") ? (
+              <Link
+                href="/course/admin-import"
+                className="flex items-center gap-1 rounded-xl border border-green-600 px-4 py-2 text-sm font-semibold text-green-600 duration-300 hover:bg-green-500 hover:text-neutral-200"
+              >
+                <PlusIcon className="w-5" /> Admin Import Course
+              </Link>
+            ) : (
+              <></>
+            )}
+            <Link
+              href="/course/import"
+              className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-xs font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:text-sm"
+            >
+              <PlusIcon className="w-5" /> Import Course
+            </Link>
+          </div>
         </AnimatedSection>
         {courses && courses.length > 0 ? (
           <AnimatedSection
@@ -59,6 +75,7 @@ const Index = () => {
             <p className="mb-2 text-center text-sm text-neutral-400 sm:text-base">
               You have not created any course yet.
             </p>
+
             <Link
               href="/course/import"
               className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"

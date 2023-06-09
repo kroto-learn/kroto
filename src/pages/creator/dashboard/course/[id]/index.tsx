@@ -143,6 +143,23 @@ const CourseOverview = () => {
                   />
                 </WhatsappShareButton>
               </div>
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="price"
+                  className="text-xs font-medium uppercase tracking-wider text-neutral-400"
+                >
+                  Price
+                </label>
+                {course?.price === 0 ? (
+                  <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm text-green-600 duration-300 sm:text-base">
+                    Free
+                  </p>
+                ) : (
+                  <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm font-bold text-neutral-200 duration-300 sm:text-base">
+                    ₹ {course?.price}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="w-full sm:w-2/3">
@@ -164,28 +181,12 @@ const CourseOverview = () => {
                   >
                     Description
                   </label>
-                  <p className="hide-scroll max-h-20 overflow-y-auto text-xs text-neutral-300 sm:text-sm">
+                  <p className="hide-scroll max-h-28 overflow-y-auto text-xs text-neutral-300 sm:text-sm">
                     {course?.description}
                   </p>
                 </>
               ) : (
                 <></>
-              )}
-
-              <label
-                htmlFor="price"
-                className="text-xs font-medium uppercase tracking-wider text-neutral-400"
-              >
-                Price
-              </label>
-              {course?.price === 0 ? (
-                <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm text-green-600 duration-300 sm:text-base">
-                  Free
-                </p>
-              ) : (
-                <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm font-bold text-neutral-200 duration-300 sm:text-base">
-                  ₹ {course?.price}
-                </p>
               )}
             </div>
           </AnimatedSection>
@@ -201,9 +202,10 @@ const CourseOverview = () => {
                     onSuccess: () => {
                       void ctx.course.get.invalidate();
                       void revalidate(`/course/${course?.id}`);
-                      void revalidate(
-                        `/${course?.creator.creatorProfile ?? ""}`
-                      );
+                      if (course?.creator)
+                        void revalidate(
+                          `/${course?.creator.creatorProfile ?? ""}`
+                        );
                       successToast("Course synced from YouTube successfully!");
                     },
                   }
@@ -236,7 +238,7 @@ const CourseOverview = () => {
                 {course?.chapters?.length} Chapters
               </label>
             </div>
-            <div className="h-[calc(100vh-41rem)] overflow-y-auto pr-1 sm:h-[calc(100vh-30rem)] sm:pr-4">
+            <div className="max-h-[calc(100vh-24rem)] overflow-y-auto pr-1 sm:h-[calc(100vh-32.2rem)] sm:max-h-none sm:pr-4">
               {course?.chapters?.map((chapter, index) => (
                 <button
                   onClick={() => {

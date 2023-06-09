@@ -255,18 +255,23 @@ const Index = () => {
           {chapter?.title}
         </h3>
         <Link
-          href={`/${chapter?.creator.creatorProfile ?? ""}`}
+          href={`${
+            course?.creator
+              ? `/${course?.creator?.creatorProfile ?? ""}`
+              : `https://www.youtube.com/${course?.ytChannelId ?? ""}`
+          }`}
+          target={!course?.creator ? "_blank" : undefined}
           className="group mt-2 flex items-center gap-2"
         >
           <ImageWF
-            src={chapter?.creator?.image ?? ""}
-            alt={chapter?.creator?.name}
+            src={course?.creator?.image ?? course?.ytChannelImage ?? ""}
+            alt={course?.creator?.name ?? course?.ytChannelName ?? ""}
             width={30}
             height={30}
             className="rounded-full"
           />
           <p className="font-medium text-neutral-300 duration-150 group-hover:text-neutral-200">
-            {chapter?.creator?.name}
+            {course?.creator?.name ?? course?.ytChannelName ?? ""}
           </p>
         </Link>
         <div className="mt-4 flex w-full flex-col rounded-lg border border-neutral-700 bg-neutral-200/5 backdrop-blur-sm">

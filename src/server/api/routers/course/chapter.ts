@@ -13,7 +13,6 @@ export const courseChapterRouter = createTRPCRouter({
           id: input.id,
         },
         include: {
-          creator: true,
           course: true,
           chapterProgress: {
             where: { watchedById: ctx.session.user.id },
