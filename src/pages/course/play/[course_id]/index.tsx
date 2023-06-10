@@ -317,7 +317,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
       <ShareCourseModal
         isOpen={shareModal}
         setIsOpen={setShareModal}
-        courseId={course?.id ?? ""}
+      courseId={course?.id ?? ""}
         courseTitle={course?.title ?? ""}
       />
     </div>
