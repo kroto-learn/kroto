@@ -41,9 +41,13 @@ const Index = () => {
       course &&
       course?.chapters?.length > 0
     ) {
-      const lastChId = course?.courseProgress
-        ? course?.courseProgress.lastChapterId
-        : course?.chapters[0]?.id;
+      let lastChId = course?.chapters[0]?.id;
+      for( let i = 0 ; i <=  course?.chapters?.length ; i++  ){
+           if( !course?.chapters[i]?.chapterProgress ){
+               lastChId = course?.chapters[i]?.id
+               break;
+           }
+      }
       void router.replace(`/course/play/${course_id}/${lastChId ?? ""}`);
     }
   }, [course, course_id, router]);
