@@ -380,12 +380,12 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
         <Checkbox
           checked={watchChecked}
           onClick={(e) => {
-            e.stopPropagation();
+            e.preventDefault();
             setWatchChecked(!watchChecked);
 
             if (!!chapter.chapterProgress)
               void deleteChapterProgressMutation(
-                {
+              {
                   chapterId: chapter.id,
                 },
                 {
