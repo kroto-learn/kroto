@@ -10,6 +10,7 @@ import { courseRouter } from "./routers/course/course";
 import { courseChapterRouter } from "./routers/course/chapter";
 import { emailRouter } from "./email/email";
 import { courseFeedbacksRouter } from "./routers/course/feedback";
+import { contactRouter } from "./routers/contact";
 
 /**
  * This is the primary router for your server.
@@ -32,6 +33,8 @@ export const appRouter = createTRPCRouter({
   email: emailRouter,
 
   testimonial: testimonialRouter,
+
+  contact: contactRouter,
 });
 
 // export type definition of API
