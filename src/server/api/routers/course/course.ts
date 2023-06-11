@@ -107,24 +107,49 @@ export const courseRouter = createTRPCRouter({
       };
     }),
 
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    const { prisma } = ctx;
+  getAll: protectedProcedure
+    .input(z.object({ searchQuery: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
 
-    const courses = await prisma.course.findMany({
-      where: {
-        creatorId: ctx.session.user.id,
-      },
-      include: {
-        _count: {
-          select: {
-            chapters: true,
+      const courses = await prisma.course.findMany({
+        where: {
+          creatorId: ctx.session.user.id,
+          title: {
+            startsWith: input?.searchQuery ?? "",
           },
         },
-      },
-    });
+        include: {
+          _count: {
+            select: {
+              chapters: true,
+            },
+          },
+        },
+      });
 
-    return courses;
-  }),
+      if (isAdmin(ctx.session.user.email ?? "")) {
+        const unclaimedCourses = await prisma.course.findMany({
+          where: {
+            creatorId: null,
+            title: {
+              startsWith: input?.searchQuery ?? "",
+            },
+          },
+          include: {
+            _count: {
+              select: {
+                chapters: true,
+              },
+            },
+          },
+        });
+
+        return [...courses, ...unclaimedCourses];
+      }
+
+      return courses;
+    }),
 
   searchYoutubePlaylists: protectedProcedure
     .input(z.object({ searchQuery: z.string() }))
@@ -314,6 +339,12 @@ export const courseRouter = createTRPCRouter({
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
       const playlistData = await getPlaylistDataService(course?.ytId ?? "");
 
+      if (
+        course?.creatorId !== ctx.session.user.id &&
+        !isAdmin(ctx.session.user.email ?? "")
+      )
+        return new TRPCError({ code: "BAD_REQUEST" });
+
       if (!playlistData) return new TRPCError({ code: "BAD_REQUEST" });
 
       const updatedCourse = await prisma.course.update({
@@ -416,6 +447,18 @@ export const courseRouter = createTRPCRouter({
     .input(settingsFormSchema)
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
+
+      const course = await prisma.course.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+
+      if (
+        course?.creatorId !== ctx.session.user.id &&
+        !isAdmin(ctx.session.user.email ?? "")
+      )
+        return new TRPCError({ code: "BAD_REQUEST" });
 
       const updatedCourse = await prisma.course.update({
         where: { id: input.id },
@@ -666,12 +709,26 @@ export const courseRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
-      const course = await prisma.course.delete({
+      const course = await prisma.course.findUnique({
         where: {
           id: input.id,
         },
       });
 
-      return course;
+      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+
+      if (
+        course.creatorId !== ctx.session.user.id &&
+        !isAdmin(ctx.session.user.email ?? "")
+      )
+        return new TRPCError({ code: "BAD_REQUEST" });
+
+      const courseDeleted = await prisma.course.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      return courseDeleted;
     }),
 });
