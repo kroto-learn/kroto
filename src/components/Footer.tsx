@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDiscord, faTwitter} from "@fortawesome/free-brands-svg-icons";
+import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
 import ImageWF from "@/components/ImageWF";
 import { EnvelopeIcon } from "@heroicons/react/20/solid";
-import { faLocationDot,faPhone } from "@fortawesome/free-solid-svg-icons";
+import { faPhone } from "@fortawesome/free-solid-svg-icons";
 
 export default function Footer() {
   return (
@@ -21,16 +21,14 @@ export default function Footer() {
                 </h2>
               </div>
             </Link>
-            <div className="mb-4 ml-3 hidden text-sm text-neutral-400 sm:block">
+            <div className="mb-2 ml-3 hidden text-sm text-neutral-400 sm:block">
               Created by{" "}
               <span className="text-neutral-200">Kroto Kreator Labs</span>
             </div>
-            <Link
-                href=""
-                className="flex items-center gap-2 text-xs text-neutral-300 transition duration-300 hover:text-neutral-200"
-              >
-                <FontAwesomeIcon icon={faLocationDot} className="w-4 mb-4 text-sm" /> PBT BY PASS ROAD, STREET NO-3, PN/11/14/2 <br/> Shamat Ganj, Bareilly, Bareilly-243005, Uttar Pradesh.
-              </Link>
+            <p className="ml-3 flex items-center gap-2 text-xs text-neutral-400">
+              PBT BY PASS ROAD, STREET NO-3, PN/11/14/2 <br /> Shamat Ganj,
+              Bareilly, Bareilly-243005, Uttar Pradesh.
+            </p>
           </div>
           <div className="hidden items-start gap-12 sm:flex">
             <div className="flex flex-col items-start justify-center gap-2">
@@ -104,6 +102,12 @@ export default function Footer() {
             href="/privacy"
           >
             Privacy Policy
+          </Link>
+          <Link
+            className="text-sm text-neutral-400 transition duration-300 hover:text-neutral-200"
+            href="/contact-us"
+          >
+            Contact Us
           </Link>
         </div>
 

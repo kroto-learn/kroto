@@ -284,12 +284,14 @@ const sendCalendarInvite = async (
 const sendContactus = async (contact: {
   name: string;
   email: string;
-  phone: string;
+  phone?: string;
   message: string;
 }) => {
   const converter = new showdown.Converter();
   const bodyHtml = converter.makeHtml(
-    `Name: ${contact.name}\nEmail: ${contact.email}\nPhone: ${contact.phone}\nMessage:\n${contact.message}`
+    `Name: ${contact.name}\nEmail: ${contact.email}\nPhone: ${
+      contact.phone ?? ""
+    }\nMessage:\n${contact.message}`
   );
 
   const subject = `Contact request from ${contact.name}`;
@@ -303,7 +305,7 @@ const sendContactus = async (contact: {
   const html = template(data);
 
   const mailOptions: AWS.SES.SendEmailRequest = {
-    Source: contact.email, // sender email
+    Source: "kamal@kroto.in", // sender email
     Destination: {
       ToAddresses: ["kamal@kroto.in"],
     }, // recipient email

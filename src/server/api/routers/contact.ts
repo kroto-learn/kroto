@@ -1,13 +1,13 @@
-import { z } from "zod";
-
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { contactFormSchema } from "@/pages/contact-us";
+import { sendContactus } from "@/server/helpers/emailHelper";
 
 export const contactRouter = createTRPCRouter({
   contactUs: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
+    .input(contactFormSchema)
+    .mutation(async ({ input }) => {
+      await sendContactus(input);
+
+      return input;
     }),
 });
