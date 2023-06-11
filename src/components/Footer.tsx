@@ -53,12 +53,9 @@ export default function Footer() {
               >
                 <EnvelopeIcon className="w-4" /> kamal@kroto.in
               </Link>
-              <Link
-                href=""
-                className="flex items-center gap-2 text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
-              >
+              <p className="flex items-center gap-2 text-sm text-neutral-300">
                 <FontAwesomeIcon icon={faPhone} className="w-4" /> +917906682655
-              </Link>
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3 sm:hidden">
