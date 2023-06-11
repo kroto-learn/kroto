@@ -232,7 +232,6 @@ export const creatorRouter = createTRPCRouter({
           id: ctx.session.user.id,
         },
         data: {
-          isCreator: true,
           creatorProfile:
             creatorProfile === "" ? ctx.session.user.email : creatorProfile,
           bio: bio,
