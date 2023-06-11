@@ -65,6 +65,14 @@ const CourseCard = ({ course, manage, lg }: Props) => {
         ) : (
           <></>
         )}
+
+        {manage && !course?.creatorId ? (
+          <p className="rounded bg-yellow-500/30 px-2 py-1 text-xs">
+            unclaimed
+          </p>
+        ) : (
+          <></>
+        )}
       </div>
     </Link>
   );

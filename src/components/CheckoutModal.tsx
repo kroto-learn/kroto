@@ -1,5 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import Link from "next/link"
 import { type Dispatch, Fragment, type SetStateAction } from "react";
 
 import { type Course } from "@prisma/client";
@@ -102,6 +103,11 @@ export default function CheckoutModal({
                         )}
                       </div>
                     </div>
+                  </div>
+                  <div className="mb-2 text-neutral-400 hover:text-neutral-200">
+                  <Link href="/refund-policy" >
+                       Refund Polity
+                  </Link>
                   </div>
                   <div className="mb-4 flex w-full justify-between border-b border-t border-neutral-300 px-1 py-2">
                     <label>Total</label>

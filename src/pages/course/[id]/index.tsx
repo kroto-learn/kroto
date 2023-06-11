@@ -56,7 +56,7 @@ const Index = ({ courseId }: Props) => {
 
   const dynamicOgImage = `https://kroto.in/api/og/course?title=${
     course?.title ?? ""
-  }&chapters=${course?.chapters.length ?? 0}&creatorName=${
+  }&chapters=${course?.chapters?.length ?? 0}&creatorName=${
     course?.creator?.name ?? course?.ytChannelName ?? ""
   }`;
 
