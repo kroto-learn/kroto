@@ -290,19 +290,16 @@ export function DeleteCourseModal({
                             { id },
                             {
                               onSuccess: () => {
-                                const fxn = async () => {
-                                  await ctx.course.getAll.invalidate();
-                                  await ctx.course.get.invalidate();
-                                  await revalidate(`/course/${courseId}`);
-                                  if (creatorProfile && creatorProfile !== "")
-                                    await revalidate(`/${creatorProfile}`);
+                                void ctx.course.getAll.invalidate();
+                                void ctx.course.get.invalidate();
+                                const cid = courseId;
+                                void revalidate(`/course/${cid}`);
+                                if (creatorProfile && creatorProfile !== "")
+                                  void revalidate(`/${creatorProfile}`);
 
-                                  void router.replace(
-                                    "/creator/dashboard/courses"
-                                  );
-                                };
-
-                                void fxn();
+                                void router.replace(
+                                  "/creator/dashboard/courses"
+                                );
                               },
                               onError: () => {
                                 errorToast("Error in deleting course!");

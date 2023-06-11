@@ -116,7 +116,7 @@ export const courseRouter = createTRPCRouter({
         where: {
           creatorId: ctx.session.user.id,
           title: {
-            startsWith: input?.searchQuery ?? "",
+            contains: input?.searchQuery ?? "",
           },
         },
         include: {
