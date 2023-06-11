@@ -181,6 +181,19 @@ const Index = () => {
             <MagnifyingGlassIcon className="absolute ml-2 w-4 text-pink-500/50 duration-300 peer-hover:text-pink-500/80 peer-focus:text-pink-500" />
           </div>
 
+          <p>or</p>
+
+          <input
+            placeholder="Paste youtube playlist ID or playlist URL..."
+            value={playlistId}
+            onChange={(e) => {
+              setPlaylistId(
+                e.target.value.split("&list=")[1] ?? e.target.value
+              );
+            }}
+            className="peer w-full max-w-sm rounded-lg bg-pink-500/10 px-3 py-2 font-medium text-neutral-200   outline outline-2 outline-pink-500/40 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
+          />
+
           <Image
             src={youtubeBranding}
             alt="Developed with YouTube"

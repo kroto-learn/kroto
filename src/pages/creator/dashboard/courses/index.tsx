@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { DashboardLayout } from "..";
-import { PlusIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/20/solid";
 import Head from "next/head";
 import { Loader } from "@/components/Loader";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -9,24 +9,24 @@ import ImageWF from "@/components/ImageWF";
 import CourseCard from "@/components/CourseCard";
 import { isAdmin } from "@/server/helpers/admin";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const Index = () => {
-  const { data: courses, isLoading: couresesLoading } =
-    api.course.getAll.useQuery();
-
   const session = useSession();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [debouncedQuery, setDebouncedQuery] = useState<string>("");
+  const [searchOpen, setSearchOpen] = useState(false);
 
-  if (couresesLoading)
-    return (
-      <>
-        <Head>
-          <title>Courses | Dashboard</title>
-        </Head>
-        <div className="flex h-[50vh] w-full items-center justify-center">
-          <Loader size="lg" />
-        </div>
-      </>
-    );
+  const { data: courses, isLoading: couresesLoading } =
+    api.course.getAll.useQuery({ searchQuery: debouncedQuery });
+
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timerId);
+  }, [searchQuery]);
 
   return (
     <>
@@ -55,7 +55,30 @@ const Index = () => {
             </Link>
           </div>
         </AnimatedSection>
-        {courses && courses.length > 0 ? (
+        {searchOpen ? (
+          <div className="relative flex items-center">
+            <input
+              placeholder="Search course..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              autoFocus
+              className="peer w-full rounded-lg bg-pink-500/10 px-3 py-2 pl-8 font-medium text-neutral-200   outline outline-2 outline-pink-500/40 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
+            />
+            <div className="absolute right-4">{false && <Loader />}</div>
+
+            <MagnifyingGlassIcon className="absolute ml-2 w-4 text-pink-500/50 duration-300 peer-hover:text-pink-500/80 peer-focus:text-pink-500" />
+          </div>
+        ) : (
+          <MagnifyingGlassIcon
+            onClick={() => setSearchOpen(true)}
+            className="my-3 ml-2 w-4 cursor-pointer text-pink-500 duration-300"
+          />
+        )}
+        {couresesLoading ? (
+          <div className="flex h-[50vh] w-full items-center justify-center">
+            <Loader size="lg" />
+          </div>
+        ) : courses && courses.length > 0 ? (
           <AnimatedSection
             delay={0.2}
             className="mt-8 flex w-full flex-col items-start gap-4"

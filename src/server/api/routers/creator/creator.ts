@@ -232,7 +232,6 @@ export const creatorRouter = createTRPCRouter({
           id: ctx.session.user.id,
         },
         data: {
-          isCreator: true,
           creatorProfile:
             creatorProfile === "" ? ctx.session.user.email : creatorProfile,
           bio: bio,
@@ -279,7 +278,10 @@ export const creatorRouter = createTRPCRouter({
         },
         data: {
           isCreator: true,
-          creatorProfile: input.creatorProfile ?? ctx.session.user.email,
+          creatorProfile:
+            input.creatorProfile && input.creatorProfile !== ""
+              ? input.creatorProfile
+              : ctx.session.user.email?.split("@")[0],
           ogImage,
         },
       });
