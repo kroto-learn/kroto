@@ -281,10 +281,62 @@ const sendCalendarInvite = async (
   }
 };
 
+const sendContactus = async (contact: {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}) => {
+  const converter = new showdown.Converter();
+  const bodyHtml = converter.makeHtml(
+    `Name: ${contact.name}\nEmail: ${contact.email}\nPhone: ${contact.phone}\nMessage:\n${contact.message}`
+  );
+
+  const subject = `Contact request from ${contact.name}`;
+
+  const data = {
+    title: subject,
+    heading: subject,
+    content: bodyHtml,
+  };
+
+  const html = template(data);
+
+  const mailOptions: AWS.SES.SendEmailRequest = {
+    Source: contact.email, // sender email
+    Destination: {
+      ToAddresses: ["kamal@kroto.in"],
+    }, // recipient email
+    Message: {
+      Subject: {
+        Charset: "UTF-8",
+        Data: subject,
+      },
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+      },
+    },
+  };
+
+  try {
+    await AWS_SES.sendEmail(mailOptions).promise();
+  } catch (err) {
+    if (err instanceof Error)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+  }
+};
+
 export {
   sendUpdatePreview,
   sendCalendarInvite,
   sendRegistrationConfirmation,
   sendEventStarted,
   sendEventUpdate,
+  sendContactus,
 };

@@ -225,7 +225,7 @@ const CourseOverview = () => {
               href={`/course/play/${course?.id}`}
               className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800 sm:text-xs`}
             >
-              {syncImportLoading ? <Loader /> : <PlayIcon className="w-3" />}
+              <PlayIcon className="w-3" />
               View in Course Player
             </Link>
           </AnimatedSection>
