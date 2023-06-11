@@ -25,6 +25,12 @@ export default function Footer() {
               Created by{" "}
               <span className="text-neutral-200">Kroto Kreator Labs</span>
             </div>
+            <Link
+                href=""
+                className="flex items-center gap-2 text-xs text-neutral-300 transition duration-300 hover:text-neutral-200"
+              >
+                <FontAwesomeIcon icon={faLocationDot} className="w-4 mb-4 text-sm" /> PBT BY PASS ROAD, STREET NO-3, PN/11/14/2 <br/> Shamat Ganj, Bareilly, Bareilly-243005, Uttar Pradesh.
+              </Link>
           </div>
           <div className="hidden items-start gap-12 sm:flex">
             <div className="flex flex-col items-start justify-center gap-2">
@@ -54,12 +60,6 @@ export default function Footer() {
                 className="flex items-center gap-2 text-sm text-neutral-300 transition duration-300 hover:text-neutral-200"
               >
                 <FontAwesomeIcon icon={faPhone} className="w-4" /> +917906682655
-              </Link>
-              <Link
-                href=""
-                className="flex items-center gap-2 text-xs text-neutral-300 transition duration-300 hover:text-neutral-200"
-              >
-                <FontAwesomeIcon icon={faLocationDot} className="w-4 mb-4 text-sm" /> PBT BY PASS ROAD, STREET NO-3, PN/11/14/2 <br/> Shamat Ganj, Bareilly, Bareilly-243005, Uttar Pradesh.
               </Link>
             </div>
           </div>
