@@ -401,7 +401,7 @@ export const ClaimLinkBanner = () => {
   };
 
   return (
-    <div className="relative mx-auto my-8 flex w-full max-w-3xl flex-col items-center gap-4 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-6 px-8 md:items-start md:p-10 md:px-12">
+    <div className="relative my-8 flex w-full max-w-4xl flex-col items-center gap-4 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-6 px-8 md:items-start md:p-10 md:px-12">
       <h3 className="text-center text-2xl font-medium md:text-left">
         Become a <span className="text-pink-600">Kreator</span> now, and claim
         your proflie

@@ -49,8 +49,7 @@ const EnrolledCourseCard = ({ enrollment }: Props) => {
         <p
           className={`flex items-center gap-1 text-xs text-pink-500/70 group-hover:text-pink-500`}
         >
-          <PlayIcon className="w-3" /> Resume learning chapter{" "}
-          {(enrollment.course?.courseProgress?.lastChapter?.position ?? 0) + 1}
+          <PlayIcon className="w-3" /> Resume learning
         </p>
       </div>
     </Link>
