@@ -53,6 +53,7 @@ export const courseRouter = createTRPCRouter({
               user: true,
             },
           },
+          tags: true,
         },
       });
 
@@ -213,6 +214,12 @@ export const courseRouter = createTRPCRouter({
           creatorId: ctx.session.user.id,
           ytId: input.ytId,
           price: parseInt(input.price),
+          tags: {
+            connectOrCreate: input.tags.map((tag) => ({
+              where: { id: tag.id },
+              create: { title: tag.title },
+            })),
+          },
         },
       });
 
@@ -280,6 +287,12 @@ export const courseRouter = createTRPCRouter({
           ytChannelId: input.ytChannelId,
           ytChannelName: input.ytChannelName,
           ytChannelImage: input.ytChannelImage,
+          tags: {
+            connectOrCreate: input.tags.map((tag) => ({
+              where: { id: tag.id },
+              create: { title: tag.title },
+            })),
+          },
         },
       });
 
@@ -702,6 +715,66 @@ export const courseRouter = createTRPCRouter({
           return null;
         }
       }
+    }),
+
+  createTag: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const tag = await prisma.tag.create({
+        data: {
+          title: input,
+        },
+      });
+
+      return tag;
+    }),
+
+  searchTags: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const tags = await prisma.tag.findMany({
+        where: {
+          title: {
+            contains: input,
+          },
+        },
+      });
+
+      return tags;
+    }),
+
+  createCategory: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const tag = await prisma.tag.create({
+        data: {
+          title: input,
+        },
+      });
+
+      return tag;
+    }),
+
+  getCategories: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const tags = await prisma.tag.findMany({
+        where: {
+          title: {
+            contains: input,
+          },
+        },
+      });
+
+      return tags;
     }),
 
   delete: protectedProcedure
