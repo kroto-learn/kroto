@@ -81,7 +81,7 @@ const Index = () => {
         ) : courses && courses.length > 0 ? (
           <AnimatedSection
             delay={0.2}
-            className="mt-8 flex w-full flex-col items-start gap-4"
+            className="flex w-full flex-col items-start gap-4"
           >
             {courses?.map((course) => (
               <CourseCard course={course} key={course.id} manage />

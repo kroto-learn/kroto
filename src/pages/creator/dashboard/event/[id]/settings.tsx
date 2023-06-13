@@ -32,9 +32,12 @@ const EventSettings = () => {
       <Head>
         <title>{(event?.title ?? "Event") + " | Settings"}</title>
       </Head>
-      <AnimatedSection delay={0.2} className="w-full rounded-xl bg-neutral-900 p-8">
+      <AnimatedSection
+        delay={0.2}
+        className="w-full rounded-xl bg-neutral-900 p-8"
+      >
         <div className="flex flex-col items-start gap-3">
-          <label className="text-lg font-medium line-clamp-2 text-ellipsis overflow-hidden">
+          <label className="line-clamp-2 overflow-hidden text-ellipsis text-lg font-medium">
             Delete &quot;{event?.title ?? ""}&quot; event ?
           </label>
           <button
@@ -148,18 +151,15 @@ export function DeleteEventModal({
                             { id },
                             {
                               onSuccess: () => {
-                                const fxn = async () => {
-                                  await ctx.event.getAll.invalidate();
-                                  await ctx.event.get.invalidate();
-                                  await revalidate(`/event/${eventId}`);
-                                  void revalidate(`/${creatorProfile}`);
+                                void ctx.event.getAll.invalidate();
+                                void ctx.event.get.invalidate();
+                                const eid = eventId;
+                                void revalidate(`/event/${eid}`);
+                                void revalidate(`/${creatorProfile}`);
 
-                                  void router.replace(
-                                    "/creator/dashboard/events"
-                                  );
-                                };
-
-                                void fxn();
+                                void router.replace(
+                                  "/creator/dashboard/events"
+                                );
                               },
                               onError: () => {
                                 errorToast("Error in deleting event!");

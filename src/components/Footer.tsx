@@ -25,9 +25,9 @@ export default function Footer() {
               Created by{" "}
               <span className="text-neutral-200">Kroto Kreator Labs</span>
             </div>
-            <p className="ml-3 flex items-center gap-2 text-xs text-neutral-400">
-              PBT BY PASS ROAD, STREET NO-3, PN/11/14/2 <br /> Shamat Ganj,
-              Bareilly, Bareilly-243005, Uttar Pradesh.
+            <p className="ml-3 flex items-center gap-2 text-xs text-neutral-500">
+              Pbt by pass road, street bo-3, PN/11/14/2 <br /> Shamat Ganj,
+              Bareilly, 243005, Uttar Pradesh.
             </p>
           </div>
           <div className="hidden items-start gap-12 sm:flex">
