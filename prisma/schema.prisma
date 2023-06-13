@@ -225,7 +225,11 @@ model Course {
   chapters       Chapter[]
   feedbacks      Feedback[]
   audienceMember AudienceMember[]
+  tags           Tag[]
+  category       Category?        @relation(fields: [categoryId], references: [id])
+  categoryId     String?
 
+  @@index([categoryId])
   @@index([creatorId])
 }
 
@@ -327,4 +331,16 @@ model Recipient {
 
   @@unique([emailModelId, id])
   @@index([emailModelId])
+}
+
+model Category {
+  id      String   @id @default(cuid())
+  title   String
+  courses Course[]
+}
+
+model Tag {
+  id      String   @id @default(cuid())
+  title   String
+  courses Course[]
 }

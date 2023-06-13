@@ -53,6 +53,8 @@ export const courseRouter = createTRPCRouter({
               user: true,
             },
           },
+          tags: true,
+          category: true,
         },
       });
 
@@ -89,6 +91,8 @@ export const courseRouter = createTRPCRouter({
         include: {
           creator: true,
           chapters: true,
+          tags: true,
+          category: true,
         },
       });
 
@@ -125,6 +129,8 @@ export const courseRouter = createTRPCRouter({
               chapters: true,
             },
           },
+          tags: true,
+          category: true,
         },
       });
 
@@ -213,6 +219,13 @@ export const courseRouter = createTRPCRouter({
           creatorId: ctx.session.user.id,
           ytId: input.ytId,
           price: parseInt(input.price),
+          tags: {
+            connectOrCreate: input.tags.map((tag) => ({
+              where: { id: tag.id },
+              create: { title: tag.title },
+            })),
+          },
+          categoryId: input?.category?.id,
         },
       });
 
@@ -280,6 +293,13 @@ export const courseRouter = createTRPCRouter({
           ytChannelId: input.ytChannelId,
           ytChannelName: input.ytChannelName,
           ytChannelImage: input.ytChannelImage,
+          tags: {
+            connectOrCreate: input.tags.map((tag) => ({
+              where: { id: tag.id },
+              create: { title: tag.title },
+            })),
+          },
+          categoryId: input?.category?.id,
         },
       });
 
@@ -703,6 +723,64 @@ export const courseRouter = createTRPCRouter({
         }
       }
     }),
+
+  createTag: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const tag = await prisma.tag.create({
+        data: {
+          title: input,
+        },
+      });
+
+      return tag;
+    }),
+
+  searchTags: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const tags = await prisma.tag.findMany({
+        where: {
+          title: {
+            contains: input,
+          },
+        },
+      });
+
+      return tags;
+    }),
+
+  createCategory: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const catgs = await prisma.category.create({
+        data: {
+          title: input,
+        },
+      });
+
+      return catgs;
+    }),
+
+  getCategories: publicProcedure.query(async ({ ctx, input }) => {
+    const { prisma } = ctx;
+
+    const catgs = await prisma.category.findMany({
+      where: {
+        title: {
+          contains: input,
+        },
+      },
+    });
+
+    return catgs;
+  }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))

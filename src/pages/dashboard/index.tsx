@@ -32,14 +32,11 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="mx-auto w-11/12 sm:w-10/12 md:w-8/12 lg:w-6/12">
+      <div className="flex w-full flex-col items-center">
         <Head>
           <title>Dashboard | Kroto</title>
         </Head>
-        <AnimatedSection
-          delay={0.2}
-          className="my-10 rounded-xl border border-neutral-800 bg-neutral-900 p-5"
-        >
+        <AnimatedSection className="my-10 w-full max-w-4xl rounded-xl border border-neutral-800 bg-neutral-900 p-5">
           <div className="flex items-center justify-between">
             <div className="flex w-full flex-col items-center justify-between gap-5 sm:flex-row">
               <div className="flex flex-col items-center gap-5 sm:flex-row">
@@ -81,8 +78,8 @@ export default function Dashboard() {
           </div>
         </AnimatedSection>
         <AnimatedSection
-          delay={0.5}
-          className="mb-10 flex flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-3 sm:gap-4  sm:p-8"
+          delay={0.1}
+          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-3 sm:gap-4  sm:p-8"
         >
           <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
             Enrolled Courses
@@ -120,8 +117,8 @@ export default function Dashboard() {
           </div>
         </AnimatedSection>
         <AnimatedSection
-          delay={0.8}
-          className="mb-10 flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8"
+          delay={0.2}
+          className="mb-10 flex w-full max-w-4xl flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8"
         >
           <div className="flex w-full flex-col items-start justify-between sm:flex-row sm:items-center">
             <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">

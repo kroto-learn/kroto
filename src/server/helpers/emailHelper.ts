@@ -289,9 +289,9 @@ const sendContactus = async (contact: {
 }) => {
   const converter = new showdown.Converter();
   const bodyHtml = converter.makeHtml(
-    `Name: ${contact.name}\nEmail: ${contact.email}\nPhone: ${
+    `Name: ${contact.name}<br/>Email: ${contact.email}<br/>Phone: ${
       contact.phone ?? ""
-    }\nMessage:\n${contact.message}`
+    }<br/>Message:<br/>${contact.message}`
   );
 
   const subject = `Contact request from ${contact.name}`;

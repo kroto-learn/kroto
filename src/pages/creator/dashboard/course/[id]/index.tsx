@@ -40,6 +40,7 @@ const CourseOverview = () => {
   const { id } = router.query as { id: string };
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewPos, setPreviewPos] = useState(0);
+  const [showFullDesc, setShowFullDesc] = useState(false);
 
   const { data: course, isLoading: courseLoading } = api.course.get.useQuery({
     id,
@@ -160,6 +161,22 @@ const CourseOverview = () => {
                   </p>
                 )}
               </div>
+
+              {course?.category ? (
+                <div className="flex flex-col gap-1">
+                  <label
+                    htmlFor="category"
+                    className="text-xs font-medium uppercase tracking-wider text-neutral-400"
+                  >
+                    Category
+                  </label>
+                  <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm font-medium text-neutral-200 duration-300 sm:text-base">
+                    {course?.category?.title}
+                  </p>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
 
             <div className="w-full sm:w-2/3">
@@ -181,9 +198,48 @@ const CourseOverview = () => {
                   >
                     Description
                   </label>
-                  <p className="hide-scroll max-h-28 overflow-y-auto text-xs text-neutral-300 sm:text-sm">
-                    {course?.description}
-                  </p>
+                  <div className="flex flex-col items-start">
+                    <p
+                      className={`${
+                        !showFullDesc
+                          ? "line-clamp-5 overflow-hidden text-ellipsis"
+                          : ""
+                      } text-xs text-neutral-300 sm:text-sm`}
+                    >
+                      {course?.description}
+                    </p>
+                    <button
+                      className="font-bold"
+                      onClick={() => {
+                        setShowFullDesc(!showFullDesc);
+                      }}
+                    >
+                      {!showFullDesc ? "more" : "less"}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+
+              {course?.tags?.length > 0 ? (
+                <>
+                  <label
+                    htmlFor="tags"
+                    className="text-xs font-medium uppercase tracking-wider text-neutral-400"
+                  >
+                    Tags
+                  </label>
+                  <div className="flex flex-wrap items-center gap-1">
+                    {course?.tags?.map((tag) => (
+                      <span
+                        className="rounded-lg bg-neutral-200/30 px-2 py-1 text-xs"
+                        key={tag?.id}
+                      >
+                        {tag?.title}
+                      </span>
+                    ))}
+                  </div>
                 </>
               ) : (
                 <></>
