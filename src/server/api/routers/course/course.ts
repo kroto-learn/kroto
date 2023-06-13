@@ -54,6 +54,7 @@ export const courseRouter = createTRPCRouter({
             },
           },
           tags: true,
+          category: true,
         },
       });
 
@@ -90,6 +91,8 @@ export const courseRouter = createTRPCRouter({
         include: {
           creator: true,
           chapters: true,
+          tags: true,
+          category: true,
         },
       });
 
@@ -126,6 +129,8 @@ export const courseRouter = createTRPCRouter({
               chapters: true,
             },
           },
+          tags: true,
+          category: true,
         },
       });
 
@@ -220,6 +225,7 @@ export const courseRouter = createTRPCRouter({
               create: { title: tag.title },
             })),
           },
+          categoryId: input?.category?.id,
         },
       });
 
@@ -293,6 +299,7 @@ export const courseRouter = createTRPCRouter({
               create: { title: tag.title },
             })),
           },
+          categoryId: input?.category?.id,
         },
       });
 
@@ -752,30 +759,28 @@ export const courseRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
-      const tag = await prisma.tag.create({
+      const catgs = await prisma.category.create({
         data: {
           title: input,
         },
       });
 
-      return tag;
+      return catgs;
     }),
 
-  getCategories: publicProcedure
-    .input(z.string())
-    .query(async ({ ctx, input }) => {
-      const { prisma } = ctx;
+  getCategories: publicProcedure.query(async ({ ctx, input }) => {
+    const { prisma } = ctx;
 
-      const tags = await prisma.tag.findMany({
-        where: {
-          title: {
-            contains: input,
-          },
+    const catgs = await prisma.category.findMany({
+      where: {
+        title: {
+          contains: input,
         },
-      });
+      },
+    });
 
-      return tags;
-    }),
+    return catgs;
+  }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
