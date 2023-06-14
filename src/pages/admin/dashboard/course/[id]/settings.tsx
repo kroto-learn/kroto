@@ -9,9 +9,13 @@ import React, {
 } from "react";
 import { CourseNestedLayout } from ".";
 import { api } from "@/utils/api";
-import { TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import {
+  ChevronDownIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
 import AnimatedSection from "@/components/AnimatedSection";
-import { Transition, Dialog } from "@headlessui/react";
+import { Transition, Dialog, Listbox } from "@headlessui/react";
 import { Loader } from "@/components/Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import useToast from "@/hooks/useToast";
@@ -22,6 +26,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 export const settingsFormSchema = z.object({
   price: z.string().nonempty("Please enter course price."),
+  tags: z.array(z.object({ id: z.string(), title: z.string() })),
+  category: z.object({ id: z.string(), title: z.string() }).optional(),
   id: z.string(),
 });
 
@@ -51,22 +57,42 @@ const Index = () => {
     schema: settingsFormSchema,
     defaultValues: {
       price: "0",
+      tags: [],
     },
   });
 
-  const { mutateAsync: priceUpdateMutation, isLoading: priceMutateLoading } =
-    api.course.updatePrice.useMutation();
+  const [tagInput, setTagInput] = useState("");
+  const [tagInputFocused, setTagInputFocused] = useState(false);
+  const [debouncedTagInput, setDebouncedTagInput] = useState(tagInput);
 
-  const [initPrice, setInitPrice] = useState(false);
+  const { mutateAsync: priceUpdateMutation, isLoading: priceMutateLoading } =
+    api.course.update.useMutation();
+
+  const { data: searchedTags, isLoading: searchingtags } =
+    api.course.searchTags.useQuery(debouncedTagInput);
+
+  const { data: catgs } = api.course.getCategories.useQuery();
+
+  const [initData, setInitData] = useState(false);
 
   const ctx = api.useContext();
 
   const revalidate = useRevalidateSSG();
 
   useEffect(() => {
-    if (!(course instanceof TRPCError) && course && !initPrice) {
-      setInitPrice(true);
+    const timerId = setTimeout(() => {
+      setDebouncedTagInput(tagInput);
+    }, 500);
+
+    return () => clearTimeout(timerId);
+  }, [tagInput]);
+
+  useEffect(() => {
+    if (!(course instanceof TRPCError) && course && !initData) {
+      setInitData(true);
       methods.setValue("price", course?.price?.toString());
+      methods.setValue("tags", course?.tags);
+      methods.setValue("category", course?.category ?? undefined);
       methods.setValue("id", course?.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -99,80 +125,227 @@ const Index = () => {
           })}
           className="mb-12 mt-1 flex flex-col items-start gap-3"
         >
-          <label htmlFor="description" className="text-lg  text-neutral-200">
-            Price
-          </label>
-          <div className="flex items-center gap-2">
-            <div
-              className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                methods.watch().price === "0"
-                  ? "border-green-600 bg-green-600/40"
-                  : "border-neutral-500 text-neutral-500"
-              }`}
-              onClick={() => {
-                methods.setValue("price", "0");
-              }}
-            >
+          <div className="mt-4 flex flex-col gap-2">
+            <label htmlFor="description" className="text-lg  text-neutral-200">
+              Price
+            </label>
+            <div className="flex items-center gap-2">
               <div
-                className={`flex h-3 w-3 items-center rounded-full border ${
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
                   methods.watch().price === "0"
-                    ? "border-neutral-300"
-                    : "border-neutral-500"
+                    ? "border-green-600 bg-green-600/40"
+                    : "border-neutral-500 text-neutral-500"
                 }`}
+                onClick={() => {
+                  methods.setValue("price", "0");
+                }}
               >
-                {methods.watch().price === "0" ? (
-                  <div className="h-full w-full rounded-full bg-neutral-300" />
-                ) : (
-                  <></>
-                )}
-              </div>{" "}
-              Free
-            </div>
+                <div
+                  className={`flex h-3 w-3 items-center rounded-full border ${
+                    methods.watch().price === "0"
+                      ? "border-neutral-300"
+                      : "border-neutral-500"
+                  }`}
+                >
+                  {methods.watch().price === "0" ? (
+                    <div className="h-full w-full rounded-full bg-neutral-300" />
+                  ) : (
+                    <></>
+                  )}
+                </div>{" "}
+                Free
+              </div>
 
-            <div
-              className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                methods.watch().price !== "0"
-                  ? "border-pink-600 bg-pink-600/40"
-                  : "border-neutral-500 text-neutral-500"
-              }`}
-              onClick={() => {
-                methods.setValue("price", "50");
-              }}
-            >
               <div
-                className={`flex h-3 w-3 items-center justify-center rounded-full border ${
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
                   methods.watch().price !== "0"
-                    ? "border-neutral-300"
-                    : "border-neutral-500"
+                    ? "border-pink-600 bg-pink-600/40"
+                    : "border-neutral-500 text-neutral-500"
                 }`}
+                onClick={() => {
+                  methods.setValue("price", "50");
+                }}
               >
-                {methods.watch().price !== "0" ? (
-                  <div className="h-full w-full rounded-full bg-neutral-300" />
-                ) : (
-                  <></>
+                <div
+                  className={`flex h-3 w-3 items-center justify-center rounded-full border ${
+                    methods.watch().price !== "0"
+                      ? "border-neutral-300"
+                      : "border-neutral-500"
+                  }`}
+                >
+                  {methods.watch().price !== "0" ? (
+                    <div className="h-full w-full rounded-full bg-neutral-300" />
+                  ) : (
+                    <></>
+                  )}
+                </div>{" "}
+                Paid
+              </div>
+            </div>
+            {methods.watch().price !== "0" ? (
+              <div className="relative flex w-full max-w-[7rem] items-center">
+                <input
+                  type="number"
+                  {...methods.register("price")}
+                  className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  placeholder="00"
+                  defaultValue={50}
+                />
+                <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                  ₹
+                </p>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-col gap-2">
+            <label htmlFor="description" className="text-lg  text-neutral-200">
+              Tags
+            </label>
+            <div className="flex items-center gap-2">
+              {methods.watch().tags.map((tag) => (
+                <span
+                  className="flex items-center gap-1 overflow-hidden rounded bg-pink-600/30 pl-2 text-xs"
+                  key={tag.id}
+                >
+                  {tag.title}{" "}
+                  <button
+                    onClick={() => {
+                      methods.setValue(
+                        "tags",
+                        methods.watch().tags.filter((t) => t.id !== tag.id)
+                      );
+                    }}
+                    className="ml-1 p-1 text-neutral-200 duration-150 hover:bg-pink-600"
+                  >
+                    <XMarkIcon className="w-4" />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="relative flex w-full max-w-sm items-center justify-end">
+              <input
+                type="text"
+                onFocus={() => setTagInputFocused(true)}
+                onBlur={() =>
+                  setTimeout(() => {
+                    setTagInputFocused(false);
+                  }, 200)
+                }
+                value={tagInput}
+                onChange={(e) => {
+                  setTagInput(e?.target?.value.substring(0, 30));
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    methods.setValue("tags", [
+                      ...methods.watch().tags,
+                      {
+                        id: tagInput,
+                        title: tagInput,
+                      },
+                    ]);
+                    setTagInput("");
+                  }
+                }}
+                className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-1 pr-6 text-sm placeholder-neutral-500 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                placeholder="Add tags..."
+              />
+              <div className="absolute">
+                {searchingtags ? <Loader /> : <></>}
+              </div>
+            </div>
+            {tagInputFocused && searchedTags && searchedTags?.length > 0 ? (
+              <div
+                className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
+              >
+                <div className="flex w-full flex-col overflow-hidden rounded border border-neutral-600 bg-neutral-800/70 backdrop-blur">
+                  {searchedTags?.map((st) => (
+                    <button
+                      type="button"
+                      className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
+                      onClick={() => {
+                        setTagInput("");
+                        if (!methods.watch().tags.find((tg) => tg.id === st.id))
+                          methods.setValue("tags", [
+                            ...methods.watch().tags,
+                            st,
+                          ]);
+                      }}
+                      key={st.id}
+                    >
+                      {st.title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-col gap-2">
+            <label htmlFor="description" className="text-lg  text-neutral-200">
+              Category
+            </label>
+            <div className="relative flex w-full max-w-sm items-center justify-end">
+              <Listbox
+                value={methods.watch().category?.id ?? "none"}
+                onChange={(val) => {
+                  const selectedCatg = catgs?.find((ctg) => ctg.id === val);
+                  if (selectedCatg) methods.setValue("category", selectedCatg);
+                  else methods.setValue("category", undefined);
+                }}
+              >
+                {({ open }) => (
+                  <div className="flex w-full flex-col gap-2">
+                    <div className="relative flex w-full items-center justify-end">
+                      <Listbox.Button className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 pr-8 text-left">
+                        {methods.watch().category?.title ?? "none"}
+                      </Listbox.Button>
+                      <ChevronDownIcon
+                        className={`${
+                          open ? "rotate-180 duration-150" : ""
+                        } absolute mr-4 w-4`}
+                      />
+                    </div>
+                    <div
+                      className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
+                    >
+                      <Listbox.Options className="flex w-full flex-col overflow-hidden rounded border border-neutral-600 bg-neutral-800/70 backdrop-blur">
+                        <Listbox.Option
+                          key={"none"}
+                          value={"none"}
+                          className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
+                        >
+                          none
+                        </Listbox.Option>
+                        {catgs && catgs.length > 0 ? (
+                          catgs.map((ctg) => (
+                            <Listbox.Option
+                              key={ctg.id}
+                              value={ctg.id}
+                              className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
+                            >
+                              {ctg.title}
+                            </Listbox.Option>
+                          ))
+                        ) : (
+                          <></>
+                        )}
+                      </Listbox.Options>
+                    </div>
+                  </div>
                 )}
-              </div>{" "}
-              Paid
+              </Listbox>
             </div>
           </div>
-          {methods.watch().price !== "0" ? (
-            <div className="relative flex w-full max-w-[7rem] items-center">
-              <input
-                type="number"
-                {...methods.register("price")}
-                className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                placeholder="00"
-                defaultValue={50}
-              />
-              <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
-                ₹
-              </p>
-            </div>
-          ) : (
-            <></>
-          )}
+
           <button className="flex items-center gap-1 rounded-lg bg-pink-500 px-4 py-2 text-sm font-bold duration-150 hover:bg-pink-600">
-            {priceMutateLoading ? <Loader white /> : <></>} Update Price
+            {priceMutateLoading ? <Loader white /> : <></>} Update Course
           </button>
         </form>
         <div className="flex flex-col items-start gap-3">

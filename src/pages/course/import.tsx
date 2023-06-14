@@ -97,8 +97,7 @@ const Index = () => {
   const { data: searchedTags, isLoading: searchingtags } =
     api.course.searchTags.useQuery(debouncedTagInput);
 
-  const { data: catgs, isLoading: searchingCatgs } =
-    api.course.getCategories.useQuery();
+  const { data: catgs } = api.course.getCategories.useQuery();
 
   // const { mutateAsync: createTagMutation, isLoading: creatingTag } =
   //   api.course.createTag.useMutation();
@@ -390,12 +389,6 @@ const Index = () => {
                   methods.watch()?.chapters.length}{" "}
                 Chapters
               </label>
-              {/* <button
-                type="button"
-                className="flex items-center gap-1 rounded-lg border border-pink-600 px-3 py-1 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
-              >
-                <PlusIcon className="w-4" /> Add Course block
-              </button> */}
             </div>
             <div className="max-h-[24rem] overflow-y-auto pr-2">
               {methods.watch()?.chapters.length > 0 ? (
@@ -550,17 +543,11 @@ const Index = () => {
                         <Listbox.Button className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 pr-8 text-left">
                           {methods.watch().category?.title ?? "none"}
                         </Listbox.Button>
-                        {searchingCatgs ? (
-                          <div className="absolute mr-3">
-                            <Loader white />
-                          </div>
-                        ) : (
-                          <ChevronDownIcon
-                            className={`${
-                              open ? "rotate-180 duration-150" : ""
-                            } absolute mr-4 w-4`}
-                          />
-                        )}
+                        <ChevronDownIcon
+                          className={`${
+                            open ? "rotate-180 duration-150" : ""
+                          } absolute mr-4 w-4`}
+                        />
                       </div>
                       <div
                         className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
