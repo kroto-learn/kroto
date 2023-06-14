@@ -97,8 +97,7 @@ const Index = () => {
   const { data: searchedTags, isLoading: searchingtags } =
     api.course.searchTags.useQuery(debouncedTagInput);
 
-  const { data: catgs, isLoading: searchingCatgs } =
-    api.course.getCategories.useQuery();
+  const { data: catgs } = api.course.getCategories.useQuery();
 
   // const { mutateAsync: createTagMutation, isLoading: creatingTag } =
   //   api.course.createTag.useMutation();
@@ -544,17 +543,11 @@ const Index = () => {
                         <Listbox.Button className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 pr-8 text-left">
                           {methods.watch().category?.title ?? "none"}
                         </Listbox.Button>
-                        {searchingCatgs ? (
-                          <div className="absolute mr-3">
-                            <Loader white />
-                          </div>
-                        ) : (
-                          <ChevronDownIcon
-                            className={`${
-                              open ? "rotate-180 duration-150" : ""
-                            } absolute mr-4 w-4`}
-                          />
-                        )}
+                        <ChevronDownIcon
+                          className={`${
+                            open ? "rotate-180 duration-150" : ""
+                          } absolute mr-4 w-4`}
+                        />
                       </div>
                       <div
                         className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
