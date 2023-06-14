@@ -18,6 +18,7 @@ import { ogImageUpload } from "@/server/helpers/s3";
 import { settingsFormSchema } from "../../../../pages/creator/dashboard/course/[id]/settings";
 import { adminImportCourseFormSchema } from "@/pages/course/admin-import";
 import { isAdmin } from "@/server/helpers/admin";
+import { createCategoryFormSchema } from "@/pages/admin/dashboard/categories";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -134,27 +135,52 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      if (isAdmin(ctx.session.user.email ?? "")) {
-        const unclaimedCourses = await prisma.course.findMany({
-          where: {
-            creatorId: null,
-            title: {
-              startsWith: input?.searchQuery ?? "",
-            },
-          },
-          include: {
-            _count: {
-              select: {
-                chapters: true,
-              },
-            },
-          },
-        });
-
-        return [...courses, ...unclaimedCourses];
-      }
-
       return courses;
+    }),
+
+  getAllAdmin: protectedProcedure
+    .input(z.object({ searchQuery: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      if (!isAdmin(ctx.session.user.email ?? ""))
+        return new TRPCError({ code: "BAD_REQUEST" });
+
+      const myCourses = await prisma.course.findMany({
+        where: {
+          creatorId: ctx.session.user.id,
+          title: {
+            contains: input?.searchQuery ?? "",
+          },
+        },
+        include: {
+          _count: {
+            select: {
+              chapters: true,
+            },
+          },
+          tags: true,
+          category: true,
+        },
+      });
+
+      const unclaimedCourses = await prisma.course.findMany({
+        where: {
+          creatorId: null,
+          title: {
+            startsWith: input?.searchQuery ?? "",
+          },
+        },
+        include: {
+          _count: {
+            select: {
+              chapters: true,
+            },
+          },
+        },
+      });
+
+      return [...myCourses, ...unclaimedCourses];
     }),
 
   searchYoutubePlaylists: protectedProcedure
@@ -755,13 +781,13 @@ export const courseRouter = createTRPCRouter({
     }),
 
   createCategory: protectedProcedure
-    .input(z.string())
+    .input(createCategoryFormSchema)
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
       const catgs = await prisma.category.create({
         data: {
-          title: input,
+          title: input.title,
         },
       });
 

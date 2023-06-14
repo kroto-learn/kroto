@@ -137,7 +137,7 @@ const Index = () => {
       playlistId,
     });
 
-  const { data: courses } = api.course.getAll.useQuery();
+  const { data: courses } = api.course.getAllAdmin.useQuery();
 
   const {
     mutateAsync: importCourseMutation,
@@ -242,6 +242,7 @@ const Index = () => {
                   <button
                     onClick={() => {
                       if (
+                        !(courses instanceof TRPCError) &&
                         courses?.find((c) => c.ytId === playlist.playlistId)
                       ) {
                         errorToast("This playlist has already been imported!");
