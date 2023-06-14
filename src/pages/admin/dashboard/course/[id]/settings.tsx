@@ -463,7 +463,7 @@ export function DeleteCourseModal({
                             { id },
                             {
                               onSuccess: () => {
-                                void ctx.course.getAll.invalidate();
+                                void ctx.course.getAllAdmin.invalidate();
                                 void ctx.course.get.invalidate();
                                 const cid = courseId;
                                 void revalidate(`/course/${cid}`);
