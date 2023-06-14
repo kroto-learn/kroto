@@ -237,6 +237,12 @@ export const courseRouter = createTRPCRouter({
 
       if (!input) return new TRPCError({ code: "BAD_REQUEST" });
 
+      const existingCourse = await prisma.course.findFirst({
+        where: { ytId: input.ytId },
+      });
+
+      if (existingCourse) return new TRPCError({ code: "BAD_REQUEST" });
+
       const course = await prisma.course.create({
         data: {
           title: input.title,
@@ -307,6 +313,12 @@ export const courseRouter = createTRPCRouter({
 
       if (!isAdmin(ctx.session.user.email ?? ""))
         return new TRPCError({ code: "BAD_REQUEST" });
+
+      const existingCourse = await prisma.course.findFirst({
+        where: { ytId: input.ytId },
+      });
+
+      if (existingCourse) return new TRPCError({ code: "BAD_REQUEST" });
 
       const course = await prisma.course.create({
         data: {
@@ -489,7 +501,7 @@ export const courseRouter = createTRPCRouter({
       return { ...ogUpdatedCourse, chapters: updatedChapters };
     }),
 
-  updatePrice: protectedProcedure
+  update: protectedProcedure
     .input(settingsFormSchema)
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
@@ -508,7 +520,16 @@ export const courseRouter = createTRPCRouter({
 
       const updatedCourse = await prisma.course.update({
         where: { id: input.id },
-        data: { price: parseInt(input.price) },
+        data: {
+          price: parseInt(input.price),
+          tags: {
+            connectOrCreate: input.tags.map((tag) => ({
+              where: { id: tag.id },
+              create: { title: tag.title },
+            })),
+          },
+          categoryId: input?.category?.id,
+        },
       });
 
       return updatedCourse;

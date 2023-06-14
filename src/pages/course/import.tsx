@@ -390,12 +390,6 @@ const Index = () => {
                   methods.watch()?.chapters.length}{" "}
                 Chapters
               </label>
-              {/* <button
-                type="button"
-                className="flex items-center gap-1 rounded-lg border border-pink-600 px-3 py-1 text-sm font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
-              >
-                <PlusIcon className="w-4" /> Add Course block
-              </button> */}
             </div>
             <div className="max-h-[24rem] overflow-y-auto pr-2">
               {methods.watch()?.chapters.length > 0 ? (
