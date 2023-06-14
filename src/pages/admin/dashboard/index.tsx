@@ -1,31 +1,15 @@
 import { api } from "@/utils/api";
-import { Menu, Transition } from "@headlessui/react";
 import { signOut } from "next-auth/react";
 import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment, useEffect, type ReactNode } from "react";
-import CalenderIcon from "@heroicons/react/20/solid/CalendarIcon";
-import { CalendarIcon } from "@heroicons/react/24/outline";
-import UserGroupIcon from "@heroicons/react/20/solid/UserGroupIcon";
-import { UserGroupIcon as UserGroupIconO } from "@heroicons/react/24/outline";
-import Cog6ToothIcon from "@heroicons/react/20/solid/Cog6ToothIcon";
-import { Cog6ToothIcon as Cog6ToothIconO } from "@heroicons/react/24/outline";
-import Bars3Icon from "@heroicons/react/20/solid/Bars3Icon";
-import ChevronDownIcon from "@heroicons/react/20/solid/ChevronDownIcon";
-import ArrowLeftOnRectangleIcon from "@heroicons/react/20/solid/ArrowLeftOnRectangleIcon";
-import WindowIcon from "@heroicons/react/20/solid/WindowIcon";
-import UserIcon from "@heroicons/react/20/solid/UserIcon";
-import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
+import { useEffect, type ReactNode } from "react";
 import { useRouter } from "next/router";
-import { PresentationChartLineIcon } from "@heroicons/react/24/solid";
-import { PresentationChartLineIcon as PresentationChartBarIcon0 } from "@heroicons/react/24/outline";
 import {
   AdjustmentsHorizontalIcon,
   InboxStackIcon,
   RectangleStackIcon,
 } from "@heroicons/react/20/solid";
-
 import { InboxStackIcon as InboxStackIconO } from "@heroicons/react/24/outline";
 import { RectangleStackIcon as RectangleStackIconO } from "@heroicons/react/24/outline";
 import { isAdmin } from "@/server/helpers/admin";
@@ -45,7 +29,7 @@ function AdminDashboardLayoutR({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (router.pathname === "/admin/dashboard")
       void router.push("/admin/dashboard/courses");
-    if (!isAdmin(creator?.email ?? "")) void router.replace("/");
+    if (creator && !isAdmin(creator?.email ?? "")) void router.replace("/");
   }, [creator, router]);
 
   return (
