@@ -40,6 +40,8 @@ const Index = () => {
   const { mutateAsync: createCategoryMutation, isLoading: createCatgLoading } =
     api.course.createCategory.useMutation();
 
+    const ctx = api.useContext();
+
   return (
     <>
       <Head>
@@ -82,6 +84,8 @@ const Index = () => {
                   if (catg && !(catg instanceof TRPCError)) {
                     successToast(`New category ${catg.title} created.`);
                   }
+                  methods.setValue("title","")
+                  void ctx.course.getCategories.invalidate();
                 },
                 onError: () => {
                   errorToast("Error in creating category!");
