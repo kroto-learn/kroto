@@ -6,6 +6,7 @@ import Link from "next/link";
 import ImageWF from "@/components/ImageWF";
 import { Fragment } from "react";
 import { useRouter } from "next/router";
+import { isAdmin } from "@/server/helpers/admin";
 
 export default function Navbar({ status }: { status: string }) {
   const router = useRouter();
@@ -80,6 +81,18 @@ export default function Navbar({ status }: { status: string }) {
                           Dashboard
                         </Link>
                       </Menu.Item>
+                      {isAdmin(creator?.email ?? "") ? (
+                        <Menu.Item>
+                          <Link
+                            href="/admin/dashboard/courses"
+                            className={`w-full px-6 py-2 font-medium transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                          >
+                            Admin Dashboard
+                          </Link>
+                        </Menu.Item>
+                      ) : (
+                        <></>
+                      )}
                       <Menu.Item>
                         <Link
                           className={`w-full px-6 py-2 font-medium transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
