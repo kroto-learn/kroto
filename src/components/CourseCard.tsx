@@ -21,7 +21,7 @@ const CourseCard = ({ course, manage, lg, admin }: Props) => {
           ? `/admin/dashboard/course/${course?.id}`
           : `/course/${course?.id}`
       }
-      className="flex w-full max-w-lg gap-3 rounded-xl p-2 backdrop-blur-sm duration-150 hover:bg-neutral-200/10"
+      className="flex w-full max-w-lg items-start gap-3 rounded-xl p-2 backdrop-blur-sm duration-150 hover:bg-neutral-200/10"
       key={course?.id}
     >
       <div
@@ -69,7 +69,7 @@ const CourseCard = ({ course, manage, lg, admin }: Props) => {
           <></>
         )}
 
-        {manage && !course?.creatorId ? (
+        {admin && !course?.creatorId ? (
           <p className="rounded bg-yellow-500/30 px-2 py-1 text-xs">
             unclaimed
           </p>
