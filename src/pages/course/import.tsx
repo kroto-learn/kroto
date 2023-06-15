@@ -441,6 +441,7 @@ const Index = () => {
                           methods.watch().tags.filter((t) => t.id !== tag.id)
                         );
                       }}
+                      type="button"
                       className="ml-1 p-1 text-neutral-200 duration-150 hover:bg-pink-600"
                     >
                       <XMarkIcon className="w-4" />

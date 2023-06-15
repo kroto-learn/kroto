@@ -28,8 +28,8 @@ import Link from "next/link";
 import AnimatedSection from "@/components/AnimatedSection";
 import { AdminDashboardLayout } from "../..";
 
-const CourseLayoutR = dynamic(
-  () => import("@/components/layouts/courseDashboard"),
+const AdminCourseLayoutR = dynamic(
+  () => import("@/components/layouts/adminCourseDashboard"),
   {
     ssr: false,
   }
@@ -358,7 +358,7 @@ CourseOverview.getLayout = CourseNestedLayout;
 export default CourseOverview;
 
 function CourseLayout(page: ReactNode) {
-  return <CourseLayoutR>{page}</CourseLayoutR>;
+  return <AdminCourseLayoutR>{page}</AdminCourseLayoutR>;
 }
 
 export { CourseLayout };
