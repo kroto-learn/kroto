@@ -134,8 +134,30 @@ const Index = ({ courseId }: Props) => {
               </Link>
             </div>
 
-            {session.data?.user.id !== course?.creator?.id ? (
-              isEnrolled ? (
+            {session.status !== "loading" ? (
+              course?.creator?.id &&
+              session.data?.user.id === course?.creator?.id ? (
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/course/play/${course?.id}`}
+                    className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                  >
+                    <>
+                      <PlayIcon className="w-4" />
+                      <span>Play</span>
+                    </>
+                  </Link>
+                  <Link
+                    href={`/creator/dashboard/course/${course?.id}`}
+                    className={`group my-4 inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/10 px-6 py-1  text-center font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200`}
+                  >
+                    <>
+                      <AdjustmentsHorizontalIcon className="w-4" />
+                      <span>Manage</span>
+                    </>
+                  </Link>
+                </div>
+              ) : isEnrolled ? (
                 <Link
                   href={`/course/play/${course?.id}`}
                   className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
@@ -208,25 +230,9 @@ const Index = ({ courseId }: Props) => {
                 </>
               )
             ) : (
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/course/play/${course?.id}`}
-                  className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
-                >
-                  <>
-                    <PlayIcon className="w-4" />
-                    <span>Play</span>
-                  </>
-                </Link>
-                <Link
-                  href={`/creator/dashboard/course/${course?.id}`}
-                  className={`group my-4 inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/10 px-6 py-1  text-center font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200`}
-                >
-                  <>
-                    <AdjustmentsHorizontalIcon className="w-4" />
-                    <span>Manage</span>
-                  </>
-                </Link>
+              <div className="flex w-full flex-col gap-1">
+                <div className="mt-2 h-4 w-20 animate-pulse rounded-lg bg-neutral-500" />
+                <div className="mt-2 h-8 w-32 animate-pulse rounded-xl bg-neutral-500" />
               </div>
             )}
 

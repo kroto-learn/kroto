@@ -217,8 +217,10 @@ const Index = () => {
             placeholder="Paste youtube playlist ID or playlist URL..."
             value={playlistId}
             onChange={(e) => {
-              setPlaylistId(
-                e.target.value.split("&list=")[1] ?? e.target.value
+              setPlaylistId(e.target.value.split("list=")[1] ?? e.target.value);
+              methods.setValue(
+                "ytId",
+                e.target.value.split("list=")[1] ?? e.target.value
               );
             }}
             className="peer w-full max-w-sm rounded-lg bg-pink-500/10 px-3 py-2 font-medium text-neutral-200   outline outline-2 outline-pink-500/40 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
@@ -297,7 +299,7 @@ const Index = () => {
               onSuccess: (courseCreated) => {
                 if (courseCreated && !(courseCreated instanceof TRPCError)) {
                   void router.push(
-                    `/creator/dashboard/course/${courseCreated?.id}`
+                    `/admin/dashboard/course/${courseCreated?.id}`
                   );
                   void revalidate(`/course/${courseCreated?.id}`);
                 }
