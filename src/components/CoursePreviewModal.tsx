@@ -147,69 +147,8 @@ const CoursePreviewModal = ({
                       </div>
                     </div>
                   )}
-                  {session.data?.user.id !== course?.creator?.id ? (
-                    isEnrolled ? (
-                      <Link
-                        href={`/course/play/${course?.id}`}
-                        className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
-                      >
-                        <>
-                          <PlayIcon className="w-4" />
-                          <span>Play</span>
-                        </>
-                      </Link>
-                    ) : (
-                      <div className="mt-4 flex flex-col items-start gap-2">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={async () => {
-                              if (!session.data) {
-                                void signIn(undefined, {
-                                  callbackUrl: `/course/${courseId}`,
-                                });
-                                return;
-                              }
-                              if (course.price === 0)
-                                await enrollMutation(
-                                  { courseId: course?.id },
-                                  {
-                                    onSuccess: () => {
-                                      void ctx.course.isEnrolled.invalidate();
-                                      successToast(
-                                        "Successfully enrolled in course!"
-                                      );
-                                    },
-                                    onError: () => {
-                                      errorToast(
-                                        "Error in enrolling in course!"
-                                      );
-                                    },
-                                  }
-                                );
-                              else setCheckoutModalOpen(true);
-                            }}
-                            className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
-                          >
-                            {enrollLoading ? <Loader white /> : <></>}
-                            <span>Enroll now</span>
-                          </button>
-                          {course?.price === 0 ? (
-                            <span className="uppercase tracking-wider text-green-600">
-                              FREE
-                            </span>
-                          ) : (
-                            <span className="font-bold uppercase tracking-wider text-white">
-                              ₹ {course?.price}
-                            </span>
-                          )}
-                        </div>
-
-                        <p className="text-sm text-neutral-400">
-                          Enroll to access the complete course.
-                        </p>
-                      </div>
-                    )
-                  ) : (
+                  {course?.creator?.id &&
+                  session.data?.user.id === course?.creator?.id ? (
                     <Link
                       href={`/creator/dashboard/course/${course?.id}`}
                       className={`group my-4 inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/10 px-6 py-1  text-center font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200`}
@@ -219,6 +158,64 @@ const CoursePreviewModal = ({
                         <span>Manage</span>
                       </>
                     </Link>
+                  ) : isEnrolled ? (
+                    <Link
+                      href={`/course/play/${course?.id}`}
+                      className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                    >
+                      <>
+                        <PlayIcon className="w-4" />
+                        <span>Play</span>
+                      </>
+                    </Link>
+                  ) : (
+                    <div className="mt-4 flex flex-col items-start gap-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={async () => {
+                            if (!session.data) {
+                              void signIn(undefined, {
+                                callbackUrl: `/course/${courseId}`,
+                              });
+                              return;
+                            }
+                            if (course.price === 0)
+                              await enrollMutation(
+                                { courseId: course?.id },
+                                {
+                                  onSuccess: () => {
+                                    void ctx.course.isEnrolled.invalidate();
+                                    successToast(
+                                      "Successfully enrolled in course!"
+                                    );
+                                  },
+                                  onError: () => {
+                                    errorToast("Error in enrolling in course!");
+                                  },
+                                }
+                              );
+                            else setCheckoutModalOpen(true);
+                          }}
+                          className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                        >
+                          {enrollLoading ? <Loader white /> : <></>}
+                          <span>Enroll now</span>
+                        </button>
+                        {course?.price === 0 ? (
+                          <span className="uppercase tracking-wider text-green-600">
+                            FREE
+                          </span>
+                        ) : (
+                          <span className="font-bold uppercase tracking-wider text-white">
+                            ₹ {course?.price}
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-sm text-neutral-400">
+                        Enroll to access the complete course.
+                      </p>
+                    </div>
                   )}
                 </Dialog.Panel>
               </Transition.Child>

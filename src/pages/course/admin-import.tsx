@@ -299,7 +299,7 @@ const Index = () => {
               onSuccess: (courseCreated) => {
                 if (courseCreated && !(courseCreated instanceof TRPCError)) {
                   void router.push(
-                    `/creator/dashboard/course/${courseCreated?.id}`
+                    `/admin/dashboard/course/${courseCreated?.id}`
                   );
                   void revalidate(`/course/${courseCreated?.id}`);
                 }
