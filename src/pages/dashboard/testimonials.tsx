@@ -13,7 +13,8 @@ import Head from "next/head";
 import ImageWF from "@/components/ImageWF";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
+import { faAt, faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
 
 const TestimonialEditModal = dynamic(
   () => import("@/components/TestimonialEditModal"),
@@ -56,16 +57,24 @@ const Index = () => {
                       <Disclosure.Button className="z-2 flex w-full items-center justify-between rounded-xl bg-neutral-800 px-4 py-2">
                         <div className="flex items-center gap-2">
                           <span>For</span>
-                          <ImageWF
+                          {/* <ImageWF
                             src={testimonial.user.image ?? ""}
                             height={25}
                             width={25}
                             alt={testimonial.user.name ?? ""}
                             className="aspect-square rounded-full object-cover"
-                          />
-                          <p className="max-w-[8rem] overflow-hidden truncate text-ellipsis">
-                            {testimonial.user.name}
-                          </p>
+                          /> */}
+                          <Link
+                            href={`/${testimonial?.creatorProfile}`}
+                            className={`text-center text-neutral-300 transition-all duration-300 hover:text-neutral-200 lg:text-left`}
+                          >
+                            {/* <span className="font-medium text-pink-500">@</span> */}
+                            <FontAwesomeIcon
+                              icon={faAt}
+                              className="mr-[0.15rem] text-sm text-pink-500"
+                            />
+                            {testimonial?.creatorProfile}
+                          </Link>
                         </div>
                         <div className="flex items-center gap-2">
                           <button

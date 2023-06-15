@@ -381,10 +381,7 @@ const Index = () => {
 
           <div className="mt-4 flex flex-col gap-3">
             <div className="flex w-full justify-between">
-              <label
-                htmlFor="description"
-                className="text-lg  text-neutral-200"
-              >
+              <label htmlFor="chapters" className="text-lg  text-neutral-200">
                 {methods.watch()?.chapters.length !== 0 &&
                   methods.watch()?.chapters.length}{" "}
                 Chapters
@@ -407,7 +404,9 @@ const Index = () => {
                       />
                     </div>
                     <div className="flex h-full w-full flex-col items-start gap-1">
-                      <h5 className="font-medium">{chapter.title}</h5>
+                      <h5 className="line-clamp-2 overflow-hidden text-ellipsis text-xs font-medium sm:text-sm">
+                        {chapter.title}
+                      </h5>
                       <label className="flex items-center gap-1 text-xs text-neutral-300">
                         <ClockIcon className="w-4" />
                         {chapter?.duration} min
@@ -425,13 +424,10 @@ const Index = () => {
 
           {playlistData ? (
             <div className="mt-4 flex flex-col gap-2">
-              <label
-                htmlFor="description"
-                className="text-lg  text-neutral-200"
-              >
+              <label htmlFor="tags" className="text-lg  text-neutral-200">
                 Tags
               </label>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {methods.watch().tags.map((tag) => (
                   <span
                     className="flex items-center gap-1 overflow-hidden rounded bg-pink-600/30 pl-2 text-xs"
@@ -521,10 +517,7 @@ const Index = () => {
 
           {playlistData ? (
             <div className="mt-4 flex flex-col gap-2">
-              <label
-                htmlFor="description"
-                className="text-lg  text-neutral-200"
-              >
+              <label htmlFor="category" className="text-lg  text-neutral-200">
                 Category
               </label>
               <div className="relative flex w-full max-w-sm items-center justify-end">
@@ -586,10 +579,7 @@ const Index = () => {
 
           {playlistData ? (
             <div className="mt-4 flex flex-col gap-3">
-              <label
-                htmlFor="description"
-                className="text-lg  text-neutral-200"
-              >
+              <label htmlFor="price" className="text-lg  text-neutral-200">
                 Price
               </label>
               <div className="flex items-center gap-2">
