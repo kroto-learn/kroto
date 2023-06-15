@@ -85,7 +85,7 @@ const Index = () => {
             className="flex w-full flex-col items-start gap-4"
           >
             {courses?.map((course) => (
-              <CourseCard course={course} key={course.id} manage />
+              <CourseCard course={course} key={course.id} admin />
             ))}
           </AnimatedSection>
         ) : (
