@@ -72,11 +72,7 @@ export default function Navbar({ status }: { status: string }) {
                       {creator?.isCreator ? (
                         <Menu.Item>
                           <Link
-                            href={
-                              creator?.isCreator
-                                ? "/creator/dashboard/courses"
-                                : "/dashboard"
-                            }
+                            href="/creator/dashboard/courses"
                             className={`w-full px-6 py-2 font-medium transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
                           >
                             Studio
@@ -87,11 +83,7 @@ export default function Navbar({ status }: { status: string }) {
                       )}
                       <Menu.Item>
                         <Link
-                          href={
-                            creator?.isCreator
-                              ? "/creator/dashboard/courses"
-                              : "/dashboard"
-                          }
+                          href="/dashboard"
                           className={`w-full px-6 py-2 font-medium transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
                         >
                           Dashboard

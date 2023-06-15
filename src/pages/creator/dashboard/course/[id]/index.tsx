@@ -287,10 +287,7 @@ const CourseOverview = () => {
           </AnimatedSection>
           <AnimatedSection delay={0.3} className="mt-4 flex flex-col gap-3">
             <div className="flex w-full justify-between">
-              <label
-                htmlFor="description"
-                className="text-lg  text-neutral-200"
-              >
+              <label htmlFor="chapters" className="text-lg  text-neutral-200">
                 {course?.chapters?.length} Chapters
               </label>
             </div>

@@ -281,7 +281,7 @@ export const CreateEmail = ({
         )}
       </div>
       <div className="flex flex-col gap-3">
-        <label htmlFor="description" className="text-lg  text-neutral-200">
+        <label htmlFor="body" className="text-lg  text-neutral-200">
           Body
         </label>
         <div data-color-mode="dark">
