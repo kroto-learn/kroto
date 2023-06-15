@@ -69,6 +69,22 @@ export default function Navbar({ status }: { status: string }) {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute right-0 top-12 mt-2 flex origin-top-right flex-col divide-y divide-neutral-800 overflow-hidden rounded-xl bg-neutral-900/80 backdrop-blur-sm duration-300">
+                      {creator?.isCreator ? (
+                        <Menu.Item>
+                          <Link
+                            href={
+                              creator?.isCreator
+                                ? "/creator/dashboard/courses"
+                                : "/dashboard"
+                            }
+                            className={`w-full px-6 py-2 font-medium transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                          >
+                            Studio
+                          </Link>
+                        </Menu.Item>
+                      ) : (
+                        <></>
+                      )}
                       <Menu.Item>
                         <Link
                           href={
@@ -87,7 +103,7 @@ export default function Navbar({ status }: { status: string }) {
                             href="/admin/dashboard/courses"
                             className={`w-full px-6 py-2 font-medium transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
                           >
-                            Admin Dashboard
+                            Admin
                           </Link>
                         </Menu.Item>
                       ) : (

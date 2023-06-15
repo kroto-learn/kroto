@@ -374,9 +374,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                           <Menu.Item>
                             <div className="flex items-center gap-2 text-xl md:text-sm">
                               <WindowIcon className="w-4" />{" "}
-                              <span className="hidden md:block">
-                                Learner’s Dashboard
-                              </span>{" "}
+                              <span className="hidden md:block">Dashboard</span>{" "}
                             </div>
                           </Menu.Item>
                         </Link>
