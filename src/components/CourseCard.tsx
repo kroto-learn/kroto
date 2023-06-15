@@ -7,15 +7,18 @@ type Props = {
     _count: { chapters: number };
   };
   manage?: boolean;
+  admin?: boolean;
   lg?: boolean;
 };
 
-const CourseCard = ({ course, manage, lg }: Props) => {
+const CourseCard = ({ course, manage, lg, admin }: Props) => {
   return (
     <Link
       href={
         manage
           ? `/creator/dashboard/course/${course?.id}`
+          : admin
+          ? `/admin/dashboard/course/${course?.id}`
           : `/course/${course?.id}`
       }
       className="flex w-full max-w-lg gap-3 rounded-xl p-2 backdrop-blur-sm duration-150 hover:bg-neutral-200/10"
