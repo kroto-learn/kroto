@@ -126,7 +126,7 @@ const Index = () => {
           className="mb-12 mt-1 flex flex-col items-start gap-3"
         >
           <div className="mt-4 flex flex-col gap-2">
-            <label htmlFor="description" className="text-lg  text-neutral-200">
+            <label htmlFor="price" className="text-lg  text-neutral-200">
               Price
             </label>
             <div className="flex items-center gap-2">
@@ -201,10 +201,10 @@ const Index = () => {
           </div>
 
           <div className="mt-4 flex flex-col gap-2">
-            <label htmlFor="description" className="text-lg  text-neutral-200">
+            <label htmlFor="tags" className="text-lg  text-neutral-200">
               Tags
             </label>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {methods.watch().tags.map((tag) => (
                 <span
                   className="flex items-center gap-1 overflow-hidden rounded bg-pink-600/30 pl-2 text-xs"
@@ -288,7 +288,7 @@ const Index = () => {
           </div>
 
           <div className="mt-4 flex flex-col gap-2">
-            <label htmlFor="description" className="text-lg  text-neutral-200">
+            <label htmlFor="category" className="text-lg  text-neutral-200">
               Category
             </label>
             <div className="relative flex w-full max-w-sm items-center justify-end">

@@ -289,7 +289,7 @@ const Index = () => {
                   href={decoratedHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium text-neutral-200 underline duration-150 hover:text-neutral-300"
+                  className="line-clamp-1 overflow-hidden text-ellipsis font-medium text-neutral-200 underline duration-150 hover:text-neutral-300"
                   key={key}
                 >
                   {decoratedText}
