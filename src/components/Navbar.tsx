@@ -1,19 +1,20 @@
 import { KrotoLogo } from "@/pages/auth/sign-in";
 import { Menu, Transition } from "@headlessui/react";
 import { api } from "@/utils/api";
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import ImageWF from "@/components/ImageWF";
 import { Fragment } from "react";
 import { useRouter } from "next/router";
 import { isAdmin } from "@/server/helpers/admin";
 
-export default function Navbar({ status }: { status: string }) {
+export default function Navbar() {
   const router = useRouter();
   const creator_id = router.query.creator_id as string;
+  const session = useSession();
 
-  const { data: creator, isLoading: creatorLoader } =
-    api.creator.getProfile.useQuery();
+  const { data: creator } = api.creator.getProfile.useQuery();
+
   const { data: UnknownCreator } = api.creator.getPublicProfile.useQuery({
     creatorProfile: creator_id,
   });
@@ -43,14 +44,14 @@ export default function Navbar({ status }: { status: string }) {
               <KrotoLogo />
             )}
           </div>
-          {status === "authenticated" && !creatorLoader ? (
+          {session.status === "authenticated" ? (
             <Menu as="div" className="relative inline-block text-left">
               {({ open }) => (
                 <div className="flex flex-col items-end">
                   <Menu.Button>
                     <div className="relative h-9 w-9 rounded-full">
                       <ImageWF
-                        src={creator?.image ?? ""}
+                        src={session?.data?.user?.image ?? ""}
                         alt="Profile Image"
                         className={`rounded-full transition-all ${
                           open ? "ring ring-neutral-700" : ""
@@ -89,7 +90,7 @@ export default function Navbar({ status }: { status: string }) {
                           Dashboard
                         </Link>
                       </Menu.Item>
-                      {isAdmin(creator?.email ?? "") ? (
+                      {isAdmin(session?.data?.user?.email ?? "") ? (
                         <Menu.Item>
                           <Link
                             href="/admin/dashboard/courses"
@@ -117,7 +118,8 @@ export default function Navbar({ status }: { status: string }) {
             </Menu>
           ) : (
             <>
-              {!(status === "loading") && status === "unauthenticated" ? (
+              {!(session.status === "loading") &&
+              session.status === "unauthenticated" ? (
                 <button
                   className="transition-all duration-300 hover:text-neutral-400"
                   onClick={() =>
