@@ -13,15 +13,12 @@ import {
   NewspaperIcon,
 } from "@heroicons/react/20/solid";
 import Navbar from "@/components/Navbar";
-import { useSession } from "next-auth/react";
 import { getServerAuthSession } from "@/server/auth";
 import Footer from "@/components/Footer";
 import { MixPannelTracking } from "@/analytics/mixpanel";
 import { useEffect, useState } from "react";
 
 const Home: NextPage = () => {
-  const { status } = useSession();
-
   const [word, setWord] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
@@ -80,7 +77,7 @@ const Home: NextPage = () => {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <nav>
-        <Navbar status={status} />
+        <Navbar />
       </nav>
 
       <main className="mt-20">
