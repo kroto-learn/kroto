@@ -41,14 +41,21 @@ const Index = () => {
       course &&
       course?.chapters?.length > 0
     ) {
-      let lastChId = course?.chapters[0]?.id;
-      for( let i = 0 ; i <=  course?.chapters?.length ; i++  ){
-           if( !course?.chapters[i]?.chapterProgress ){
-               lastChId = course?.chapters[i]?.id
-               break;
-           }
-      }
-      void router.replace(`/course/play/${course_id}/${lastChId ?? ""}`);
+      const lastChIdx = course?.chapters?.findIndex(
+        (ch) => ch.id === course?.courseProgress?.lastChapterId
+      );
+      const nextUnwatchedCh = course?.chapters
+        ?.slice(lastChIdx !== -1 ? lastChIdx : 0)
+        .find((ch) => !(!!ch?.chapterProgress && ch?.chapterProgress?.watched));
+
+      const prevUnwatchedCh = course?.chapters
+        ?.slice(0, lastChIdx !== -1 ? lastChIdx : 0)
+        .find((ch) => !(!!ch?.chapterProgress && ch?.chapterProgress?.watched));
+
+      const chToPlay =
+        nextUnwatchedCh?.id ?? prevUnwatchedCh?.id ?? course?.chapters[0]?.id;
+
+      void router.replace(`/course/play/${course_id}/${chToPlay ?? ""}`);
     }
   }, [course, course_id, router]);
 
@@ -106,11 +113,11 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
   if (course instanceof TRPCError || !course) return <></>;
 
   const chaptersWatched = course.chapters.filter(
-    (ch) => !!ch.chapterProgress
+    (ch) => !!ch?.chapterProgress && ch?.chapterProgress?.watched
   )?.length;
 
   const minutesWatched = course.chapters
-    .filter((ch) => !!ch.chapterProgress)
+    .filter((ch) => !!ch.chapterProgress && ch?.chapterProgress?.watched)
     .reduce(
       (accumulator, currentValue) =>
         accumulator + (currentValue?.duration ?? 0),
@@ -317,7 +324,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
       <ShareCourseModal
         isOpen={shareModal}
         setIsOpen={setShareModal}
-      courseId={course?.id ?? ""}
+        courseId={course?.id ?? ""}
         courseTitle={course?.title ?? ""}
       />
     </div>
@@ -340,12 +347,14 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
     api.courseChapter.updateChapterProgress.useMutation();
 
   const { mutateAsync: deleteChapterProgressMutation } =
-    api.courseChapter.deleteChapterProgress.useMutation();
+    api.courseChapter.clearWatched.useMutation();
 
   const [watchChecked, setWatchChecked] = useState(false);
 
   useEffect(() => {
-    setWatchChecked(!!chapter.chapterProgress);
+    setWatchChecked(
+      !!chapter?.chapterProgress && chapter?.chapterProgress?.watched
+    );
   }, [chapter.chapterProgress]);
 
   const ctx = api.useContext();
@@ -358,7 +367,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
       id={`${chapter?.id}`}
       className={`group flex items-center border-neutral-700 text-xs last:rounded-b ${
         !(chapter.id === chapter_id)
-          ? chapter.chapterProgress
+          ? !!chapter.chapterProgress && chapter?.chapterProgress?.watched
             ? "!bg-green-950/30 hover:!bg-green-800/30"
             : "hover:bg-neutral-200/10"
           : " !bg-pink-900/10 hover:!bg-pink-900/20"
@@ -383,9 +392,9 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
             e.preventDefault();
             setWatchChecked(!watchChecked);
 
-            if (!!chapter.chapterProgress)
+            if (!!chapter?.chapterProgress && chapter?.chapterProgress?.watched)
               void deleteChapterProgressMutation(
-              {
+                {
                   chapterId: chapter.id,
                 },
                 {

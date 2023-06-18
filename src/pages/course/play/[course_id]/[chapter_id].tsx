@@ -12,6 +12,7 @@ import Link from "next/link";
 import ReactLinkify from "react-linkify";
 import { Checkbox, ConfigProvider, theme } from "antd";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import { useSession } from "next-auth/react";
 
 const Index = () => {
   const router = useRouter();
@@ -35,7 +36,14 @@ const Index = () => {
   const { mutateAsync: updateChapterProgressMutation } =
     api.courseChapter.updateChapterProgress.useMutation();
 
+  const { mutateAsync: trackLearningMutation } =
+    api.courseChapter.trackLearning.useMutation();
+
+  const session = useSession();
+
   const [progress, setProgress] = useState(0);
+  const [stackedProgress, setStackedProgress] = useState(0);
+
   const [paused, setPaused] = useState(false);
 
   const ctx = api.useContext();
@@ -65,10 +73,11 @@ const Index = () => {
 
   useEffect(() => {
     setProgress(0);
+    setStackedProgress(0);
   }, [chapter_id]);
 
   useEffect(() => {
-    if (player && progress && progress / player.getDuration() >= 0.8)
+    if (player && progress && progress / player.getDuration() >= 0.9)
       void updateChapterProgressMutation(
         { chapterId: chapter_id },
         {
@@ -79,10 +88,37 @@ const Index = () => {
       );
 
     const timer = () => {
-      if (player)
+      if (player) {
         setProgress(
           progress + (progress >= player?.getDuration() || paused ? 0 : 1)
         );
+
+        if (stackedProgress >= 300) {
+          if (
+            session.data?.user.id &&
+            !(course instanceof TRPCError) &&
+            course &&
+            course.id &&
+            !(chapter instanceof TRPCError) &&
+            chapter &&
+            chapter.id
+          )
+            void trackLearningMutation({
+              userId: session.data?.user.id,
+              courseId: course?.id,
+              chapterId: chapter?.id,
+            });
+
+          if (!(chapter instanceof TRPCError) && chapter && chapter.id)
+            void updateChapterProgressMutation({
+              chapterId: chapter.id,
+              videoProgress: progress + 1,
+            });
+        } else
+          setStackedProgress(
+            progress + (progress >= player?.getDuration() || paused ? 0 : 1)
+          );
+      }
     };
 
     const id = setInterval(timer, 1000);
@@ -93,12 +129,17 @@ const Index = () => {
   const [watchChecked, setWatchChecked] = useState(false);
 
   const { mutateAsync: deleteChapterProgressMutation } =
-    api.courseChapter.deleteChapterProgress.useMutation();
+    api.courseChapter.clearWatched.useMutation();
 
   useEffect(() => {
-    if (!(chapter instanceof TRPCError) && chapter)
-      setWatchChecked(!!chapter?.chapterProgress);
-  }, [chapter]);
+    if (!(chapter instanceof TRPCError) && chapter) {
+      setWatchChecked(
+        !!chapter?.chapterProgress && chapter?.chapterProgress?.watched
+      );
+      if (chapter?.chapterProgress?.videoProgress && player)
+        player?.seekTo(chapter?.chapterProgress?.videoProgress, true);
+    }
+  }, [chapter, player]);
 
   if (chapterLoading || courseLoading || !chapter_id || !course_id)
     return (
@@ -178,7 +219,10 @@ const Index = () => {
                       e.stopPropagation();
                       setWatchChecked(!watchChecked);
 
-                      if (!!chapter.chapterProgress)
+                      if (
+                        !!chapter.chapterProgress &&
+                        chapter?.chapterProgress?.watched
+                      )
                         void deleteChapterProgressMutation(
                           {
                             chapterId: chapter.id,

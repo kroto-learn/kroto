@@ -48,6 +48,9 @@ export const courseRouter = createTRPCRouter({
           courseProgress: {
             where: { watchedById: ctx.session.user.id },
             take: 1,
+            include: {
+              lastChapterProgress: true,
+            },
           },
           enrollments: {
             include: {
