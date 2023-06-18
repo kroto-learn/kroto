@@ -18,8 +18,6 @@ import WindowIcon from "@heroicons/react/20/solid/WindowIcon";
 import UserIcon from "@heroicons/react/20/solid/UserIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 import { useRouter } from "next/router";
-import { PresentationChartLineIcon } from "@heroicons/react/24/solid";
-import { PresentationChartLineIcon as PresentationChartBarIcon0 } from "@heroicons/react/24/outline";
 import { RectangleStackIcon } from "@heroicons/react/20/solid";
 import { RectangleStackIcon as RectangleStackIconO } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -169,7 +167,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                 }`}
               />
             </Link>
-            <Link
+            {/* <Link
               href="/creator/dashboard/marketing"
               className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
                 pathname && pathname.startsWith("/creator/dashboard/marketing")
@@ -206,7 +204,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                     : "opacity-0"
                 }`}
               />
-            </Link>
+            </Link> */}
             <Link
               href="/creator/dashboard/audience"
               className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
@@ -271,7 +269,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                       : "hidden"
                   }`}
                 />{" "}
-                <span className="hidden md:block">Settings</span>
+                <span className="hidden md:block">Profile</span>
               </div>
               <span
                 className={`h-full w-1 rounded-l-lg bg-pink-600 ${
@@ -331,7 +329,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                             </div>
                           </Menu.Item>
                         </Link>
-                        <Link
+                        {/* <Link
                           href={`/${creator?.creatorProfile ?? ""}`}
                           className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-12"
                         >
@@ -343,7 +341,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                               </span>{" "}
                             </div>
                           </Menu.Item>
-                        </Link>
+                        </Link> */}
                         <button
                           onClick={() => void signOut({ callbackUrl: "/" })}
                           className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-12"
