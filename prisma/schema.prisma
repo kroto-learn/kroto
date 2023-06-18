@@ -290,14 +290,14 @@ model Enrollment {
 }
 
 model CourseProgress {
-  id                  String          @id @default(cuid())
+  id                  String           @id @default(cuid())
   lastChapterId       String
   courseId            String
   watchedById         String
-  lastChapter         Chapter         @relation(fields: [lastChapterId], references: [id], onDelete: Cascade)
-  lastChapterProgress ChapterProgress @relation(fields: [lastChapterId, watchedById], references: [chapterId, watchedById], onDelete: Cascade)
-  course              Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  watchedBy           User            @relation(fields: [watchedById], references: [id], onDelete: Cascade)
+  lastChapter         Chapter          @relation(fields: [lastChapterId], references: [id], onDelete: Cascade)
+  lastChapterProgress ChapterProgress? @relation(fields: [lastChapterId, watchedById], references: [chapterId, watchedById], onDelete: Cascade)
+  course              Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  watchedBy           User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
 
   @@unique([courseId, watchedById])
   @@index([courseId])
@@ -313,7 +313,7 @@ model ChapterProgress {
   watchedById      String
   chapter          Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   watchedBy        User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
-  watched          Boolean          @default(true)
+  watched          Boolean          @default(false)
   courseProgresses CourseProgress[]
 
   @@unique([chapterId, watchedById])
@@ -324,11 +324,11 @@ model ChapterProgress {
 model LearnTrack {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   courseId  String
-  course    Course   @relation(fields: [courseId], references: [id])
+  course    Course?  @relation(fields: [courseId], references: [id])
   chapterId String
-  chapter   Chapter  @relation(fields: [chapterId], references: [id])
+  chapter   Chapter? @relation(fields: [chapterId], references: [id])
   createdAt DateTime @default(now())
   minutes   Int      @default(5)
   day       Int      @default(0)

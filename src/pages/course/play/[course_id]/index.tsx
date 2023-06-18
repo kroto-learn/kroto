@@ -32,14 +32,18 @@ ChartJS.register(ArcElement, TooltipC);
 
 const Index = () => {
   const router = useRouter();
-  const { course_id } = router.query as { course_id: string };
+  const { course_id, chapter_id } = router.query as {
+    course_id: string;
+    chapter_id?: string;
+  };
   const { data: course } = api.course.get.useQuery({ id: course_id });
 
   useEffect(() => {
     if (
       !(course instanceof TRPCError) &&
       course &&
-      course?.chapters?.length > 0
+      course?.chapters?.length > 0 &&
+      !chapter_id
     ) {
       const lastChIdx = course?.chapters?.findIndex(
         (ch) => ch.id === course?.courseProgress?.lastChapterId
@@ -57,7 +61,7 @@ const Index = () => {
 
       void router.replace(`/course/play/${course_id}/${chToPlay ?? ""}`);
     }
-  }, [course, course_id, router]);
+  }, [course, course_id, router, chapter_id]);
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center">
@@ -343,10 +347,10 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
     chapter_id: string;
   };
 
-  const { mutateAsync: updateChapterProgressMutation } =
-    api.courseChapter.updateChapterProgress.useMutation();
+  const { mutateAsync: markWatchedMutation } =
+    api.courseChapter.markWatched.useMutation();
 
-  const { mutateAsync: deleteChapterProgressMutation } =
+  const { mutateAsync: clearWatchedMutation } =
     api.courseChapter.clearWatched.useMutation();
 
   const [watchChecked, setWatchChecked] = useState(false);
@@ -393,7 +397,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
             setWatchChecked(!watchChecked);
 
             if (!!chapter?.chapterProgress && chapter?.chapterProgress?.watched)
-              void deleteChapterProgressMutation(
+              void clearWatchedMutation(
                 {
                   chapterId: chapter.id,
                 },
@@ -405,7 +409,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
                 }
               );
             else
-              void updateChapterProgressMutation(
+              void markWatchedMutation(
                 {
                   chapterId: chapter.id,
                 },
