@@ -17,8 +17,8 @@ import { object, string, type z } from "zod";
 
 const contentLimit = 500;
 
-const queryFormSchema = object({
-  content: string().max(contentLimit).nonempty("Please enter feedback."),
+const askedQueryFormSchema = object({
+  question: string().max(contentLimit).nonempty("Please enter feedback."),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
@@ -34,7 +34,7 @@ function useZodForm<TSchema extends z.ZodType>(
   return form;
 }
 
-const Query = () => {
+const Index = () => {
   const router = useRouter();
   const session = useSession();
 
@@ -44,34 +44,32 @@ const Query = () => {
       creatorProfile: creator_id,
     });
 
-  const { data: testimonial, isLoading: testimonialLoading } =
-    api.testimonial.getOne.useQuery({
+  const { data: askedQuery, isLoading: askedQueryLoading } =
+    api.askedQuery.getOne.useQuery({
       creatorProfile: creator_id,
     });
 
-    console.log(testimonial)
-
-  const testimonialExists = !!testimonial;
+  const askedQueryExists = !!askedQuery;
 
   const isLoading =
-    session.status === "loading" || creatorLoading || testimonialLoading;
+    session.status === "loading" || creatorLoading || askedQueryLoading;
 
   const methods = useZodForm({
-    schema: queryFormSchema,
+    schema: askedQueryFormSchema,
     defaultValues: {
-      content: "",
+      question: "",
     },
   });
 
   const {
-    mutateAsync: addTestimonialMutation,
-    isLoading: addTestimonialLoading,
-  } = api.testimonial.add.useMutation();
+    mutateAsync: addQueryMutation,
+    isLoading: addQueryLoading,
+  } = api.askedQuery.add.useMutation();
 
   const {
-    mutateAsync: updateTestimonialMutation,
-    isLoading: updateTestimonialLoading,
-  } = api.testimonial.update.useMutation();
+    mutateAsync: updateQueryMutation,
+    isLoading: updateQueryLoading,
+  } = api.askedQuery.update.useMutation();
 
   const [submitted, setSubmitted] = useState(false);
 
@@ -80,11 +78,11 @@ const Query = () => {
   const { successToast, errorToast, warningToast } = useToast();
 
   useEffect(() => {
-    if (testimonialExists) {
-      methods.setValue("content", testimonial?.content ?? "");
+    if (askedQueryExists) {
+      methods.setValue("question", askedQuery?.question ?? "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [testimonial, testimonialExists]);
+  }, [askedQuery, askedQueryExists]);
 
   const revalidate = useRevalidateSSG();
 
@@ -95,7 +93,7 @@ const Query = () => {
       ) : submitted ? (
         <div className="flex w-full max-w-3xl flex-col items-center gap-2">
           <h1 className="text-2xl md:text-3xl">
-            {"🙏"} Thank you for your query!
+            {"🙏"} Thank you for your Query!
           </h1>
           <Link
             className="text-medium group mt-8 flex items-center text-xl text-pink-500"
@@ -109,12 +107,12 @@ const Query = () => {
         <form
           onSubmit={methods.handleSubmit(async (values) => {
             if (creator?.id === session?.data?.user.id) {
-              warningToast("You cannot submit testimonial for yourself!");
+              warningToast("You cannot submit Query for yourself!");
               return;
             }
 
-            if (!testimonialExists) {
-              await addTestimonialMutation(
+            if (!askedQueryExists) {
+              await addQueryMutation(
                 {
                   ...values,
                   creatorProfile: creator_id,
@@ -132,17 +130,17 @@ const Query = () => {
                 }
               );
             } else {
-              await updateTestimonialMutation(
+              await updateQueryMutation(
                 {
                   ...values,
-                  id: testimonial?.id ?? "",
+                  id: askedQuery?.id ?? "",
                 },
                 {
                   onSuccess: () => {
                     successToast("Testimonial submitted successfully");
                     setSubmitted(true);
                     void ctx.testimonial.getOne.invalidate();
-                    void revalidate(`/${testimonial.creatorProfile}`);
+                    void revalidate(`/${askedQuery.creatorProfile}`);
                   },
                   onError: () => {
                     errorToast("Error in submitting testimonial");
@@ -154,7 +152,7 @@ const Query = () => {
           className="my-8 flex w-full max-w-3xl flex-col items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-6 px-4 md:items-start md:p-10 md:px-12"
         >
           <div className="flex items-center justify-center gap-2 text-lg md:text-xl lg:justify-start lg:text-2xl">
-            <span>Ask any query to </span>
+            <span>Write a testimonial for</span>
             <ImageWF
               src={creator?.image ?? ""}
               width={30}
@@ -166,25 +164,25 @@ const Query = () => {
           </div>
 
           <textarea
-            value={methods.watch()?.content}
+            value={methods.watch()?.question}
             onChange={(e) => {
               methods.setValue(
-                "content",
+                "question",
                 e.target?.value.substring(0, contentLimit)
               );
             }}
             rows={6}
             className="mt-6 w-full rounded-xl border-0 bg-neutral-700 p-4 outline-0 placeholder:text-neutral-400"
-            placeholder="Write me a query....."
+            placeholder="Write me a testimonial..."
           />
           {
             <p className="w-full text-end text-neutral-600">
-              {methods.watch()?.content?.length}/{contentLimit}
+              {methods.watch()?.question?.length}/{contentLimit}
             </p>
           }
-          {methods.formState.errors.content?.message && (
+          {methods.formState.errors.question?.message && (
             <p className="text-red-700">
-              {methods.formState.errors.content?.message}
+              {methods.formState.errors.question?.message}
             </p>
           )}
           <button
@@ -193,9 +191,9 @@ const Query = () => {
           >
             Submit
             {(
-              testimonialExists
-                ? updateTestimonialLoading
-                : addTestimonialLoading
+              askedQueryExists
+                ? updateQueryLoading
+                : addQueryLoading
             ) ? (
               <Loader white />
             ) : (
@@ -208,4 +206,4 @@ const Query = () => {
   );
 };
 
-export default Query;
+export default Index;

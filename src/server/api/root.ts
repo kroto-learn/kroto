@@ -11,6 +11,7 @@ import { courseChapterRouter } from "./routers/course/chapter";
 import { emailRouter } from "./email/email";
 import { courseFeedbacksRouter } from "./routers/course/feedback";
 import { contactRouter } from "./routers/contact";
+import { askedQueryRouter } from "./routers/askedQuery";
 
 /**
  * This is the primary router for your server.
@@ -33,6 +34,9 @@ export const appRouter = createTRPCRouter({
   email: emailRouter,
 
   testimonial: testimonialRouter,
+
+  askedQuery: askedQueryRouter,
+
 
   contact: contactRouter,
 });

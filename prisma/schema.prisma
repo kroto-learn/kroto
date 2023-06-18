@@ -72,6 +72,7 @@ model User {
   courseProgress        CourseProgress[]
   chapterProgress       ChapterProgress[]
   learnTracks           LearnTrack[]
+  askedQueries          AskedQuery[]
 }
 
 model Event {
@@ -201,6 +202,18 @@ model Testimonial {
   creatorProfile String
   userId         String
   user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, creatorProfile])
+  @@index([userId])
+}
+
+model AskedQuery {
+  id             String  @id @default(cuid())
+  question       String
+  answer         String?
+  creatorProfile String
+  userId         String
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, creatorProfile])
   @@index([userId])
