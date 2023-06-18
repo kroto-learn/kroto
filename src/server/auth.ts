@@ -13,6 +13,7 @@ import { prisma } from "@/server/db";
 import GoogleProvider from "next-auth/providers/google";
 import type { DefaultJWT } from "next-auth/jwt";
 import axios from "axios";
+import { MixPannelTracking } from "@/analytics/mixpanel";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
