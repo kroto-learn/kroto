@@ -71,6 +71,8 @@ model User {
   Email                 Email[]
   courseProgress        CourseProgress[]
   chapterProgress       ChapterProgress[]
+  learnTracks           LearnTrack[]
+  askedQueries          AskedQuery[]
 }
 
 model Event {
@@ -205,6 +207,18 @@ model Testimonial {
   @@index([userId])
 }
 
+model AskedQuery {
+  id             String  @id @default(cuid())
+  question       String
+  answer         String?
+  creatorProfile String
+  userId         String
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, creatorProfile])
+  @@index([userId])
+}
+
 model Course {
   id             String           @id @default(cuid())
   title          String
@@ -228,6 +242,7 @@ model Course {
   tags           Tag[]
   category       Category?        @relation(fields: [categoryId], references: [id])
   categoryId     String?
+  learnTracks    LearnTrack[]
 
   @@index([categoryId])
   @@index([creatorId])
@@ -251,6 +266,7 @@ model Chapter {
   courseProgress  CourseProgress[]
   chapterProgress ChapterProgress[]
   userId          String?
+  learnTracks     LearnTrack[]
 
   @@index([courseId])
 }
@@ -274,31 +290,57 @@ model Enrollment {
 }
 
 model CourseProgress {
-  id            String  @id @default(cuid())
-  lastChapterId String
-  courseId      String
-  watchedById   String
-  lastChapter   Chapter @relation(fields: [lastChapterId], references: [id], onDelete: Cascade)
-  course        Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  watchedBy     User    @relation(fields: [watchedById], references: [id], onDelete: Cascade)
+  id                  String           @id @default(cuid())
+  lastChapterId       String
+  courseId            String
+  watchedById         String
+  lastChapter         Chapter          @relation(fields: [lastChapterId], references: [id], onDelete: Cascade)
+  lastChapterProgress ChapterProgress? @relation(fields: [lastChapterId, watchedById], references: [chapterId, watchedById], onDelete: Cascade)
+  course              Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  watchedBy           User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
 
   @@unique([courseId, watchedById])
   @@index([courseId])
   @@index([watchedById])
   @@index([lastChapterId])
+  @@index([lastChapterId, watchedById])
 }
 
 model ChapterProgress {
-  id            String  @id @default(cuid())
-  videoProgress Int     @default(0)
-  chapterId     String
-  watchedById   String
-  chapter       Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  watchedBy     User    @relation(fields: [watchedById], references: [id], onDelete: Cascade)
+  id               String           @id @default(cuid())
+  videoProgress    Int              @default(0)
+  chapterId        String
+  watchedById      String
+  chapter          Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  watchedBy        User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
+  watched          Boolean          @default(false)
+  courseProgresses CourseProgress[]
 
   @@unique([chapterId, watchedById])
   @@index([chapterId])
   @@index([watchedById])
+}
+
+model LearnTrack {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course?  @relation(fields: [courseId], references: [id])
+  chapterId String
+  chapter   Chapter? @relation(fields: [chapterId], references: [id])
+  createdAt DateTime @default(now())
+  minutes   Int      @default(5)
+  day       Int      @default(0)
+  month     Int      @default(0)
+  year      Int      @default(0)
+  weekday   Int      @default(0)
+
+  @@unique([userId, courseId, chapterId, day, month, year])
+  @@index([userId])
+  @@index([courseId])
+  @@index([chapterId])
+  @@index([courseId, userId])
 }
 
 model Email {

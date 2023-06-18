@@ -12,6 +12,7 @@ import Link from "next/link";
 import ReactLinkify from "react-linkify";
 import { Checkbox, ConfigProvider, theme } from "antd";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import { useSession } from "next-auth/react";
 
 const Index = () => {
   const router = useRouter();
@@ -35,7 +36,20 @@ const Index = () => {
   const { mutateAsync: updateChapterProgressMutation } =
     api.courseChapter.updateChapterProgress.useMutation();
 
+  const { mutateAsync: markWatchedMutation } =
+    api.courseChapter.markWatched.useMutation();
+
+  const { mutateAsync: clearWatchedMutation } =
+    api.courseChapter.clearWatched.useMutation();
+
+  const { mutateAsync: trackLearningMutation } =
+    api.courseChapter.trackLearning.useMutation();
+
+  const session = useSession();
+
   const [progress, setProgress] = useState(0);
+  const [stackedProgress, setStackedProgress] = useState(0);
+
   const [paused, setPaused] = useState(false);
 
   const ctx = api.useContext();
@@ -65,11 +79,12 @@ const Index = () => {
 
   useEffect(() => {
     setProgress(0);
+    setStackedProgress(0);
   }, [chapter_id]);
 
   useEffect(() => {
-    if (player && progress && progress / player.getDuration() >= 0.8)
-      void updateChapterProgressMutation(
+    if (player && progress && progress / player.getDuration() >= 0.9)
+      void markWatchedMutation(
         { chapterId: chapter_id },
         {
           onSuccess: () => {
@@ -79,26 +94,80 @@ const Index = () => {
       );
 
     const timer = () => {
-      if (player)
+      if (player) {
         setProgress(
           progress + (progress >= player?.getDuration() || paused ? 0 : 1)
         );
+
+        setVideoLoaded(true);
+
+        if (stackedProgress >= 60) {
+          if (
+            session.data?.user.id &&
+            !(course instanceof TRPCError) &&
+            course &&
+            course.id &&
+            !(chapter instanceof TRPCError) &&
+            chapter &&
+            chapter.id
+          )
+            void trackLearningMutation({
+              userId: session.data?.user.id,
+              courseId: course?.id,
+              chapterId: chapter?.id,
+            });
+
+          if (!(chapter instanceof TRPCError) && chapter && chapter.id)
+            void updateChapterProgressMutation({
+              chapterId: chapter.id,
+              videoProgress: progress + 1,
+            });
+          console.log("stacked progress inside", stackedProgress);
+
+          console.log("stacked 0 set");
+          setStackedProgress(0);
+        } else {
+          if (!(progress >= player?.getDuration() || paused))
+            console.log("increaded stacked progress");
+          setStackedProgress(
+            stackedProgress +
+              (progress >= player?.getDuration() || paused ? 0 : 1)
+          );
+        }
+      }
     };
 
     const id = setInterval(timer, 1000);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progress, paused]);
-
-  const [watchChecked, setWatchChecked] = useState(false);
-
-  const { mutateAsync: deleteChapterProgressMutation } =
-    api.courseChapter.deleteChapterProgress.useMutation();
+  }, [
+    progress,
+    paused,
+    stackedProgress,
+    setStackedProgress,
+    chapter,
+    course,
+    chapter_id,
+  ]);
 
   useEffect(() => {
-    if (!(chapter instanceof TRPCError) && chapter)
-      setWatchChecked(!!chapter?.chapterProgress);
-  }, [chapter]);
+    console.log("stacked progress outside", stackedProgress);
+  }, [stackedProgress]);
+
+  const [watchChecked, setWatchChecked] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!(chapter instanceof TRPCError) && chapter) {
+      setWatchChecked(
+        !!chapter?.chapterProgress && chapter?.chapterProgress?.watched
+      );
+      if (chapter?.chapterProgress?.videoProgress && player && videoLoaded) {
+        console.log("player", player);
+        player.seekTo(chapter?.chapterProgress?.videoProgress, true);
+      }
+    }
+  }, [chapter, player, videoLoaded]);
 
   if (chapterLoading || courseLoading || !chapter_id || !course_id)
     return (
@@ -148,7 +217,14 @@ const Index = () => {
                 if (player?.getCurrentTime())
                   setProgress(player?.getCurrentTime());
               }}
-              onPause={() => setPaused(true)}
+              onPause={() => {
+                setPaused(true);
+                if (!(chapter instanceof TRPCError) && chapter && chapter.id)
+                  void updateChapterProgressMutation({
+                    chapterId: chapter.id,
+                    videoProgress: progress,
+                  });
+              }}
               onPlay={() => setPaused(false)}
               onReady={(e) => {
                 if (e.target) setPlayer(e.target as YT.Player);
@@ -178,8 +254,11 @@ const Index = () => {
                       e.stopPropagation();
                       setWatchChecked(!watchChecked);
 
-                      if (!!chapter.chapterProgress)
-                        void deleteChapterProgressMutation(
+                      if (
+                        !!chapter.chapterProgress &&
+                        chapter?.chapterProgress?.watched
+                      )
+                        void clearWatchedMutation(
                           {
                             chapterId: chapter.id,
                           },
@@ -191,7 +270,7 @@ const Index = () => {
                           }
                         );
                       else
-                        void updateChapterProgressMutation(
+                        void markWatchedMutation(
                           {
                             chapterId: chapter.id,
                           },
