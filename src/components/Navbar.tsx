@@ -13,7 +13,8 @@ export default function Navbar() {
   const creator_id = router.query.creator_id as string;
   const session = useSession();
 
-  const { data: creator } = api.creator.getProfile.useQuery();
+  const { data: creator, isLoading: creatorLoading } =
+    api.creator.getProfile.useQuery();
 
   const { data: UnknownCreator } = api.creator.getPublicProfile.useQuery({
     creatorProfile: creator_id,
@@ -44,7 +45,7 @@ export default function Navbar() {
               <KrotoLogo />
             )}
           </div>
-          {session.status === "authenticated" ? (
+          {session.status === "authenticated" && !creatorLoading ? (
             <Menu as="div" className="relative inline-block text-left">
               {({ open }) => (
                 <div className="flex flex-col items-end">
@@ -116,22 +117,18 @@ export default function Navbar() {
                 </div>
               )}
             </Menu>
+          ) : !(session.status === "loading") &&
+            session.status === "unauthenticated" ? (
+            <button
+              className="transition-all duration-300 hover:text-neutral-400"
+              onClick={() =>
+                void signIn(undefined, { callbackUrl: router.asPath })
+              }
+            >
+              Sign In
+            </button>
           ) : (
-            <>
-              {!(session.status === "loading") &&
-              session.status === "unauthenticated" ? (
-                <button
-                  className="transition-all duration-300 hover:text-neutral-400"
-                  onClick={() =>
-                    void signIn(undefined, { callbackUrl: router.asPath })
-                  }
-                >
-                  Sign In
-                </button>
-              ) : (
-                <div className="h-9 w-9 animate-pulse rounded-full bg-neutral-800" />
-              )}
-            </>
+            <div className="h-9 w-9 animate-pulse rounded-full bg-neutral-800" />
           )}
         </div>
       </div>

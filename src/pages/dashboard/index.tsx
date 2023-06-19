@@ -59,6 +59,7 @@ export default function Dashboard() {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
   };
 
   interface ChartContext {
@@ -79,7 +80,7 @@ export default function Dashboard() {
         backgroundColor: ({ chart: { ctx } }: { chart: ChartContext }) => {
           const bg = ctx.createLinearGradient(0, 150, 0, 600);
           bg.addColorStop(0, "rgba(236, 72, 153,0.2)");
-          bg.addColorStop(0.5, "rgba(236, 72, 153,0)");
+          bg.addColorStop(0.2, "rgba(236, 72, 153,0)");
           bg.addColorStop(1, "transparent");
 
           return bg;
@@ -91,7 +92,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="flex w-full flex-col items-center">
+      <div className="flex w-full flex-col items-center px-4">
         <Head>
           <title>Dashboard | Kroto</title>
         </Head>
@@ -136,15 +137,26 @@ export default function Dashboard() {
             </div>
           </div>
         </AnimatedSection>
-        <div className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-3 sm:gap-4  sm:p-8">
+        <AnimatedSection
+          delay={0.1}
+          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-6 sm:gap-4  sm:p-8"
+        >
           <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
             Learning Graph
           </h1>
-          <Line options={options} data={data} height="100px" />
-        </div>
+          {lastWeekLearningLoading ? (
+            <div className="flex h-60 flex-col items-center justify-center">
+              <Loader size="lg" />
+            </div>
+          ) : (
+            <div className="relative h-60 w-full sm:h-80">
+              <Line options={options} data={data} />
+            </div>
+          )}
+        </AnimatedSection>
         <AnimatedSection
-          delay={0.1}
-          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-3 sm:gap-4  sm:p-8"
+          delay={0.2}
+          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-6 sm:gap-4  sm:p-8"
         >
           <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
             Enrolled Courses
@@ -183,8 +195,8 @@ export default function Dashboard() {
         </AnimatedSection>
 
         <AnimatedSection
-          delay={0.2}
-          className="mb-10 flex w-full max-w-4xl flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8"
+          delay={0.3}
+          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-6 sm:gap-4 sm:p-8"
         >
           <div className="flex w-full flex-col items-start justify-between sm:flex-row sm:items-center">
             <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
