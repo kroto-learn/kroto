@@ -147,12 +147,13 @@ model ImportedAudieceMember {
 }
 
 model Registration {
-  id       String  @id @default(cuid())
-  eventId  String
-  userId   String
-  event    Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId String?
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId  String?
+  createdAt DateTime @default(now())
 
   @@unique([eventId, userId])
   @@index([eventId])
@@ -278,11 +279,12 @@ enum ChapterType {
 }
 
 model Enrollment {
-  id       String @id @default(cuid())
-  courseId String
-  userId   String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  courseId  String
+  userId    String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@unique([courseId, userId])
   @@index([courseId])
@@ -330,7 +332,8 @@ model LearnTrack {
   chapterId String
   chapter   Chapter? @relation(fields: [chapterId], references: [id])
   createdAt DateTime @default(now())
-  minutes   Int      @default(5)
+  updatedAt DateTime @default(now())
+  minutes   Int      @default(1)
   day       Int      @default(0)
   month     Int      @default(0)
   year      Int      @default(0)

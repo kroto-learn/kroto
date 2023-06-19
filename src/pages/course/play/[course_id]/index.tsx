@@ -77,9 +77,15 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     chapter_id: string;
   };
   const { data: course } = api.course?.get.useQuery({ id: course_id });
+  const { data: isEnrolled, isLoading: isEnrolledLoading } =
+    api.course.isEnrolled.useQuery({ courseId: course_id });
   const [sideDrawerCollapsed, setSideDrawerCollapsed] = useState(false);
   const chaptersNavRef = useRef<HTMLDivElement | null>(null);
   const [navbarScrollInit, setNavbarScrollInit] = useState(false);
+
+  useEffect(() => {
+    if (!isEnrolledLoading && !isEnrolled) void router.replace("/");
+  }, [isEnrolled, isEnrolledLoading, router]);
 
   useEffect(() => {
     //TODO: scroll to chapter link, this doesn't work
@@ -142,6 +148,8 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
 
   const options = {
     radius: sideDrawerCollapsed ? 25 : 40,
+    responsive: true,
+    maintainAspectRatio: false,
   };
 
   return (
@@ -240,7 +248,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             }`}
           >
             <div
-              className={`flex items-center justify-center ${
+              className={`relative flex items-center justify-center ${
                 sideDrawerCollapsed
                   ? "hidden h-16 w-16 sm:flex"
                   : "h-24 w-24 sm:h-24 sm:w-24"

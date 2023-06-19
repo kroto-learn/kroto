@@ -139,64 +139,6 @@ export const courseChapterRouter = createTRPCRouter({
       return chapterProgress;
     }),
 
-  trackLearning: protectedProcedure
-    .input(
-      z.object({
-        courseId: z.string(),
-        chapterId: z.string(),
-        userId: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { prisma } = ctx;
-
-      const today = new Date();
-      const day = today.getDate();
-      const month = today.getMonth();
-      const year = today.getFullYear();
-      const weekday = today.getDay();
-
-      // Sunday = 0, Monday = 1, so on...
-
-      const trackExists = await prisma.learnTrack.findFirst({
-        where: {
-          userId: input.userId,
-          courseId: input.courseId,
-          chapterId: input.chapterId,
-          day,
-          month,
-          year,
-        },
-      });
-
-      if (trackExists) {
-        const updatedTrack = await prisma.learnTrack.update({
-          where: {
-            id: trackExists.id,
-          },
-          data: {
-            minutes: trackExists.minutes + 1,
-          },
-        });
-
-        return updatedTrack;
-      }
-
-      const newTrack = await prisma.learnTrack.create({
-        data: {
-          userId: input.userId,
-          courseId: input.courseId,
-          chapterId: input.courseId,
-          day,
-          month,
-          year,
-          weekday,
-        },
-      });
-
-      return newTrack;
-    }),
-
   delete: protectedProcedure
     .input(
       z.object({

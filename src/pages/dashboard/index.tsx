@@ -15,6 +15,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 import EnrolledCourseCard from "@/components/EnrolledCourseCard";
 import Head from "next/head";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Filler,
+  Legend,
+  type ChartData,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -25,14 +38,61 @@ export default function Dashboard() {
   const { data: enrollments, isLoading: enrollmentsLoading } =
     api.course.getEnrollments.useQuery();
 
+  const { data: lastWeekLearning, isLoading: lastWeekLearningLoading } =
+    api.tracking.getPastWeek.useQuery();
+
   const isPastTab = router.query.events === "past";
   const upcomingEvents = profile?.registrations;
   const pastEvents = pastRegisteredEvents;
   const events = isPastTab ? pastEvents : upcomingEvents;
 
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Filler,
+    Legend
+  );
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+  };
+
+  interface ChartContext {
+    ctx: CanvasRenderingContext2D;
+  }
+
+  const data: ChartData<"line", number[], string> = {
+    labels:
+      lastWeekLearning?.map((lwl) =>
+        lwl.date.toLocaleString("en-US", { weekday: "long" })
+      ) ?? [],
+    datasets: [
+      {
+        fill: true,
+        label: "Minutes learned in previous week",
+        data: lastWeekLearning?.map((lwl) => lwl.minutes) ?? [],
+        borderColor: "#db2777",
+        backgroundColor: ({ chart: { ctx } }: { chart: ChartContext }) => {
+          const bg = ctx.createLinearGradient(0, 150, 0, 600);
+          bg.addColorStop(0, "rgba(236, 72, 153,0.2)");
+          bg.addColorStop(0.2, "rgba(236, 72, 153,0)");
+          bg.addColorStop(1, "transparent");
+
+          return bg;
+        },
+        cubicInterpolationMode: "monotone",
+      },
+    ],
+  };
+
   return (
     <Layout>
-      <div className="flex w-full flex-col items-center">
+      <div className="flex w-full flex-col items-center px-4">
         <Head>
           <title>Dashboard | Kroto</title>
         </Head>
@@ -79,7 +139,24 @@ export default function Dashboard() {
         </AnimatedSection>
         <AnimatedSection
           delay={0.1}
-          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-3 sm:gap-4  sm:p-8"
+          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-6 sm:gap-4  sm:p-8"
+        >
+          <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
+            Learning Graph
+          </h1>
+          {lastWeekLearningLoading ? (
+            <div className="flex h-60 flex-col items-center justify-center">
+              <Loader size="lg" />
+            </div>
+          ) : (
+            <div className="relative h-60 w-full sm:h-80">
+              <Line options={options} data={data} />
+            </div>
+          )}
+        </AnimatedSection>
+        <AnimatedSection
+          delay={0.2}
+          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-6 sm:gap-4  sm:p-8"
         >
           <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
             Enrolled Courses
@@ -116,9 +193,10 @@ export default function Dashboard() {
             )}
           </div>
         </AnimatedSection>
+
         <AnimatedSection
-          delay={0.2}
-          className="mb-10 flex w-full max-w-4xl flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-8"
+          delay={0.3}
+          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-6 sm:gap-4 sm:p-8"
         >
           <div className="flex w-full flex-col items-start justify-between sm:flex-row sm:items-center">
             <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">

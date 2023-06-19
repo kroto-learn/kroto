@@ -31,7 +31,8 @@ const Index = ({ courseId }: Props) => {
   // const router = useRouter();
   const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
     api.course.enroll.useMutation();
-  const { data: isEnrolled } = api.course.isEnrolled.useQuery({ courseId });
+  const { data: isEnrolled, isLoading: isEnrolledLoading } =
+    api.course.isEnrolled.useQuery({ courseId });
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -134,7 +135,7 @@ const Index = ({ courseId }: Props) => {
               </Link>
             </div>
 
-            {session.status !== "loading" ? (
+            {session.status !== "loading" && !isEnrolledLoading ? (
               course?.creator?.id &&
               session.data?.user.id === course?.creator?.id ? (
                 <div className="flex items-center gap-2">
