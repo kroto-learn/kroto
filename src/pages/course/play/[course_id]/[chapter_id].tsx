@@ -43,7 +43,7 @@ const Index = () => {
     api.courseChapter.clearWatched.useMutation();
 
   const { mutateAsync: trackLearningMutation } =
-    api.courseChapter.trackLearning.useMutation();
+    api.tracking.trackLearning.useMutation();
 
   const session = useSession();
 
@@ -79,19 +79,28 @@ const Index = () => {
 
   useEffect(() => {
     setProgress(0);
-    setStackedProgress(0);
   }, [chapter_id]);
 
   useEffect(() => {
-    if (player && progress && progress / player.getDuration() >= 0.9)
+    if (
+      player &&
+      progress &&
+      progress / player.getDuration() >= 0.9 &&
+      !(chapter instanceof TRPCError) &&
+      !(chapter?.chapterProgress && chapter?.chapterProgress?.watched) &&
+      chapter_id === chapter?.id
+    ) {
+      console.log("this shouldnot run");
       void markWatchedMutation(
         { chapterId: chapter_id },
         {
           onSuccess: () => {
             void ctx.course.get.invalidate();
+            void ctx.courseChapter.get.invalidate();
           },
         }
       );
+    }
 
     const timer = () => {
       if (player) {
@@ -122,17 +131,14 @@ const Index = () => {
               chapterId: chapter.id,
               videoProgress: progress + 1,
             });
-          console.log("stacked progress inside", stackedProgress);
 
-          console.log("stacked 0 set");
           setStackedProgress(0);
         } else {
           if (!(progress >= player?.getDuration() || paused))
-            console.log("increaded stacked progress");
-          setStackedProgress(
-            stackedProgress +
-              (progress >= player?.getDuration() || paused ? 0 : 1)
-          );
+            setStackedProgress(
+              stackedProgress +
+                (progress >= player?.getDuration() || paused ? 0 : 1)
+            );
         }
       }
     };
@@ -150,10 +156,6 @@ const Index = () => {
     chapter_id,
   ]);
 
-  useEffect(() => {
-    console.log("stacked progress outside", stackedProgress);
-  }, [stackedProgress]);
-
   const [watchChecked, setWatchChecked] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
 
@@ -163,7 +165,6 @@ const Index = () => {
         !!chapter?.chapterProgress && chapter?.chapterProgress?.watched
       );
       if (chapter?.chapterProgress?.videoProgress && player && videoLoaded) {
-        console.log("player", player);
         player.seekTo(chapter?.chapterProgress?.videoProgress, true);
       }
     }
