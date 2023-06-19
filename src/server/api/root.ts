@@ -12,6 +12,7 @@ import { emailRouter } from "./email/email";
 import { courseFeedbacksRouter } from "./routers/course/feedback";
 import { contactRouter } from "./routers/contact";
 import { askedQueryRouter } from "./routers/askedQuery";
+import { trackingRouter } from "./routers/course/tracking";
 
 /**
  * This is the primary router for your server.
@@ -25,6 +26,7 @@ export const appRouter = createTRPCRouter({
   course: courseRouter,
   courseChapter: courseChapterRouter,
   courseFeedback: courseFeedbacksRouter,
+  tracking: trackingRouter,
 
   event: eventRouter,
   eventFeedback: feedbacksRouter,
@@ -36,7 +38,6 @@ export const appRouter = createTRPCRouter({
   testimonial: testimonialRouter,
 
   askedQuery: askedQueryRouter,
-
 
   contact: contactRouter,
 });
