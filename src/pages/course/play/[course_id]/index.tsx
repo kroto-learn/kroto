@@ -148,6 +148,8 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
 
   const options = {
     radius: sideDrawerCollapsed ? 25 : 40,
+    responsive: true,
+    maintainAspectRatio: false,
   };
 
   return (
@@ -246,7 +248,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             }`}
           >
             <div
-              className={`flex items-center justify-center ${
+              className={`relative flex items-center justify-center ${
                 sideDrawerCollapsed
                   ? "hidden h-16 w-16 sm:flex"
                   : "h-24 w-24 sm:h-24 sm:w-24"
