@@ -719,7 +719,7 @@ export const courseRouter = createTRPCRouter({
             },
           },
           orderBy: {
-            createdAt: "asc",
+            createdAt: "desc",
           },
         },
       },

@@ -332,6 +332,7 @@ model LearnTrack {
   chapterId String
   chapter   Chapter? @relation(fields: [chapterId], references: [id])
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
   minutes   Int      @default(5)
   day       Int      @default(0)
   month     Int      @default(0)
