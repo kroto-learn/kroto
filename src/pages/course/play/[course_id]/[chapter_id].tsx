@@ -158,17 +158,24 @@ const Index = () => {
 
   const [watchChecked, setWatchChecked] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [seekedInit, setSeekedInit] = useState(false);
 
   useEffect(() => {
     if (!(chapter instanceof TRPCError) && chapter) {
       setWatchChecked(
         !!chapter?.chapterProgress && chapter?.chapterProgress?.watched
       );
-      if (chapter?.chapterProgress?.videoProgress && player && videoLoaded) {
-        player.seekTo(chapter?.chapterProgress?.videoProgress, true);
+      if (
+        chapter?.chapterProgress?.videoProgress &&
+        player &&
+        videoLoaded &&
+        !seekedInit
+      ) {
+        player?.seekTo(chapter?.chapterProgress?.videoProgress, true);
+        setSeekedInit(true);
       }
     }
-  }, [chapter, player, videoLoaded]);
+  }, [chapter, player, videoLoaded, seekedInit]);
 
   if (chapterLoading || courseLoading || !chapter_id || !course_id)
     return (
