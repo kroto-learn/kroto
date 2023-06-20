@@ -11,7 +11,7 @@ import "@/styles/globals.css";
 import ProtectedRoutes from "@/components/ProtectedRoutes";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
-import { MixPannelTracking } from "@/analytics/mixpanel";
+import { MixPannelClient } from "@/analytics/mixpanel";
 import { useRouter } from "next/router";
 import { AnimatePresence } from "framer-motion";
 import Script from "next/script";
@@ -25,10 +25,19 @@ const MyApp: AppType<{ session: Session | null }> = ({
   const router = useRouter();
 
   useEffect(() => {
-    MixPannelTracking.getInstance().pageViewed({
+    if (session?.user?.email) {
+      MixPannelClient.getInstance().authenticatedVisit({
+        email: session.user.email,
+        name: session.user.name ?? "",
+        id: session.user.id,
+        avatar: session.user.image ?? "",
+      });
+    }
+
+    MixPannelClient.getInstance().pageViewed({
       pagePath: router.asPath,
     });
-  }, [router]);
+  }, [router, session]);
 
   return (
     <>

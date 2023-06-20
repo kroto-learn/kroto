@@ -1,22 +1,22 @@
 import mixpanel from "mixpanel-browser";
 import { PageEvents, UserEvents } from "./events.interface";
 
-export class MixPannelTracking {
-  private static _instance: MixPannelTracking;
+export class MixPannelClient {
+  private static _instance: MixPannelClient;
   private static _distict_id: string;
   private static _last_login = new Date();
   private static _logged_in = false;
 
-  public static getInstance(): MixPannelTracking {
-    if (MixPannelTracking._instance == null) {
-      return (MixPannelTracking._instance = new MixPannelTracking());
+  public static getInstance(): MixPannelClient {
+    if (MixPannelClient._instance == null) {
+      return (MixPannelClient._instance = new MixPannelClient());
     }
 
     return this._instance;
   }
 
   public constructor() {
-    if (MixPannelTracking._instance) {
+    if (MixPannelClient._instance) {
       throw new Error(
         "Error: Instance creation of MixPannelTracking is not allowed. Use MixPannelTracking.getInstance() instead."
       );
@@ -40,6 +40,21 @@ export class MixPannelTracking {
     this.track(PageEvents.PAGE_VIEW, data);
   }
 
+  private setIdentity(data: {
+    email: string;
+    name: string;
+    id: string;
+    avatar: string;
+  }) {
+    mixpanel.identify(data.id);
+    mixpanel.people.set_once({
+      $email: data.email,
+      $name: data.name,
+      $avatar: data.avatar,
+      $last_login: MixPannelClient._last_login,
+    });
+  }
+
   public signIn(data: {
     provider: string;
     email: string;
@@ -61,5 +76,15 @@ export class MixPannelTracking {
 
   public signOut(data: { email: string; name: string; id: string }) {
     this.track(UserEvents.USER_SIGN_OUT, data);
+  }
+
+  public authenticatedVisit(data: {
+    email: string;
+    name: string;
+    id: string;
+    avatar: string;
+  }) {
+    this.track(UserEvents.AUTHENTICATED_VISIT, data);
+    this.setIdentity(data);
   }
 }

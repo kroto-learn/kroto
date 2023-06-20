@@ -13,6 +13,7 @@ export enum UserEvents {
   USER_SIGN_UP = "User Sign Up",
   USER_SIGN_IN = "User Sign In",
   USER_SIGN_OUT = "User Sign Out",
+  AUTHENTICATED_VISIT = "Authenticated Visit",
 
   CREATOR_SIGN_UP = "Creator Sign Up",
 }

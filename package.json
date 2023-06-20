@@ -52,6 +52,7 @@
     "is-base64": "^1.1.0",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.21",
+    "mixpanel": "^0.17.0",
     "mixpanel-browser": "^2.46.0",
     "moment": "^2.29.4",
     "next": "^13.3.0",
