@@ -28,29 +28,38 @@ const ShareCourseModal = dynamic(
 );
 // import ShareCourseModal from "@/components/ShareCourseModal";
 
-ChartJS.register(ArcElement, TooltipC);
-
 const Index = () => {
   const router = useRouter();
-  const { course_id } = router.query as { course_id: string };
+  const { course_id, chapter_id } = router.query as {
+    course_id: string;
+    chapter_id?: string;
+  };
   const { data: course } = api.course.get.useQuery({ id: course_id });
 
   useEffect(() => {
     if (
       !(course instanceof TRPCError) &&
       course &&
-      course?.chapters?.length > 0
+      course?.chapters?.length > 0 &&
+      !chapter_id
     ) {
-      let lastChId = course?.chapters[0]?.id;
-      for( let i = 0 ; i <=  course?.chapters?.length ; i++  ){
-           if( !course?.chapters[i]?.chapterProgress ){
-               lastChId = course?.chapters[i]?.id
-               break;
-           }
-      }
-      void router.replace(`/course/play/${course_id}/${lastChId ?? ""}`);
+      const lastChIdx = course?.chapters?.findIndex(
+        (ch) => ch.id === course?.courseProgress?.lastChapterId
+      );
+      const nextUnwatchedCh = course?.chapters
+        ?.slice(lastChIdx !== -1 ? lastChIdx : 0)
+        .find((ch) => !(!!ch?.chapterProgress && ch?.chapterProgress?.watched));
+
+      const prevUnwatchedCh = course?.chapters
+        ?.slice(0, lastChIdx !== -1 ? lastChIdx : 0)
+        .find((ch) => !(!!ch?.chapterProgress && ch?.chapterProgress?.watched));
+
+      const chToPlay =
+        nextUnwatchedCh?.id ?? prevUnwatchedCh?.id ?? course?.chapters[0]?.id;
+
+      void router.replace(`/course/play/${course_id}/${chToPlay ?? ""}`);
     }
-  }, [course, course_id, router]);
+  }, [course, course_id, router, chapter_id]);
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center">
@@ -66,9 +75,15 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     chapter_id: string;
   };
   const { data: course } = api.course?.get.useQuery({ id: course_id });
+  const { data: isEnrolled, isLoading: isEnrolledLoading } =
+    api.course.isEnrolled.useQuery({ courseId: course_id });
   const [sideDrawerCollapsed, setSideDrawerCollapsed] = useState(false);
   const chaptersNavRef = useRef<HTMLDivElement | null>(null);
   const [navbarScrollInit, setNavbarScrollInit] = useState(false);
+
+  useEffect(() => {
+    if (!isEnrolledLoading && !isEnrolled) void router.replace("/");
+  }, [isEnrolled, isEnrolledLoading, router]);
 
   useEffect(() => {
     //TODO: scroll to chapter link, this doesn't work
@@ -105,17 +120,21 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
 
   if (course instanceof TRPCError || !course) return <></>;
 
-  const chaptersWatched = course.chapters.filter(
-    (ch) => !!ch.chapterProgress
+  const chaptersWatched = course.chapters?.filter(
+    (ch) => !!ch?.chapterProgress && ch?.chapterProgress?.watched
   )?.length;
 
-  const minutesWatched = course.chapters
-    .filter((ch) => !!ch.chapterProgress)
-    .reduce(
+  const minutesWatched = course?.chapters
+    ?.filter((ch) => !!ch.chapterProgress && ch?.chapterProgress?.watched)
+    ?.reduce(
       (accumulator, currentValue) =>
         accumulator + (currentValue?.duration ?? 0),
       0
     );
+
+  ChartJS.register(ArcElement, TooltipC);
+
+  // ChartJS.defaults.plugins.legend.display = false;
 
   const data = {
     labels: ["Watched", "Not watched"],
@@ -131,6 +150,13 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
 
   const options = {
     radius: sideDrawerCollapsed ? 25 : 40,
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
   };
 
   return (
@@ -229,7 +255,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             }`}
           >
             <div
-              className={`flex items-center justify-center ${
+              className={`relative flex items-center justify-center ${
                 sideDrawerCollapsed
                   ? "hidden h-16 w-16 sm:flex"
                   : "h-24 w-24 sm:h-24 sm:w-24"
@@ -317,7 +343,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
       <ShareCourseModal
         isOpen={shareModal}
         setIsOpen={setShareModal}
-      courseId={course?.id ?? ""}
+        courseId={course?.id ?? ""}
         courseTitle={course?.title ?? ""}
       />
     </div>
@@ -336,16 +362,18 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
     chapter_id: string;
   };
 
-  const { mutateAsync: updateChapterProgressMutation } =
-    api.courseChapter.updateChapterProgress.useMutation();
+  const { mutateAsync: markWatchedMutation } =
+    api.courseChapter.markWatched.useMutation();
 
-  const { mutateAsync: deleteChapterProgressMutation } =
-    api.courseChapter.deleteChapterProgress.useMutation();
+  const { mutateAsync: clearWatchedMutation } =
+    api.courseChapter.clearWatched.useMutation();
 
   const [watchChecked, setWatchChecked] = useState(false);
 
   useEffect(() => {
-    setWatchChecked(!!chapter.chapterProgress);
+    setWatchChecked(
+      !!chapter?.chapterProgress && chapter?.chapterProgress?.watched
+    );
   }, [chapter.chapterProgress]);
 
   const ctx = api.useContext();
@@ -358,7 +386,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
       id={`${chapter?.id}`}
       className={`group flex items-center border-neutral-700 text-xs last:rounded-b ${
         !(chapter.id === chapter_id)
-          ? chapter.chapterProgress
+          ? !!chapter.chapterProgress && chapter?.chapterProgress?.watched
             ? "!bg-green-950/30 hover:!bg-green-800/30"
             : "hover:bg-neutral-200/10"
           : " !bg-pink-900/10 hover:!bg-pink-900/20"
@@ -383,9 +411,9 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
             e.preventDefault();
             setWatchChecked(!watchChecked);
 
-            if (!!chapter.chapterProgress)
-              void deleteChapterProgressMutation(
-              {
+            if (!!chapter?.chapterProgress && chapter?.chapterProgress?.watched)
+              void clearWatchedMutation(
+                {
                   chapterId: chapter.id,
                 },
                 {
@@ -396,7 +424,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
                 }
               );
             else
-              void updateChapterProgressMutation(
+              void markWatchedMutation(
                 {
                   chapterId: chapter.id,
                 },

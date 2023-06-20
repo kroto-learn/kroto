@@ -11,7 +11,11 @@ import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { Loader } from "@/components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAt, faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAt,
+  faQuoteLeft,
+  faQuestion,
+} from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
 import Layout from "@/components/layouts/main";
 import CourseCard from "@/components/CourseCard";
@@ -172,6 +176,13 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
                 <></>
               )}
             </AnimatedSection>
+            {/* <Link
+              id="testimonial"
+              href={`/${creator?.creatorProfile ?? ""}/query`}
+              className="group flex w-2/7 items-center justify-center gap-2 rounded-xl bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 backdrop-blur-sm transition-all duration-300 hover:bg-pink-500/80 hover:text-neutral-200"
+            >
+              <FontAwesomeIcon icon={faQuestion} /> Ask any query to me
+            </Link> */}
           </div>
         </div>
         <div className="flex w-full max-w-4xl -translate-y-24 flex-col items-center justify-start gap-8 rounded-3xl bg-gradient-to-b from-neutral-800 via-neutral-800 to-transparent p-8 pb-24 backdrop-blur-sm">

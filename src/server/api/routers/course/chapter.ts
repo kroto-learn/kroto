@@ -26,73 +26,6 @@ export const courseChapterRouter = createTRPCRouter({
       return { ...chapter, chapterProgress: chapter.chapterProgress[0] };
     }),
 
-  // update: protectedProcedure
-  //   .input(createFormSchema.and(z.object({ id: z.string() })))
-  //   .mutation(async ({ input, ctx }) => {
-  //     const { prisma } = ctx;
-
-  //     if (!input) return new TRPCError({ code: "BAD_REQUEST" });
-
-  //     const checkIsCreator = await prisma.event.findUnique({
-  //       where: {
-  //         id: input.id,
-  //       },
-  //     });
-
-  //     if (!checkIsCreator)
-  //       return new TRPCError({
-  //         code: "BAD_REQUEST",
-  //         message: "Event doesn't exist",
-  //       });
-
-  //     if (checkIsCreator.creatorId !== ctx.session.user.id)
-  //       return new TRPCError({
-  //         code: "BAD_REQUEST",
-  //         message: "You didn't create this event",
-  //       });
-
-  //     let thumbnail = input.thumbnail;
-  //     if (isBase64(input.thumbnail, { allowMime: true }))
-  //       thumbnail = await imageUpload(input.thumbnail, input.id, "event");
-
-  //     const ogImageRes = await axios({
-  //       url: OG_URL,
-  //       responseType: "arraybuffer",
-  //       params: {
-  //         title: input.title,
-  //         datetime: input.datetime.getTime(),
-  //         host: ctx.session.user.name ?? "",
-  //       },
-  //     });
-
-  //     const ogImage = await ogImageUpload(
-  //       ogImageRes.data as AWS.S3.Body,
-  //       input.id,
-  //       "event"
-  //     );
-
-  //     const event = await prisma.event.update({
-  //       where: {
-  //         id: input.id,
-  //       },
-  //       data: {
-  //         title: input.title,
-  //         description: input.description,
-  //         datetime: input.datetime,
-  //         eventUrl: input.eventUrl ?? "",
-  //         eventLocation: input.eventLocation ?? "",
-  //         eventType: input.eventType,
-  //         thumbnail: thumbnail,
-  //         ogImage,
-  //         endTime: input.endTime,
-
-  //         creatorId: ctx.session.user.id,
-  //       },
-  //     });
-
-  //     return event;
-  //   }),
-
   updateChapterProgress: protectedProcedure
     .input(
       z.object({
@@ -136,7 +69,48 @@ export const courseChapterRouter = createTRPCRouter({
       }
     }),
 
-  deleteChapterProgress: protectedProcedure
+  markWatched: protectedProcedure
+    .input(
+      z.object({
+        chapterId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const chapterProgress = await prisma.chapterProgress.findFirst({
+        where: {
+          watchedById: ctx.session.user.id,
+          chapterId: input.chapterId,
+        },
+      });
+
+      if (chapterProgress) {
+        const updatedCP = await prisma.chapterProgress.update({
+          where: {
+            id: chapterProgress.id,
+          },
+          data: {
+            watched: true,
+            videoProgress: 0,
+          },
+        });
+
+        return updatedCP;
+      } else {
+        const newCP = await prisma.chapterProgress.create({
+          data: {
+            watchedById: ctx.session.user.id,
+            chapterId: input.chapterId,
+            watched: true,
+          },
+        });
+
+        return newCP;
+      }
+    }),
+
+  clearWatched: protectedProcedure
     .input(
       z.object({
         chapterId: z.string(),
@@ -153,9 +127,12 @@ export const courseChapterRouter = createTRPCRouter({
       });
 
       if (chapterProgress)
-        await prisma.chapterProgress.delete({
+        await prisma.chapterProgress.update({
           where: {
             id: chapterProgress.id,
+          },
+          data: {
+            watched: false,
           },
         });
 

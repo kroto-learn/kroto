@@ -7,11 +7,17 @@ import { useRouter } from "next/router";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import Head from "next/head";
 import { PlayerLayout } from ".";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import ReactLinkify from "react-linkify";
 import { Checkbox, ConfigProvider, theme } from "antd";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
+import { useSession } from "next-auth/react";
+import { Dialog, Transition } from "@headlessui/react";
 
 const Index = () => {
   const router = useRouter();
@@ -35,7 +41,21 @@ const Index = () => {
   const { mutateAsync: updateChapterProgressMutation } =
     api.courseChapter.updateChapterProgress.useMutation();
 
+  const { mutateAsync: markWatchedMutation } =
+    api.courseChapter.markWatched.useMutation();
+
+  const { mutateAsync: clearWatchedMutation } =
+    api.courseChapter.clearWatched.useMutation();
+
+  const { mutateAsync: trackLearningMutation } =
+    api.tracking.trackLearning.useMutation();
+
+  const session = useSession();
+
   const [progress, setProgress] = useState(0);
+  const [stackedProgress, setStackedProgress] = useState(0);
+  const [previousProgress, setPreviousProgress] = useState(0);
+
   const [paused, setPaused] = useState(false);
 
   const ctx = api.useContext();
@@ -48,7 +68,7 @@ const Index = () => {
       autoplay: 1,
       modestbranding: 1,
       rel: 0,
-      origin: typeof window !== "undefined" ? window.location.origin : 0,
+      origin: typeof window !== "undefined" ? window.location.hostname : 0,
       showinfo: 0,
     },
   };
@@ -65,40 +85,106 @@ const Index = () => {
 
   useEffect(() => {
     setProgress(0);
+    setStackedProgress(0);
+    setSeekedInit(false);
+    setVideoLoaded(false);
   }, [chapter_id]);
 
   useEffect(() => {
-    if (player && progress && progress / player.getDuration() >= 0.8)
-      void updateChapterProgressMutation(
+    if (
+      player &&
+      progress &&
+      progress / player.getDuration() >= 0.9 &&
+      !(chapter instanceof TRPCError) &&
+      !(chapter?.chapterProgress && chapter?.chapterProgress?.watched) &&
+      chapter_id === chapter?.id
+    ) {
+      console.log("this shouldnot run");
+      void markWatchedMutation(
         { chapterId: chapter_id },
         {
           onSuccess: () => {
             void ctx.course.get.invalidate();
+            void ctx.courseChapter.get.invalidate();
           },
         }
       );
+    }
 
     const timer = () => {
-      if (player)
+      if (player) {
         setProgress(
           progress + (progress >= player?.getDuration() || paused ? 0 : 1)
         );
+
+        setVideoLoaded(true);
+
+        if (stackedProgress >= 60) {
+          if (
+            session.data?.user.id &&
+            !(course instanceof TRPCError) &&
+            course &&
+            course.id &&
+            !(chapter instanceof TRPCError) &&
+            chapter &&
+            chapter.id
+          )
+            void trackLearningMutation({
+              userId: session.data?.user.id,
+              courseId: course?.id,
+              chapterId: chapter?.id,
+            });
+
+          if (!(chapter instanceof TRPCError) && chapter && chapter.id)
+            void updateChapterProgressMutation({
+              chapterId: chapter.id,
+              videoProgress: progress + 1,
+            });
+
+          setStackedProgress(0);
+        } else {
+          if (!(progress >= player?.getDuration() || paused))
+            setStackedProgress(
+              stackedProgress +
+                (progress >= player?.getDuration() || paused ? 0 : 1)
+            );
+        }
+      }
     };
 
     const id = setInterval(timer, 1000);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progress, paused]);
+  }, [
+    progress,
+    paused,
+    stackedProgress,
+    setStackedProgress,
+    chapter,
+    course,
+    chapter_id,
+  ]);
 
   const [watchChecked, setWatchChecked] = useState(false);
-
-  const { mutateAsync: deleteChapterProgressMutation } =
-    api.courseChapter.deleteChapterProgress.useMutation();
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [seekedInit, setSeekedInit] = useState(false);
 
   useEffect(() => {
-    if (!(chapter instanceof TRPCError) && chapter)
-      setWatchChecked(!!chapter?.chapterProgress);
-  }, [chapter]);
+    if (!(chapter instanceof TRPCError) && chapter) {
+      setWatchChecked(
+        !!chapter?.chapterProgress && chapter?.chapterProgress?.watched
+      );
+      if (
+        chapter?.chapterProgress?.videoProgress &&
+        player &&
+        videoLoaded &&
+        !seekedInit
+      ) {
+        setPreviousProgress(chapter?.chapterProgress?.videoProgress);
+        setSeekedInit(true);
+      }
+    }
+  }, [chapter, player, videoLoaded, seekedInit]);
 
   if (chapterLoading || courseLoading || !chapter_id || !course_id)
     return (
@@ -148,7 +234,9 @@ const Index = () => {
                 if (player?.getCurrentTime())
                   setProgress(player?.getCurrentTime());
               }}
-              onPause={() => setPaused(true)}
+              onPause={() => {
+                setPaused(true);
+              }}
               onPlay={() => setPaused(false)}
               onReady={(e) => {
                 if (e.target) setPlayer(e.target as YT.Player);
@@ -178,8 +266,11 @@ const Index = () => {
                       e.stopPropagation();
                       setWatchChecked(!watchChecked);
 
-                      if (!!chapter.chapterProgress)
-                        void deleteChapterProgressMutation(
+                      if (
+                        !!chapter.chapterProgress &&
+                        chapter?.chapterProgress?.watched
+                      )
+                        void clearWatchedMutation(
                           {
                             chapterId: chapter.id,
                           },
@@ -191,7 +282,7 @@ const Index = () => {
                           }
                         );
                       else
-                        void updateChapterProgressMutation(
+                        void markWatchedMutation(
                           {
                             chapterId: chapter.id,
                           },
@@ -302,9 +393,129 @@ const Index = () => {
           </div>
         </div>
       </div>
+      <SeekToModal
+        prevProg={previousProgress}
+        onYes={() => {
+          if (player && videoLoaded && previousProgress > 0) {
+            player?.seekTo(previousProgress, true);
+            player?.playVideo();
+          }
+          setPreviousProgress(0);
+        }}
+        onLoad={() => {
+          if (player && videoLoaded) player?.pauseVideo();
+        }}
+        onClose={() => {
+          setPreviousProgress(0);
+          if (player && videoLoaded) player?.playVideo();
+        }}
+      />
     </>
   );
 };
+
+export function SeekToModal({
+  onYes,
+  onLoad,
+  onClose,
+  prevProg,
+}: {
+  onYes: () => void;
+  onLoad: () => void;
+  onClose: () => void;
+  prevProg: number;
+}) {
+  const date = new Date();
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(prevProg);
+
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
+
+  const formattedTime =
+    hours === "00" ? `${minutes}:${seconds}` : `${hours}:${minutes}:${seconds}`;
+
+  const isOpen = prevProg > 0;
+
+  useEffect(() => {
+    if (prevProg > 0) onLoad();
+  }, [prevProg, onLoad]);
+
+  return (
+    <>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={onClose}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-6 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 p-4 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="div" className="flex w-full flex-col gap-4">
+                    <div className="flex w-full justify-end">
+                      <button
+                        onClick={onClose}
+                        type="button"
+                        className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
+                      >
+                        <XMarkIcon className="w-5" />
+                      </button>
+                    </div>
+                  </Dialog.Title>
+                  <div className="space-y-6 p-4">
+                    <p className="text-base leading-relaxed text-neutral-500 dark:text-neutral-400">
+                      You left this chapter at{" "}
+                      <span className="font-bold tracking-wider text-pink-600">
+                        {formattedTime}
+                      </span>
+                      , do you want to continue from there?
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2 rounded-b p-4 text-sm dark:border-neutral-600">
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="flex items-center gap-2 rounded-lg bg-neutral-500 px-5 py-2.5 text-center text-sm font-bold duration-300 hover:bg-neutral-600  hover:text-neutral-200"
+                    >
+                      No, thank you
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onYes}
+                      className="flex items-center gap-2 rounded-lg bg-pink-500 px-5 py-2.5 text-center text-sm font-bold duration-300 hover:bg-pink-600  hover:text-neutral-200"
+                    >
+                      Yes, of course
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+}
 
 Index.getLayout = PlayerLayout;
 

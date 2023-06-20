@@ -48,6 +48,9 @@ export const courseRouter = createTRPCRouter({
           courseProgress: {
             where: { watchedById: ctx.session.user.id },
             take: 1,
+            include: {
+              lastChapterProgress: true,
+            },
           },
           enrollments: {
             include: {
@@ -60,12 +63,6 @@ export const courseRouter = createTRPCRouter({
       });
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
-
-      if (
-        course.creatorId !== ctx.session.user.id &&
-        !isAdmin(ctx.session.user.email ?? "")
-      )
-        return new TRPCError({ code: "BAD_REQUEST" });
 
       const courseProgress = course.courseProgress[0];
 
@@ -714,6 +711,9 @@ export const courseRouter = createTRPCRouter({
                 },
               },
             },
+          },
+          orderBy: {
+            createdAt: "desc",
           },
         },
       },
