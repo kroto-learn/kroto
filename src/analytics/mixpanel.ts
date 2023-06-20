@@ -1,4 +1,5 @@
 import mixpanel from "mixpanel-browser";
+import { PageEvents, UserEvents } from "./events.interface";
 
 export class MixPannelTracking {
   private static _instance: MixPannelTracking;
@@ -36,7 +37,7 @@ export class MixPannelTracking {
   }
 
   public pageViewed(data: { pagePath: string }) {
-    this.track("pageViewed", data);
+    this.track(PageEvents.PAGE_VIEW, data);
   }
 
   public signIn(data: {
@@ -46,7 +47,7 @@ export class MixPannelTracking {
     id: string;
   }) {
     mixpanel.identify(data.id);
-    this.track("sign in", data);
+    this.track(UserEvents.USER_SIGN_IN, data);
   }
 
   public signUp(data: {
@@ -55,10 +56,10 @@ export class MixPannelTracking {
     name: string;
     id: string;
   }) {
-    this.track("sign up", data);
+    this.track(UserEvents.USER_SIGN_UP, data);
   }
 
   public signOut(data: { email: string; name: string; id: string }) {
-    this.track("sign out", data);
+    this.track(UserEvents.USER_SIGN_OUT, data);
   }
 }
