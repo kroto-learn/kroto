@@ -13,6 +13,10 @@ import { prisma } from "@/server/db";
 import GoogleProvider from "next-auth/providers/google";
 import type { DefaultJWT } from "next-auth/jwt";
 import axios from "axios";
+// import { MixPanelServer } from "./analytics/mixpanel";
+
+import Mixpanel from "mixpanel";
+const mixpanel = Mixpanel.init(env.MIXPANEL_TOKEN);
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -62,7 +66,7 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: PrismaAdapter(prisma),
   events: {
-    async signIn({ user, account }) {
+    async signIn({ user, account, isNewUser }) {
       const dbUser = await prisma.user.findUnique({
         where: {
           id: user.id,
@@ -76,6 +80,39 @@ export const authOptions: NextAuthOptions = {
 
       const dbAccount = dbUser?.accounts[0];
 
+      if (isNewUser) {
+        mixpanel.track("User Sign Up", {
+          provider: dbAccount.provider,
+          email: dbUser.email,
+          name: dbUser.name,
+          id: dbUser.id,
+        });
+        if (dbUser.isCreator) {
+          mixpanel.track("Creator Sign In", {
+            provider: dbAccount.provider,
+            email: dbUser.email,
+            name: dbUser.name,
+            id: dbUser.id,
+          });
+        }
+      }
+
+      if (dbUser.isCreator) {
+        mixpanel.track("Creator Sign In", {
+          provider: dbAccount.provider,
+          email: dbUser.email,
+          name: dbUser.name,
+          id: dbUser.id,
+        });
+      } else {
+        mixpanel.track("User Sign In", {
+          provider: dbAccount.provider,
+          email: dbUser.email,
+          name: dbUser.name,
+          id: dbUser.id,
+        });
+      }
+
       await prisma.account.update({
         where: {
           provider_providerAccountId: {
@@ -88,6 +125,14 @@ export const authOptions: NextAuthOptions = {
           expires_at: account.expires_at,
           refresh_token: account.refresh_token,
         },
+      });
+    },
+    createUser({ user }) {
+      mixpanel.people.set_once(user.id, {
+        $email: user.email,
+        $name: user.name,
+        $created: new Date().toISOString(),
+        $avatar: user.image,
       });
     },
   },

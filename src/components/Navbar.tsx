@@ -7,6 +7,7 @@ import ImageWF from "@/components/ImageWF";
 import { Fragment } from "react";
 import { useRouter } from "next/router";
 import { isAdmin } from "@/server/helpers/admin";
+import { MixPannelClient } from "@/analytics/mixpanel";
 
 export default function Navbar() {
   const router = useRouter();
@@ -106,7 +107,14 @@ export default function Navbar() {
                       <Menu.Item>
                         <Link
                           className={`w-full px-6 py-2 font-medium transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
-                          onClick={() => void signOut({ callbackUrl: "/" })}
+                          onClick={() => {
+                            MixPannelClient.getInstance().signOut({
+                              email: session?.data?.user?.email ?? "",
+                              name: session?.data?.user?.name ?? "",
+                              id: session?.data?.user?.id ?? "",
+                            });
+                            void signOut({ callbackUrl: "/" });
+                          }}
                           href="/"
                         >
                           Sign Out
