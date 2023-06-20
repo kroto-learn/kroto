@@ -28,8 +28,6 @@ const ShareCourseModal = dynamic(
 );
 // import ShareCourseModal from "@/components/ShareCourseModal";
 
-ChartJS.register(ArcElement, TooltipC);
-
 const Index = () => {
   const router = useRouter();
   const { course_id, chapter_id } = router.query as {
@@ -122,17 +120,21 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
 
   if (course instanceof TRPCError || !course) return <></>;
 
-  const chaptersWatched = course.chapters.filter(
+  const chaptersWatched = course.chapters?.filter(
     (ch) => !!ch?.chapterProgress && ch?.chapterProgress?.watched
   )?.length;
 
-  const minutesWatched = course.chapters
-    .filter((ch) => !!ch.chapterProgress && ch?.chapterProgress?.watched)
-    .reduce(
+  const minutesWatched = course?.chapters
+    ?.filter((ch) => !!ch.chapterProgress && ch?.chapterProgress?.watched)
+    ?.reduce(
       (accumulator, currentValue) =>
         accumulator + (currentValue?.duration ?? 0),
       0
     );
+
+  ChartJS.register(ArcElement, TooltipC);
+
+  // ChartJS.defaults.plugins.legend.display = false;
 
   const data = {
     labels: ["Watched", "Not watched"],
@@ -150,6 +152,11 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     radius: sideDrawerCollapsed ? 25 : 40,
     responsive: true,
     maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
   };
 
   return (
