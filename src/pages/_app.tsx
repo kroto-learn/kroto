@@ -14,6 +14,8 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import { MixPannelTracking } from "@/analytics/mixpanel";
 import { useRouter } from "next/router";
 import { AnimatePresence } from "framer-motion";
+import Script from "next/script";
+
 config.autoAddCss = false;
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -29,28 +31,52 @@ const MyApp: AppType<{ session: Session | null }> = ({
   }, [router]);
 
   return (
-    <SessionProvider session={session}>
-      <NextProgress
-        delay={300}
-        color="#db2777"
-        options={{
-          showSpinner: false,
+    <>
+      {/* Google tag (gtag.js) */}
+
+      <Script
+        strategy="afterInteractive"
+        src="https://www.googletagmanager.com/gtag/js?id=G-X2LKVN7H4M"
+      />
+
+      <Script
+        id="google-analytics"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-X2LKVN7H4M', {
+            page_path: window.location.pathname,
+          });
+        `,
         }}
       />
-      <Toaster />
-      <Analytics />
-      <ProtectedRoutes />
-      <AnimatePresence mode="wait" initial={true}>
-        <Layout
-          Component={
-            Component as NextComponentType & {
-              getLayout: (page: ReactNode) => JSX.Element;
-            }
-          }
-          pageProps={pageProps}
+
+      <SessionProvider session={session}>
+        <NextProgress
+          delay={300}
+          color="#db2777"
+          options={{
+            showSpinner: false,
+          }}
         />
-      </AnimatePresence>
-    </SessionProvider>
+        <Toaster />
+        <Analytics />
+        <ProtectedRoutes />
+        <AnimatePresence mode="wait" initial={true}>
+          <Layout
+            Component={
+              Component as NextComponentType & {
+                getLayout: (page: ReactNode) => JSX.Element;
+              }
+            }
+            pageProps={pageProps}
+          />
+        </AnimatePresence>
+      </SessionProvider>
+    </>
   );
 };
 
