@@ -26,6 +26,10 @@ export class MixPannelClient {
       mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_ID ?? "", {
         debug: process.env.NODE_ENV === "development",
         ignore_dnt: true,
+        loaded: (_mix) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          MixPannelClient._distict_id = _mix.get_distinct_id();
+        },
       });
     } catch (error) {
       console.log(error);
@@ -46,6 +50,7 @@ export class MixPannelClient {
     id: string;
     avatar: string;
   }) {
+    mixpanel.alias(data.id, MixPannelClient._distict_id);
     mixpanel.identify(data.id);
     mixpanel.people.set_once({
       $email: data.email,
