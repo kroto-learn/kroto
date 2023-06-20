@@ -26,6 +26,7 @@ import {
   Filler,
   Legend,
   type ChartData,
+  type TooltipItem,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -60,6 +61,55 @@ export default function Dashboard() {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    scales: {
+      y: {
+        ticks: {
+          callback: (value: string | number) => `${value} m`,
+        },
+        beginAtZero: true,
+      },
+      x: {
+        ticks: {
+          // For a category axis, the val is the index so the lookup via getLabelForValue is needed
+          callback: (val: string | number) => {
+            // Hide every 2nd tick label
+            return lastWeekLearning
+              ? lastWeekLearning[val as number]?.date?.toLocaleString("en-US", {
+                  weekday: "short",
+                })
+              : "-";
+          },
+        },
+      },
+      x1: {
+        ticks: {
+          // For a category axis, the val is the index so the lookup via getLabelForValue is needed
+          callback: (val: string | number) => {
+            // Hide every 2nd tick label
+            return lastWeekLearning
+              ? lastWeekLearning[val as number]?.date?.toLocaleString("en-US", {
+                  day: "numeric",
+                  month: "short",
+                })
+              : "";
+          },
+        },
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem: TooltipItem<"line">) {
+            return `Minutes Learned: ${
+              (lastWeekLearning ?? [])[tooltipItem.dataIndex]?.minutes ?? 0
+            }`;
+          },
+        },
+      },
+      legend: {
+        display: false,
+      },
+    },
   };
 
   interface ChartContext {
@@ -69,7 +119,7 @@ export default function Dashboard() {
   const data: ChartData<"line", number[], string> = {
     labels:
       lastWeekLearning?.map((lwl) =>
-        lwl.date.toLocaleString("en-US", { weekday: "long" })
+        lwl.date.toLocaleString("en-US", { weekday: "short" })
       ) ?? [],
     datasets: [
       {

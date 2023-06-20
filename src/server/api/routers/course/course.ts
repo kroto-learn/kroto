@@ -64,12 +64,6 @@ export const courseRouter = createTRPCRouter({
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
 
-      if (
-        course.creatorId !== ctx.session.user.id &&
-        !isAdmin(ctx.session.user.email ?? "")
-      )
-        return new TRPCError({ code: "BAD_REQUEST" });
-
       const courseProgress = course.courseProgress[0];
 
       const chapters = course.chapters.map((chapter) => ({

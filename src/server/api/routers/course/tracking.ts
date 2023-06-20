@@ -13,7 +13,9 @@ export const trackingRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
-      const today = new Date();
+      const today = new Date(
+        new Date().toLocaleString("en-US", { timeZone: "IST" })
+      );
       const day = today.getDate();
       const month = today.getMonth();
       // January =0, February = 1, ...
@@ -65,28 +67,19 @@ export const trackingRouter = createTRPCRouter({
 
     const minutesStudiedInLastWeek: { date: Date; minutes: number }[] = [];
 
-    const currentDate = new Date();
+    const today = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "IST" })
+    );
     for (let i = 6; i >= 0; i--) {
-      const lastIthStartDate = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate() - i
-      );
-
-      const lastIthEndDate = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate() - i + 1
-      );
+      const lastIthDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
 
       // Query documents created in the last 7 days
       const learnTracks = await prisma.learnTrack.findMany({
         where: {
           userId: ctx.session.user.id,
-          createdAt: {
-            gte: lastIthStartDate,
-            lt: lastIthEndDate,
-          },
+          day: lastIthDate.getDate(),
+          month: lastIthDate.getMonth(),
+          year: lastIthDate.getFullYear(),
         },
       });
 
@@ -94,7 +87,7 @@ export const trackingRouter = createTRPCRouter({
         return total + current.minutes;
       }, 0);
 
-      minutesStudiedInLastWeek.push({ date: lastIthStartDate, minutes });
+      minutesStudiedInLastWeek.push({ date: lastIthDate, minutes });
     }
 
     return minutesStudiedInLastWeek;
