@@ -65,8 +65,8 @@ export default function Dashboard() {
       y: {
         ticks: {
           callback: (value: string | number) => `${value} m`,
-          beginAtZero: true,
         },
+        beginAtZero: true,
       },
       x: {
         ticks: {
