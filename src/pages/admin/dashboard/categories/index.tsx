@@ -40,12 +40,12 @@ const Index = () => {
   const { mutateAsync: createCategoryMutation, isLoading: createCatgLoading } =
     api.course.createCategory.useMutation();
 
-    const ctx = api.useContext();
+  const ctx = api.useContext();
 
   return (
     <>
       <Head>
-        <title>Categories | Dashboard</title>
+        <title>Categories | Admin</title>
       </Head>
       <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
         <AnimatedSection className="flex w-full items-center justify-between gap-4 sm:px-4">
@@ -84,7 +84,7 @@ const Index = () => {
                   if (catg && !(catg instanceof TRPCError)) {
                     successToast(`New category ${catg.title} created.`);
                   }
-                  methods.setValue("title","")
+                  methods.setValue("title", "");
                   void ctx.course.getCategories.invalidate();
                 },
                 onError: () => {
