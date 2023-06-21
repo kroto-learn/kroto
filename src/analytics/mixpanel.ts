@@ -24,8 +24,9 @@ export class MixPannelClient {
 
     try {
       mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_ID ?? "", {
-        debug: process.env.NODE_ENV === "development",
+        debug: process.env.NODE_ENV !== "production",
         ignore_dnt: true,
+        api_host: "https://api.mixpanel.com",
         loaded: (_mix) => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           MixPannelClient._distict_id = _mix.get_distinct_id();
@@ -52,7 +53,7 @@ export class MixPannelClient {
   }) {
     mixpanel.alias(data.id, MixPannelClient._distict_id);
     mixpanel.identify(data.id);
-    mixpanel.people.set_once({
+    mixpanel.people.set({
       $email: data.email,
       $name: data.name,
       $avatar: data.avatar,
