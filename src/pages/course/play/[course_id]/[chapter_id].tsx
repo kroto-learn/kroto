@@ -86,6 +86,7 @@ const Index = () => {
   useEffect(() => {
     setProgress(0);
     setStackedProgress(0);
+    setPreviousProgress(0);
     setSeekedInit(false);
     setVideoLoaded(false);
   }, [chapter_id]);
@@ -99,7 +100,6 @@ const Index = () => {
       !(chapter?.chapterProgress && chapter?.chapterProgress?.watched) &&
       chapter_id === chapter?.id
     ) {
-      console.log("this shouldnot run");
       void markWatchedMutation(
         { chapterId: chapter_id },
         {
@@ -117,7 +117,9 @@ const Index = () => {
           progress + (progress >= player?.getDuration() || paused ? 0 : 1)
         );
 
-        setVideoLoaded(true);
+        if (!paused && stackedProgress > 0) {
+          setVideoLoaded(true);
+        }
 
         if (stackedProgress >= 60) {
           if (
@@ -174,13 +176,9 @@ const Index = () => {
       setWatchChecked(
         !!chapter?.chapterProgress && chapter?.chapterProgress?.watched
       );
-      if (
-        chapter?.chapterProgress?.videoProgress &&
-        player &&
-        videoLoaded &&
-        !seekedInit
-      ) {
-        setPreviousProgress(chapter?.chapterProgress?.videoProgress);
+      if (player && videoLoaded && !seekedInit) {
+        if (chapter?.chapterProgress?.videoProgress)
+          setPreviousProgress(chapter?.chapterProgress?.videoProgress);
         setSeekedInit(true);
       }
     }
@@ -218,7 +216,8 @@ const Index = () => {
           Ch. {chapter.position + 1} | {course.title}
         </title>
       </Head>
-      <div className="flex w-full flex-col items-start gap-2">
+
+      <div className="flex w-full flex-col items-start gap-2 pr-4">
         {chapter.type !== "TEXT" ? (
           <div className="flex max-h-[85vh] w-full flex-col overflow-hidden rounded-lg border border-neutral-700">
             <YouTube
@@ -403,7 +402,9 @@ const Index = () => {
           setPreviousProgress(0);
         }}
         onLoad={() => {
-          if (player && videoLoaded) player?.pauseVideo();
+          if (player && videoLoaded) {
+            player?.pauseVideo();
+          }
         }}
         onClose={() => {
           setPreviousProgress(0);
@@ -476,7 +477,7 @@ export function SeekToModal({
                       <button
                         onClick={onClose}
                         type="button"
-                        className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 hover:bg-neutral-600"
+                        className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-neutral-400 outline-none hover:bg-neutral-600"
                       >
                         <XMarkIcon className="w-5" />
                       </button>
@@ -504,7 +505,7 @@ export function SeekToModal({
                       onClick={onYes}
                       className="flex items-center gap-2 rounded-lg bg-pink-500 px-5 py-2.5 text-center text-sm font-bold duration-300 hover:bg-pink-600  hover:text-neutral-200"
                     >
-                      Yes, of course
+                      Yeah, sure
                     </button>
                   </div>
                 </Dialog.Panel>

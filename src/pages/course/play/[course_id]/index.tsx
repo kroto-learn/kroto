@@ -16,10 +16,12 @@ import { Checkbox, ConfigProvider, theme } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { type ReactNode, useEffect, useState, useRef } from "react";
+import { type ReactNode, useEffect, useState, useRef, Fragment } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip as TooltipC } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import dynamic from "next/dynamic";
+import { getCalApi } from "@calcom/embed-react";
+import { Menu, Transition } from "@headlessui/react";
 const ShareCourseModal = dynamic(
   () => import("@/components/ShareCourseModal"),
   {
@@ -116,6 +118,17 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    void (async function () {
+      const cal = await getCalApi();
+      cal("ui", {
+        styles: { branding: { brandColor: "#ec4899" } },
+        theme: "dark",
+        hideEventTypeDetails: false,
+      });
+    })();
+  }, []);
+
   const [shareModal, setShareModal] = useState(false);
 
   if (course instanceof TRPCError || !course) return <></>;
@@ -161,7 +174,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <div className="sticky top-0 z-10 flex w-full justify-between gap-4 bg-gradient-to-b from-neutral-950 via-neutral-950/70 to-transparent p-4 text-neutral-400 duration-150">
+      <div className="sticky top-0 z-10 flex w-full justify-between gap-4 bg-gradient-to-b from-neutral-950 via-neutral-950/70 to-transparent p-4 pb-1 text-neutral-400 duration-150">
         <Link
           href="/dashboard"
           className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider hover:text-neutral-300 sm:text-sm"
@@ -177,168 +190,279 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
           <ShareIcon className="w-3" /> Share Course
         </button>
       </div>
-      <div className="flex w-full  flex-col-reverse justify-end gap-6 p-4 pt-3 sm:flex-row sm:justify-start">
+      <div className="mt-2 flex w-full items-center justify-between bg-pink-500 px-2 py-2 pl-3 text-sm font-bold sm:hidden">
+        <h4>Book a free 1:1 doubt resolving session!</h4>
+        <Menu as="div" className="relative inline-block text-left">
+          <div className="flex flex-col items-end">
+            <Menu.Button
+              as="button"
+              className="z-2 mt-1 rounded-lg bg-neutral-200 px-3 py-1 text-sm font-bold text-pink-500"
+            >
+              Book now
+            </Menu.Button>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="absolute right-0 top-[2rem] z-10 mt-4 flex w-40 origin-top-right flex-col divide-y divide-neutral-800 overflow-hidden rounded-xl bg-neutral-200/20 backdrop-blur-sm duration-300">
+                <Menu.Item>
+                  <button
+                    data-cal-link="rosekamallove/15min"
+                    className={`w-full px-2 py-1 text-sm font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                  >
+                    15 mins call
+                  </button>
+                </Menu.Item>
+                <Menu.Item>
+                  <button
+                    data-cal-link="rosekamallove/30min"
+                    className={`w-full px-2 py-1 text-sm font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                  >
+                    30 mins call
+                  </button>
+                </Menu.Item>
+              </Menu.Items>
+            </Transition>
+          </div>
+        </Menu>
+      </div>
+      <div className="flex w-full flex-col-reverse justify-end gap-4 p-4 pr-0 pt-3 sm:flex-row sm:justify-start">
         {children}
-        <div
-          className={`flex rounded-lg backdrop-blur-sm md:bg-neutral-200/5 ${
-            sideDrawerCollapsed
-              ? "right-4 top-16 flex-row-reverse border-neutral-700 sm:sticky sm:h-[calc(100vh-5rem)] sm:max-w-[5rem] sm:flex-col sm:border sm:bg-neutral-950/80"
-              : "fixed right-4 top-16 h-[calc(100vh-5rem)] w-4/5 max-w-sm flex-col border border-neutral-700 bg-neutral-950/80 sm:w-full md:sticky"
-          }`}
-        >
-          <button
-            className={`absolute -left-5 top-6 z-10 aspect-square rounded-full border border-neutral-600 bg-neutral-900 p-2 text-neutral-400 drop-shadow-xl duration-150 hover:bg-neutral-800 hover:text-neutral-300 ${
-              sideDrawerCollapsed ? "hidden sm:flex" : ""
-            }`}
-            onClick={() => setSideDrawerCollapsed(!sideDrawerCollapsed)}
-          >
-            {sideDrawerCollapsed ? (
-              <ChevronLeftIcon className="w-5" />
-            ) : (
-              <ChevronRightIcon className="w-5" />
-            )}
-          </button>
+        <div className={`flex flex-col rounded-lg`}>
+          {!sideDrawerCollapsed ? (
+            <div className="sticky top-[3.3rem] hidden h-44 w-full rounded-lg border border-neutral-700 bg-neutral-200/5 backdrop-blur sm:block">
+              <div className="relative flex h-full w-full flex-col items-start">
+                <div className="flex flex-col items-start justify-start gap-2 p-4">
+                  <h3 className="m-0 p-0 text-sm font-bold text-pink-500">
+                    Have some doubts in this chapter?
+                  </h3>
+                  <h3 className="m-0 max-w-[16rem] p-0 font-bold text-neutral-200">
+                    Book a free 1:1 Doubt resolving session with our experts!
+                  </h3>
+                  <Menu as="div" className="relative inline-block text-left">
+                    <div className="flex flex-col items-end">
+                      <Menu.Button
+                        as="button"
+                        className="z-2 mt-1 rounded-lg bg-pink-500 px-4 py-1 text-sm font-bold hover:bg-pink-600 hover:text-neutral-200"
+                      >
+                        Book now
+                      </Menu.Button>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute left-0 top-[2rem] mt-2 flex w-40 origin-top-right flex-col divide-y divide-neutral-800 overflow-hidden rounded-xl bg-neutral-900/80 backdrop-blur-sm duration-300">
+                          <Menu.Item>
+                            <button
+                              data-cal-link="rosekamallove/15min"
+                              className={`w-full px-2 py-1 text-sm font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                            >
+                              15 mins call
+                            </button>
+                          </Menu.Item>
+                          <Menu.Item>
+                            <button
+                              data-cal-link="rosekamallove/30min"
+                              className={`w-full px-2 py-1 text-sm font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                            >
+                              30 mins call
+                            </button>
+                          </Menu.Item>
+                        </Menu.Items>
+                      </Transition>
+                    </div>
+                  </Menu>
+                </div>
+
+                <div className="absolute bottom-0 -z-10 h-5 w-full rounded-b-lg bg-neutral-800" />
+                <Image
+                  src="/book-ta.png"
+                  alt="Book TA Session"
+                  width={206}
+                  height={124}
+                  className="absolute bottom-0 right-0"
+                />
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
           <div
-            className={`flex w-full flex-col gap-2 border-b border-neutral-700 p-4 px-6 transition-all duration-300 ${
-              sideDrawerCollapsed ? "hidden" : ""
+            className={`right-4 flex rounded-lg backdrop-blur-sm md:bg-neutral-200/5 ${
+              sideDrawerCollapsed
+                ? "top-[3.3rem] flex-row-reverse border-neutral-700 sm:sticky sm:h-[calc(100vh-4.5rem)] sm:max-w-[5rem] sm:flex-col sm:border sm:bg-neutral-950/80"
+                : "fixed top-[3.3rem] h-[calc(100vh-4.5rem)] w-4/5 max-w-sm flex-col border border-neutral-700 bg-neutral-950/80 sm:top-[16rem] sm:h-[calc(100vh-17rem)] sm:w-full md:sticky"
             }`}
           >
+            <button
+              className={`absolute -left-5 top-6 z-10 aspect-square rounded-full border border-neutral-600 bg-neutral-900 p-2 text-neutral-400 drop-shadow-xl duration-150 hover:bg-neutral-800 hover:text-neutral-300 ${
+                sideDrawerCollapsed ? "hidden sm:flex" : ""
+              }`}
+              onClick={() => setSideDrawerCollapsed(!sideDrawerCollapsed)}
+            >
+              {sideDrawerCollapsed ? (
+                <ChevronLeftIcon className="w-5" />
+              ) : (
+                <ChevronRightIcon className="w-5" />
+              )}
+            </button>
             <div
-              className={`flex items-start justify-between ${
-                sideDrawerCollapsed ? "flex-col gap-1 sm:flex-row" : "gap-2"
+              className={`flex w-full flex-col gap-2 border-b border-neutral-700 p-4 px-6 transition-all duration-300 ${
+                sideDrawerCollapsed ? "hidden" : ""
               }`}
             >
+              <div
+                className={`flex items-start justify-between ${
+                  sideDrawerCollapsed ? "flex-col gap-1 sm:flex-row" : "gap-2"
+                }`}
+              >
+                {sideDrawerCollapsed ? (
+                  <></>
+                ) : (
+                  <Link
+                    href={`/course/${course?.id ?? ""}`}
+                    className="line-clamp-2 overflow-hidden text-ellipsis text-lg font-medium duration-150 hover:text-neutral-100"
+                  >
+                    {course?.title}
+                  </Link>
+                )}
+              </div>
+
               {sideDrawerCollapsed ? (
                 <></>
               ) : (
-                <Link
-                  href={`/course/${course?.id ?? ""}`}
-                  className="line-clamp-2 overflow-hidden text-ellipsis text-lg font-medium duration-150 hover:text-neutral-100"
-                >
-                  {course?.title}
-                </Link>
+                <div className="flex items-center gap-2 text-sm text-neutral-300">
+                  <Link
+                    href={`${
+                      course?.creator
+                        ? `/${course?.creator?.creatorProfile ?? ""}`
+                        : `https://www.youtube.com/${course?.ytChannelId ?? ""}`
+                    }`}
+                    target={!course?.creator ? "_blank" : undefined}
+                    className="duration-150 hover:text-neutral-200"
+                  >
+                    {course?.creator?.name ?? course?.ytChannelName ?? ""}
+                  </Link>{" "}
+                  • <p>{course?.chapters?.length} Chapters</p>
+                </div>
               )}
             </div>
-
-            {sideDrawerCollapsed ? (
-              <></>
-            ) : (
-              <div className="flex items-center gap-2 text-sm text-neutral-300">
-                <Link
-                  href={`${
-                    course?.creator
-                      ? `/${course?.creator?.creatorProfile ?? ""}`
-                      : `https://www.youtube.com/${course?.ytChannelId ?? ""}`
-                  }`}
-                  target={!course?.creator ? "_blank" : undefined}
-                  className="duration-150 hover:text-neutral-200"
-                >
-                  {course?.creator?.name ?? course?.ytChannelName ?? ""}
-                </Link>{" "}
-                • <p>{course?.chapters?.length} Chapters</p>
-              </div>
-            )}
-          </div>
-          {
-            <button
-              className={`${sideDrawerCollapsed ? "px-2 sm:hidden" : "hidden"}`}
-              onClick={() => setSideDrawerCollapsed(!sideDrawerCollapsed)}
-            >
-              <ListBulletIcon className="w-6" />
-            </button>
-          }
-          <div
-            className={`flex items-center overflow-hidden border-neutral-700 p-1 sm:p-2 [&.chartjs-legend]:hidden ${
-              sideDrawerCollapsed
-                ? "gap-2 sm:w-full sm:gap-4 sm:border-b sm:border-l-0"
-                : "w-full gap-2 border-b sm:gap-4"
-            }`}
-          >
+            {
+              <button
+                className={`${
+                  sideDrawerCollapsed ? "px-2 sm:hidden" : "hidden"
+                }`}
+                onClick={() => setSideDrawerCollapsed(!sideDrawerCollapsed)}
+              >
+                <ListBulletIcon className="w-6" />
+              </button>
+            }
             <div
-              className={`relative flex items-center justify-center ${
+              className={`flex items-center overflow-hidden border-neutral-700 p-1 sm:p-2 [&.chartjs-legend]:hidden ${
                 sideDrawerCollapsed
-                  ? "hidden h-16 w-16 sm:flex"
-                  : "h-24 w-24 sm:h-24 sm:w-24"
+                  ? "gap-2 sm:w-full sm:gap-4 sm:border-b sm:border-l-0"
+                  : "w-full gap-2 border-b sm:gap-4"
               }`}
             >
-              <Pie data={data} options={options} />
-            </div>
-            <h5
-              className={`${
-                sideDrawerCollapsed ? "block px-2 pr-3 sm:hidden" : "hidden"
-              }`}
-            >
-              <span className="m-0 p-0 text-xl font-bold text-green-600">
-                {Math.ceil((chaptersWatched / course.chapters?.length) * 100)}
-                <span className="m-0 p-0 text-sm font-normal leading-3">%</span>
-              </span>
-            </h5>
-
-            {sideDrawerCollapsed ? (
-              <></>
-            ) : (
-              <div className="grid grid-cols-2 gap-x-1 gap-y-5 sm:gap-5">
-                <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
-                  <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-green-600">
-                    {Math.ceil(
-                      (chaptersWatched / course.chapters?.length) * 100
-                    )}
-                    <span className="m-0 p-0 text-sm font-normal leading-3">
-                      %
-                    </span>
-                  </span>{" "}
-                  completed
-                </div>
-                <div className="m-0 flex items-center p-0 text-xs leading-3 text-neutral-300">
-                  <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-neutral-200">
-                    {minutesWatched}
-                    <span className="m-0 p-0 text-sm font-normal leading-3">
-                      mins
-                    </span>
-                  </span>{" "}
-                  watched
-                </div>
-                <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
-                  <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-green-600">
-                    {chaptersWatched}
-                    <span className="m-0 p-0 text-sm font-normal leading-3">
-                      chs
-                    </span>
-                  </span>{" "}
-                  watched
-                </div>
-                <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
-                  <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-neutral-400">
-                    {course.chapters?.length - chaptersWatched}
-                    <span className="m-0 p-0 text-sm font-normal leading-3">
-                      chs
-                    </span>
-                  </span>{" "}
-                  remaining
-                </div>
+              <div
+                className={`relative flex items-center justify-center ${
+                  sideDrawerCollapsed
+                    ? "hidden h-16 w-16 sm:flex"
+                    : "h-24 w-24 sm:h-24 sm:w-24"
+                }`}
+              >
+                <Pie data={data} options={options} />
               </div>
-            )}
-          </div>
-          <div
-            ref={chaptersNavRef}
-            className={`flex w-full justify-start overflow-auto  ${
-              sideDrawerCollapsed
-                ? "hide-scroll flex-row items-center justify-start sm:max-h-[calc(100vh-10rem)] sm:flex-col"
-                : "max-h-[calc(100vh-17rem)] flex-col"
-            }`}
-          >
-            {course?.chapters?.map((chapter, idx) => (
-              <CoursePlayerChapterTile
-                collapsed={sideDrawerCollapsed}
-                idx={idx}
-                chapter={chapter}
-                key={chapter?.id}
-              />
-            ))}
+              <h5
+                className={`${
+                  sideDrawerCollapsed ? "block px-2 pr-3 sm:hidden" : "hidden"
+                }`}
+              >
+                <span className="m-0 p-0 text-xl font-bold text-green-600">
+                  {Math.ceil((chaptersWatched / course.chapters?.length) * 100)}
+                  <span className="m-0 p-0 text-sm font-normal leading-3">
+                    %
+                  </span>
+                </span>
+              </h5>
+
+              {sideDrawerCollapsed ? (
+                <></>
+              ) : (
+                <div className="grid grid-cols-2 gap-x-1 gap-y-5 sm:gap-5">
+                  <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
+                    <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-green-600">
+                      {Math.ceil(
+                        (chaptersWatched / course.chapters?.length) * 100
+                      )}
+                      <span className="m-0 p-0 text-sm font-normal leading-3">
+                        %
+                      </span>
+                    </span>{" "}
+                    completed
+                  </div>
+                  <div className="m-0 flex items-center p-0 text-xs leading-3 text-neutral-300">
+                    <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-neutral-200">
+                      {minutesWatched}
+                      <span className="m-0 p-0 text-sm font-normal leading-3">
+                        mins
+                      </span>
+                    </span>{" "}
+                    watched
+                  </div>
+                  <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
+                    <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-green-600">
+                      {chaptersWatched}
+                      <span className="m-0 p-0 text-sm font-normal leading-3">
+                        chs
+                      </span>
+                    </span>{" "}
+                    watched
+                  </div>
+                  <div className="m-0 flex items-end p-0 text-xs leading-3 text-neutral-300">
+                    <span className="m-0 mr-1 p-0 text-xl font-bold leading-3 text-neutral-400">
+                      {course.chapters?.length - chaptersWatched}
+                      <span className="m-0 p-0 text-sm font-normal leading-3">
+                        chs
+                      </span>
+                    </span>{" "}
+                    remaining
+                  </div>
+                </div>
+              )}
+            </div>
+            <div
+              ref={chaptersNavRef}
+              className={`flex w-full justify-start overflow-auto  ${
+                sideDrawerCollapsed
+                  ? "hide-scroll flex-row items-center justify-start sm:max-h-[calc(100vh-9rem)] sm:flex-col"
+                  : "max-h-[calc(100vh-9rem)] flex-col sm:max-h-[calc(100vh-29rem)]"
+              }`}
+            >
+              {course?.chapters?.map((chapter, idx) => (
+                <CoursePlayerChapterTile
+                  collapsed={sideDrawerCollapsed}
+                  idx={idx}
+                  chapter={chapter}
+                  key={chapter?.id}
+                />
+              ))}
+            </div>
           </div>
         </div>
+
         {/* stops content from sliding up on side bar open */}
-        <div className={`${!sideDrawerCollapsed ? "h-[4.5rem] sm:h-0" : ""}`} />
+        <div className={`${!sideDrawerCollapsed ? "h-[3rem] sm:h-0" : ""}`} />
       </div>
       <ShareCourseModal
         isOpen={shareModal}

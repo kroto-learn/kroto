@@ -772,7 +772,7 @@ export const courseRouter = createTRPCRouter({
     }),
 
   createTag: protectedProcedure
-    .input(z.string())
+    .input(z.string().min(3))
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
@@ -799,6 +799,20 @@ export const courseRouter = createTRPCRouter({
       });
 
       return tags;
+    }),
+
+  deleteTag: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const tag = await prisma.tag.delete({
+        where: {
+          id: input,
+        },
+      });
+
+      return tag;
     }),
 
   createCategory: protectedProcedure
