@@ -51,7 +51,6 @@ export class MixPannelClient {
     id: string;
     avatar: string;
   }) {
-    mixpanel.alias(data.id, MixPannelClient._distict_id);
     mixpanel.identify(data.id);
     mixpanel.people.set({
       $email: data.email,
