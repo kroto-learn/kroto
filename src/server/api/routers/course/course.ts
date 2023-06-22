@@ -63,6 +63,16 @@ export const courseRouter = createTRPCRouter({
       });
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      const isEnrolled = course?.enrollments.find(
+        (er) => ctx.session.user.id === er.id
+      );
+
+      if (
+        !isEnrolled &&
+        ctx.session.user.id !== course?.creatorId &&
+        !isAdmin(ctx.session.user.email ?? "")
+      )
+        return new TRPCError({ code: "BAD_REQUEST" });
 
       const courseProgress = course.courseProgress[0];
 
