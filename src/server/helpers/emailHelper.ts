@@ -345,90 +345,21 @@ const sendContactus = async (contact: {
   }
 };
 
-const dailyReminderNotLearned = async ({
-  name,
-  email,
-  courseId,
-  courseName,
-}: {
-  name: string;
-  email: string;
-  courseId: string;
-  courseName: string;
-}) => {
-  const data = {
-    name,
-    courseUrl: `https://kroto.in/course/play/${courseId}`,
-    courseName,
-  };
-
-  const html = reminderTemplate(data);
-
-  const mailOptions = {
-    from: "kamal@kroto.in", // sender email
-    to: email, // recipient email
-    subject: "You're falling behind!",
-    html: html,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (err) {
-    if (err instanceof Error)
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: err.message,
-      });
-  }
+const dailyReminderNotLearned = ({ email }: { email: string }) => {
+  console.log("Not learned anything", email);
 };
 
-const dailyLearningReport = async ({
-  name,
-  email,
+const dailyLearningReport = ({
   courseId,
-  courseName,
-  chsWatched,
+  chapterId,
   minutes,
-  moreLearned,
-  lessLearned,
 }: {
-  name: string;
   email: string;
   courseId: string;
-  courseName: string;
-  chsWatched: number;
+  chapterId: string;
   minutes: number;
-  moreLearned: string;
-  lessLearned: string;
 }) => {
-  const data = {
-    name,
-    chsWatched,
-    minsLearned: minutes,
-    courseUrl: `https://kroto.in/course/play/${courseId}`,
-    courseName,
-    moreLearned,
-    lessLearned,
-  };
-
-  const html = reportTemplate(data);
-
-  const mailOptions = {
-    from: "kamal@kroto.in", // sender email
-    to: email, // recipient email
-    subject: "Your learning report is here!",
-    html: html,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (err) {
-    if (err instanceof Error)
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: err.message,
-      });
-  }
+  console.log("Learning Report::", { courseId, chapterId, minutes });
 };
 
 export {

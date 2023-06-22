@@ -105,6 +105,8 @@ export const trackingRouter = createTRPCRouter({
     const minutesStudiedInLastWeek: { date: Date; minutes: number }[] = [];
 
     const currentDate = new Date();
+
+    // Query documents created in the last 7 days
     for (let i = 6; i >= 0; i--) {
       const lastIthStartDate = new Date(
         currentDate.getFullYear(),
@@ -118,7 +120,6 @@ export const trackingRouter = createTRPCRouter({
         currentDate.getDate() - i + 1
       );
 
-      // Query documents created in the last 7 days
       const learnTracks = await prisma.learnTrack.findMany({
         where: {
           userId: ctx.session.user.id,
