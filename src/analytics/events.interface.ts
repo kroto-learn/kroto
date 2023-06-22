@@ -20,7 +20,6 @@ export enum UserEvents {
 
 export enum PROFILE_EVENTS {
   PROFILE_VIEWED = "Profile Viewed",
-  PROFILE_UPDATED = "Profile Updated",
 
   PROFILE_EVENT_TAB_VIEWED = "Profile Event Viewed",
   PROFILE_TESTIMONIAL_TAB_VIEWED = "Profile Testimonial Viewed",
@@ -43,11 +42,14 @@ export enum CourseEvents {
   COURSE_UPDATED = "Course Updated",
   COURSE_DELETED = "Course Deleted",
 
+  BACK_TO_DASHBOARD_CLICKED = "Back To Dashboard Clicked",
+
   COURSE_ENROLLED = "Course Enrolled",
   COURSE_VIEWED = "Course Viewed",
-  COURSE_SHARED = "Course Shared",
+  COURSE_SHARE_CLICKED = "Course Shared Clicked",
+  COURSE_SHARED_TYPE = "Course Shared Type",
 
-  CREATOR_PROFILE_CLICKED = "Creator Profile Clicked",
+  CREATOR_PROFILE_CLICKED_FROM_COURSE = "Creator Profile Clicked From Course",
 }
 
 export enum LessonEvents {
@@ -57,8 +59,13 @@ export enum LessonEvents {
 
   MARK_AS_COMPLETE_CLICKED = "Mark As Complete Clicked",
   NEXT_LESSON_CLICKED = "Next Lesson Clicked",
+  PREVIOUS_LESSON_CLICKED = "Previous Lesson Clicked",
 
   OVERVIEW_COLLAPSED = "Overview Collapsed",
 
   LESSON_WATCHED_5 = "Lesson Watched 5m",
+
+  BOOK_A_SESSION_CLICKED = "Book A Session Clicked",
+  SESSON_CHOOSED_15 = "Session Choosed 15m",
+  SESSON_CHOOSED_30 = "Session Choosed 30m",
 }
