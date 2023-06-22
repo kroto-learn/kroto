@@ -99,11 +99,6 @@ const Index = () => {
 
   const { data: catgs } = api.course.getCategories.useQuery();
 
-  // const { mutateAsync: createTagMutation, isLoading: creatingTag } =
-  //   api.course.createTag.useMutation();
-
-  // const [playlistDetailInit, setPlaylistDetailInit] = useState(false);
-
   const { errorToast } = useToast();
 
   useEffect(() => {
