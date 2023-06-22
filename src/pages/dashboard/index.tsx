@@ -29,6 +29,8 @@ import {
   type TooltipItem,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { MixPannelClient } from "@/analytics/mixpanel";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -139,6 +141,14 @@ export default function Dashboard() {
       },
     ],
   };
+
+  useEffect(() => {
+    MixPannelClient.getInstance().dashboardViewed();
+  }, []);
+
+  useEffect(() => {
+    if (isPastTab) MixPannelClient.getInstance().pastEventTabViewed();
+  }, [isPastTab]);
 
   return (
     <Layout>

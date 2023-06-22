@@ -256,7 +256,6 @@ export class MixPannelClient {
   }
 
   public lessonWatchedForFiveMinutes(data: {
-    lessonId: string;
     courseId: string;
     userId: string;
   }) {

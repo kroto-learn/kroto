@@ -12,6 +12,8 @@ import {
   WhatsappIcon,
   WhatsappShareButton,
 } from "next-share";
+import { MixPannelClient } from "@/analytics/mixpanel";
+import { useSession } from "next-auth/react";
 
 export default function ShareCourseModal({
   courseId,
@@ -27,6 +29,8 @@ export default function ShareCourseModal({
   const { successToast } = useToast();
 
   const courseUrl = `https://kroto.in/course/${courseId}`;
+
+  const session = useSession();
 
   return (
     <>
@@ -87,11 +91,25 @@ export default function ShareCourseModal({
                         onClick={() => {
                           void navigator.clipboard.writeText(courseUrl);
                           successToast("Course URL copied to clipboard!");
+                          MixPannelClient.getInstance().courseSharedType({
+                            courseId,
+                            userId: session.data?.user?.id ?? "",
+                            type: "copy-link",
+                          });
                         }}
                       >
                         <LinkIcon className="w-5" />
                       </button>
-                      <LinkedinShareButton url={courseUrl}>
+                      <LinkedinShareButton
+                        url={courseUrl}
+                        onClick={() => {
+                          MixPannelClient.getInstance().courseSharedType({
+                            courseId,
+                            userId: session.data?.user?.id ?? "",
+                            type: "linkedin",
+                          });
+                        }}
+                      >
                         <LinkedinIcon
                           size={36}
                           round
@@ -102,6 +120,13 @@ export default function ShareCourseModal({
                         url={courseUrl}
                         quote={`Enroll the "${courseTitle}" course on Kroto.in`}
                         hashtag={"#kroto"}
+                        onClick={() => {
+                          MixPannelClient.getInstance().courseSharedType({
+                            courseId,
+                            userId: session.data?.user?.id ?? "",
+                            type: "facebook",
+                          });
+                        }}
                       >
                         <FacebookIcon
                           size={36}
@@ -112,6 +137,13 @@ export default function ShareCourseModal({
                       <TwitterShareButton
                         url={courseUrl}
                         title={`Enroll the "${courseTitle}" course on Kroto`}
+                        onClick={() => {
+                          MixPannelClient.getInstance().courseSharedType({
+                            courseId,
+                            userId: session.data?.user?.id ?? "",
+                            type: "twitter",
+                          });
+                        }}
                       >
                         <TwitterIcon
                           size={36}
@@ -123,6 +155,13 @@ export default function ShareCourseModal({
                         url={courseUrl}
                         title={`Enroll the "${courseTitle}" course on Kroto.in`}
                         separator=": "
+                        onClick={() => {
+                          MixPannelClient.getInstance().courseSharedType({
+                            courseId,
+                            userId: session.data?.user?.id ?? "",
+                            type: "whatsapp",
+                          });
+                        }}
                       >
                         <WhatsappIcon
                           size={36}
