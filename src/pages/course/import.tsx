@@ -30,6 +30,7 @@ import { CheckmarkIcon } from "react-hot-toast";
 import ImageWF from "@/components/ImageWF";
 import { signIn } from "next-auth/react";
 import { Listbox } from "@headlessui/react";
+import { MixPannelClient } from "@/analytics/mixpanel";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -303,6 +304,9 @@ const Index = () => {
             await importCourseMutation(values, {
               onSuccess: (courseCreated) => {
                 if (courseCreated && !(courseCreated instanceof TRPCError)) {
+                  MixPannelClient.getInstance().courseCreated({
+                    courseId: courseCreated?.id,
+                  });
                   void router.push(
                     `/creator/dashboard/course/${courseCreated?.id}`
                   );

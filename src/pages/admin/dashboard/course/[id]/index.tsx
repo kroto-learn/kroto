@@ -27,6 +27,8 @@ import { ClockIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import AnimatedSection from "@/components/AnimatedSection";
 import { AdminDashboardLayout } from "../..";
+import { MixPannelClient } from "@/analytics/mixpanel";
+import { useSession } from "next-auth/react";
 
 const AdminCourseLayoutR = dynamic(
   () => import("@/components/layouts/adminCourseDashboard"),
@@ -48,6 +50,8 @@ const CourseOverview = () => {
 
   const { mutateAsync: syncImportMutation, isLoading: syncImportLoading } =
     api.course.syncImport.useMutation();
+
+  const session = useSession();
 
   const ctx = api.useContext();
   const revalidate = useRevalidateSSG();
@@ -96,11 +100,33 @@ const CourseOverview = () => {
                   onClick={() => {
                     void navigator.clipboard.writeText(courseUrl);
                     successToast("Course URL copied to clipboard!");
+                    MixPannelClient.getInstance().courseShared({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                    });
+                    MixPannelClient.getInstance().courseSharedType({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                      type: "copy-link",
+                    });
                   }}
                 >
                   <LinkIcon className="w-3" />
                 </button>
-                <LinkedinShareButton url={courseUrl}>
+                <LinkedinShareButton
+                  url={courseUrl}
+                  onClick={() => {
+                    MixPannelClient.getInstance().courseShared({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                    });
+                    MixPannelClient.getInstance().courseSharedType({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                      type: "linkedin",
+                    });
+                  }}
+                >
                   <LinkedinIcon
                     size={28}
                     round
@@ -113,6 +139,17 @@ const CourseOverview = () => {
                     course?.title ?? ""
                   }" course on Kroto.in`}
                   hashtag={"#kroto"}
+                  onClick={() => {
+                    MixPannelClient.getInstance().courseShared({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                    });
+                    MixPannelClient.getInstance().courseSharedType({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                      type: "facebook",
+                    });
+                  }}
                 >
                   <FacebookIcon
                     size={28}
@@ -123,6 +160,17 @@ const CourseOverview = () => {
                 <TwitterShareButton
                   url={courseUrl}
                   title={`Enroll the "${course?.title ?? ""}" course on Kroto`}
+                  onClick={() => {
+                    MixPannelClient.getInstance().courseShared({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                    });
+                    MixPannelClient.getInstance().courseSharedType({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                      type: "twitter",
+                    });
+                  }}
                 >
                   <TwitterIcon
                     size={28}
@@ -131,6 +179,17 @@ const CourseOverview = () => {
                   />
                 </TwitterShareButton>
                 <WhatsappShareButton
+                  onClick={() => {
+                    MixPannelClient.getInstance().courseShared({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                    });
+                    MixPannelClient.getInstance().courseSharedType({
+                      courseId: course?.id ?? "",
+                      userId: session.data?.user?.id ?? "",
+                      type: "whatsapp",
+                    });
+                  }}
                   url={courseUrl}
                   title={`Enroll the "${
                     course?.title ?? ""
@@ -256,6 +315,9 @@ const CourseOverview = () => {
                   { id: course?.id },
                   {
                     onSuccess: () => {
+                      MixPannelClient.getInstance().courseUpdated({
+                        courseId: course?.id,
+                      });
                       void ctx.course.get.invalidate();
                       void revalidate(`/course/${course?.id}`);
                       if (course?.creator)

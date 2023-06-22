@@ -14,12 +14,13 @@ import Image from "next/image";
 import Link from "next/link";
 // import { useRouter } from "next/router";
 import { type ParsedUrlQuery } from "querystring";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CoursePreviewModal from "@/components/CoursePreviewModal";
 import { useRouter } from "next/router";
 import { prisma } from "@/server/db";
 import CheckoutModal from "@/components/CheckoutModal";
 import { type Course } from "@prisma/client";
+import { MixPannelClient } from "@/analytics/mixpanel";
 
 type Props = {
   courseId: string;
@@ -38,6 +39,14 @@ const Index = ({ courseId }: Props) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState<boolean>(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (courseId && session.status !== "loading")
+      MixPannelClient.getInstance().courseViewed({
+        userId: session.data?.user.id ?? "",
+        courseId,
+      });
+  }, [courseId, session]);
 
   if (course instanceof TRPCError || !course)
     return (
@@ -194,6 +203,10 @@ const Index = ({ courseId }: Props) => {
                             { courseId: course?.id },
                             {
                               onSuccess: () => {
+                                MixPannelClient.getInstance().courseEnrolled({
+                                  courseId,
+                                  userId: session?.data.user?.id ?? "",
+                                });
                                 void ctx.course.isEnrolled.invalidate();
                                 successToast(
                                   "Successfully enrolled in course!"
