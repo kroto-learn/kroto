@@ -21,6 +21,7 @@ import { prisma } from "@/server/db";
 import CheckoutModal from "@/components/CheckoutModal";
 import { type Course } from "@prisma/client";
 import { MixPannelClient } from "@/analytics/mixpanel";
+import ImageWF from "@/components/ImageWF";
 
 type Props = {
   courseId: string;
@@ -108,7 +109,7 @@ const Index = ({ courseId }: Props) => {
         <div className="hide-scroll mx-auto mb-8 mt-16 flex w-full max-w-4xl flex-col gap-4 overflow-x-hidden p-4 sm:h-[80vh] sm:flex-row">
           <AnimatedSection className="flex h-full w-full flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm sm:w-[30rem]">
             <div className="relative aspect-video w-full content-center overflow-hidden rounded-xl">
-              <Image
+              <ImageWF
                 src={course?.thumbnail ?? ""}
                 alt={course?.title ?? ""}
                 fill
@@ -272,7 +273,7 @@ const Index = ({ courseId }: Props) => {
               >
                 <p className="text-sm text-neutral-300">{index + 1}</p>
                 <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
-                  <Image
+                  <ImageWF
                     src={chapter?.thumbnail ?? ""}
                     alt={chapter?.title ?? ""}
                     fill
