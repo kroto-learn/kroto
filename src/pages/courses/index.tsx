@@ -82,16 +82,16 @@ const Index = () => {
             <div className="flex h-60 w-full items-center justify-center">
               <Loader size="lg" />
             </div>
-          ) : (
+          ) : courses && courses?.length > 0 ? (
             <div className="flex w-full flex-wrap justify-center gap-8">
               {courses?.map((course) => (
                 <Link
                   href={`/course/${course?.id}`}
                   key={course.id}
-                  className="group relative h-[15.5rem] w-64 rounded-lg border border-neutral-700 bg-neutral-200/10 backdrop-blur duration-150 hover:border-neutral-600"
+                  className="group relative h-[15.5rem] w-64 rounded-lg border border-neutral-800 bg-neutral-200/5 backdrop-blur-sm duration-150 hover:border-neutral-700"
                 >
-                  <div className="flex w-full flex-col gap-2 p-2">
-                    <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                  <div className="flex w-full flex-col gap-1 p-2">
+                    <div className="relative mb-1 aspect-video w-full overflow-hidden rounded-lg">
                       <ImageWF
                         src={course?.thumbnail ?? ""}
                         alt={course?.title ?? ""}
@@ -99,7 +99,7 @@ const Index = () => {
                         className="object-cover"
                       />
                     </div>
-                    <title className="line-clamp-2 overflow-hidden text-ellipsis text-xs font-bold text-neutral-200">
+                    <title className="line-clamp-2 overflow-hidden text-ellipsis text-sm font-bold text-neutral-200">
                       {course.title}
                     </title>
                     <Link
@@ -120,21 +120,30 @@ const Index = () => {
                         alt={
                           course?.creator?.name ?? course?.ytChannelName ?? ""
                         }
-                        width={22}
-                        height={22}
+                        width={18}
+                        height={18}
                         className="rounded-full"
                       />
-                      <p className="w-full text-xs font-bold duration-150 hover:text-neutral-200 hover:underline">
+                      <p className="w-full text-xs duration-150 hover:text-neutral-200 hover:underline">
                         {course?.creator?.name ?? course?.ytChannelName ?? ""}
                       </p>
                     </Link>
                   </div>
-                  <div className="absolute bottom-0 flex w-full items-center justify-center gap-1 border-t border-neutral-700 px-2 py-1 text-xs duration-150 group-hover:border-neutral-600">
+                  <div className="absolute bottom-0 flex w-full items-center justify-center gap-1 border-t border-neutral-800 px-2 py-1 text-xs duration-150 group-hover:border-neutral-700">
                     <BookOpenIcon className="w-3" /> {course?._count.chapters}{" "}
                     Chapters
                   </div>
                 </Link>
               ))}
+            </div>
+          ) : (
+            <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+              <div className="relative aspect-square w-40 object-contain">
+                <ImageWF src="/empty/course_empty.svg" alt="empty" fill />
+              </div>
+              <p className="mb-2 text-center text-neutral-400">
+                Sorry, no courses found!
+              </p>
             </div>
           )}
         </AnimatedSection>
