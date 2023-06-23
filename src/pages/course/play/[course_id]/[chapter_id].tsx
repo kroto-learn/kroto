@@ -195,8 +195,6 @@ const Index = () => {
         userId: session.data?.user?.id ?? "",
       });
 
-      console.log("5min mixed");
-
       localStorage.setItem(
         `5minLWMixed-${course_id}`,
         JSON.stringify({
