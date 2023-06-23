@@ -100,24 +100,25 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
   }, [isEnrolled, isEnrolledLoading, router, course, session, courseLoading]);
 
   useEffect(() => {
-    //TODO: scroll to chapter link, this doesn't work
     if (chapter_id && chaptersNavRef.current && !!course && !navbarScrollInit) {
       setNavbarScrollInit(true);
-      // const buttonToScrollTo = chaptersNavRef.current.querySelector(
-      //   `#${chapter_id}`
-      // );
+      const buttonToScrollTo = chaptersNavRef.current.querySelector(
+        `#${chapter_id}`
+      );
 
-      // #1st approach
-      // if (buttonToScrollTo)
-      //   buttonToScrollTo.scrollIntoView({ block: "start", inline: "nearest" });
-
-      // #2nd approach
-      // if (buttonToScrollTo)
-      //   chaptersNavRef.current.scrollTop = (
-      //     buttonToScrollTo as HTMLDivElement
-      //   ).offsetTop;
+      if (buttonToScrollTo) {
+        chaptersNavRef.current.scrollTop =
+          (buttonToScrollTo as HTMLDivElement).offsetTop - 190;
+        chaptersNavRef.current.scrollLeft = (
+          buttonToScrollTo as HTMLDivElement
+        ).offsetLeft;
+      }
     }
   }, [chapter_id, course, navbarScrollInit]);
+
+  useEffect(() => {
+    setNavbarScrollInit(false);
+  }, [sideDrawerCollapsed]);
 
   useEffect(() => {
     function handleResize() {
@@ -217,7 +218,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
           <ShareIcon className="w-3" /> Share Course
         </button>
       </div>
-      <div className="sticky top-12 z-20 flex w-full items-center justify-between bg-pink-500 px-2 py-2 pl-3 text-sm font-bold sm:mt-2 sm:hidden">
+      <div className="sticky top-12 z-10 flex w-full items-center justify-between bg-pink-500 px-2 py-2 pl-3 text-sm font-bold sm:mt-2 sm:hidden">
         <h4>Book a free 1:1 doubt resolving session!</h4>
         <Menu as="div" className="relative inline-block text-left">
           <div className="flex flex-col items-end">
@@ -374,7 +375,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             className={`right-4 flex rounded-lg backdrop-blur-sm md:bg-neutral-200/5 ${
               sideDrawerCollapsed
                 ? "top-[3.3rem] flex-row-reverse border-neutral-700 sm:sticky sm:h-[calc(100vh-4.5rem)] sm:max-w-[5rem] sm:flex-col sm:border sm:bg-neutral-950/80"
-                : "fixed top-[3.3rem] h-[calc(100vh-4.5rem)] w-4/5 max-w-sm flex-col border border-neutral-700 bg-neutral-950/80 sm:top-[16rem] sm:h-[calc(100vh-17rem)] sm:w-full md:sticky"
+                : "fixed top-[3.3rem] z-20 h-[calc(100vh-4.5rem)] w-4/5 max-w-sm flex-col border border-neutral-700 bg-neutral-950/80 sm:top-[16rem] sm:h-[calc(100vh-17rem)] sm:w-full md:sticky"
             }`}
           >
             <button
@@ -537,7 +538,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
               className={`flex w-full justify-start overflow-auto  ${
                 sideDrawerCollapsed
                   ? "hide-scroll flex-row items-center justify-start sm:max-h-[calc(100vh-9rem)] sm:flex-col"
-                  : "max-h-[calc(100vh-9rem)] flex-col sm:max-h-[calc(100vh-29rem)]"
+                  : "max-h-[calc(100vh-16.5rem)] flex-col sm:max-h-[calc(100vh-29rem)]"
               }`}
             >
               {course?.chapters?.map((chapter, idx) => (
