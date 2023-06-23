@@ -190,6 +190,10 @@ export class MixPannelClient {
     this.track(CourseEvents.COURSE_SHARED_TYPE, data);
   }
 
+  public coursePlayed(data: { userId: string; courseId: string }) {
+    this.track(CourseEvents.COURSE_VIEWED, data);
+  }
+
   public backToDashboardClicked(data: {
     courseId: string;
     userId: string;

@@ -19,7 +19,6 @@ import {
 import { useSession } from "next-auth/react";
 import { Dialog, Transition } from "@headlessui/react";
 import { MixPannelClient } from "@/analytics/mixpanel";
-import moment from "moment";
 
 const Index = () => {
   const router = useRouter();
@@ -57,7 +56,7 @@ const Index = () => {
   const [progress, setProgress] = useState(0);
   const [stackedProgress, setStackedProgress] = useState(0);
   const [stackedProgress2, setStackedProgress2] = useState(0);
-  const [fiveMinMixedThisWeek, set5MinMixedThisWeek] = useState(false);
+  const [fiveMinMixedToday, set5MinMixedToday] = useState(false);
 
   const [previousProgress, setPreviousProgress] = useState(0);
 
@@ -97,7 +96,7 @@ const Index = () => {
   }, [chapter_id]);
 
   useEffect(() => {
-    set5MinMixedThisWeek(false);
+    set5MinMixedToday(false);
   }, [course_id]);
 
   useEffect(() => {
@@ -131,7 +130,7 @@ const Index = () => {
           progress + (progress >= player?.getDuration() || paused ? 0 : 1)
         );
 
-        if (!fiveMinMixedThisWeek)
+        if (!fiveMinMixedToday)
           setStackedProgress2(
             stackedProgress2 +
               (progress >= player?.getDuration() || paused ? 0 : 1)
@@ -189,10 +188,14 @@ const Index = () => {
 
   useEffect(() => {
     if (stackedProgress2 > 5 * 60) {
+      setStackedProgress2(0);
+      set5MinMixedToday(true);
       MixPannelClient.getInstance().lessonWatchedForFiveMinutes({
         courseId: course_id,
         userId: session.data?.user?.id ?? "",
       });
+
+      console.log("5min mixed");
 
       localStorage.setItem(
         `5minLWMixed-${course_id}`,
@@ -218,11 +221,18 @@ const Index = () => {
 
     if (
       fiveMinLWMixed &&
-      moment(new Date(fiveMinLWMixed.date)).isoWeek() ===
-        moment(new Date()).isoWeek()
+      new Date(fiveMinLWMixed.date).getDate() === new Date().getDate()
     )
-      set5MinMixedThisWeek(true);
+      set5MinMixedToday(true);
   }, [course_id]);
+
+  useEffect(() => {
+    if (session.status === "authenticated")
+      MixPannelClient.getInstance().coursePlayed({
+        courseId: course_id,
+        userId: session.data?.user?.id ?? "",
+      });
+  }, [course_id, session]);
 
   const [watchChecked, setWatchChecked] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);

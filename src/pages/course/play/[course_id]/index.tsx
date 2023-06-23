@@ -103,12 +103,19 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     //TODO: scroll to chapter link, this doesn't work
     if (chapter_id && chaptersNavRef.current && !!course && !navbarScrollInit) {
       setNavbarScrollInit(true);
-      const buttonToScrollTo = chaptersNavRef.current.querySelector(
-        `#${chapter_id}`
-      );
+      // const buttonToScrollTo = chaptersNavRef.current.querySelector(
+      //   `#${chapter_id}`
+      // );
 
-      if (buttonToScrollTo)
-        buttonToScrollTo.scrollIntoView({ block: "start", inline: "nearest" });
+      // #1st approach
+      // if (buttonToScrollTo)
+      //   buttonToScrollTo.scrollIntoView({ block: "start", inline: "nearest" });
+
+      // #2nd approach
+      // if (buttonToScrollTo)
+      //   chaptersNavRef.current.scrollTop = (
+      //     buttonToScrollTo as HTMLDivElement
+      //   ).offsetTop;
     }
   }, [chapter_id, course, navbarScrollInit]);
 
@@ -406,7 +413,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                 ) : (
                   <Link
                     href={`/course/${course?.id ?? ""}`}
-                    className="line-clamp-2 overflow-hidden text-ellipsis text-lg font-medium duration-150 hover:text-neutral-100"
+                    className="line-clamp-1 overflow-hidden text-ellipsis text-lg font-medium duration-150 hover:text-neutral-100"
                   >
                     {course?.title}
                   </Link>
