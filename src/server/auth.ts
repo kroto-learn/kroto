@@ -95,6 +95,13 @@ export const authOptions: NextAuthOptions = {
             id: dbUser.id,
           });
         }
+
+        mixpanel.people.set(dbUser.id, {
+          $email: dbUser.email,
+          $name: dbUser.name,
+          $created: new Date().toISOString(),
+          $avatar: dbUser.image,
+        });
       }
 
       if (dbUser.isCreator) {
@@ -110,6 +117,13 @@ export const authOptions: NextAuthOptions = {
           email: dbUser.email,
           name: dbUser.name,
           id: dbUser.id,
+        });
+
+        mixpanel.people.set(dbUser.id, {
+          $email: dbUser.email,
+          $name: dbUser.name,
+          $created: new Date().toISOString(),
+          $avatar: dbUser.image,
         });
       }
 
@@ -128,7 +142,7 @@ export const authOptions: NextAuthOptions = {
       });
     },
     createUser({ user }) {
-      mixpanel.people.set_once(user.id, {
+      mixpanel.people.set(user.id, {
         $email: user.email,
         $name: user.name,
         $created: new Date().toISOString(),
