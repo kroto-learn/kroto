@@ -63,13 +63,7 @@ const Index = () => {
 
   const {
     mutateAsync: addQueryMutation,
-    isLoading: addQueryLoading,
   } = api.askedQuery.add.useMutation();
-
-  const {
-    mutateAsync: updateQueryMutation,
-    isLoading: updateQueryLoading,
-  } = api.askedQuery.update.useMutation();
 
   const [submitted, setSubmitted] = useState(false);
 
@@ -129,25 +123,7 @@ const Index = () => {
                   },
                 }
               );
-            } else {
-              await updateQueryMutation(
-                {
-                  ...values,
-                  id: askedQuery?.id ?? "",
-                },
-                {
-                  onSuccess: () => {
-                    successToast("Testimonial submitted successfully");
-                    setSubmitted(true);
-                    void ctx.testimonial.getOne.invalidate();
-                    void revalidate(`/${askedQuery.creatorProfile}`);
-                  },
-                  onError: () => {
-                    errorToast("Error in submitting testimonial");
-                  },
-                }
-              );
-            }
+            } 
           })}
           className="my-8 flex w-full max-w-3xl flex-col items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-6 px-4 md:items-start md:p-10 md:px-12"
         >
@@ -190,11 +166,8 @@ const Index = () => {
             className="group mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-pink-600 px-4 py-3 text-lg font-medium text-neutral-200 outline-0 duration-150 hover:bg-pink-700"
           >
             Submit
-            {(
-              askedQueryExists
-                ? updateQueryLoading
-                : addQueryLoading
-            ) ? (
+            {
+              askedQueryExists ? (
               <Loader white />
             ) : (
               <PaperAirplaneIcon className="w-5 transition-transform duration-150 group-hover:translate-x-1" />

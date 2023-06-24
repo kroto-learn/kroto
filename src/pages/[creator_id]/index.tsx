@@ -3,7 +3,7 @@ import SocialLink from "@/components/SocialLink";
 import type { GetStaticPropsContext } from "next";
 import Head from "next/head";
 import type { ParsedUrlQuery } from "querystring";
-import React from "react";
+import React, { useEffect } from "react";
 import ImageWF from "@/components/ImageWF";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
@@ -23,6 +23,8 @@ import TestimonialDisclosure from "@/components/TestimonialDisclosure";
 import { Tooltip } from "antd";
 import { prisma } from "@/server/db";
 import AnimatedSection from "@/components/AnimatedSection";
+import { MixPannelClient } from "@/analytics/mixpanel";
+import { useSession } from "next-auth/react";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -50,6 +52,39 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   const isCoursesTab = !(tab === "events") && !(tab === "testimonials");
   const isEventsTab = tab === "events";
   const isTestimonialsTab = tab === "testimonials";
+  const session = useSession();
+
+  useEffect(() => {
+    if (session.status !== "loading")
+      MixPannelClient.getInstance().profileViewed({
+        userId: session.data?.user.id ?? "",
+        creatorProfile: creatorProfile,
+      });
+  }, [session, creatorProfile]);
+
+  useEffect(() => {
+    if (session.status !== "loading" && isEventsTab)
+      MixPannelClient.getInstance().profileEventTabViewed({
+        userId: session.data?.user.id ?? "",
+        creatorProfile: creatorProfile,
+      });
+  }, [isEventsTab, session, creatorProfile]);
+
+  useEffect(() => {
+    if (session.status !== "loading" && isTestimonialsTab)
+      MixPannelClient.getInstance().profileTestimonialTabViewed({
+        userId: session.data?.user.id ?? "",
+        creatorProfile: creatorProfile,
+      });
+  }, [isTestimonialsTab, session, creatorProfile]);
+
+  useEffect(() => {
+    if (session.status !== "loading" && isCoursesTab)
+      MixPannelClient.getInstance().profileCourseTabViewed({
+        userId: session.data?.user.id ?? "",
+        creatorProfile: creatorProfile,
+      });
+  }, [isCoursesTab, session, creatorProfile]);
 
   if (!creator) {
     return (
@@ -307,6 +342,12 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           id="testimonial"
           href={`/${creator?.creatorProfile ?? ""}/testimonial`}
           className="group flex w-full max-w-xs items-center justify-center gap-2 rounded-xl bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 backdrop-blur-sm transition-all duration-300 hover:bg-pink-500/80 hover:text-neutral-200"
+          onClick={() => {
+            MixPannelClient.getInstance().giveTestimonialClicked({
+              userId: session.data?.user.id ?? "",
+              creatorProfile: creatorProfile,
+            });
+          }}
         >
           <FontAwesomeIcon icon={faQuoteLeft} /> Write a Testimonial for me
         </Link>

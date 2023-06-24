@@ -39,7 +39,7 @@ export const askedQueryRouter = createTRPCRouter({
     }),
 
   update: protectedProcedure
-    .input(z.object({ id: z.string(), question: z.string() }))
+    .input(z.object({ id: z.string(), answer: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
@@ -48,7 +48,7 @@ export const askedQueryRouter = createTRPCRouter({
           id: input.id,
         },
         data: {
-          question: input.question,
+          answer: input.answer,
         },
       });
 
@@ -71,12 +71,10 @@ export const askedQueryRouter = createTRPCRouter({
     .input(z.object({ creatorProfile: z.string() }))
     .query(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const querys = await prisma.askedQuery.findUnique({
+      const querys = await prisma.askedQuery.findFirst({
         where: {
-          userId_creatorProfile: {
             userId: ctx.session.user.id,
             creatorProfile: input.creatorProfile,
-          },
         },
       });
       return querys;

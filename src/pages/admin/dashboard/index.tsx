@@ -153,7 +153,43 @@ function AdminDashboardLayoutR({ children }: { children: ReactNode }) {
               </div>
               <span
                 className={`h-full w-1 rounded-l-lg bg-pink-600 ${
-                  pathname && pathname.startsWith("/creator/dashboard/course")
+                  pathname &&
+                  pathname.startsWith("/creator/dashboard/categories")
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              />
+            </Link>
+
+            <Link
+              href="/admin/dashboard/tags"
+              className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+                pathname && pathname.startsWith("/admin/dashboard/tags")
+                  ? "text-pink-500"
+                  : "hover:text-neutral-200"
+              }`}
+            >
+              <span className="w-1/3" />
+              <div className="flex  w-full items-center gap-2">
+                <InboxStackIconO
+                  className={`w-6 ${
+                    pathname && pathname.startsWith("/admin/dashboard/tags")
+                      ? "hidden"
+                      : ""
+                  }`}
+                />{" "}
+                <InboxStackIcon
+                  className={`w-6 ${
+                    pathname && pathname.startsWith("/admin/dashboard/tags")
+                      ? "flex"
+                      : "hidden"
+                  }`}
+                />{" "}
+                <span className="hidden md:block">Tags</span>
+              </div>
+              <span
+                className={`h-full w-1 rounded-l-lg bg-pink-600 ${
+                  pathname && pathname.startsWith("/creator/dashboard/tags")
                     ? "opacity-100"
                     : "opacity-0"
                 }`}

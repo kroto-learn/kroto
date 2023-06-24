@@ -23,6 +23,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { useForm, type UseFormProps } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { MixPannelClient } from "@/analytics/mixpanel";
 
 export const settingsFormSchema = z.object({
   price: z.string().nonempty("Please enter course price."),
@@ -65,7 +66,7 @@ const Index = () => {
   const [tagInputFocused, setTagInputFocused] = useState(false);
   const [debouncedTagInput, setDebouncedTagInput] = useState(tagInput);
 
-  const { mutateAsync: priceUpdateMutation, isLoading: priceMutateLoading } =
+  const { mutateAsync: courseUpdateMutation, isLoading: priceMutateLoading } =
     api.course.update.useMutation();
 
   const { data: searchedTags, isLoading: searchingtags } =
@@ -113,8 +114,11 @@ const Index = () => {
       >
         <form
           onSubmit={methods.handleSubmit(async (values) => {
-            await priceUpdateMutation(values, {
+            await courseUpdateMutation(values, {
               onSuccess: () => {
+                MixPannelClient.getInstance().courseUpdated({
+                  courseId: course?.id,
+                });
                 void ctx.course.get.invalidate();
                 void ctx.course.getCourse.invalidate();
                 void revalidate(`/course/${course?.id}`);
@@ -464,6 +468,9 @@ export function DeleteCourseModal({
                             { id },
                             {
                               onSuccess: () => {
+                                MixPannelClient.getInstance().courseDeleted({
+                                  courseId,
+                                });
                                 void ctx.course.getAllAdmin.invalidate();
                                 void ctx.course.get.invalidate();
                                 const cid = courseId;

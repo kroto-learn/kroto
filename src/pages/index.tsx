@@ -15,14 +15,14 @@ import {
 import Navbar from "@/components/Navbar";
 import { getServerAuthSession } from "@/server/auth";
 import Footer from "@/components/Footer";
-import { MixPannelTracking } from "@/analytics/mixpanel";
+import { MixPannelClient } from "@/analytics/mixpanel";
 import { useEffect, useState } from "react";
 
 const Home: NextPage = () => {
   const [word, setWord] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
-    MixPannelTracking.getInstance().pageViewed({
+    MixPannelClient.getInstance().pageViewed({
       pagePath: "/",
     });
 
