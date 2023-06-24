@@ -89,13 +89,12 @@ export const askedQueryRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       const querys = await prisma.askedQuery.findMany({
-       where:{
-        creatorProfile
-       },
-       include:{
-        user: true
-       }
-      
+        where: {
+          creatorProfile,
+        },
+        include: {
+          user: true,
+        },
       });
 
       return querys;
