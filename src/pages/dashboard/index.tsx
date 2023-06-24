@@ -29,6 +29,8 @@ import {
   type TooltipItem,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { MixPannelClient } from "@/analytics/mixpanel";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -61,6 +63,12 @@ export default function Dashboard() {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    elements: {
+      point: {
+        radius: 5,
+        borderWidth: 2,
+      },
+    },
     scales: {
       y: {
         ticks: {
@@ -129,16 +137,28 @@ export default function Dashboard() {
         borderColor: "#db2777",
         backgroundColor: ({ chart: { ctx } }: { chart: ChartContext }) => {
           const bg = ctx.createLinearGradient(0, 150, 0, 600);
-          bg.addColorStop(0, "rgba(236, 72, 153,0.2)");
-          bg.addColorStop(0.2, "rgba(236, 72, 153,0)");
+          bg.addColorStop(0, "rgba(236, 72, 153,0.15)");
+          bg.addColorStop(0.18, "rgba(236, 72, 153,0)");
           bg.addColorStop(1, "transparent");
 
           return bg;
         },
+        pointBorderColor: "#171717",
+
+        pointBackgroundColor: "#db2777",
+
         cubicInterpolationMode: "monotone",
       },
     ],
   };
+
+  useEffect(() => {
+    MixPannelClient.getInstance().dashboardViewed();
+  }, []);
+
+  useEffect(() => {
+    if (isPastTab) MixPannelClient.getInstance().pastEventTabViewed();
+  }, [isPastTab]);
 
   return (
     <Layout>

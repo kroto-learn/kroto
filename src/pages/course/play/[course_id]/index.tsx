@@ -22,6 +22,8 @@ import { Pie } from "react-chartjs-2";
 import dynamic from "next/dynamic";
 import { getCalApi } from "@calcom/embed-react";
 import { Menu, Transition } from "@headlessui/react";
+import { useSession } from "next-auth/react";
+import { MixPannelClient } from "@/analytics/mixpanel";
 const ShareCourseModal = dynamic(
   () => import("@/components/ShareCourseModal"),
   {
@@ -76,32 +78,47 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     course_id: string;
     chapter_id: string;
   };
-  const { data: course } = api.course?.get.useQuery({ id: course_id });
+  const { data: course, isLoading: courseLoading } = api.course?.get.useQuery({
+    id: course_id,
+  });
   const { data: isEnrolled, isLoading: isEnrolledLoading } =
     api.course.isEnrolled.useQuery({ courseId: course_id });
   const [sideDrawerCollapsed, setSideDrawerCollapsed] = useState(false);
   const chaptersNavRef = useRef<HTMLDivElement | null>(null);
   const [navbarScrollInit, setNavbarScrollInit] = useState(false);
+  const session = useSession();
 
   useEffect(() => {
-    if (!isEnrolledLoading && !isEnrolled) void router.replace("/");
-  }, [isEnrolled, isEnrolledLoading, router]);
+    if (
+      !isEnrolledLoading &&
+      !isEnrolled &&
+      !courseLoading &&
+      !(course instanceof TRPCError) &&
+      session.data?.user.id !== course?.creatorId
+    )
+      void router.replace("/");
+  }, [isEnrolled, isEnrolledLoading, router, course, session, courseLoading]);
 
   useEffect(() => {
-    //TODO: scroll to chapter link, this doesn't work
-    if (chaptersNavRef.current && !!course && !navbarScrollInit) {
+    if (chapter_id && chaptersNavRef.current && !!course && !navbarScrollInit) {
       setNavbarScrollInit(true);
       const buttonToScrollTo = chaptersNavRef.current.querySelector(
         `#${chapter_id}`
       );
 
-      if (buttonToScrollTo)
-        buttonToScrollTo.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-        });
+      if (buttonToScrollTo) {
+        chaptersNavRef.current.scrollTop =
+          (buttonToScrollTo as HTMLDivElement).offsetTop - 190;
+        chaptersNavRef.current.scrollLeft = (
+          buttonToScrollTo as HTMLDivElement
+        ).offsetLeft;
+      }
     }
   }, [chapter_id, course, navbarScrollInit]);
+
+  useEffect(() => {
+    setNavbarScrollInit(false);
+  }, [sideDrawerCollapsed]);
 
   useEffect(() => {
     function handleResize() {
@@ -174,29 +191,47 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <div className="sticky top-0 z-10 flex w-full justify-between gap-4 bg-gradient-to-b from-neutral-950 via-neutral-950/70 to-transparent p-4 pb-1 text-neutral-400 duration-150">
+      <div className="sticky top-0 z-10 flex w-full justify-between gap-4 bg-gradient-to-r from-neutral-950/70 via-neutral-950/70 to-neutral-950/70 p-4 text-neutral-300 duration-150 sm:from-neutral-950 sm:via-neutral-950/70 sm:to-transparent sm:pb-1">
         <Link
           href="/dashboard"
           className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider hover:text-neutral-300 sm:text-sm"
+          onClick={() => {
+            MixPannelClient.getInstance().backToDashboardClicked({
+              courseId: course_id,
+              userId: session.data?.user?.id ?? "",
+              lessonId: chapter_id,
+            });
+          }}
         >
           <ArrowLeftIcon className="w-4" /> Back to dashboard
         </Link>
         <button
           onClick={() => {
             setShareModal(true);
+            MixPannelClient.getInstance().courseShared({
+              courseId: course?.id ?? "",
+              userId: session.data?.user?.id ?? "",
+            });
           }}
           className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider hover:text-neutral-300 sm:text-sm"
         >
           <ShareIcon className="w-3" /> Share Course
         </button>
       </div>
-      <div className="mt-2 flex w-full items-center justify-between bg-pink-500 px-2 py-2 pl-3 text-sm font-bold sm:hidden">
+      <div className="sticky top-12 z-10 flex w-full items-center justify-between bg-pink-500 px-2 py-2 pl-3 text-sm font-bold sm:mt-2 sm:hidden">
         <h4>Book a free 1:1 doubt resolving session!</h4>
         <Menu as="div" className="relative inline-block text-left">
           <div className="flex flex-col items-end">
             <Menu.Button
               as="button"
               className="z-2 mt-1 rounded-lg bg-neutral-200 px-3 py-1 text-sm font-bold text-pink-500"
+              onClick={() => {
+                MixPannelClient.getInstance().bookASessionClicked({
+                  courseId: course_id,
+                  userId: session.data?.user?.id ?? "",
+                  lessonId: chapter_id,
+                });
+              }}
             >
               Book now
             </Menu.Button>
@@ -214,6 +249,13 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                   <button
                     data-cal-link="rosekamallove/15min"
                     className={`w-full px-2 py-1 text-sm font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                    onClick={() => {
+                      MixPannelClient.getInstance().sessionChoosed_15({
+                        courseId: course_id,
+                        userId: session.data?.user?.id ?? "",
+                        lessonId: chapter_id,
+                      });
+                    }}
                   >
                     15 mins call
                   </button>
@@ -222,6 +264,13 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                   <button
                     data-cal-link="rosekamallove/30min"
                     className={`w-full px-2 py-1 text-sm font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                    onClick={() => {
+                      MixPannelClient.getInstance().sessionChoosed_30({
+                        courseId: course_id,
+                        userId: session.data?.user?.id ?? "",
+                        lessonId: chapter_id,
+                      });
+                    }}
                   >
                     30 mins call
                   </button>
@@ -249,6 +298,13 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                       <Menu.Button
                         as="button"
                         className="z-2 mt-1 rounded-lg bg-pink-500 px-4 py-1 text-sm font-bold hover:bg-pink-600 hover:text-neutral-200"
+                        onClick={() => {
+                          MixPannelClient.getInstance().bookASessionClicked({
+                            courseId: course_id,
+                            userId: session.data?.user?.id ?? "",
+                            lessonId: chapter_id,
+                          });
+                        }}
                       >
                         Book now
                       </Menu.Button>
@@ -266,6 +322,15 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                             <button
                               data-cal-link="rosekamallove/15min"
                               className={`w-full px-2 py-1 text-sm font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                              onClick={() => {
+                                MixPannelClient.getInstance().sessionChoosed_15(
+                                  {
+                                    courseId: course_id,
+                                    userId: session.data?.user?.id ?? "",
+                                    lessonId: chapter_id,
+                                  }
+                                );
+                              }}
                             >
                               15 mins call
                             </button>
@@ -274,6 +339,15 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                             <button
                               data-cal-link="rosekamallove/30min"
                               className={`w-full px-2 py-1 text-sm font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600`}
+                              onClick={() => {
+                                MixPannelClient.getInstance().sessionChoosed_30(
+                                  {
+                                    courseId: course_id,
+                                    userId: session.data?.user?.id ?? "",
+                                    lessonId: chapter_id,
+                                  }
+                                );
+                              }}
                             >
                               30 mins call
                             </button>
@@ -301,14 +375,23 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
             className={`right-4 flex rounded-lg backdrop-blur-sm md:bg-neutral-200/5 ${
               sideDrawerCollapsed
                 ? "top-[3.3rem] flex-row-reverse border-neutral-700 sm:sticky sm:h-[calc(100vh-4.5rem)] sm:max-w-[5rem] sm:flex-col sm:border sm:bg-neutral-950/80"
-                : "fixed top-[3.3rem] h-[calc(100vh-4.5rem)] w-4/5 max-w-sm flex-col border border-neutral-700 bg-neutral-950/80 sm:top-[16rem] sm:h-[calc(100vh-17rem)] sm:w-full md:sticky"
+                : "fixed top-[3.3rem] z-20 h-[calc(100vh-4.5rem)] w-4/5 max-w-sm flex-col border border-neutral-700 bg-neutral-950/80 sm:top-[16rem] sm:h-[calc(100vh-17rem)] sm:w-full md:sticky"
             }`}
           >
             <button
               className={`absolute -left-5 top-6 z-10 aspect-square rounded-full border border-neutral-600 bg-neutral-900 p-2 text-neutral-400 drop-shadow-xl duration-150 hover:bg-neutral-800 hover:text-neutral-300 ${
                 sideDrawerCollapsed ? "hidden sm:flex" : ""
               }`}
-              onClick={() => setSideDrawerCollapsed(!sideDrawerCollapsed)}
+              onClick={() => {
+                if (!sideDrawerCollapsed)
+                  MixPannelClient.getInstance().overViewCollapsed({
+                    courseId: course_id,
+                    userId: session.data?.user?.id ?? "",
+                    lessonId: chapter_id,
+                  });
+
+                setSideDrawerCollapsed(!sideDrawerCollapsed);
+              }}
             >
               {sideDrawerCollapsed ? (
                 <ChevronLeftIcon className="w-5" />
@@ -331,7 +414,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                 ) : (
                   <Link
                     href={`/course/${course?.id ?? ""}`}
-                    className="line-clamp-2 overflow-hidden text-ellipsis text-lg font-medium duration-150 hover:text-neutral-100"
+                    className="line-clamp-1 overflow-hidden text-ellipsis text-lg font-medium duration-150 hover:text-neutral-100"
                   >
                     {course?.title}
                   </Link>
@@ -350,6 +433,15 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                     }`}
                     target={!course?.creator ? "_blank" : undefined}
                     className="duration-150 hover:text-neutral-200"
+                    onClick={() => {
+                      MixPannelClient.getInstance().creatorProfileClickedFromCourse(
+                        {
+                          courseId: course_id,
+                          userId: session.data?.user?.id ?? "",
+                          creatorId: course?.creatorId ?? "unclaimed",
+                        }
+                      );
+                    }}
                   >
                     {course?.creator?.name ?? course?.ytChannelName ?? ""}
                   </Link>{" "}
@@ -446,7 +538,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
               className={`flex w-full justify-start overflow-auto  ${
                 sideDrawerCollapsed
                   ? "hide-scroll flex-row items-center justify-start sm:max-h-[calc(100vh-9rem)] sm:flex-col"
-                  : "max-h-[calc(100vh-9rem)] flex-col sm:max-h-[calc(100vh-29rem)]"
+                  : "max-h-[calc(100vh-16.5rem)] flex-col sm:max-h-[calc(100vh-29rem)]"
               }`}
             >
               {course?.chapters?.map((chapter, idx) => (
@@ -516,7 +608,7 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
           : " !bg-pink-900/10 hover:!bg-pink-900/20"
       }  bg-transparent backdrop-blur-sm duration-150 ${
         collapsed
-          ? "mx-1 h-12 gap-2 rounded-lg border p-1 px-2 sm:m-0 sm:aspect-square sm:h-auto sm:min-h-[4rem] sm:w-full sm:max-w-lg sm:rounded-none sm:border-0 sm:border-b sm:border-r-0 sm:p-2 sm:px-4"
+          ? "mx-1 h-12 gap-2 rounded-lg border p-1 px-2 pr-4 sm:m-0 sm:aspect-square sm:h-auto sm:min-h-[4rem] sm:w-full sm:max-w-lg sm:rounded-none sm:border-0 sm:border-b sm:border-r-0 sm:p-2 sm:px-4"
           : "min-h-[4.5rem] w-full max-w-lg gap-3 border-b p-2 px-4"
       }`}
       key={chapter?.id}
@@ -573,8 +665,8 @@ const CoursePlayerChapterTile = ({ chapter, idx, collapsed }: CPCTProps) => {
             <div
               className={`aspect-square ${
                 collapsed
-                  ? "w-5 text-xl font-medium group-hover:hidden"
-                  : "w-5 group-hover:hidden"
+                  ? "w-5 text-base font-medium group-hover:hidden"
+                  : "w-5 text-sm group-hover:hidden"
               }`}
             >
               {collapsed ? (

@@ -63,6 +63,16 @@ export const courseRouter = createTRPCRouter({
       });
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      const isEnrolled = course?.enrollments.find(
+        (er) => ctx.session.user.id === er.id
+      );
+
+      if (
+        !isEnrolled &&
+        ctx.session.user.id !== course?.creatorId &&
+        !isAdmin(ctx.session.user.email ?? "")
+      )
+        return new TRPCError({ code: "BAD_REQUEST" });
 
       const courseProgress = course.courseProgress[0];
 
@@ -133,6 +143,71 @@ export const courseRouter = createTRPCRouter({
       });
 
       return courses;
+    }),
+
+  getAllPublic: publicProcedure
+    .input(
+      z
+        .object({
+          searchQuery: z.string().optional(),
+          categoryTitle: z.string().optional(),
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const query: {
+        title: {
+          contains: string;
+        };
+        category:
+          | {
+              title: {
+                equals: string | undefined;
+              };
+            }
+          | undefined;
+      } = {
+        title: {
+          contains: input?.searchQuery ?? "",
+        },
+        category: {
+          title: {
+            equals: input?.categoryTitle,
+          },
+        },
+      };
+
+      if (!input?.categoryTitle) delete query["category"];
+
+      const courses = await prisma.course.findMany({
+        where: query,
+        include: {
+          _count: {
+            select: {
+              chapters: true,
+            },
+          },
+          creator: true,
+          tags: true,
+          category: true,
+        },
+      });
+
+      const coursesWithLilCreatorData = courses.map((course) => ({
+        ...course,
+        creator: course?.creatorId
+          ? {
+              id: course?.creator?.id,
+              name: course?.creator?.name,
+              image: course?.creator?.image,
+              creatorProfile: course?.creator?.creatorProfile,
+            }
+          : undefined,
+      }));
+
+      return coursesWithLilCreatorData;
     }),
 
   getAllAdmin: protectedProcedure

@@ -14,12 +14,14 @@ import Image from "next/image";
 import Link from "next/link";
 // import { useRouter } from "next/router";
 import { type ParsedUrlQuery } from "querystring";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CoursePreviewModal from "@/components/CoursePreviewModal";
 import { useRouter } from "next/router";
 import { prisma } from "@/server/db";
 import CheckoutModal from "@/components/CheckoutModal";
 import { type Course } from "@prisma/client";
+import { MixPannelClient } from "@/analytics/mixpanel";
+import ImageWF from "@/components/ImageWF";
 
 type Props = {
   courseId: string;
@@ -38,6 +40,14 @@ const Index = ({ courseId }: Props) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState<boolean>(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (courseId && session.status !== "loading")
+      MixPannelClient.getInstance().courseViewed({
+        userId: session.data?.user.id ?? "",
+        courseId,
+      });
+  }, [courseId, session]);
 
   if (course instanceof TRPCError || !course)
     return (
@@ -99,7 +109,7 @@ const Index = ({ courseId }: Props) => {
         <div className="hide-scroll mx-auto mb-8 mt-16 flex w-full max-w-4xl flex-col gap-4 overflow-x-hidden p-4 sm:h-[80vh] sm:flex-row">
           <AnimatedSection className="flex h-full w-full flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm sm:w-[30rem]">
             <div className="relative aspect-video w-full content-center overflow-hidden rounded-xl">
-              <Image
+              <ImageWF
                 src={course?.thumbnail ?? ""}
                 alt={course?.title ?? ""}
                 fill
@@ -194,6 +204,10 @@ const Index = ({ courseId }: Props) => {
                             { courseId: course?.id },
                             {
                               onSuccess: () => {
+                                MixPannelClient.getInstance().courseEnrolled({
+                                  courseId,
+                                  userId: session?.data.user?.id ?? "",
+                                });
                                 void ctx.course.isEnrolled.invalidate();
                                 successToast(
                                   "Successfully enrolled in course!"
@@ -259,7 +273,7 @@ const Index = ({ courseId }: Props) => {
               >
                 <p className="text-sm text-neutral-300">{index + 1}</p>
                 <div className="relative aspect-video w-40 content-center overflow-hidden rounded-lg">
-                  <Image
+                  <ImageWF
                     src={chapter?.thumbnail ?? ""}
                     alt={chapter?.title ?? ""}
                     fill

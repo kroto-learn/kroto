@@ -18,6 +18,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { useSession } from "next-auth/react";
 import { Dialog, Transition } from "@headlessui/react";
+import { MixPannelClient } from "@/analytics/mixpanel";
 
 const Index = () => {
   const router = useRouter();
@@ -54,6 +55,9 @@ const Index = () => {
 
   const [progress, setProgress] = useState(0);
   const [stackedProgress, setStackedProgress] = useState(0);
+  const [stackedProgress2, setStackedProgress2] = useState(0);
+  const [fiveMinMixedToday, set5MinMixedToday] = useState(false);
+
   const [previousProgress, setPreviousProgress] = useState(0);
 
   const [paused, setPaused] = useState(false);
@@ -92,6 +96,10 @@ const Index = () => {
   }, [chapter_id]);
 
   useEffect(() => {
+    set5MinMixedToday(false);
+  }, [course_id]);
+
+  useEffect(() => {
     if (
       player &&
       progress &&
@@ -104,6 +112,11 @@ const Index = () => {
         { chapterId: chapter_id },
         {
           onSuccess: () => {
+            MixPannelClient.getInstance().markLessonAsComplete({
+              courseId: course_id,
+              userId: session.data?.user?.id ?? "",
+              lessonId: chapter_id,
+            });
             void ctx.course.get.invalidate();
             void ctx.courseChapter.get.invalidate();
           },
@@ -116,6 +129,12 @@ const Index = () => {
         setProgress(
           progress + (progress >= player?.getDuration() || paused ? 0 : 1)
         );
+
+        if (!fiveMinMixedToday)
+          setStackedProgress2(
+            stackedProgress2 +
+              (progress >= player?.getDuration() || paused ? 0 : 1)
+          );
 
         if (!paused && stackedProgress > 0) {
           setVideoLoaded(true);
@@ -167,6 +186,52 @@ const Index = () => {
     chapter_id,
   ]);
 
+  useEffect(() => {
+    if (stackedProgress2 > 5 * 60) {
+      setStackedProgress2(0);
+      set5MinMixedToday(true);
+      MixPannelClient.getInstance().lessonWatchedForFiveMinutes({
+        courseId: course_id,
+        userId: session.data?.user?.id ?? "",
+      });
+
+      localStorage.setItem(
+        `5minLWMixed-${course_id}`,
+        JSON.stringify({
+          courseId: course_id,
+          userId: session.data?.user?.id ?? "",
+          date: new Date().getTime(),
+        })
+      );
+    }
+  }, [stackedProgress2, course_id, session]);
+
+  useEffect(() => {
+    const fiveMinLWMixedS = localStorage.getItem(`5minLWMixed-${course_id}`);
+
+    const fiveMinLWMixed = fiveMinLWMixedS
+      ? (JSON.parse(fiveMinLWMixedS) as {
+          courseId: string;
+          userId: string;
+          date: number;
+        })
+      : undefined;
+
+    if (
+      fiveMinLWMixed &&
+      new Date(fiveMinLWMixed.date).getDate() === new Date().getDate()
+    )
+      set5MinMixedToday(true);
+  }, [course_id]);
+
+  useEffect(() => {
+    if (session.status === "authenticated")
+      MixPannelClient.getInstance().coursePlayed({
+        courseId: course_id,
+        userId: session.data?.user?.id ?? "",
+      });
+  }, [course_id, session]);
+
   const [watchChecked, setWatchChecked] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [seekedInit, setSeekedInit] = useState(false);
@@ -179,10 +244,24 @@ const Index = () => {
       if (player && videoLoaded && !seekedInit) {
         if (chapter?.chapterProgress?.videoProgress)
           setPreviousProgress(chapter?.chapterProgress?.videoProgress);
+        else
+          MixPannelClient.getInstance().lessonStarted({
+            courseId: course_id,
+            userId: session.data?.user?.id ?? "",
+            lessonId: chapter_id,
+          });
         setSeekedInit(true);
       }
     }
-  }, [chapter, player, videoLoaded, seekedInit]);
+  }, [
+    chapter,
+    player,
+    videoLoaded,
+    seekedInit,
+    course_id,
+    chapter_id,
+    session,
+  ]);
 
   if (chapterLoading || courseLoading || !chapter_id || !course_id)
     return (
@@ -241,6 +320,12 @@ const Index = () => {
                 if (e.target) setPlayer(e.target as YT.Player);
               }}
               onEnd={() => {
+                MixPannelClient.getInstance().lessonCompleted({
+                  courseId: course_id,
+                  userId: session.data?.user?.id ?? "",
+                  lessonId: chapter_id,
+                });
+
                 if (position < course.chapters.length - 1)
                   void router.push(
                     `/course/play/${course_id}/${
@@ -287,6 +372,13 @@ const Index = () => {
                           },
                           {
                             onSuccess: () => {
+                              MixPannelClient.getInstance().markLessonAsComplete(
+                                {
+                                  courseId: course_id,
+                                  userId: session.data?.user?.id ?? "",
+                                  lessonId: chapter_id,
+                                }
+                              );
                               void ctx.course.get.invalidate();
                               void ctx.courseChapter.get.invalidate();
                             },
@@ -302,6 +394,12 @@ const Index = () => {
                   <button
                     type="button"
                     onClick={() => {
+                      MixPannelClient.getInstance().previousLessonClicked({
+                        courseId: course_id,
+                        userId: session.data?.user?.id ?? "",
+                        lessonId: chapter_id,
+                      });
+
                       void router.push(
                         `/course/play/${course_id}/${
                           course?.chapters[position - 1]?.id ?? ""
@@ -319,6 +417,12 @@ const Index = () => {
                   <button
                     type="button"
                     onClick={() => {
+                      MixPannelClient.getInstance().nextLessonClicked({
+                        courseId: course_id,
+                        userId: session.data?.user?.id ?? "",
+                        lessonId: chapter_id,
+                      });
+
                       void router.push(
                         `/course/play/${course_id}/${
                           course?.chapters[position + 1]?.id ?? ""
@@ -352,6 +456,13 @@ const Index = () => {
           }`}
           target={!course?.creator ? "_blank" : undefined}
           className="group mt-2 flex items-center gap-2"
+          onClick={() => {
+            MixPannelClient.getInstance().creatorProfileClickedFromCourse({
+              courseId: course_id,
+              userId: session.data?.user?.id ?? "",
+              creatorId: course?.creatorId ?? "unclaimed",
+            });
+          }}
         >
           <ImageWF
             src={course?.creator?.image ?? course?.ytChannelImage ?? ""}

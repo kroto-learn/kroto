@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
+import { MixPannelClient } from "@/analytics/mixpanel";
 
 const contentLimit = 500;
 
@@ -112,6 +113,10 @@ const Index = () => {
             }
 
             if (!testimonialExists) {
+              MixPannelClient.getInstance().giveTestimonialSubmitted({
+                userId: session.data?.user.id ?? "",
+                creatorProfile: creator?.creatorProfile ?? "",
+              });
               await addTestimonialMutation(
                 {
                   ...values,
