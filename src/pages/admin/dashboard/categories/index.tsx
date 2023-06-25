@@ -35,10 +35,10 @@ const Index = () => {
   const { successToast, errorToast } = useToast();
 
   const { data: categories, isLoading: catgsLoading } =
-    api.course.getCategories.useQuery();
+    api.categoriesCourse.getCategories.useQuery();
 
   const { mutateAsync: createCategoryMutation, isLoading: createCatgLoading } =
-    api.course.createCategory.useMutation();
+    api.categoriesCourse.createCategory.useMutation();
 
   const ctx = api.useContext();
 
@@ -60,7 +60,7 @@ const Index = () => {
           categories.length > 0 ? (
           <AnimatedSection
             delay={0.2}
-            className="flex w-full flex-col items-start gap-4"
+            className="flex w-full flex-col items-start gap-4 sm:p-4"
           >
             {categories?.map((catg) => (
               <li key={catg?.id}>{catg?.title}</li>
@@ -76,7 +76,7 @@ const Index = () => {
             </p>
           </AnimatedSection>
         )}
-        <AnimatedSection className="w-full" delay={0.3}>
+        <AnimatedSection className="w-full sm:p-4" delay={0.3}>
           <form
             onSubmit={methods.handleSubmit(async (values) => {
               await createCategoryMutation(values, {
@@ -85,7 +85,7 @@ const Index = () => {
                     successToast(`New category ${catg.title} created.`);
                   }
                   methods.setValue("title", "");
-                  void ctx.course.getCategories.invalidate();
+                  void ctx.categoriesCourse.getCategories.invalidate();
                 },
                 onError: () => {
                   errorToast("Error in creating category!");

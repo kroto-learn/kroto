@@ -2,6 +2,45 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
 export const trackingRouter = createTRPCRouter({
+  updateCourseProgress: protectedProcedure
+    .input(z.object({ courseId: z.string(), lastChapterId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const courseProgress = await prisma.courseProgress.findFirst({
+        where: {
+          watchedById: ctx.session.user.id,
+          courseId: input.courseId,
+        },
+      });
+
+      if (courseProgress) {
+        const updatedCourseProgress = await prisma.courseProgress.update({
+          where: {
+            id: courseProgress.id,
+          },
+          data: {
+            lastChapterId: input.lastChapterId,
+          },
+        });
+        return updatedCourseProgress;
+      } else {
+        try {
+          const newCourseProgress = await prisma.courseProgress.create({
+            data: {
+              watchedById: ctx.session.user.id,
+              courseId: input.courseId,
+              lastChapterId: input.lastChapterId,
+            },
+          });
+          return newCourseProgress;
+        } catch (err) {
+          console.log(err);
+          return null;
+        }
+      }
+    }),
+
   trackLearning: protectedProcedure
     .input(
       z.object({

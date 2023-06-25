@@ -8,7 +8,7 @@ import EnrolledCourseCard from "@/components/EnrolledCourseCard";
 
 const Index = () => {
   const { data: enrollments, isLoading: enrollmentsLoading } =
-    api.course.getEnrollments.useQuery();
+    api.enrollmentCourse.getEnrollments.useQuery();
 
   return (
     <>

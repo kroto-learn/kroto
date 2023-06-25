@@ -37,7 +37,7 @@ const Index = () => {
   });
 
   const { mutateAsync: updateCourseProgressMutation } =
-    api.course.updateCourseProgress.useMutation();
+    api.tracking.updateCourseProgress.useMutation();
 
   const { mutateAsync: updateChapterProgressMutation } =
     api.courseChapter.updateChapterProgress.useMutation();

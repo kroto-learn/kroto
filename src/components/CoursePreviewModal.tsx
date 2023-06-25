@@ -39,8 +39,10 @@ const CoursePreviewModal = ({
   };
   const session = useSession();
   const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
-    api.course.enroll.useMutation();
-  const { data: isEnrolled } = api.course.isEnrolled.useQuery({ courseId });
+    api.enrollmentCourse.enroll.useMutation();
+  const { data: isEnrolled } = api.enrollmentCourse.isEnrolled.useQuery({
+    courseId,
+  });
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
 
@@ -184,7 +186,7 @@ const CoursePreviewModal = ({
                                 { courseId: course?.id },
                                 {
                                   onSuccess: () => {
-                                    void ctx.course.isEnrolled.invalidate();
+                                    void ctx.enrollmentCourse.isEnrolled.invalidate();
                                     successToast(
                                       "Successfully enrolled in course!"
                                     );
