@@ -1,6 +1,8 @@
 import { DashboardLayout } from "..";
+import React, { type ReactNode } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
+import AnimatedSection from "@/components/AnimatedSection";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/20/solid";
@@ -11,8 +13,10 @@ import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
 import { useState, type Dispatch, type SetStateAction } from "react";
 import Image from "next/image";
+import Link from "next/link"
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 import { type AskedQuery } from "@prisma/client";
+import { usePathname } from "next/navigation";
 
 const Index = () => {
   const { data: session } = useSession();
@@ -27,12 +31,12 @@ const Index = () => {
       <Head>
         <title>Queries | Dashboard</title>
       </Head>
-      <div className="my-12 flex w-full flex-col items-center p-9">
+      <div className="py-8 flex w-full flex-col items-center">
         {queries && queries.length > 0 ? (
           <div className="flex w-full flex-col gap-4">
             {queries.map((query) => (
               <div key={query?.id ?? ""}>
-                <div className="w-full -translate-y-6 rounded-lg bg-neutral-800 px-4 py-4 text-gray-300">
+                <div className="w-full -translate-y-6 rounded-lg bg-neutral-800 px-4 py-2 text-gray-300">
                   <div className="flex w-full">
                     <div>
                       <Image
@@ -223,6 +227,63 @@ export const CreateReply = ({
   );
 };
 
+const nestLayout = (
+  parent: (page: ReactNode) => JSX.Element,
+  child: (page: ReactNode) => JSX.Element
+) => {
+  return (page: ReactNode) => parent(child(page));
+};
+
+export const QueriesNestedLayout = nestLayout(DashboardLayout, QueriesLayout);
+
 export default Index;
 
-Index.getLayout = DashboardLayout;
+Index.getLayout = QueriesNestedLayout;
+
+function QueriesLayoutR({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+
+  return (
+    <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
+      <AnimatedSection
+        delay={0.1}
+        className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400"
+      >
+        <ul className="-mb-px flex flex-wrap">
+          <li className="mr-2">
+            <Link
+              href="/creator/dashboard/queries"
+              className={`inline-block rounded-t-lg p-4 ${
+                pathname === "/creator/dashboard/queries"
+                  ? "border-b-2 border-pink-500 text-pink-500 transition"
+                  : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
+              }`}
+            >
+              Not Replied
+            </Link>
+          </li>
+          <li className="/creator/dashboard/queries">
+            <Link
+              href="/creator/dashboard/queries/replied"
+              className={`inline-block rounded-t-lg p-4 transition ${
+                pathname === "/creator/dashboard/queries/replied"
+                  ? "border-b-2 border-pink-500 text-pink-500"
+                  : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
+              }`}
+              aria-current="page"
+            >
+              Replied
+            </Link>
+          </li>
+        </ul>
+      </AnimatedSection>
+      {children}
+    </div>
+  );
+}
+
+function QueriesLayout(page: ReactNode) {
+  return <QueriesLayoutR>{page}</QueriesLayoutR>;
+}
+
+export { QueriesLayout };
