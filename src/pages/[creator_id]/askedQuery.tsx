@@ -17,6 +17,10 @@
 
 // const contentLimit = 500;
 
+export default function AskedQuery() {
+  return <div></div>;
+}
+
 // const askedQueryFormSchema = object({
 //   question: string().max(contentLimit).nonempty("Please enter feedback."),
 // });

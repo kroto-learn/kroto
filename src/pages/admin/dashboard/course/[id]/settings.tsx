@@ -70,9 +70,9 @@ const Index = () => {
     api.course.update.useMutation();
 
   const { data: searchedTags, isLoading: searchingtags } =
-    api.course.searchTags.useQuery(debouncedTagInput);
+    api.tagsCourse.searchTags.useQuery(debouncedTagInput);
 
-  const { data: catgs } = api.course.getCategories.useQuery();
+  const { data: catgs } = api.categoriesCourse.getCategories.useQuery();
 
   const [initData, setInitData] = useState(false);
 

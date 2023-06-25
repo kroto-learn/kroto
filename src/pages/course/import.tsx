@@ -96,9 +96,9 @@ const Index = () => {
   const [playlistId, setPlaylistId] = useState("");
   const revalidate = useRevalidateSSG();
   const { data: searchedTags, isLoading: searchingtags } =
-    api.course.searchTags.useQuery(debouncedTagInput);
+    api.tagsCourse.searchTags.useQuery(debouncedTagInput);
 
-  const { data: catgs } = api.course.getCategories.useQuery();
+  const { data: catgs } = api.categoriesCourse.getCategories.useQuery();
 
   const { errorToast } = useToast();
 
@@ -122,12 +122,12 @@ const Index = () => {
     methods.setValue("thumbnail", generateRandomGradientImages());
   }, [methods]);
 
-  const { data: playlists } = api.course.searchYoutubePlaylists.useQuery({
+  const { data: playlists } = api.ytCourse.searchYoutubePlaylists.useQuery({
     searchQuery: debouncedQuery,
   });
 
   const { data: playlistData, isLoading: playlistLoading } =
-    api.course.getYoutubePlaylist.useQuery({
+    api.ytCourse.getYoutubePlaylist.useQuery({
       playlistId,
     });
 

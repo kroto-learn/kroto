@@ -13,6 +13,11 @@ import { courseFeedbacksRouter } from "./routers/course/feedback";
 import { contactRouter } from "./routers/contact";
 // import { askedQueryRouter } from "./routers/askedQuery";
 import { trackingRouter } from "./routers/course/tracking";
+import { ytCourseRouter } from "./routers/course/yt";
+import { tagsCourseRouter } from "./routers/course/tags";
+import { categoriesCourseRouter } from "./routers/course/categories";
+import { enrollmentCourseRouter } from "./routers/course/enrollment";
+import { suggestionCourseRouter } from "./routers/course/suggestions";
 
 /**
  * This is the primary router for your server.
@@ -25,8 +30,13 @@ export const appRouter = createTRPCRouter({
 
   course: courseRouter,
   courseChapter: courseChapterRouter,
+  enrollmentCourse: enrollmentCourseRouter,
   courseFeedback: courseFeedbacksRouter,
   tracking: trackingRouter,
+  ytCourse: ytCourseRouter,
+  tagsCourse: tagsCourseRouter,
+  categoriesCourse: categoriesCourseRouter,
+  suggestionsCourse: suggestionCourseRouter,
 
   event: eventRouter,
   eventFeedback: feedbacksRouter,

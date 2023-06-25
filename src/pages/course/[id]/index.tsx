@@ -32,9 +32,9 @@ const Index = ({ courseId }: Props) => {
   const session = useSession();
   // const router = useRouter();
   const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
-    api.course.enroll.useMutation();
+    api.enrollmentCourse.enroll.useMutation();
   const { data: isEnrolled, isLoading: isEnrolledLoading } =
-    api.course.isEnrolled.useQuery({ courseId });
+    api.enrollmentCourse.isEnrolled.useQuery({ courseId });
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -208,7 +208,7 @@ const Index = ({ courseId }: Props) => {
                                   courseId,
                                   userId: session?.data.user?.id ?? "",
                                 });
-                                void ctx.course.isEnrolled.invalidate();
+                                void ctx.enrollmentCourse.isEnrolled.invalidate();
                                 successToast(
                                   "Successfully enrolled in course!"
                                 );

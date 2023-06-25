@@ -39,7 +39,7 @@ export default function Dashboard() {
   const { data: pastRegisteredEvents, isLoading: isPastLoading } =
     api.creator.getPastEvents.useQuery();
   const { data: enrollments, isLoading: enrollmentsLoading } =
-    api.course.getEnrollments.useQuery();
+    api.enrollmentCourse.getEnrollments.useQuery();
 
   const { data: lastWeekLearning, isLoading: lastWeekLearningLoading } =
     api.tracking.getPastWeek.useQuery();

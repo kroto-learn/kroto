@@ -22,6 +22,7 @@ const ProtectedRoutes = () => {
       "/[creator_id]",
       "/event/[id]",
       "/course/[id]",
+      "/courses",
     ];
 
     if (publicRoutes.includes(router.pathname)) return;

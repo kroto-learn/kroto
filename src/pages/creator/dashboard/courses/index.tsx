@@ -7,12 +7,9 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { api } from "@/utils/api";
 import ImageWF from "@/components/ImageWF";
 import CourseCard from "@/components/CourseCard";
-import { isAdmin } from "@/server/helpers/admin";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 const Index = () => {
-  const session = useSession();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [debouncedQuery, setDebouncedQuery] = useState<string>("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -71,7 +68,7 @@ const Index = () => {
         ) : courses && courses.length > 0 ? (
           <AnimatedSection
             delay={0.2}
-            className="flex w-full flex-col items-start gap-4"
+            className="flex max-h-[76vh] w-full flex-col items-start gap-4 overflow-y-scroll"
           >
             {courses?.map((course) => (
               <CourseCard course={course} key={course.id} manage />
