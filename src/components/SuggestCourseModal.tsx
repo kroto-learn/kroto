@@ -51,7 +51,7 @@ export default function SuggestCourseModal({
     });
 
   const { mutateAsync: suggestCourseMutation, isLoading: suggestLoading } =
-    api.course.suggestCourse.useMutation();
+    api.suggestionsCourse.suggestCourse.useMutation();
 
   const methods = useZodForm({
     schema: suggestCourseSchema,
