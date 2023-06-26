@@ -214,9 +214,9 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
             <Link
               id="query"
               href={`/${creator?.creatorProfile ?? ""}/ask-query`}
-              className="w-2/7 group flex items-center justify-center gap-2 rounded-xl bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 backdrop-blur-sm transition-all duration-300 hover:bg-pink-500/80 hover:text-neutral-200"
+              className={`w-2/7 group flex items-center justify-center gap-2 rounded-xl bg-neutral-200/10 px-4 py-2 pr-[1.2rem] text-sm font-medium text-neutral-300 backdrop-blur-sm transition-all duration-300 hover:bg-pink-500/80 hover:text-neutral-200`}
             >
-              <FontAwesomeIcon icon={faQuestion} /> Ask query
+              <FontAwesomeIcon icon={faQuestion} /> Ask a query
             </Link>
           </div>
         </div>

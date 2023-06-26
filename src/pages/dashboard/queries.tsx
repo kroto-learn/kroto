@@ -1,6 +1,7 @@
 import { Loader } from "@/components/Loader";
 import Image from "next/image";
 import Layout from "@/components/layouts/main";
+import { SenderImage, SenderName } from "@/components/CreatorDetails";
 import { api } from "@/utils/api";
 import Head from "next/head";
 import ImageWF from "@/components/ImageWF";
@@ -9,14 +10,8 @@ import { useSession } from "next-auth/react";
 const Index = () => {
   const { data: session } = useSession();
 
-  const { data: creator } = api.askedQuery.getAllCreatorProtected.useQuery({
-    id: session?.user.id ?? "",
-  });
-
   const { data: queries, isLoading: queriesLoading } =
-    api.askedQuery.getAllCreator.useQuery({
-      creatorProfile: creator?.creatorProfile ?? "",
-    });
+    api.askedQuery.getUserQuery.useQuery({ userId: session?.user.id ?? "" });
 
   if (queriesLoading)
     return (
@@ -65,16 +60,10 @@ const Index = () => {
                     {query.answer ? (
                       <div className="flex w-full truncate text-ellipsis pt-2">
                         <div>
-                          <Image
-                            className="rounded-full dark:border-gray-800"
-                            src={session?.user.image ?? ""}
-                            width={30}
-                            height={30}
-                            alt={session?.user.name ?? ""}
-                          />
+                          <SenderImage query={query} />
                         </div>
                         <div className="pl-3">
-                          <p>{session?.user.name ?? ""}</p>
+                          <SenderName query={query} />
                           <p>{query.answer}</p>
                         </div>
                       </div>

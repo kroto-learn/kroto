@@ -38,7 +38,7 @@ export const askedQueryRouter = createTRPCRouter({
       return querys;
     }),
 
-  update: protectedProcedure
+  answerQuery: protectedProcedure
     .input(z.object({ id: z.string(), answer: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
@@ -80,7 +80,7 @@ export const askedQueryRouter = createTRPCRouter({
       return querys;
     }),
 
-  getAllCreator: publicProcedure
+  getAllPending: publicProcedure
     .input(z.object({ creatorProfile: z.string() }))
     .query(async ({ ctx, input }) => {
       const { prisma } = ctx;
@@ -97,20 +97,37 @@ export const askedQueryRouter = createTRPCRouter({
       return querys;
     }),
 
-  getAllCreatorProtected: protectedProcedure
-    .input(z.object({ id: z.string() }))
+  getAllReplied: publicProcedure
+    .input(z.object({ creatorProfile: z.string() }))
     .query(async ({ ctx, input }) => {
       const { prisma } = ctx;
 
-      const user = await prisma.user.findUnique({
+      const querys = await prisma.askedQuery.findMany({
         where: {
-          id: input.id,
+          creatorProfile: input.creatorProfile,
+        },
+        include: {
+          user: true,
         },
       });
 
-      if (!user || !user.isCreator || !user.creatorProfile)
-        throw new TRPCError({ code: "BAD_REQUEST" });
+      return querys;
+    }),  
 
-      return user;
-    }),
+  getUserQuery: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+
+      const querys = await prisma.askedQuery.findMany({
+        where: {
+          userId: input.userId,
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      return querys;
+    }), 
 });

@@ -1,24 +1,18 @@
-import { DashboardLayout } from "..";
-import QueriesLayout from ".";
-import React, { type ReactNode } from "react";
+import QueriesLayout, { QueriesNestedLayout } from ".";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
-import AnimatedSection from "@/components/AnimatedSection";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import Image from "next/image";
-import Link from "next/link";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
-import { usePathname } from "next/navigation";
 
 const RepliedAnswer = () => {
   const { data: session } = useSession();
 
-  const { data: creator } = api.askedQuery.getAllCreatorProtected.useQuery({
-    id: session?.user.id ?? "",
-  });
+  const { data: creator } = api.creator.getProfile.useQuery();
 
-  const { data: queries } = api.askedQuery.getAllCreator.useQuery({
+  const { data: queries } = api.askedQuery.getAllReplied.useQuery({
     creatorProfile: creator?.creatorProfile ?? "",
   });
 
@@ -81,7 +75,7 @@ const RepliedAnswer = () => {
               />
             </div>
             <p className="mb-2 text-center text-sm text-neutral-400 sm:text-base">
-              You have not wrote any Queries.
+              You have not reply any queries
             </p>
           </div>
         )}
@@ -90,63 +84,8 @@ const RepliedAnswer = () => {
   );
 };
 
-const nestLayout = (
-  parent: (page: ReactNode) => JSX.Element,
-  child: (page: ReactNode) => JSX.Element
-) => {
-  return (page: ReactNode) => parent(child(page));
-};
-
-export const RepliedNestedLayout = nestLayout(DashboardLayout, RepliedLayout);
-
 export default RepliedAnswer;
 
-RepliedAnswer.getLayout = RepliedNestedLayout;
-
-function RepliedLayoutR({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-
-  return (
-    <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
-      <AnimatedSection
-        delay={0.1}
-        className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400"
-      >
-        <ul className="-mb-px flex flex-wrap">
-          <li className="mr-2">
-            <Link
-              href="/creator/dashboard/queries"
-              className={`inline-block rounded-t-lg p-4 ${
-                pathname === "/creator/dashboard/queries"
-                  ? "border-b-2 border-pink-500 text-pink-500 transition"
-                  : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
-              }`}
-            >
-              Not Replied
-            </Link>
-          </li>
-          <li className="/creator/dashboard/queries">
-            <Link
-              href="/creator/dashboard/queries/replied"
-              className={`inline-block rounded-t-lg p-4 transition ${
-                pathname === "/creator/dashboard/queries/replied"
-                  ? "border-b-2 border-pink-500 text-pink-500"
-                  : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
-              }`}
-              aria-current="page"
-            >
-              Replied
-            </Link>
-          </li>
-        </ul>
-      </AnimatedSection>
-      {children}
-    </div>
-  );
-}
-
-function RepliedLayout(page: ReactNode) {
-  return <RepliedLayoutR>{page}</RepliedLayoutR>;
-}
+RepliedAnswer.getLayout = QueriesNestedLayout;
 
 export { QueriesLayout };

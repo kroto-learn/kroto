@@ -3,7 +3,6 @@ import React, { type ReactNode } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import AnimatedSection from "@/components/AnimatedSection";
-import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import { Loader } from "@/components/Loader";
@@ -18,13 +17,9 @@ import { type AskedQuery, type User } from "@prisma/client";
 import { usePathname } from "next/navigation";
 
 const Index = () => {
-  const { data: session } = useSession();
+  const { data: creator } = api.creator.getProfile.useQuery();
 
-  const { data: creator } = api.askedQuery.getAllCreatorProtected.useQuery({
-    id: session?.user.id ?? "",
-  });
-
-  const { data: queries } = api.askedQuery.getAllCreator.useQuery({
+  const { data: queries } = api.askedQuery.getAllPending.useQuery({
     creatorProfile: creator?.creatorProfile ?? "",
   });
 
@@ -98,7 +93,7 @@ const Index = () => {
               </button>
               <CreateReply
                 ReplyModal={ReplyModal}
-                setReplyModal={setReplyModal}
+                setCreateReply={setCreateReply}
               />
             </div>
           </div>
@@ -112,7 +107,7 @@ const Index = () => {
               />
             </div>
             <p className="mb-2 text-center text-sm text-neutral-400 sm:text-base">
-              You have not wrote any Queries.
+              You have not recieved any queries
             </p>
           </div>
         )}
@@ -142,11 +137,10 @@ function useZodForm<TSchema extends z.ZodType>(
 
 export const CreateReply = ({
   ReplyModal,
+  setCreateReply,
 }: {
   ReplyModal: (AskedQuery & { user: User }) | undefined;
-  setReplyModal: Dispatch<
-    SetStateAction<(AskedQuery & { user: User }) | undefined>
-  >;
+  setCreateReply: Dispatch<SetStateAction<boolean>>;
 }) => {
   const ctx = api.useContext();
   const methods = useZodForm({
@@ -157,7 +151,7 @@ export const CreateReply = ({
   //   api.askedQuery.create.useMutation();
 
   const { mutateAsync: createAnswer, isLoading: createAnswerLoading } =
-    api.askedQuery.update.useMutation();
+    api.askedQuery.answerQuery.useMutation();
 
   return (
     <form
@@ -171,8 +165,9 @@ export const CreateReply = ({
             },
             {
               onSuccess: () => {
-                void ctx.askedQuery.getAllUser.invalidate();
+                void ctx.askedQuery.getAllPending.invalidate();
                 methods.setValue("answer", "");
+                setCreateReply(false);
               },
             }
           );

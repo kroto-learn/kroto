@@ -1,5 +1,4 @@
 import { Loader } from "@/components/Loader";
-import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import useToast from "@/hooks/useToast";
 import { api } from "@/utils/api";
 import {
@@ -7,6 +6,10 @@ import {
   PaperAirplaneIcon,
 } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
+import dynamic from "next/dynamic";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import { type MDEditorProps } from "@uiw/react-md-editor";
 import { useSession } from "next-auth/react";
 import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
@@ -14,6 +17,10 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
+
+const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
+  ssr: false,
+});
 
 const contentLimit = 500;
 
@@ -59,11 +66,7 @@ const Index = () => {
 
   const [submitted, setSubmitted] = useState(false);
 
-  const ctx = api.useContext();
-
   const { successToast, errorToast, warningToast } = useToast();
-
-  const revalidate = useRevalidateSSG();
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
@@ -78,7 +81,7 @@ const Index = () => {
             className="text-medium group mt-8 flex items-center text-xl text-pink-500"
             href={`/dashboard/queries`}
           >
-            Watch your queries
+            See your queries
             <ArrowSmallRightIcon className="ml-2 w-8 transition-transform duration-150 group-hover:translate-x-1" />
           </Link>
           <Link
@@ -95,26 +98,24 @@ const Index = () => {
             if (creator?.id === session?.data?.user.id) {
               warningToast("You cannot submit Query for yourself!");
               return;
+            } else {
+              await addQueryMutation(
+                {
+                  ...values,
+                  creatorProfile: creator_id,
+                },
+                {
+                  onSuccess: () => {
+                    successToast("Query submitted successfully");
+                    setSubmitted(true);
+                    methods.setValue("question", "");
+                  },
+                  onError: () => {
+                    errorToast("Error in submitting Query");
+                  },
+                }
+              );
             }
-
-            await addQueryMutation(
-              {
-                ...values,
-                creatorProfile: creator_id,
-              },
-              {
-                onSuccess: (QueryGen) => {
-                  successToast("Query submitted successfully");
-                  setSubmitted(true);
-                  methods.setValue("question", "");
-                  void ctx.askedQuery.getOne.invalidate();
-                  void revalidate(`/${QueryGen.creatorProfile}`);
-                },
-                onError: () => {
-                  errorToast("Error in submitting Query");
-                },
-              }
-            );
           })}
           className="my-8 flex w-full max-w-3xl flex-col items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-6 px-4 md:items-start md:p-10 md:px-12"
         >
@@ -129,19 +130,18 @@ const Index = () => {
             />
             <span className="font-medium">{creator?.name ?? ""}</span>
           </div>
-
-          <textarea
-            value={methods.watch()?.question}
-            onChange={(e) => {
-              methods.setValue(
-                "question",
-                e.target?.value.substring(0, contentLimit)
-              );
-            }}
-            rows={6}
-            className="mt-6 w-full rounded-xl border-0 bg-neutral-700 p-4 outline-0 placeholder:text-neutral-400"
-            placeholder="Write me a testimonial..."
-          />
+          <div data-color-mode="dark" className="w-full">
+            <MDEditor
+              height={300}
+              value={methods.watch()?.question}
+              onChange={(mdtext) => {
+                if (mdtext) methods.setValue("question", mdtext);
+                else methods.setValue("question", "");
+              }}
+              className="mt-6 w-full rounded-xl border-0 bg-neutral-700 p-4 outline-0 placeholder:text-neutral-400"
+              placeholder="Write me a testimonial..."
+            />
+          </div>
           {
             <p className="w-full text-end text-neutral-600">
               {methods.watch()?.question?.length}/{contentLimit}
