@@ -244,6 +244,7 @@ model Course {
   category       Category?        @relation(fields: [categoryId], references: [id])
   categoryId     String?
   learnTracks    LearnTrack[]
+  discount       Discount?
 
   @@index([categoryId])
   @@index([creatorId])
@@ -276,6 +277,14 @@ enum ChapterType {
   YTVIDEO
   VIDEO
   TEXT
+}
+
+model Discount {
+  id       String   @id @default(cuid())
+  price    Int      @default(0)
+  deadline DateTime @default(now())
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String   @unique
 }
 
 model Enrollment {

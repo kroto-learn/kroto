@@ -19,20 +19,55 @@
           <tr>
             <td class="m-0 bg-inherit bg-white p-0 text-base text-slate-700">
               <div class="h-full bg-neutral-900 text-center">
-                <div class="pt-8 text-4xl">⚠️</div>
+                <div class="pt-8 text-4xl">📈</div>
                 <h2 class="mx-auto my-5 px-2 pb-4 font-semibold text-white">
-                  You're falling behind!
+                  Your learning report is here!
                 </h2>
               </div>
               <div class="p-6">
                 <p>Hello @{{name}},</p>
+                <p>Here's your weekly learning report:</p>
+                <table class="m-0 p-0">
+                  <thead>
+                    <th>
+                      <tr>
+                        <td>
+                          <p class="m-0 p-0 text-sm uppercase tracking-wider">
+                            📖 Chapters watched
+                          </p>
+                        </td>
+                        <td>
+                          <p class="m-0 p-0 text-sm uppercase tracking-wider">
+                            ⌛ Minutes learned
+                          </p>
+                        </td>
+                      </tr>
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <p class="m-0 p-0 text-2xl font-black text-pink-600">
+                          @{{chsWatched}}
+                        </p>
+                      </td>
+
+                      <td>
+                        <p class="m-0 p-0 text-2xl font-black text-pink-600">
+                          @{{minsLearned}}
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
                 <p>
-                  I noticed that you have not continued your learning for more
-                  than a day and your learning graph is falling down 📉.
+                  View your detailed learning report on your Kroto
+                  <a href="https://kroto.in/dashboard">dashboard</a>.
                 </p>
                 <p>
-                  I wanted to reach out and give you a gentle nudge to continue
-                  learning the <a href="@{{courseUrl}}">@{{courseName}}</a>
+                  Keep up with your learning & continue learning the
+                  <a href="@{{courseUrl}}">@{{courseName}}</a>
                   course.
                 </p>
                 <a
@@ -40,19 +75,11 @@
                   class="rounded-lg bg-pink-500 px-4 py-2 text-sm font-bold text-white no-underline hover:bg-pink-600"
                   >Continue learning
                 </a>
-                <p>
-                  It's completely normal to hit roadblocks during the learning
-                  process, but I want to remind you that persistence is key.
-                </p>
-                <p>
-                  As your peers continue to make progress in their courses, I
-                  don't want you to fall behind. That's why I encourage you to
-                  keep going and push through any challenges that come your way.
-                </p>
+
                 <p>
                   If you get stuck some where in your course, you can
                   <a href="https://www.kroto.in/book-doubt-session">book</a> a
-                  free Doubt Session with our experts on Kroto.
+                  free Doubt Session with our experts.
                 </p>
                 <a
                   href="@{{courseUrl}}"
