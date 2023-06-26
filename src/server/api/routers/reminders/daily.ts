@@ -15,13 +15,13 @@ export const dailyReminderRouter = createTRPCRouter({
     const startDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
-      currentDate.getDate()
+      currentDate.getDate() - 7
     );
 
     const endDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth(),
-      currentDate.getDate() + 1
+      currentDate.getDate()
     );
 
     const users = await prisma.user.findMany();
