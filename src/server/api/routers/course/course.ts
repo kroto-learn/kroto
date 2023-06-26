@@ -280,6 +280,16 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
+      const discount = input.discount
+        ? await prisma.discount.create({
+            data: {
+              courseId: course.id,
+              price: parseInt(input.discount.price),
+              deadline: input.discount.deadline,
+            },
+          })
+        : undefined;
+
       const chapters = await Promise.all(
         input.chapters.map(async (cb, position) => {
           return await prisma.chapter.create({
@@ -320,7 +330,7 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      return { ...updatedCourse, chapters };
+      return { ...updatedCourse, chapters, discount };
     }),
 
   adminImport: protectedProcedure

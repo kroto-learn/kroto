@@ -17,9 +17,11 @@ import { api } from "@/utils/api";
 import ImageWF from "./ImageWF";
 
 export const suggestCourseSchema = z.object({
-  playlistId: z.string({
-    required_error: "A valid YouTube playlist is required.",
-  }),
+  playlistId: z
+    .string({
+      required_error: "YouTube playlist is required.",
+    })
+    .nonempty("YouTube playlist is required."),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
