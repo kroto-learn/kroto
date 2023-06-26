@@ -99,10 +99,10 @@ const Index = () => {
 
   const revalidate = useRevalidateSSG();
 
-  const { data: catgs } = api.course.getCategories.useQuery();
+  const { data: catgs } = api.categoriesCourse.getCategories.useQuery();
 
   const { data: searchedTags, isLoading: searchingtags } =
-    api.course.searchTags.useQuery(debouncedTagInput);
+    api.tagsCourse.searchTags.useQuery(debouncedTagInput);
 
   // const [playlistDetailInit, setPlaylistDetailInit] = useState(false);
 
@@ -128,12 +128,14 @@ const Index = () => {
     methods.setValue("thumbnail", generateRandomGradientImages());
   }, [methods]);
 
-  const { data: playlists } = api.course.searchYoutubePlaylistsAdmin.useQuery({
-    searchQuery: debouncedQuery,
-  });
+  const { data: playlists } = api.ytCourse.searchYoutubePlaylistsAdmin.useQuery(
+    {
+      searchQuery: debouncedQuery,
+    }
+  );
 
   const { data: playlistData, isLoading: playlistLoading } =
-    api.course.getYoutubePlaylistAdmin.useQuery({
+    api.ytCourse.getYoutubePlaylistAdmin.useQuery({
       playlistId,
     });
 
@@ -145,6 +147,23 @@ const Index = () => {
   } = api.course.adminImport.useMutation();
 
   const router = useRouter();
+
+  const { ptId } = router.query as { ptId: string | undefined };
+
+  useEffect(() => {
+    if (ptId) {
+      if (
+        !(courses instanceof TRPCError) &&
+        courses?.find((c) => c.ytId === ptId)
+      ) {
+        errorToast("This playlist has already been imported!");
+        return;
+      }
+      setPlaylistId(ptId);
+      methods.setValue("ytId", ptId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ptId, courses]);
 
   useEffect(() => {
     if (playlistData) {
@@ -218,11 +237,11 @@ const Index = () => {
             placeholder="Paste youtube playlist ID or playlist URL..."
             value={playlistId}
             onChange={(e) => {
-              setPlaylistId(e.target.value.split("list=")[1] ?? e.target.value);
-              methods.setValue(
-                "ytId",
-                e.target.value.split("list=")[1] ?? e.target.value
-              );
+              const pid =
+                new URLSearchParams(e.target.value).get("list") ??
+                e.target.value;
+              setPlaylistId(pid);
+              methods.setValue("ytId", pid);
             }}
             className="peer w-full max-w-sm rounded-lg bg-pink-500/10 px-3 py-2 font-medium text-neutral-200   outline outline-2 outline-pink-500/40 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
           />

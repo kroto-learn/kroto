@@ -103,6 +103,42 @@ export const searchYoutubePlaylistsAdminService = async ({
   }
 };
 
+export const getPlaylistDataShallowService = async (id: string) => {
+  const playlistDetailsConfig = {
+    id: [id],
+    part: ["snippet"],
+    key: YOUTUBE_API_KEY,
+  };
+
+  try {
+    const yt = google.youtube({ version: "v3" });
+    // Send request for playlist details
+    const res = await yt.playlists.list(playlistDetailsConfig);
+
+    if (!res || res.status !== 200) {
+      console.log("error in getting playlist details!", res?.data);
+      return null;
+    }
+
+    if (!res?.data?.items || !res?.data?.items[0]) return null;
+
+    const playlistTitle: string = res?.data?.items[0]?.snippet?.title ?? "";
+    const playlistDescription: string =
+      res?.data?.items[0]?.snippet?.description ?? "";
+    const playlistThumbnail: string =
+      res?.data?.items[0]?.snippet?.thumbnails?.high?.url ?? "";
+
+    return {
+      title: playlistTitle,
+      description: playlistDescription,
+      thumbnail: playlistThumbnail,
+      id,
+    };
+  } catch (error) {
+    console.log;
+  }
+};
+
 export const getPlaylistDataService = async (id: string) => {
   const playlistDetailsConfig = {
     id: [id],

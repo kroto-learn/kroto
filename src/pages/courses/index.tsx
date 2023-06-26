@@ -1,23 +1,28 @@
 import AnimatedSection from "@/components/AnimatedSection";
 import ImageWF from "@/components/ImageWF";
 import { Loader } from "@/components/Loader";
+import SuggestCourseModal from "@/components/SuggestCourseModal";
 import Layout from "@/components/layouts/main";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { BookOpenIcon } from "@heroicons/react/24/outline";
+import { BookOpenIcon, LightBulbIcon } from "@heroicons/react/24/outline";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const Index = () => {
-  const { data: categories } = api.course.getCategories.useQuery();
+  const { data: categories } = api.categoriesCourse.getCategories.useQuery();
   const router = useRouter();
   const { category } = router.query as { category: string | undefined };
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [debouncedQuery, setDebouncedQuery] = useState<string>("");
+  const session = useSession();
+
+  const [suggestCourseOpen, setSuggestCourseOpen] = useState<boolean>(false);
 
   const { data: courses, isLoading: coursesLoading } =
     api.course.getAllPublic.useQuery({
@@ -67,17 +72,33 @@ const Index = () => {
           delay={0.1}
           className="mt-8 flex w-full max-w-4xl flex-col gap-4"
         >
-          <div className="relative mb-4 flex items-center">
-            <input
-              placeholder="What do you want to learn today?"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="peer w-full rounded-lg bg-pink-500/10 px-3 py-2 pl-8 font-medium text-neutral-200   outline outline-2 outline-pink-500/40 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
-            />
-            <div className="absolute right-4">{false && <Loader />}</div>
+          <div className="mb-2 flex w-full flex-col items-end gap-3">
+            <div className="relative flex w-full items-center">
+              <input
+                placeholder="What do you want to learn today?"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="peer w-full rounded-lg bg-pink-500/10 px-3 py-2 pl-8 font-medium text-neutral-200   outline outline-2 outline-pink-500/40 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
+              />
+              <div className="absolute right-4">{false && <Loader />}</div>
 
-            <MagnifyingGlassIcon className="absolute ml-2 w-4 text-pink-500/50 duration-300 peer-hover:text-pink-500/80 peer-focus:text-pink-500" />
+              <MagnifyingGlassIcon className="absolute ml-2 w-4 text-pink-500/50 duration-300 peer-hover:text-pink-500/80 peer-focus:text-pink-500" />
+            </div>
+            <button
+              onClick={() => {
+                if (session.data?.user) setSuggestCourseOpen(true);
+                else
+                  void signIn(undefined, {
+                    callbackUrl: `/courses`,
+                  });
+              }}
+              className="flex items-center gap-1 text-sm text-neutral-400 duration-150 hover:text-neutral-200"
+            >
+              <LightBulbIcon className="w-4" />
+              <p>Suggest Course</p>
+            </button>
           </div>
+
           {coursesLoading ? (
             <div className="flex h-60 w-full items-center justify-center">
               <Loader size="lg" />
@@ -148,6 +169,10 @@ const Index = () => {
           )}
         </AnimatedSection>
       </main>
+      <SuggestCourseModal
+        isOpen={suggestCourseOpen}
+        setIsOpen={setSuggestCourseOpen}
+      />
     </Layout>
   );
 };
@@ -155,7 +180,7 @@ const Index = () => {
 export async function getStaticProps() {
   const ssg = generateSSGHelper();
 
-  await ssg.course.getCategories.prefetch();
+  await ssg.categoriesCourse.getCategories.prefetch();
   await ssg.course.getAllPublic.prefetch();
 
   return {

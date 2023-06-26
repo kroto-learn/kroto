@@ -8,10 +8,15 @@ import { useRouter } from "next/router";
 import {
   AdjustmentsHorizontalIcon,
   InboxStackIcon,
+  LightBulbIcon,
   RectangleStackIcon,
+  TagIcon,
 } from "@heroicons/react/20/solid";
+import { LightBulbIcon as LightBulbIconO } from "@heroicons/react/24/outline";
 import { InboxStackIcon as InboxStackIconO } from "@heroicons/react/24/outline";
 import { RectangleStackIcon as RectangleStackIconO } from "@heroicons/react/24/outline";
+import { TagIcon as TagIconO } from "@heroicons/react/24/outline";
+
 import { isAdmin } from "@/server/helpers/admin";
 
 export default function Dashboard() {
@@ -171,14 +176,14 @@ function AdminDashboardLayoutR({ children }: { children: ReactNode }) {
             >
               <span className="w-1/3" />
               <div className="flex  w-full items-center gap-2">
-                <InboxStackIconO
+                <TagIconO
                   className={`w-6 ${
                     pathname && pathname.startsWith("/admin/dashboard/tags")
                       ? "hidden"
                       : ""
                   }`}
                 />{" "}
-                <InboxStackIcon
+                <TagIcon
                   className={`w-6 ${
                     pathname && pathname.startsWith("/admin/dashboard/tags")
                       ? "flex"
@@ -190,6 +195,45 @@ function AdminDashboardLayoutR({ children }: { children: ReactNode }) {
               <span
                 className={`h-full w-1 rounded-l-lg bg-pink-600 ${
                   pathname && pathname.startsWith("/creator/dashboard/tags")
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              />
+            </Link>
+
+            <Link
+              href="/admin/dashboard/suggested-courses"
+              className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+                pathname &&
+                pathname.startsWith("/admin/dashboard/suggested-courses")
+                  ? "text-pink-500"
+                  : "hover:text-neutral-200"
+              }`}
+            >
+              <span className="w-1/3" />
+              <div className="flex  w-full items-center gap-2">
+                <LightBulbIconO
+                  className={`w-6 ${
+                    pathname &&
+                    pathname.startsWith("/admin/dashboard/suggested-courses")
+                      ? "hidden"
+                      : ""
+                  }`}
+                />{" "}
+                <LightBulbIcon
+                  className={`w-6 ${
+                    pathname &&
+                    pathname.startsWith("/admin/dashboard/suggested-courses")
+                      ? "flex"
+                      : "hidden"
+                  }`}
+                />{" "}
+                <span className="hidden md:block">Suggestions</span>
+              </div>
+              <span
+                className={`h-full w-1 rounded-l-lg bg-pink-600 ${
+                  pathname &&
+                  pathname.startsWith("/creator/dashboard/suggested-courses")
                     ? "opacity-100"
                     : "opacity-0"
                 }`}

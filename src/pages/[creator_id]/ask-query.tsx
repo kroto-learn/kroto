@@ -11,7 +11,7 @@ import { useSession } from "next-auth/react";
 import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
 
@@ -39,20 +39,13 @@ const Index = () => {
   const session = useSession();
 
   const { creator_id } = router.query as { creator_id: string };
+  console.log(creator_id);
   const { data: creator, isLoading: creatorLoading } =
     api.creator.getPublicProfile.useQuery({
       creatorProfile: creator_id,
     });
 
-  const { data: askedQuery, isLoading: askedQueryLoading } =
-    api.askedQuery.getOne.useQuery({
-      creatorProfile: creator_id,
-    });
-
-  const askedQueryExists = !!askedQuery;
-
-  const isLoading =
-    session.status === "loading" || creatorLoading || askedQueryLoading;
+  const isLoading = session.status === "loading" || creatorLoading;
 
   const methods = useZodForm({
     schema: askedQueryFormSchema,
@@ -61,22 +54,14 @@ const Index = () => {
     },
   });
 
-  const {
-    mutateAsync: addQueryMutation,
-  } = api.askedQuery.add.useMutation();
+  const { mutateAsync: addQueryMutation, isLoading: addQueryLoading } =
+    api.askedQuery.add.useMutation();
 
   const [submitted, setSubmitted] = useState(false);
 
   const ctx = api.useContext();
 
   const { successToast, errorToast, warningToast } = useToast();
-
-  useEffect(() => {
-    if (askedQueryExists) {
-      methods.setValue("question", askedQuery?.question ?? "");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [askedQuery, askedQueryExists]);
 
   const revalidate = useRevalidateSSG();
 
@@ -87,8 +72,15 @@ const Index = () => {
       ) : submitted ? (
         <div className="flex w-full max-w-3xl flex-col items-center gap-2">
           <h1 className="text-2xl md:text-3xl">
-            {"🙏"} Thank you for your Query!
+            {"🙏"} Thank you for your query!
           </h1>
+          <Link
+            className="text-medium group mt-8 flex items-center text-xl text-pink-500"
+            href={`/dashboard/queries`}
+          >
+            Watch your queries
+            <ArrowSmallRightIcon className="ml-2 w-8 transition-transform duration-150 group-hover:translate-x-1" />
+          </Link>
           <Link
             className="text-medium group mt-8 flex items-center text-xl text-pink-500"
             href={`/${creator?.creatorProfile ?? ""}`}
@@ -105,30 +97,29 @@ const Index = () => {
               return;
             }
 
-            if (!askedQueryExists) {
-              await addQueryMutation(
-                {
-                  ...values,
-                  creatorProfile: creator_id,
+            await addQueryMutation(
+              {
+                ...values,
+                creatorProfile: creator_id,
+              },
+              {
+                onSuccess: (QueryGen) => {
+                  successToast("Query submitted successfully");
+                  setSubmitted(true);
+                  methods.setValue("question", "");
+                  void ctx.askedQuery.getOne.invalidate();
+                  void revalidate(`/${QueryGen.creatorProfile}`);
                 },
-                {
-                  onSuccess: (testimonialGen) => {
-                    successToast("Testimonial submitted successfully");
-                    setSubmitted(true);
-                    void ctx.testimonial.getOne.invalidate();
-                    void revalidate(`/${testimonialGen.creatorProfile}`);
-                  },
-                  onError: () => {
-                    errorToast("Error in submitting testimonial");
-                  },
-                }
-              );
-            } 
+                onError: () => {
+                  errorToast("Error in submitting Query");
+                },
+              }
+            );
           })}
           className="my-8 flex w-full max-w-3xl flex-col items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-6 px-4 md:items-start md:p-10 md:px-12"
         >
           <div className="flex items-center justify-center gap-2 text-lg md:text-xl lg:justify-start lg:text-2xl">
-            <span>Write a testimonial for</span>
+            <span>Write a Query for</span>
             <ImageWF
               src={creator?.image ?? ""}
               width={30}
@@ -166,8 +157,7 @@ const Index = () => {
             className="group mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-pink-600 px-4 py-3 text-lg font-medium text-neutral-200 outline-0 duration-150 hover:bg-pink-700"
           >
             Submit
-            {
-              askedQueryExists ? (
+            {addQueryLoading ? (
               <Loader white />
             ) : (
               <PaperAirplaneIcon className="w-5 transition-transform duration-150 group-hover:translate-x-1" />

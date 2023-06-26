@@ -1,85 +1,88 @@
 import { DashboardLayout } from "..";
-import React, { type ReactNode } from "react"
+import React, { type ReactNode } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/20/solid";
-import { SenderImage, SenderName } from "@/components/CreatorDetails";
 import { Loader } from "@/components/Loader";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
 import { useState, type Dispatch, type SetStateAction } from "react";
 import Image from "next/image";
-import Link from "next/link"
+import Link from "next/link";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
-import { type AskedQuery } from "@prisma/client";
+import { type AskedQuery, type User } from "@prisma/client";
 import { usePathname } from "next/navigation";
 
 const Index = () => {
   const { data: session } = useSession();
 
-  const { data: queries } = api.askedQuery.getAllUser.useQuery();
+  const { data: creator } = api.askedQuery.getAllCreatorProtected.useQuery({
+    id: session?.user.id ?? "",
+  });
+
+  const { data: queries } = api.askedQuery.getAllCreator.useQuery({
+    creatorProfile: creator?.creatorProfile ?? "",
+  });
 
   const [createReplyModal, setCreateReply] = useState<boolean>(false);
-  const [ReplyModal, setReplyModal] = useState<AskedQuery | null>(null);
+  const [ReplyModal, setReplyModal] = useState<
+    (AskedQuery & { user: User }) | undefined
+  >();
 
   return (
     <>
       <Head>
         <title>Queries | Dashboard</title>
       </Head>
-      <div className="py-8 flex w-full flex-col items-center">
+      <div className="flex w-full flex-col items-center py-8">
         {queries && queries.length > 0 ? (
           <div className="flex w-full flex-col gap-4">
-            {queries.map((query) => (
-              <div key={query?.id ?? ""}>
-                <div className="w-full -translate-y-6 rounded-lg bg-neutral-800 px-4 py-2 text-gray-300">
-                  <div className="flex w-full">
-                    <div>
-                      <Image
-                        className="rounded-full dark:border-gray-800"
-                        src={session?.user.image ?? ""}
-                        width={30}
-                        height={30}
-                        alt={session?.user.name ?? ""}
-                      />
-                    </div>
-                    <div className="w-full pl-3">
-                      <p className="text-sm font-bold">{session?.user.name}</p>
-                      <p className="">{query.question}</p>
-                    </div>
-                  </div>
-                  {query.answer ? (
-                    <div className="flex truncate text-ellipsis pt-2">
+            {queries.map((query) => {
+              return query.answer ? (
+                <></>
+              ) : (
+                <div key={query?.id ?? ""}>
+                  <div className="w-full -translate-y-6 rounded-lg bg-neutral-800 px-4 py-2 text-gray-300">
+                    <div className="flex w-full">
                       <div>
-                        <SenderImage query={query} />
+                        <Image
+                          className="rounded-full dark:border-gray-800"
+                          src={query.user.image ?? ""}
+                          width={30}
+                          height={30}
+                          alt={query?.user.name ?? ""}
+                        />
                       </div>
-                      <div className="pl-3">
-                        <SenderName query={query} />
-                        <p>{query.answer}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="relative ">
-                      <div className="absolute bottom-0 right-0">
-                        <button
-                          onClick={() => {
-                            setCreateReply(true);
-                            setReplyModal(query);
-                          }}
-                          className="text-sm font-semibold"
-                        >
-                          Reply
-                        </button>
+                      <div className="w-full pl-3">
+                        <p>{query.user.name}</p>
+                        <p className="">{query.question}</p>
                       </div>
                     </div>
-                  )}
+                    {query.answer ? (
+                      <></>
+                    ) : (
+                      <div className="relative ">
+                        <div className="absolute bottom-0 right-0">
+                          <button
+                            onClick={() => {
+                              setCreateReply(true);
+                              setReplyModal(query);
+                            }}
+                            className="text-sm font-semibold"
+                          >
+                            Reply
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             <div
               className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-xl flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
                 createReplyModal ? "translate-x-0" : "translate-x-full"
@@ -139,13 +142,13 @@ function useZodForm<TSchema extends z.ZodType>(
 
 export const CreateReply = ({
   ReplyModal,
-  setReplyModal,
 }: {
-  ReplyModal: AskedQuery | null;
-  setReplyModal: Dispatch<SetStateAction<AskedQuery | null>>;
+  ReplyModal: (AskedQuery & { user: User }) | undefined;
+  setReplyModal: Dispatch<
+    SetStateAction<(AskedQuery & { user: User }) | undefined>
+  >;
 }) => {
   const ctx = api.useContext();
-  const { data: session } = useSession();
   const methods = useZodForm({
     schema: sendUpdateFormSchema,
   });
@@ -169,11 +172,10 @@ export const CreateReply = ({
             {
               onSuccess: () => {
                 void ctx.askedQuery.getAllUser.invalidate();
-                methods.setValue("answer","")
+                methods.setValue("answer", "");
               },
             }
           );
-          setReplyModal(null);
         }
       })}
       className="mx-auto my-4 flex w-full max-w-2xl flex-col gap-8"
@@ -182,14 +184,14 @@ export const CreateReply = ({
         <div>
           <Image
             className="rounded-full dark:border-gray-800"
-            src={session?.user.image ?? ""}
+            src={ReplyModal?.user.image ?? ""}
             width={30}
             height={30}
-            alt={session?.user.name ?? ""}
+            alt={ReplyModal?.user.name ?? ""}
           />
         </div>
         <div className="w-full pl-3">
-          <p className="text-sm font-bold">{session?.user.name}</p>
+          <p className="text-sm font-bold">{ReplyModal?.user.name}</p>
           <p className="">{ReplyModal?.question}</p>
         </div>
       </div>
@@ -215,13 +217,17 @@ export const CreateReply = ({
         )}
       </div>
       <div className="flex w-full flex-col md:flex-row">
-          <button
-            className={`group inline-flex font-bold text-lg items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
-            type="submit"
-          >
-            Send
-            {createAnswerLoading ? <Loader size="md" /> : <PaperAirplaneIcon className="ml-1 w-5" />}
-          </button>
+        <button
+          className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2 text-center text-lg  font-bold text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
+          type="submit"
+        >
+          Send
+          {createAnswerLoading ? (
+            <Loader size="md" />
+          ) : (
+            <PaperAirplaneIcon className="ml-1 w-5" />
+          )}
+        </button>
       </div>
     </form>
   );

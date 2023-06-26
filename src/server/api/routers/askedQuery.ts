@@ -73,8 +73,8 @@ export const askedQueryRouter = createTRPCRouter({
       const { prisma } = ctx;
       const querys = await prisma.askedQuery.findFirst({
         where: {
-            userId: ctx.session.user.id,
-            creatorProfile: input.creatorProfile,
+          userId: ctx.session.user.id,
+          creatorProfile: input.creatorProfile,
         },
       });
       return querys;
@@ -83,43 +83,34 @@ export const askedQueryRouter = createTRPCRouter({
   getAllCreator: publicProcedure
     .input(z.object({ creatorProfile: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { creatorProfile } = input;
       const { prisma } = ctx;
 
       const querys = await prisma.askedQuery.findMany({
-       where:{
-        creatorProfile
-       },
-       include:{
-        user: true
-       }
-      
+        where: {
+          creatorProfile: input.creatorProfile,
+        },
+        include: {
+          user: true,
+        },
       });
 
       return querys;
     }),
 
-  getAllCreatorProtected: protectedProcedure.query(async ({ ctx }) => {
-    const { prisma } = ctx;
+  getAllCreatorProtected: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: ctx.session.user.id,
-      },
-    });
+      const user = await prisma.user.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
 
-    if (!user || !user.isCreator || !user.creatorProfile)
-      throw new TRPCError({ code: "BAD_REQUEST" });
+      if (!user || !user.isCreator || !user.creatorProfile)
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const querys = await prisma.askedQuery.findMany({
-      where: {
-        creatorProfile: user.creatorProfile,
-      },
-      // include: {
-      //  user: true
-      // },
-    });
-
-    return querys;
-  }),
+      return user;
+    }),
 });
