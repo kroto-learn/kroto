@@ -19,33 +19,73 @@
           <tr>
             <td class="m-0 bg-inherit bg-white p-0 text-base text-slate-700">
               <div class="h-full bg-neutral-900 text-center">
-                <h2 class="mx-auto my-5 px-2 py-6 font-semibold text-white">
-                  Thank you so much for attending @{{eventName}}🥳
+                <div class="pt-8 text-4xl">📈</div>
+                <h2 class="mx-auto my-5 px-2 pb-4 font-semibold text-white">
+                  Your learning report is here!
                 </h2>
               </div>
               <div class="p-6">
+                <p>Hello @{{name}},</p>
+                <p>Here's your weekly learning report:</p>
+                <table class="m-0 p-0">
+                  <thead>
+                    <th>
+                      <tr>
+                        <td>
+                          <p class="m-0 p-0 text-sm uppercase tracking-wider">
+                            📖 Chapters watched
+                          </p>
+                        </td>
+                        <td>
+                          <p class="m-0 p-0 text-sm uppercase tracking-wider">
+                            ⌛ Minutes learned
+                          </p>
+                        </td>
+                      </tr>
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <p class="m-0 p-0 text-2xl font-black text-pink-600">
+                          @{{chsWatched}}
+                        </p>
+                      </td>
+
+                      <td>
+                        <p class="m-0 p-0 text-2xl font-black text-pink-600">
+                          @{{minsLearned}}
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
                 <p>
-                  It was a great pleasure talking to you all and going over what
-                  we should do in our first and second years in collage.
+                  View your detailed learning report on your Kroto
+                  <a href="https://kroto.in/dashboard">dashboard</a>.
                 </p>
                 <p>
-                  That being said, this was my first ever public live event and
-                  a little feedback from your side would be of great help.
+                  Keep up with your learning & continue learning the
+                  <a href="@{{courseUrl}}">@{{courseName}}</a>
+                  course.
                 </p>
+                <a
+                  href="@{{courseUrl}}"
+                  class="rounded-lg bg-pink-500 px-4 py-2 text-sm font-bold text-white no-underline hover:bg-pink-600"
+                  >Continue learning
+                </a>
+
                 <p>
-                  It would be awesome if you can take our a couple of minute to
-                  give us feedback.🤗
+                  If you get stuck some where in your course, you can
+                  <a href="https://www.kroto.in/book-doubt-session">book</a> a
+                  free Doubt Session with our experts.
                 </p>
-                <a class="cursor-pointer" href="{{feedbackUrl}}"
-                  >Link to feedback form</a
-                >
-                <hr />
-                <p>
-                  Thank you,
-                  <a href="https://twitter.com/RoseKamalLove1"
-                    >Rose Kamal Love</a
-                  >
-                </p>
+                <a
+                  href="@{{courseUrl}}"
+                  class="rounded-lg bg-pink-500 px-4 py-2 text-sm font-bold text-white no-underline hover:bg-pink-600"
+                  >Book now
+                </a>
               </div>
               <div class="h-full bg-neutral-900 text-white">
                 <div class="flex justify-between px-4">
@@ -107,7 +147,7 @@
                     >
                   </div>
                 </div>
-                <div class="pb-px text-center">
+                <div class="pb-px text-center text-sm">
                   <p>
                     &copy;2023 Kroto Kreator Labs Pvt. Ltd., All right reserved.
                   </p>

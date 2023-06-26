@@ -108,7 +108,7 @@ const Index = () => {
             <ImageWF src="/empty/testimonial_empty.svg" alt="empty" fill />
           </div>
           <p className="mb-2 text-center text-sm text-neutral-400 sm:text-base">
-            You have not wrote any testimonials.
+            You have not written any testimonials.
           </p>
         </div>
       )}
