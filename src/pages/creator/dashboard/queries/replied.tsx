@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import Image from "next/image";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 
@@ -38,12 +40,14 @@ const RepliedAnswer = () => {
                           alt={query?.user.name ?? ""}
                         />
                       </div>
-                      <div className="w-full pl-3">
+                      <div className="w-full break-all pl-3">
                         <p>{query.user.name}</p>
-                        <p className="">{query.question}</p>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {query.question ?? ""}
+                        </ReactMarkdown>
                       </div>
                     </div>
-                    <div className="flex w-full truncate text-ellipsis pt-2">
+                    <div className="flex w-full text-ellipsis pt-2">
                       <div>
                         <Image
                           className="rounded-full dark:border-gray-800"
@@ -53,9 +57,11 @@ const RepliedAnswer = () => {
                           alt={session?.user.name ?? ""}
                         />
                       </div>
-                      <div className="pl-3">
+                      <div className="w-full break-all pl-3">
                         <p>{session?.user.name ?? ""}</p>
-                        <p>{query.answer}</p>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {query.answer ?? ""}
+                        </ReactMarkdown>
                       </div>
                     </div>
                   </div>

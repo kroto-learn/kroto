@@ -45,6 +45,8 @@ const Index = () => {
   const router = useRouter();
   const session = useSession();
 
+  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+
   const { creator_id } = router.query as { creator_id: string };
   console.log(creator_id);
   const { data: creator, isLoading: creatorLoading } =
@@ -63,6 +65,9 @@ const Index = () => {
 
   const { mutateAsync: addQueryMutation, isLoading: addQueryLoading } =
     api.askedQuery.add.useMutation();
+
+  const { mutateAsync: importAudienceMutation } =
+    api.creator.audience.importAudience.useMutation();
 
   const [submitted, setSubmitted] = useState(false);
 
@@ -99,6 +104,10 @@ const Index = () => {
               warningToast("You cannot submit Query for yourself!");
               return;
             } else {
+              setSelectedEmails([...(creator?.email ?? "")]);
+              await importAudienceMutation({
+                email: selectedEmails,
+              });
               await addQueryMutation(
                 {
                   ...values,
@@ -139,7 +148,7 @@ const Index = () => {
                 else methods.setValue("question", "");
               }}
               className="mt-6 w-full rounded-xl border-0 bg-neutral-700 p-4 outline-0 placeholder:text-neutral-400"
-              placeholder="Write me a testimonial..."
+              placeholder="Write me a Query..."
             />
           </div>
           {

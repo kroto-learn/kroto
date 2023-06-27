@@ -18,8 +18,19 @@ const registrationSource = fs.readFileSync(
   `${process.cwd()}/templates/registration.hbs`,
   "utf8"
 );
+const reminderSource = fs.readFileSync(
+  `${process.cwd()}/mail/templates/learning-reminder.hbs`,
+  "utf8"
+);
+const reportSource = fs.readFileSync(
+  `${process.cwd()}/mail/templates/learning-report.hbs`,
+  "utf8"
+);
+
 const registration = handlebars.compile(registrationSource);
 const template = handlebars.compile(templateSource);
+const reminderTemplate = handlebars.compile(reminderSource);
+const reportTemplate = handlebars.compile(reportSource);
 
 const transporter = nodemailer.createTransport({
   host: "email-smtp.us-east-1.amazonaws.com",
@@ -334,6 +345,92 @@ const sendContactus = async (contact: {
   }
 };
 
+const dailyReminderNotLearned = async ({
+  name,
+  email,
+  courseId,
+  courseName,
+}: {
+  name: string;
+  email: string;
+  courseId: string;
+  courseName: string;
+}) => {
+  const data = {
+    name,
+    courseUrl: `https://kroto.in/course/play/${courseId}`,
+    courseName,
+  };
+
+  const html = reminderTemplate(data);
+
+  const mailOptions = {
+    from: "kamal@kroto.in", // sender email
+    to: email, // recipient email
+    subject: "You're falling behind!",
+    html: html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (err) {
+    if (err instanceof Error)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+  }
+};
+
+const dailyLearningReport = async ({
+  name,
+  email,
+  courseId,
+  courseName,
+  chsWatched,
+  minutes,
+  moreLearned,
+  lessLearned,
+}: {
+  name: string;
+  email: string;
+  courseId: string;
+  courseName: string;
+  chsWatched: number;
+  minutes: number;
+  moreLearned: string;
+  lessLearned: string;
+}) => {
+  const data = {
+    name,
+    chsWatched,
+    minsLearned: minutes,
+    courseUrl: `https://kroto.in/course/play/${courseId}`,
+    courseName,
+    moreLearned,
+    lessLearned,
+  };
+
+  const html = reportTemplate(data);
+
+  const mailOptions = {
+    from: "kamal@kroto.in", // sender email
+    to: email, // recipient email
+    subject: "Your learning report is here!",
+    html: html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (err) {
+    if (err instanceof Error)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+  }
+};
+
 export {
   sendUpdatePreview,
   sendCalendarInvite,
@@ -341,4 +438,6 @@ export {
   sendEventStarted,
   sendEventUpdate,
   sendContactus,
+  dailyLearningReport,
+  dailyReminderNotLearned,
 };

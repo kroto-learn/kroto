@@ -6,6 +6,12 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { api } from "@/utils/api";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import { Loader } from "@/components/Loader";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import dynamic from "next/dynamic";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import { type MDEditorProps } from "@uiw/react-md-editor";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
@@ -15,6 +21,10 @@ import Link from "next/link";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 import { type AskedQuery, type User } from "@prisma/client";
 import { usePathname } from "next/navigation";
+
+const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
+  ssr: false,
+});
 
 const Index = () => {
   const { data: creator } = api.creator.getProfile.useQuery();
@@ -52,15 +62,17 @@ const Index = () => {
                           alt={query?.user.name ?? ""}
                         />
                       </div>
-                      <div className="w-full pl-3">
+                      <div className="w-full break-all pl-3">
                         <p>{query.user.name}</p>
-                        <p className="">{query.question}</p>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {query.question ?? ""}
+                        </ReactMarkdown>
                       </div>
                     </div>
                     {query.answer ? (
                       <></>
                     ) : (
-                      <div className="relative ">
+                      <div className="relative pt-7">
                         <div className="absolute bottom-0 right-0">
                           <button
                             onClick={() => {
@@ -187,22 +199,22 @@ export const CreateReply = ({
         </div>
         <div className="w-full pl-3">
           <p className="text-sm font-bold">{ReplyModal?.user.name}</p>
-          <p className="">{ReplyModal?.question}</p>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {ReplyModal?.question ?? ""}
+          </ReactMarkdown>
         </div>
       </div>
-      <div className="flex flex-col gap-3">
+      <div data-color-mode="dark" className="flex flex-col gap-3">
         <div>
-          <textarea
-            rows={6}
-            className="mt-6 w-full rounded-xl border-0 bg-neutral-700 p-4 outline-0 placeholder:text-neutral-400"
+          <MDEditor
+            height={300}
             value={methods.watch()?.answer}
-            onChange={(e) => {
-              if (e)
-                methods.setValue(
-                  "answer",
-                  e.target?.value.substring(0, answerLimit)
-                );
+            onChange={(mdtext) => {
+              if (mdtext) methods.setValue("answer", mdtext);
+              else methods.setValue("answer", "");
             }}
+            className="mt-6 w-full rounded-xl border-0 bg-neutral-700 p-4 outline-0 placeholder:text-neutral-400"
+            placeholder="Write me a testimonial..."
           />
         </div>
         {methods.formState.errors.answer?.message && (

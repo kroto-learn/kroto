@@ -4,6 +4,8 @@ import Layout from "@/components/layouts/main";
 import { SenderImage, SenderName } from "@/components/CreatorDetails";
 import { api } from "@/utils/api";
 import Head from "next/head";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import ImageWF from "@/components/ImageWF";
 import { useSession } from "next-auth/react";
 
@@ -49,7 +51,9 @@ const Index = () => {
                       </div>
                       <div className="w-full pl-3">
                         <p>{query.user.name}</p>
-                        <p className="">{query.question}</p>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {query.question ?? ""}
+                        </ReactMarkdown>
                       </div>
                       {query.answer ? (
                         <div className="text-sm">Replied</div>
@@ -58,13 +62,15 @@ const Index = () => {
                       )}
                     </div>
                     {query.answer ? (
-                      <div className="flex w-full truncate text-ellipsis pt-2">
+                      <div className="flex w-full pt-2">
                         <div>
                           <SenderImage query={query} />
                         </div>
-                        <div className="pl-3">
+                        <div className="w-full break-all pl-3">
                           <SenderName query={query} />
-                          <p>{query.answer}</p>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {query.answer ?? ""}
+                          </ReactMarkdown>
                         </div>
                       </div>
                     ) : (

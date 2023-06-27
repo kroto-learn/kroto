@@ -309,6 +309,8 @@ model CourseProgress {
   lastChapterProgress ChapterProgress? @relation(fields: [lastChapterId, watchedById], references: [chapterId, watchedById], onDelete: Cascade)
   course              Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   watchedBy           User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @default(now()) @updatedAt
 
   @@unique([courseId, watchedById])
   @@index([courseId])
@@ -326,6 +328,8 @@ model ChapterProgress {
   watchedBy        User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
   watched          Boolean          @default(false)
   courseProgresses CourseProgress[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @default(now()) @updatedAt
 
   @@unique([chapterId, watchedById])
   @@index([chapterId])
@@ -341,7 +345,7 @@ model LearnTrack {
   chapterId String
   chapter   Chapter? @relation(fields: [chapterId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   minutes   Int      @default(1)
   day       Int      @default(0)
   month     Int      @default(0)
