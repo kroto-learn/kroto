@@ -82,6 +82,7 @@ export const creatorRouter = createTRPCRouter({
         socialLinks: true,
         testimonials: true,
         registrations: true,
+        learningStreak: true,
       },
     });
 
