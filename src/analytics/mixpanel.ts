@@ -57,6 +57,7 @@ export class MixPannelClient {
       $avatar: data.avatar,
       $last_login: MixPannelClient._last_login,
     });
+    mixpanel.alias(MixPannelClient._distict_id, data.id);
   }
 
   protected track(eventName: string, data: object = {}) {
