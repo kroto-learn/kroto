@@ -15,7 +15,6 @@ import Bars3Icon from "@heroicons/react/20/solid/Bars3Icon";
 import ChevronDownIcon from "@heroicons/react/20/solid/ChevronDownIcon";
 import ArrowLeftOnRectangleIcon from "@heroicons/react/20/solid/ArrowLeftOnRectangleIcon";
 import WindowIcon from "@heroicons/react/20/solid/WindowIcon";
-import UserIcon from "@heroicons/react/20/solid/UserIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 import { useRouter } from "next/router";
 import { RectangleStackIcon } from "@heroicons/react/20/solid";
