@@ -73,7 +73,6 @@ model User {
   chapterProgress       ChapterProgress[]
   learnTracks           LearnTrack[]
   askedQueries          AskedQuery[]
-  SuggestedCourse       SuggestedCourse[]
 }
 
 model Event {
@@ -217,6 +216,7 @@ model AskedQuery {
   userId         String
   user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, creatorProfile])
   @@index([userId])
 }
 
@@ -244,7 +244,6 @@ model Course {
   category       Category?        @relation(fields: [categoryId], references: [id])
   categoryId     String?
   learnTracks    LearnTrack[]
-  discount       Discount?
 
   @@index([categoryId])
   @@index([creatorId])
@@ -277,14 +276,6 @@ enum ChapterType {
   YTVIDEO
   VIDEO
   TEXT
-}
-
-model Discount {
-  id       String   @id @default(cuid())
-  price    Int      @default(0)
-  deadline DateTime @default(now())
-  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId String   @unique
 }
 
 model Enrollment {
@@ -397,14 +388,4 @@ model Tag {
   id      String   @id @default(cuid())
   title   String
   courses Course[]
-}
-
-model SuggestedCourse {
-  id         String   @id @default(cuid())
-  createdAt  DateTime @default(now())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  playlistId String
-
-  @@index([userId])
 }

@@ -11,22 +11,26 @@
     <tr class="m-0 p-0">
       <td class="">
         <div class="my-12 text-center sm:my-8">
-          <a href="https://maizzle.com">
-            <img src="https://kroto.in/kroto-f.png" width="80" alt="Maizzle" />
+          <a href="https://kroto.in">
+            <img src="https://kroto.in/kroto-f.png" width="80" alt="Kroto" />
           </a>
         </div>
         <table class="prose prose-pink mx-auto w-full">
           <tr>
-            <td class="m-0 bg-inherit bg-white p-0 text-base text-slate-700">
+            <td
+              class="m-0 bg-inherit bg-neutral-50 p-0 text-base text-slate-700"
+            >
               <div class="h-full bg-neutral-900 text-center">
                 <div class="pt-8 text-4xl">📈</div>
-                <h2 class="mx-auto my-5 px-2 pb-4 font-semibold text-white">
+                <h2
+                  class="mx-auto my-5 px-2 pb-4 font-semibold text-neutral-100"
+                >
                   Your learning report is here!
                 </h2>
               </div>
               <div class="p-6">
                 <p>Hello @{{name}},</p>
-                <p>Here's your weekly learning report:</p>
+                <p>Here's your daily learning report:</p>
                 <table class="m-0 p-0">
                   <thead>
                     <th>
@@ -47,20 +51,55 @@
                   <tbody>
                     <tr>
                       <td>
-                        <p class="m-0 p-0 text-2xl font-black text-pink-600">
+                        <p class="m-0 p-0 text-4xl font-black text-pink-600">
                           @{{chsWatched}}
                         </p>
                       </td>
 
                       <td>
-                        <p class="m-0 p-0 text-2xl font-black text-pink-600">
+                        <p class="m-0 p-0 text-4xl font-black text-pink-600">
                           @{{minsLearned}}
                         </p>
                       </td>
                     </tr>
                   </tbody>
                 </table>
+                <table class="m-0 p-0">
+                  <thead>
+                    <th>
+                      <tr>
+                        <td>
+                          <p class="m-0 p-0 text-sm uppercase tracking-wider">
+                            🗓️ Yesterday's comparison
+                          </p>
+                        </td>
+                        <td>
+                          <p class="m-0 p-0 text-sm uppercase tracking-wider">
+                            ⚡ Learning Streak
+                          </p>
+                        </td>
+                      </tr>
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <p class="m-0 p-0 text-4xl font-black text-green-600">
+                          @{{moreLearned}}
+                        </p>
+                        <p class="m-0 p-0 text-4xl font-black text-red-600">
+                          @{{lessLearned}}
+                        </p>
+                      </td>
 
+                      <td>
+                        <p class="m-0 p-0 text-4xl font-black text-pink-600">
+                          - days
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
                 <p>
                   View your detailed learning report on your Kroto
                   <a href="https://kroto.in/dashboard">dashboard</a>.
@@ -82,7 +121,7 @@
                   free Doubt Session with our experts.
                 </p>
                 <a
-                  href="@{{courseUrl}}"
+                  href="https://www.kroto.in/book-doubt-session"
                   class="rounded-lg bg-pink-500 px-4 py-2 text-sm font-bold text-white no-underline hover:bg-pink-600"
                   >Book now
                 </a>
@@ -93,7 +132,7 @@
                     <img
                       src="https://kroto.in/kroto-logo.png"
                       width="35"
-                      alt="Maizzle"
+                      alt="Kroto"
                     />
                   </div>
                   <div class="mr-3 flex items-center">
