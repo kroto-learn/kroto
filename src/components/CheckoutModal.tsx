@@ -97,21 +97,55 @@ export default function CheckoutModal({
                           </p>
                         ) : (
                           <p
-                            className={`text-xs font-semibold uppercase tracking-widest sm:text-sm`}
+                            className={`text-xs font-semibold uppercase tracking-wide sm:text-sm`}
                           >
-                            ₹ {course?.price}
+                            ₹{course?.price}
                           </p>
                         )}
                       </div>
                     </div>
                   </div>
                   <div className="mb-2 text-neutral-400 hover:text-neutral-200">
-                    <Link href="/refund-policy">Refund Polity</Link>
+                    <Link className="text-sm" href="/refund-policy">
+                      Refund Policy
+                    </Link>
                   </div>
-                  <div className="mb-4 flex w-full justify-between border-b border-t border-neutral-300 px-1 py-2">
-                    <label>Total</label>
-                    <p>₹ {course?.price}</p>
+                  <div className="mb-4 flex w-full flex-col">
+                    <div className="flex w-full justify-between px-1 py-1">
+                      <label>Price</label>
+                      <p>₹{course?.price}</p>
+                    </div>
+                    {course?.discount &&
+                    course?.discount?.deadline?.getTime() >
+                      new Date().getTime() ? (
+                      <div className="flex w-full justify-between px-1 py-1">
+                        <label>Discount</label>
+                        <p className="text-green-500">
+                          -
+                          {100 -
+                            Math.round(
+                              (course?.discount?.price / course?.price ?? 1) *
+                                100
+                            )}
+                          %
+                        </p>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    <div className="flex w-full justify-between border-b border-t border-neutral-300 px-1 py-1">
+                      <label>To pay</label>
+                      <p className="font-bold">
+                        ₹
+                        {course?.discount &&
+                        course?.discount?.deadline?.getTime() >
+                          new Date().getTime()
+                          ? course?.discount?.price
+                          : course?.price}
+                      </p>
+                    </div>
                   </div>
+
                   <button className="flex w-full items-center justify-center rounded-lg bg-pink-500 px-3 py-2  text-center font-bold uppercase tracking-wider duration-150 hover:bg-pink-600">
                     Checkout
                   </button>

@@ -86,7 +86,7 @@ const addDurationtoDateTime = (datetime: Date, durationInMin: number) => {
 
 const getDateTimeDiffString = (date1: Date, date2: Date) => {
   const diffMs = Math.abs(date2.getTime() - date1.getTime());
-  if (diffMs <= 0) return undefined;
+  if (diffMs <= 0) return "0 minutes";
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   const diffHours = Math.floor(
     (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
