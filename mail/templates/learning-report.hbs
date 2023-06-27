@@ -46,6 +46,9 @@ ul ol, ol ul, ol ol):not(:where([class~="not-prose"] *)) {
 .prose :where(tbody td:last-child, tfoot td:last-child):not(:where([class~="not-prose"] *)) {
   padding-right: 0;
 }
+.hover-bg-pink-600:hover {
+  background-color: #db2777 !important;
+}
 @media (max-width: 600px) {
   .sm-my-8 {
     margin-top: 32px !important;
@@ -59,42 +62,108 @@ ul ol, ol ul, ol ol):not(:where([class~="not-prose"] *)) {
     <tr style="margin: 0; padding: 0;">
       <td>
         <div class="sm-my-8" style="margin-top: 48px; margin-bottom: 48px; text-align: center">
-          <a href="https://maizzle.com">
-            <img src="https://kroto.in/kroto-f.png" width="80" alt="Maizzle" style="max-width: 100%; vertical-align: middle; line-height: 1; border: 0">
+          <a href="https://kroto.in">
+            <img src="https://kroto.in/kroto-f.png" width="80" alt="Kroto" style="max-width: 100%; vertical-align: middle; line-height: 1; border: 0">
           </a>
         </div>
         <table style="color: var(--tw-prose-body); max-width: 65ch; --tw-prose-body: #374151; --tw-prose-headings: #111827; --tw-prose-lead: #4b5563; --tw-prose-bold: #111827; --tw-prose-counters: #6b7280; --tw-prose-bullets: #d1d5db; --tw-prose-hr: #e5e7eb; --tw-prose-quotes: #111827; --tw-prose-quote-borders: #e5e7eb; --tw-prose-captions: #6b7280; --tw-prose-code: #111827; --tw-prose-pre-code: #e5e7eb; --tw-prose-pre-bg: #1f2937; --tw-prose-th-borders: #d1d5db; --tw-prose-td-borders: #e5e7eb; --tw-prose-invert-body: #d1d5db; --tw-prose-invert-headings: #fff; --tw-prose-invert-lead: #9ca3af; --tw-prose-invert-bold: #fff; --tw-prose-invert-counters: #9ca3af; --tw-prose-invert-bullets: #4b5563; --tw-prose-invert-hr: #374151; --tw-prose-invert-quotes: #f3f4f6; --tw-prose-invert-quote-borders: #374151; --tw-prose-invert-captions: #9ca3af; --tw-prose-invert-code: #fff; --tw-prose-invert-pre-code: #d1d5db; --tw-prose-invert-pre-bg: rgb(0 0 0 / 50%); --tw-prose-invert-th-borders: #4b5563; --tw-prose-invert-td-borders: #374151; font-size: 1rem; line-height: 1.75; --tw-prose-links: #db2777; --tw-prose-invert-links: #ec4899; margin-left: auto; margin-right: auto; width: 100%" cellpadding="0" cellspacing="0" role="presentation">
           <tr style="margin-top: 0; margin-bottom: 0;">
-            <td style="margin: 0; background-color: #fff; padding: 0; font-size: 16px; color: #334155">
+            <td style="margin: 0; background-color: #fafafa; padding: 0; font-size: 16px; color: #334155">
               <div style="height: 100%; background-color: #171717; text-align: center">
-                <h2 style="margin-left: auto; margin-right: auto; padding-left: 8px; padding-right: 8px; padding-top: 24px; padding-bottom: 24px; color: var(--tw-prose-headings); font-weight: 700; font-size: 1.5em; margin-top: 2em; margin-bottom: 1em; line-height: 1.3333333">
-                  Thank you so much for attending {{eventName}}🥳
+                <div style="padding-top: 32px; font-size: 36px">📈</div>
+                <h2 style="margin-left: auto; margin-right: auto; padding-left: 8px; padding-right: 8px; padding-bottom: 16px; color: var(--tw-prose-headings); font-weight: 700; font-size: 1.5em; margin-top: 2em; margin-bottom: 1em; line-height: 1.3333333">
+                  Your learning report is here!
                 </h2>
               </div>
               <div style="padding: 24px">
+                <p style="margin-top: 1.25em; margin-bottom: 1.25em;">Hello {{name}},</p>
+                <p style="margin-top: 1.25em; margin-bottom: 1.25em;">Here's your daily learning report:</p>
+                <table style="margin: 0; padding: 0; width: 100%; table-layout: auto; text-align: left; margin-top: 2em; margin-bottom: 2em; font-size: 0.875em; line-height: 1.7142857;" cellpadding="0" cellspacing="0" role="presentation">
+                  <thead style="border-bottom-width: 1px; border-bottom-color: var(--tw-prose-th-borders);">
+                    <th style="color: var(--tw-prose-headings); font-weight: 600; vertical-align: bottom; padding-right: 0.5714286em; padding-bottom: 0.5714286em; padding-left: 0;">
+                      </th><tr>
+                        <td>
+                          <p style="margin: 0; padding: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1.25em; margin-bottom: 1.25em">
+                            📖 Chapters watched
+                          </p>
+                        </td>
+                        <td>
+                          <p style="margin: 0; padding: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1.25em; margin-bottom: 1.25em;">
+                            ⌛ Minutes learned
+                          </p>
+                        </td>
+                      </tr>                  </thead>
+                  <tbody>
+                    <tr style="border-bottom-color: var(--tw-prose-td-borders); border-bottom-width: 0;">
+                      <td style="vertical-align: baseline;">
+                        <p style="margin: 0; padding: 0; font-size: 36px; font-weight: 900; color: #db2777; margin-top: 1.25em; margin-bottom: 1.25em">
+                          {{chsWatched}}
+                        </p>
+                      </td>
+                      <td style="vertical-align: baseline;">
+                        <p style="margin: 0; padding: 0; font-size: 36px; font-weight: 900; color: #db2777; margin-top: 1.25em; margin-bottom: 1.25em;">
+                          {{minsLearned}}
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table style="margin: 0; padding: 0; width: 100%; table-layout: auto; text-align: left; margin-top: 2em; margin-bottom: 2em; font-size: 0.875em; line-height: 1.7142857;" cellpadding="0" cellspacing="0" role="presentation">
+                  <thead style="border-bottom-width: 1px; border-bottom-color: var(--tw-prose-th-borders);">
+                    <th style="color: var(--tw-prose-headings); font-weight: 600; vertical-align: bottom; padding-right: 0.5714286em; padding-bottom: 0.5714286em; padding-left: 0;">
+                      </th><tr>
+                        <td>
+                          <p style="margin: 0; padding: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1.25em; margin-bottom: 1.25em;">
+                            🗓️ Yesterday's comparison
+                          </p>
+                        </td>
+                        <td>
+                          <p style="margin: 0; padding: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1.25em; margin-bottom: 1.25em;">
+                            ⚡ Learning Streak
+                          </p>
+                        </td>
+                      </tr>                  </thead>
+                  <tbody>
+                    <tr style="border-bottom-color: var(--tw-prose-td-borders); border-bottom-width: 0;">
+                      <td style="vertical-align: baseline;">
+                        <p style="margin: 0; padding: 0; font-size: 36px; font-weight: 900; color: #16a34a; margin-top: 1.25em; margin-bottom: 1.25em">
+                          {{moreLearned}}
+                        </p>
+                        <p style="margin: 0; padding: 0; font-size: 36px; font-weight: 900; color: #dc2626; margin-top: 1.25em; margin-bottom: 1.25em">
+                          {{lessLearned}}
+                        </p>
+                      </td>
+                      <td style="vertical-align: baseline;">
+                        <p style="margin: 0; padding: 0; font-size: 36px; font-weight: 900; color: #db2777; margin-top: 1.25em; margin-bottom: 1.25em;">
+                          - days
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
                 <p style="margin-top: 1.25em; margin-bottom: 1.25em;">
-                  It was a great pleasure talking to you all and going over what
-                  we should do in our first and second years in collage.
+                  View your detailed learning report on your Kroto
+                  <a href="https://kroto.in/dashboard" style="color: var(--tw-prose-links); text-decoration: underline; font-weight: 500;">dashboard</a>.
                 </p>
                 <p style="margin-top: 1.25em; margin-bottom: 1.25em;">
-                  That being said, this was my first ever public live event and
-                  a little feedback from your side would be of great help.
+                  Keep up with your learning & continue learning the
+                  <a href="{{courseUrl}}" style="color: var(--tw-prose-links); text-decoration: underline; font-weight: 500;">{{courseName}}</a>
+                  course.
                 </p>
+                <a href="{{courseUrl}}" class="hover-bg-pink-600" style="border-radius: 8px; background-color: #ec4899; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; font-size: 14px; text-decoration-line: none; color: var(--tw-prose-links); text-decoration: underline; font-weight: 500">Continue learning
+                </a>
                 <p style="margin-top: 1.25em; margin-bottom: 1.25em;">
-                  It would be awesome if you can take our a couple of minute to
-                  give us feedback.🤗
+                  If you get stuck some where in your course, you can
+                  <a href="https://www.kroto.in/book-doubt-session" style="color: var(--tw-prose-links); text-decoration: underline; font-weight: 500;">book</a> a
+                  free Doubt Session with our experts.
                 </p>
-                <a style="cursor: pointer; color: var(--tw-prose-links); text-decoration: underline; font-weight: 500">Link to feedback form</a>
-                <hr style="border-color: var(--tw-prose-hr); border-top-width: 1px; margin-top: 3em; margin-bottom: 3em;">
-                <p style="margin-bottom: 1.25em; margin-top: 0;">
-                  Thank you,
-                  <a href="https://twitter.com/RoseKamalLove1" style="color: var(--tw-prose-links); text-decoration: underline; font-weight: 500;">Rose Kamal Love</a>
-                </p>
+                <a href="https://www.kroto.in/book-doubt-session" class="hover-bg-pink-600" style="border-radius: 8px; background-color: #ec4899; padding-left: 16px; padding-right: 16px; padding-top: 8px; padding-bottom: 8px; font-size: 14px; text-decoration-line: none; color: var(--tw-prose-links); text-decoration: underline; font-weight: 500;">Book now
+                </a>
               </div>
               <div style="height: 100%; background-color: #171717; color: #fff;">
                 <div style="display: flex; justify-content: space-between; padding-left: 16px; padding-right: 16px">
                   <div style="margin-left: 4px">
-                    <img src="https://kroto.in/kroto-logo.png" width="35" alt="Maizzle" style="max-width: 100%; vertical-align: middle; line-height: 1; border: 0; margin-top: 2em; margin-bottom: 2em;">
+                    <img src="https://kroto.in/kroto-logo.png" width="35" alt="Kroto" style="max-width: 100%; vertical-align: middle; line-height: 1; border: 0; margin-top: 2em; margin-bottom: 2em;">
                   </div>
                   <div style="margin-right: 12px; display: flex; align-items: center">
                     <a href="https://twitter.com/RoseKamalLove1" style="margin: 16px; cursor: pointer; color: var(--tw-prose-links); text-decoration: underline; font-weight: 500">
@@ -119,7 +188,7 @@ ul ol, ol ul, ol ol):not(:where([class~="not-prose"] *)) {
                     <a href="https://www.kroto.in/privacy" style="margin-left: 4px; margin-right: 4px; cursor: pointer; color: var(--tw-prose-links); text-decoration: underline; font-weight: 500;">Privacy Policy</a>
                   </div>
                 </div>
-                <div style="padding-bottom: 1px; text-align: center">
+                <div style="padding-bottom: 1px; text-align: center; font-size: 14px">
                   <p style="margin-top: 1.25em; margin-bottom: 1.25em;">
                     &copy;2023 Kroto Kreator Labs Pvt. Ltd., All right reserved.
                   </p>
