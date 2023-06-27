@@ -565,7 +565,38 @@ export const courseRouter = createTRPCRouter({
           },
           categoryId: input?.category?.id,
         },
+        include: {
+          discount: true,
+        },
       });
+
+      if (updatedCourse?.discount) {
+        if (input.discount)
+          await prisma.discount.update({
+            where: {
+              id: updatedCourse?.discount?.id,
+            },
+            data: {
+              price: parseInt(input?.discount?.price),
+              deadline: input?.discount?.deadline,
+            },
+          });
+        else
+          await prisma.discount.delete({
+            where: {
+              id: updatedCourse?.discount?.id,
+            },
+          });
+      } else {
+        if (input.discount)
+          await prisma.discount.create({
+            data: {
+              courseId: updatedCourse?.id,
+              price: parseInt(input?.discount?.price),
+              deadline: input?.discount?.deadline,
+            },
+          });
+      }
 
       return updatedCourse;
     }),
