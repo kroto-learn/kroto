@@ -210,15 +210,46 @@ const CourseOverview = () => {
                 >
                   Price
                 </label>
-                {course?.price === 0 ? (
-                  <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm text-green-600 duration-300 sm:text-base">
-                    Free
-                  </p>
-                ) : (
-                  <p className="line-clamp-1 w-full overflow-hidden text-ellipsis text-sm font-bold text-neutral-200 duration-300 sm:text-base">
-                    ₹ {course?.price}
-                  </p>
-                )}
+                <div className="flex items-center gap-2">
+                  {course?.discount &&
+                  course?.discount?.deadline?.getTime() >
+                    new Date().getTime() ? (
+                    course?.discount?.price === 0 ? (
+                      <p
+                        className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+                      >
+                        free
+                      </p>
+                    ) : (
+                      <p
+                        className={`text-xs font-bold uppercase tracking-wide sm:text-sm`}
+                      >
+                        ₹{course?.discount?.price}
+                      </p>
+                    )
+                  ) : (
+                    <></>
+                  )}
+                  {course?.price === 0 ? (
+                    <p
+                      className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+                    >
+                      free
+                    </p>
+                  ) : (
+                    <p
+                      className={`text-xs font-semibold uppercase tracking-wide sm:text-sm ${
+                        course?.discount &&
+                        course?.discount?.deadline?.getTime() >
+                          new Date().getTime()
+                          ? "font-thin line-through"
+                          : "font-bold"
+                      }`}
+                    >
+                      ₹{course?.price}
+                    </p>
+                  )}
+                </div>
               </div>
 
               {course?.category ? (

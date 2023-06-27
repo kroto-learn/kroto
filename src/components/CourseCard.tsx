@@ -1,10 +1,11 @@
-import { type Course } from "@prisma/client";
+import { type Discount, type Course } from "@prisma/client";
 import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 
 type Props = {
   course: Course & {
     _count: { chapters: number };
+    discount: Discount | null;
   };
   manage?: boolean;
   admin?: boolean;
@@ -52,19 +53,44 @@ const CourseCard = ({ course, manage, lg, admin }: Props) => {
           {course._count.chapters} Chapters
         </p>
         {!manage ? (
-          course?.price === 0 ? (
-            <p
-              className={`text-xs font-semibold uppercase tracking-widest text-green-500/80 sm:text-sm`}
-            >
-              free
-            </p>
-          ) : (
-            <p
-              className={`text-xs font-semibold uppercase tracking-widest sm:text-sm`}
-            >
-              ₹ {course?.price}
-            </p>
-          )
+          <div className="flex items-center gap-2">
+            {course?.discount &&
+            course?.discount?.deadline?.getTime() > new Date().getTime() ? (
+              course?.discount?.price === 0 ? (
+                <p
+                  className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+                >
+                  free
+                </p>
+              ) : (
+                <p
+                  className={`text-xs font-bold uppercase tracking-wide sm:text-sm`}
+                >
+                  ₹{course?.discount?.price}
+                </p>
+              )
+            ) : (
+              <></>
+            )}
+            {course?.price === 0 ? (
+              <p
+                className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+              >
+                free
+              </p>
+            ) : (
+              <p
+                className={`text-xs font-semibold uppercase tracking-wide sm:text-sm ${
+                  course?.discount &&
+                  course?.discount?.deadline?.getTime() > new Date().getTime()
+                    ? "font-thin line-through"
+                    : "font-bold"
+                }`}
+              >
+                ₹{course?.price}
+              </p>
+            )}
+          </div>
         ) : (
           <></>
         )}
