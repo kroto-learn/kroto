@@ -391,6 +391,7 @@ const dailyLearningReport = async ({
   minutes,
   moreLearned,
   lessLearned,
+  streak,
 }: {
   name: string;
   email: string;
@@ -400,6 +401,7 @@ const dailyLearningReport = async ({
   minutes: number;
   moreLearned: string;
   lessLearned: string;
+  streak: number;
 }) => {
   const data = {
     name,
@@ -409,6 +411,7 @@ const dailyLearningReport = async ({
     courseName,
     moreLearned,
     lessLearned,
+    streak,
   };
 
   const html = reportTemplate(data);
