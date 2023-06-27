@@ -231,6 +231,7 @@ export const courseRouter = createTRPCRouter({
           },
           tags: true,
           category: true,
+          discount: true,
         },
       });
 
@@ -247,6 +248,7 @@ export const courseRouter = createTRPCRouter({
               chapters: true,
             },
           },
+          discount: true,
         },
       });
 

@@ -32,6 +32,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
         id: session.user.id,
         avatar: session.user.image ?? "",
       });
+
+      MixPannelClient.getInstance().signIn({
+        provider: "google",
+        email: session.user.email,
+        name: session.user.name ?? "",
+        id: session.user.id,
+      });
     }
 
     MixPannelClient.getInstance().pageViewed({
