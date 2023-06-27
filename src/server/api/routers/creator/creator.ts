@@ -52,6 +52,7 @@ export const creatorRouter = createTRPCRouter({
                   chapters: true,
                 },
               },
+              discount: true,
             },
           },
           accounts: true,
