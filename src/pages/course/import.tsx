@@ -714,7 +714,7 @@ const Index = () => {
                           : "border-neutral-500 text-neutral-500"
                       }`}
                       onClick={() => {
-                        methods.setValue("price", "0");
+                        methods.setValue("discount.price", "0");
                       }}
                     >
                       <div
@@ -775,7 +775,10 @@ const Index = () => {
                   ) : (
                     <></>
                   )}
-                  <label htmlFor="dPrice" className="text-sm text-neutral-200">
+                  <label
+                    htmlFor="dDeadline"
+                    className="text-sm text-neutral-200"
+                  >
                     Discount Deadline
                   </label>
                   <div className="flex max-w-xs items-center gap-3 rounded-lg border border-neutral-700 bg-neutral-800 p-2">
