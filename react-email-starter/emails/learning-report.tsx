@@ -36,6 +36,8 @@ export const LearningReportEmail = ({
     ? ((minsLearned - prevMinutes) / prevMinutes) * 100
     : undefined;
 
+  // something
+
   return (
     <Tailwind
       config={{
