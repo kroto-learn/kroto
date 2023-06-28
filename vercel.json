@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/trpc/cronEmailTesting.test",
-      "schedule": "*/3 * * * *"
+      "schedule": "0 0 23 * *"
     }
   ]
 }
