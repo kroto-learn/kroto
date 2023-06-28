@@ -11,6 +11,7 @@ import { CourseNestedLayout } from ".";
 import { api } from "@/utils/api";
 import {
   ChevronDownIcon,
+  PlusIcon,
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
@@ -24,9 +25,18 @@ import { z } from "zod";
 import { useForm, type UseFormProps } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MixPannelClient } from "@/analytics/mixpanel";
+import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
+import dayjs from "dayjs";
+import { getDateTimeDiffString } from "@/helpers/time";
 
 export const settingsFormSchema = z.object({
   price: z.string().nonempty("Please enter course price."),
+  discount: z
+    .object({
+      price: z.string().nonempty("Please enter discount price."),
+      deadline: z.date({ required_error: "Please enter discount deadline." }),
+    })
+    .optional(),
   tags: z.array(z.object({ id: z.string(), title: z.string() })),
   category: z.object({ id: z.string(), title: z.string() }).optional(),
   id: z.string(),
@@ -70,9 +80,9 @@ const Index = () => {
     api.course.update.useMutation();
 
   const { data: searchedTags, isLoading: searchingtags } =
-    api.course.searchTags.useQuery(debouncedTagInput);
+    api.tagsCourse.searchTags.useQuery(debouncedTagInput);
 
-  const { data: catgs } = api.course.getCategories.useQuery();
+  const { data: catgs } = api.categoriesCourse.getCategories.useQuery();
 
   const [initData, setInitData] = useState(false);
 
@@ -92,12 +102,20 @@ const Index = () => {
     if (!(course instanceof TRPCError) && course && !initData) {
       setInitData(true);
       methods.setValue("price", course?.price?.toString());
+      methods.setValue(
+        "discount",
+        course?.discount
+          ? { ...course?.discount, price: course?.discount?.price?.toString() }
+          : undefined
+      );
       methods.setValue("tags", course?.tags);
       methods.setValue("category", course?.category ?? undefined);
       methods.setValue("id", course?.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [course]);
+
+  const { darkAlgorithm } = theme;
 
   if (courseLoading) return <></>;
 
@@ -199,6 +217,239 @@ const Index = () => {
                   ₹
                 </p>
               </div>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-col gap-3">
+            <div className="flex items-center gap-4">
+              {methods.watch().discount ? (
+                <>
+                  <label
+                    htmlFor="discount"
+                    className="text-lg text-neutral-200"
+                  >
+                    Discount
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      methods.setValue("discount", undefined);
+                    }}
+                    className="rounded-lg border border-pink-500 px-2 py-1 text-sm font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
+                  >
+                    Clear Discount
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    methods.setValue("discount", {
+                      price: "0",
+                      deadline: new Date(
+                        new Date().setDate(new Date().getDate() + 1)
+                      ),
+                    });
+                  }}
+                  className="flex items-center gap-1 rounded-lg border border-pink-500 px-2 py-1 text-sm font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
+                >
+                  <PlusIcon className="w-4" /> Add a Discount
+                </button>
+              )}
+            </div>
+            {methods.watch().discount ? (
+              <>
+                <label htmlFor="dPrice" className="text-sm text-neutral-200">
+                  Discounted Price
+                </label>
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
+                      methods.watch().discount?.price === "0"
+                        ? "border-green-600 bg-green-600/40"
+                        : "border-neutral-500 text-neutral-500"
+                    }`}
+                    onClick={() => {
+                      methods.setValue("discount.price", "0");
+                    }}
+                  >
+                    <div
+                      className={`flex h-3 w-3 items-center rounded-full border ${
+                        methods.watch().discount?.price === "0"
+                          ? "border-neutral-300"
+                          : "border-neutral-500"
+                      }`}
+                    >
+                      {methods.watch().discount?.price === "0" ? (
+                        <div className="h-full w-full rounded-full bg-neutral-300" />
+                      ) : (
+                        <></>
+                      )}
+                    </div>{" "}
+                    Free
+                  </div>
+
+                  <div
+                    className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
+                      methods.watch().discount?.price !== "0"
+                        ? "border-pink-600 bg-pink-600/40"
+                        : "border-neutral-500 text-neutral-500"
+                    }`}
+                    onClick={() => {
+                      methods.setValue("discount.price", "50");
+                    }}
+                  >
+                    <div
+                      className={`flex h-3 w-3 items-center justify-center rounded-full border ${
+                        methods.watch().discount?.price !== "0"
+                          ? "border-neutral-300"
+                          : "border-neutral-500"
+                      }`}
+                    >
+                      {methods.watch().discount?.price !== "0" ? (
+                        <div className="h-full w-full rounded-full bg-neutral-300" />
+                      ) : (
+                        <></>
+                      )}
+                    </div>{" "}
+                    Paid
+                  </div>
+                </div>
+                {methods.watch().discount?.price !== "0" ? (
+                  <div className="relative flex w-full max-w-[7rem] items-center">
+                    <input
+                      type="number"
+                      {...methods.register("discount.price")}
+                      className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      placeholder="00"
+                      defaultValue={50}
+                    />
+                    <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                      ₹
+                    </p>
+                  </div>
+                ) : (
+                  <></>
+                )}
+                <label htmlFor="dDeadline" className="text-sm text-neutral-200">
+                  Discount Deadline
+                </label>
+                <div className="flex max-w-xs items-center gap-3 rounded-lg border border-neutral-700 bg-neutral-800 p-2">
+                  <ConfigProvider
+                    theme={{
+                      algorithm: darkAlgorithm,
+                      token: {
+                        colorPrimary: "#ec4899",
+                      },
+                    }}
+                  >
+                    <DatePicker
+                      format="DD-MM-YYYY"
+                      autoFocus={false}
+                      bordered={false}
+                      disabledDate={(currentDate) =>
+                        currentDate.isBefore(dayjs(new Date()), "day")
+                      }
+                      value={dayjs(
+                        methods
+                          .watch()
+                          ?.discount?.deadline?.toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          }),
+                        "DD-MM-YYYY"
+                      )}
+                      onChange={(selectedDate) => {
+                        const sourceDateObj =
+                          selectedDate?.toDate() ?? new Date();
+                        const targetDateObj =
+                          methods.watch()?.discount?.deadline ?? new Date();
+                        targetDateObj.setFullYear(sourceDateObj.getFullYear());
+                        targetDateObj.setMonth(sourceDateObj.getMonth());
+                        targetDateObj.setDate(sourceDateObj.getDate());
+                        methods.setValue("discount.deadline", targetDateObj);
+                      }}
+                    />
+                    <TimePicker
+                      autoFocus={false}
+                      bordered={false}
+                      use12Hours
+                      value={dayjs(
+                        (
+                          methods.watch()?.discount?.deadline ?? new Date()
+                        ).toLocaleTimeString("en-US", {
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        }),
+                        "hh:mm A"
+                      )}
+                      onChange={(selectedTime) => {
+                        if (selectedTime) {
+                          const prvDate = new Date(
+                            methods.watch()?.discount?.deadline ?? new Date()
+                          );
+
+                          prvDate.setHours(selectedTime.toDate().getHours());
+                          prvDate.setMinutes(
+                            selectedTime.toDate().getMinutes()
+                          );
+
+                          methods.setValue("discount.deadline", prvDate);
+                        }
+                      }}
+                      format="hh:mm A"
+                      disabledTime={() => {
+                        const now = dayjs();
+                        return {
+                          disabledHours: () => {
+                            if (
+                              dayjs(methods.watch()?.discount?.deadline).format(
+                                "DD/MM/YYYY"
+                              ) === dayjs(new Date()).format("DD/MM/YYYY")
+                            )
+                              return [...Array(now.hour()).keys()];
+                            return [];
+                          },
+                          disabledMinutes: (selectedHour) => {
+                            if (
+                              dayjs(methods.watch()?.discount?.deadline).format(
+                                "DD/MM/YYYY"
+                              ) === dayjs(new Date()).format("DD/MM/YYYY")
+                            ) {
+                              if (now.hour() === selectedHour) {
+                                return [...Array(now.minute()).keys()];
+                              }
+                              return [];
+                            }
+                            return [];
+                          },
+                        };
+                      }}
+                      style={{
+                        color: "#fff",
+                      }}
+                    />
+                  </ConfigProvider>
+                </div>
+                <p className="text-sm text-yellow-600">
+                  <span className="font-bold">
+                    {getDateTimeDiffString(
+                      new Date(),
+                      methods.watch().discount?.deadline ?? new Date()
+                    )}
+                  </span>{" "}
+                  remaining for discount.
+                </p>
+                {methods.formState.errors.discount?.deadline?.message && (
+                  <p className="text-red-700">
+                    {methods.formState.errors.discount?.deadline?.message}
+                  </p>
+                )}
+              </>
             ) : (
               <></>
             )}

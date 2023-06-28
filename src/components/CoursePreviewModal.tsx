@@ -39,12 +39,20 @@ const CoursePreviewModal = ({
   };
   const session = useSession();
   const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
-    api.course.enroll.useMutation();
-  const { data: isEnrolled } = api.course.isEnrolled.useQuery({ courseId });
+    api.enrollmentCourse.enroll.useMutation();
+  const { data: isEnrolled } = api.enrollmentCourse.isEnrolled.useQuery({
+    courseId,
+  });
   const { successToast, errorToast } = useToast();
   const ctx = api.useContext();
 
   if (course instanceof TRPCError || !course) return <>Course not found!</>;
+
+  const price =
+    course?.discount &&
+    course?.discount?.deadline?.getTime() > new Date().getTime()
+      ? course?.discount?.price
+      : course?.price;
 
   return (
     <>
@@ -179,12 +187,12 @@ const CoursePreviewModal = ({
                               });
                               return;
                             }
-                            if (course.price === 0)
+                            if (price === 0)
                               await enrollMutation(
                                 { courseId: course?.id },
                                 {
                                   onSuccess: () => {
-                                    void ctx.course.isEnrolled.invalidate();
+                                    void ctx.enrollmentCourse.isEnrolled.invalidate();
                                     successToast(
                                       "Successfully enrolled in course!"
                                     );
@@ -201,15 +209,46 @@ const CoursePreviewModal = ({
                           {enrollLoading ? <Loader white /> : <></>}
                           <span>Enroll now</span>
                         </button>
-                        {course?.price === 0 ? (
-                          <span className="uppercase tracking-wider text-green-600">
-                            FREE
-                          </span>
-                        ) : (
-                          <span className="font-bold uppercase tracking-wider text-white">
-                            ₹ {course?.price}
-                          </span>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {course?.discount &&
+                          course?.discount?.deadline?.getTime() >
+                            new Date().getTime() ? (
+                            course?.discount?.price === 0 ? (
+                              <p
+                                className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+                              >
+                                free
+                              </p>
+                            ) : (
+                              <p
+                                className={`text-xs font-bold uppercase tracking-wide sm:text-sm`}
+                              >
+                                ₹{course?.discount?.price}
+                              </p>
+                            )
+                          ) : (
+                            <></>
+                          )}
+                          {course?.price === 0 ? (
+                            <p
+                              className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+                            >
+                              free
+                            </p>
+                          ) : (
+                            <p
+                              className={`text-xs font-semibold uppercase tracking-wide sm:text-sm ${
+                                course?.discount &&
+                                course?.discount?.deadline?.getTime() >
+                                  new Date().getTime()
+                                  ? "font-thin line-through"
+                                  : "font-bold"
+                              }`}
+                            >
+                              ₹{course?.price}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       <p className="text-sm text-neutral-400">

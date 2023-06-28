@@ -84,9 +84,34 @@ const addDurationtoDateTime = (datetime: Date, durationInMin: number) => {
   return datetime;
 };
 
+const getDateTimeDiffString = (date1: Date, date2: Date) => {
+  const diffMs = Math.abs(date2.getTime() - date1.getTime());
+  if (diffMs <= 0) return "0 minutes";
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor(
+    (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
+  const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+  let diffStr = "";
+
+  if (diffDays > 0) {
+    diffStr += `${diffDays} day${diffDays !== 1 ? "s" : ""}, `;
+  }
+
+  if (diffHours > 0) {
+    diffStr += `${diffHours} hour${diffHours !== 1 ? "s" : ""}, `;
+  }
+
+  diffStr += `${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""}`;
+
+  return diffStr;
+};
+
 export {
   generateTimesArray,
   giveFirstTimeIdx,
   updateTime,
   addDurationtoDateTime,
+  getDateTimeDiffString,
 };

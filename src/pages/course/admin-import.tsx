@@ -4,6 +4,7 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
   PlusCircleIcon,
+  PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,6 +31,9 @@ import { CheckmarkIcon } from "react-hot-toast";
 import ImageWF from "@/components/ImageWF";
 import { Listbox } from "@headlessui/react";
 import { MixPannelClient } from "@/analytics/mixpanel";
+import dayjs from "dayjs";
+import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
+import { getDateTimeDiffString } from "@/helpers/time";
 
 // const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 //   ssr: false,
@@ -52,6 +56,12 @@ export const adminImportCourseFormSchema = z.object({
     })
   ),
   price: z.string().nonempty("Please enter course price."),
+  discount: z
+    .object({
+      price: z.string().nonempty("Please enter discount price."),
+      deadline: z.date({ required_error: "Please enter discount deadline." }),
+    })
+    .optional(),
   tags: z.array(z.object({ id: z.string(), title: z.string() })),
   category: z.object({ id: z.string(), title: z.string() }).optional(),
   ytId: z.string(),
@@ -99,14 +109,15 @@ const Index = () => {
 
   const revalidate = useRevalidateSSG();
 
-  const { data: catgs } = api.course.getCategories.useQuery();
+  const { data: catgs } = api.categoriesCourse.getCategories.useQuery();
 
   const { data: searchedTags, isLoading: searchingtags } =
-    api.course.searchTags.useQuery(debouncedTagInput);
+    api.tagsCourse.searchTags.useQuery(debouncedTagInput);
 
   // const [playlistDetailInit, setPlaylistDetailInit] = useState(false);
 
   const { errorToast } = useToast();
+  const { darkAlgorithm } = theme;
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -128,12 +139,14 @@ const Index = () => {
     methods.setValue("thumbnail", generateRandomGradientImages());
   }, [methods]);
 
-  const { data: playlists } = api.course.searchYoutubePlaylistsAdmin.useQuery({
-    searchQuery: debouncedQuery,
-  });
+  const { data: playlists } = api.ytCourse.searchYoutubePlaylistsAdmin.useQuery(
+    {
+      searchQuery: debouncedQuery,
+    }
+  );
 
   const { data: playlistData, isLoading: playlistLoading } =
-    api.course.getYoutubePlaylistAdmin.useQuery({
+    api.ytCourse.getYoutubePlaylistAdmin.useQuery({
       playlistId,
     });
 
@@ -145,6 +158,23 @@ const Index = () => {
   } = api.course.adminImport.useMutation();
 
   const router = useRouter();
+
+  const { ptId } = router.query as { ptId: string | undefined };
+
+  useEffect(() => {
+    if (ptId) {
+      if (
+        !(courses instanceof TRPCError) &&
+        courses?.find((c) => c.ytId === ptId)
+      ) {
+        errorToast("This playlist has already been imported!");
+        return;
+      }
+      setPlaylistId(ptId);
+      methods.setValue("ytId", ptId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ptId, courses]);
 
   useEffect(() => {
     if (playlistData) {
@@ -218,11 +248,11 @@ const Index = () => {
             placeholder="Paste youtube playlist ID or playlist URL..."
             value={playlistId}
             onChange={(e) => {
-              setPlaylistId(e.target.value.split("list=")[1] ?? e.target.value);
-              methods.setValue(
-                "ytId",
-                e.target.value.split("list=")[1] ?? e.target.value
-              );
+              const pid =
+                new URLSearchParams(e.target.value).get("list") ??
+                e.target.value;
+              setPlaylistId(pid);
+              methods.setValue("ytId", pid);
             }}
             className="peer w-full max-w-sm rounded-lg bg-pink-500/10 px-3 py-2 font-medium text-neutral-200   outline outline-2 outline-pink-500/40 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
           />
@@ -646,6 +676,250 @@ const Index = () => {
                     ₹
                   </p>
                 </div>
+              ) : (
+                <></>
+              )}
+            </div>
+          ) : (
+            <></>
+          )}
+
+          {playlistData ? (
+            <div className="mt-4 flex flex-col gap-3">
+              <div className="flex items-center gap-4">
+                {methods.watch().discount ? (
+                  <>
+                    <label
+                      htmlFor="discount"
+                      className="text-lg text-neutral-200"
+                    >
+                      Discount
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        methods.setValue("discount", undefined);
+                      }}
+                      className="rounded-lg border border-pink-500 px-2 py-1 text-sm font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
+                    >
+                      Clear Discount
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      methods.setValue("discount", {
+                        price: "0",
+                        deadline: new Date(
+                          new Date().setDate(new Date().getDate() + 1)
+                        ),
+                      });
+                    }}
+                    className="flex items-center gap-1 rounded-lg border border-pink-500 px-2 py-1 text-sm font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
+                  >
+                    <PlusIcon className="w-4" /> Add a Discount
+                  </button>
+                )}
+              </div>
+              {methods.watch().discount ? (
+                <>
+                  <label htmlFor="dPrice" className="text-sm text-neutral-200">
+                    Discounted Price
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
+                        methods.watch().discount?.price === "0"
+                          ? "border-green-600 bg-green-600/40"
+                          : "border-neutral-500 text-neutral-500"
+                      }`}
+                      onClick={() => {
+                        methods.setValue("discount.price", "0");
+                      }}
+                    >
+                      <div
+                        className={`flex h-3 w-3 items-center rounded-full border ${
+                          methods.watch().discount?.price === "0"
+                            ? "border-neutral-300"
+                            : "border-neutral-500"
+                        }`}
+                      >
+                        {methods.watch().discount?.price === "0" ? (
+                          <div className="h-full w-full rounded-full bg-neutral-300" />
+                        ) : (
+                          <></>
+                        )}
+                      </div>{" "}
+                      Free
+                    </div>
+
+                    <div
+                      className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
+                        methods.watch().discount?.price !== "0"
+                          ? "border-pink-600 bg-pink-600/40"
+                          : "border-neutral-500 text-neutral-500"
+                      }`}
+                      onClick={() => {
+                        methods.setValue("discount.price", "50");
+                      }}
+                    >
+                      <div
+                        className={`flex h-3 w-3 items-center justify-center rounded-full border ${
+                          methods.watch().discount?.price !== "0"
+                            ? "border-neutral-300"
+                            : "border-neutral-500"
+                        }`}
+                      >
+                        {methods.watch().discount?.price !== "0" ? (
+                          <div className="h-full w-full rounded-full bg-neutral-300" />
+                        ) : (
+                          <></>
+                        )}
+                      </div>{" "}
+                      Paid
+                    </div>
+                  </div>
+                  {methods.watch().discount?.price !== "0" ? (
+                    <div className="relative flex w-full max-w-[7rem] items-center">
+                      <input
+                        type="number"
+                        {...methods.register("discount.price")}
+                        className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        placeholder="00"
+                        defaultValue={50}
+                      />
+                      <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                        ₹
+                      </p>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                  <label
+                    htmlFor="dDeadline"
+                    className="text-sm text-neutral-200"
+                  >
+                    Discount Deadline
+                  </label>
+                  <div className="flex max-w-xs items-center gap-3 rounded-lg border border-neutral-700 bg-neutral-800 p-2">
+                    <ConfigProvider
+                      theme={{
+                        algorithm: darkAlgorithm,
+                        token: {
+                          colorPrimary: "#ec4899",
+                        },
+                      }}
+                    >
+                      <DatePicker
+                        format="DD-MM-YYYY"
+                        autoFocus={false}
+                        bordered={false}
+                        disabledDate={(currentDate) =>
+                          currentDate.isBefore(dayjs(new Date()), "day")
+                        }
+                        value={dayjs(
+                          methods
+                            .watch()
+                            ?.discount?.deadline?.toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            }),
+                          "DD-MM-YYYY"
+                        )}
+                        onChange={(selectedDate) => {
+                          const sourceDateObj =
+                            selectedDate?.toDate() ?? new Date();
+                          const targetDateObj =
+                            methods.watch()?.discount?.deadline ?? new Date();
+                          targetDateObj.setFullYear(
+                            sourceDateObj.getFullYear()
+                          );
+                          targetDateObj.setMonth(sourceDateObj.getMonth());
+                          targetDateObj.setDate(sourceDateObj.getDate());
+                          methods.setValue("discount.deadline", targetDateObj);
+                        }}
+                      />
+                      <TimePicker
+                        autoFocus={false}
+                        bordered={false}
+                        use12Hours
+                        value={dayjs(
+                          (
+                            methods.watch()?.discount?.deadline ?? new Date()
+                          ).toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "2-digit",
+                            hour12: true,
+                          }),
+                          "hh:mm A"
+                        )}
+                        onChange={(selectedTime) => {
+                          if (selectedTime) {
+                            const prvDate = new Date(
+                              methods.watch()?.discount?.deadline ?? new Date()
+                            );
+
+                            prvDate.setHours(selectedTime.toDate().getHours());
+                            prvDate.setMinutes(
+                              selectedTime.toDate().getMinutes()
+                            );
+
+                            methods.setValue("discount.deadline", prvDate);
+                          }
+                        }}
+                        format="hh:mm A"
+                        disabledTime={() => {
+                          const now = dayjs();
+                          return {
+                            disabledHours: () => {
+                              if (
+                                dayjs(
+                                  methods.watch()?.discount?.deadline
+                                ).format("DD/MM/YYYY") ===
+                                dayjs(new Date()).format("DD/MM/YYYY")
+                              )
+                                return [...Array(now.hour()).keys()];
+                              return [];
+                            },
+                            disabledMinutes: (selectedHour) => {
+                              if (
+                                dayjs(
+                                  methods.watch()?.discount?.deadline
+                                ).format("DD/MM/YYYY") ===
+                                dayjs(new Date()).format("DD/MM/YYYY")
+                              ) {
+                                if (now.hour() === selectedHour) {
+                                  return [...Array(now.minute()).keys()];
+                                }
+                                return [];
+                              }
+                              return [];
+                            },
+                          };
+                        }}
+                        style={{
+                          color: "#fff",
+                        }}
+                      />
+                    </ConfigProvider>
+                  </div>
+                  <p className="text-sm text-yellow-600">
+                    <span className="font-bold">
+                      {getDateTimeDiffString(
+                        new Date(),
+                        methods.watch().discount?.deadline ?? new Date()
+                      )}
+                    </span>{" "}
+                    remaining for discount.
+                  </p>
+                  {methods.formState.errors.discount?.deadline?.message && (
+                    <p className="text-red-700">
+                      {methods.formState.errors.discount?.deadline?.message}
+                    </p>
+                  )}
+                </>
               ) : (
                 <></>
               )}

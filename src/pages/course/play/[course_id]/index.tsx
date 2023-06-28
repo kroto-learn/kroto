@@ -82,7 +82,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
     id: course_id,
   });
   const { data: isEnrolled, isLoading: isEnrolledLoading } =
-    api.course.isEnrolled.useQuery({ courseId: course_id });
+    api.enrollmentCourse.isEnrolled.useQuery({ courseId: course_id });
   const [sideDrawerCollapsed, setSideDrawerCollapsed] = useState(false);
   const chaptersNavRef = useRef<HTMLDivElement | null>(null);
   const [navbarScrollInit, setNavbarScrollInit] = useState(false);

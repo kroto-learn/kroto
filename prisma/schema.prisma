@@ -74,6 +74,7 @@ model User {
   learnTracks           LearnTrack[]
   askedQueries          AskedQuery[]
   SuggestedCourse       SuggestedCourse[]
+  learningStreak        DailyStreak?
 }
 
 model Event {
@@ -244,6 +245,7 @@ model Course {
   category       Category?        @relation(fields: [categoryId], references: [id])
   categoryId     String?
   learnTracks    LearnTrack[]
+  discount       Discount?
 
   @@index([categoryId])
   @@index([creatorId])
@@ -278,6 +280,14 @@ enum ChapterType {
   TEXT
 }
 
+model Discount {
+  id       String   @id @default(cuid())
+  price    Int      @default(0)
+  deadline DateTime @default(now())
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String   @unique
+}
+
 model Enrollment {
   id        String   @id @default(cuid())
   courseId  String
@@ -300,6 +310,8 @@ model CourseProgress {
   lastChapterProgress ChapterProgress? @relation(fields: [lastChapterId, watchedById], references: [chapterId, watchedById], onDelete: Cascade)
   course              Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   watchedBy           User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @default(now()) @updatedAt
 
   @@unique([courseId, watchedById])
   @@index([courseId])
@@ -317,6 +329,8 @@ model ChapterProgress {
   watchedBy        User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
   watched          Boolean          @default(false)
   courseProgresses CourseProgress[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @default(now()) @updatedAt
 
   @@unique([chapterId, watchedById])
   @@index([chapterId])
@@ -328,11 +342,11 @@ model LearnTrack {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   courseId  String
-  course    Course?  @relation(fields: [courseId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   chapterId String
-  chapter   Chapter? @relation(fields: [chapterId], references: [id])
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   minutes   Int      @default(1)
   day       Int      @default(0)
   month     Int      @default(0)
@@ -398,4 +412,14 @@ model SuggestedCourse {
   playlistId String
 
   @@index([userId])
+}
+
+model DailyStreak {
+  id        String    @id @default(cuid())
+  start     DateTime?
+  days      Int       @default(1)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

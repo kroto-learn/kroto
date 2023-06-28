@@ -40,14 +40,15 @@ const Index = () => {
   const [debouncedTagInput, setDebouncedTagInput] = useState(tagInput);
 
   const { data: tags, isLoading: tagsLoading } =
-    api.course.searchTags.useQuery(debouncedTagInput);
+    api.tagsCourse.searchTags.useQuery(debouncedTagInput);
 
   const [tagsState, setTagsState] = useState<Tag[]>([]);
 
   const { mutateAsync: createTagMutation, isLoading: createTagLoading } =
-    api.course.createTag.useMutation();
+    api.tagsCourse.createTag.useMutation();
 
-  const { mutateAsync: deleteTagMutation } = api.course.deleteTag.useMutation();
+  const { mutateAsync: deleteTagMutation } =
+    api.tagsCourse.deleteTag.useMutation();
 
   const ctx = api.useContext();
 
@@ -100,7 +101,7 @@ const Index = () => {
                   onClick={() => {
                     void deleteTagMutation(tag.id, {
                       onSuccess: () => {
-                        void ctx.course.searchTags.invalidate();
+                        void ctx.tagsCourse.searchTags.invalidate();
                       },
                     });
                     setTagsState(tagsState.filter((tg) => tg.id !== tag.id));
@@ -130,7 +131,7 @@ const Index = () => {
                     successToast(`New tag ${tag.title} created.`);
                   }
                   methods.setValue("title", "");
-                  void ctx.course.searchTags.invalidate();
+                  void ctx.tagsCourse.searchTags.invalidate();
                 },
                 onError: () => {
                   errorToast("Error in creating tag!");
