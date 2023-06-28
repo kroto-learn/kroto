@@ -3,6 +3,14 @@
     {
       "path": "/api/trpc/cronEmailTesting.test",
       "schedule": "0 0 23 * *"
+    },
+    {
+      "path": "/api/trpc/emailReminder.sendDailyLearningReminder",
+      "schedule": "0 0 23 * *"
+    },
+    {
+      "path": "/api/trpc/emailReminder.updateDailyStreak",
+      "schedule": "0 0 18 * *"
     }
   ]
 }

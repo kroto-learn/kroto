@@ -39,6 +39,7 @@ export const appRouter = createTRPCRouter({
   tagsCourse: tagsCourseRouter,
   categoriesCourse: categoriesCourseRouter,
   suggestionsCourse: suggestionCourseRouter,
+
   emailReminder: dailyReminderRouter,
 
   event: eventRouter,
