@@ -11,7 +11,7 @@ import { courseChapterRouter } from "./routers/course/chapter";
 import { emailRouter } from "./email/email";
 import { courseFeedbacksRouter } from "./routers/course/feedback";
 import { contactRouter } from "./routers/contact";
-// import { askedQueryRouter } from "./routers/askedQuery";
+import { askedQueryRouter } from "./routers/askedQuery";
 import { trackingRouter } from "./routers/course/tracking";
 import { ytCourseRouter } from "./routers/course/yt";
 import { tagsCourseRouter } from "./routers/course/tags";
@@ -49,7 +49,7 @@ export const appRouter = createTRPCRouter({
 
   testimonial: testimonialRouter,
 
-  // askedQuery: askedQueryRouter,
+  askedQuery: askedQueryRouter,
 
   contact: contactRouter,
 });

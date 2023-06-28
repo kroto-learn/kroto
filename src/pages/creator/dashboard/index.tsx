@@ -242,6 +242,43 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               />
             </Link>
             <Link
+              href="/creator/dashboard/queries"
+              className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+                pathname && pathname.startsWith("/creator/dashboard/queries")
+                  ? "text-pink-500"
+                  : "hover:text-neutral-200"
+              }`}
+            >
+              <span className="w-1/3" />
+
+              <div className="flex w-full items-center gap-2">
+                <UserGroupIconO
+                  className={` w-6 ${
+                    pathname &&
+                    pathname.startsWith("/creator/dashboard/queries")
+                      ? "hidden"
+                      : ""
+                  }`}
+                />{" "}
+                <UserGroupIcon
+                  className={`w-6 ${
+                    pathname &&
+                    pathname.startsWith("/creator/dashboard/queries")
+                      ? "flex"
+                      : "hidden"
+                  }`}
+                />{" "}
+                <span className="hidden md:block">Queries</span>
+              </div>
+              <span
+                className={`h-full w-1 rounded-l-lg bg-pink-600 ${
+                  pathname && pathname.startsWith("/creator/dashboard/queries")
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              />
+            </Link>
+            <Link
               href="/creator/dashboard/settings"
               className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
                 pathname && pathname.startsWith("/creator/dashboard/settings")
