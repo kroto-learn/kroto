@@ -22,10 +22,30 @@ export const askedQueryRouter = createTRPCRouter({
         },
       });
 
+
       if (!creator) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (creator.id === ctx.session.user.id)
         throw new TRPCError({ code: "BAD_REQUEST" });
+
+        const audienceMember = await prisma.audienceMember.findFirst({
+          where: {
+            userId: ctx.session.user.id,
+            creatorId:creator.id
+          },
+        });
+  
+        if (!audienceMember) {
+          // if audience member doesn't exist, create one
+           await prisma.audienceMember.create({
+            data: {
+              email: ctx.session.user.email ?? "",
+              name: ctx.session.user.name ?? "",
+              userId: ctx.session.user.id ?? "",
+              creatorId: creator.id
+            },
+          });
+        }  
 
       const querys = await prisma.askedQuery.create({
         data: {
