@@ -78,7 +78,7 @@ export const dailyReminderRouter = createTRPCRouter({
           },
         });
 
-        const yesterdayMinutes = yesterdayTracks.reduce((total, current) => {
+        const prevMinutes = yesterdayTracks.reduce((total, current) => {
           return total + current.minutes;
         }, 0);
 
@@ -86,18 +86,13 @@ export const dailyReminderRouter = createTRPCRouter({
           return total + current.minutes;
         }, 0);
 
-        const diff = yesterdayMinutes
-          ? ((minutes - yesterdayMinutes) / yesterdayMinutes) * 100
-          : 100;
-
         void dailyLearningReport({
           name: user.name,
           email: user.email,
           courseId: tracks[0]?.courseId ?? "",
           courseName: tracks[0]?.course?.title ?? "",
           chsWatched: tracks.length,
-          moreLearned: diff >= 0 ? `${Math.abs(diff)}% more` : "",
-          lessLearned: diff < 0 ? `${diff}% less` : "",
+          prevMinutes,
           streak: user?.learningStreak?.days ?? 1,
           minutes,
         });

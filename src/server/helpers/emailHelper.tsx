@@ -7,8 +7,11 @@ import nodemailer from "nodemailer";
 import fs from "fs";
 import { TRPCError } from "@trpc/server";
 import { env } from "@/env.mjs";
+import { render } from "@react-email/render";
+import LearningReminderEmail from "react-email-starter/emails/learning-reminder";
 
 import AWS from "aws-sdk";
+import LearningReportEmail from "react-email-starter/emails/learning-report";
 
 const templateSource = fs.readFileSync(
   `${process.cwd()}/templates/base.hbs`,
@@ -18,19 +21,9 @@ const registrationSource = fs.readFileSync(
   `${process.cwd()}/templates/registration.hbs`,
   "utf8"
 );
-const reminderSource = fs.readFileSync(
-  `${process.cwd()}/mail/templates/learning-reminder.hbs`,
-  "utf8"
-);
-const reportSource = fs.readFileSync(
-  `${process.cwd()}/mail/templates/learning-report.hbs`,
-  "utf8"
-);
 
 const registration = handlebars.compile(registrationSource);
 const template = handlebars.compile(templateSource);
-const reminderTemplate = handlebars.compile(reminderSource);
-const reportTemplate = handlebars.compile(reportSource);
 
 const transporter = nodemailer.createTransport({
   host: "email-smtp.us-east-1.amazonaws.com",
@@ -362,13 +355,15 @@ const dailyReminderNotLearned = async ({
     courseName,
   };
 
-  const html = reminderTemplate(data);
+  // const html = reminderTemplate(data);
+
+  const emailHtml = render(<LearningReminderEmail {...data} />);
 
   const mailOptions = {
     from: "kamal@kroto.in", // sender email
     to: email, // recipient email
     subject: "You're falling behind!",
-    html: html,
+    html: emailHtml,
   };
 
   try {
@@ -389,8 +384,7 @@ const dailyLearningReport = async ({
   courseName,
   chsWatched,
   minutes,
-  moreLearned,
-  lessLearned,
+  prevMinutes,
   streak,
 }: {
   name: string;
@@ -399,8 +393,7 @@ const dailyLearningReport = async ({
   courseName: string;
   chsWatched: number;
   minutes: number;
-  moreLearned: string;
-  lessLearned: string;
+  prevMinutes: number;
   streak: number;
 }) => {
   const data = {
@@ -409,18 +402,17 @@ const dailyLearningReport = async ({
     minsLearned: minutes,
     courseUrl: `https://kroto.in/course/play/${courseId}`,
     courseName,
-    moreLearned,
-    lessLearned,
+    prevMinutes,
     streak,
   };
 
-  const html = reportTemplate(data);
+  const emailHtml = render(<LearningReportEmail {...data} />);
 
   const mailOptions = {
     from: "kamal@kroto.in", // sender email
     to: email, // recipient email
     subject: "Your learning report is here!",
-    html: html,
+    html: emailHtml,
   };
 
   try {
