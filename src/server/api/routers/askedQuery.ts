@@ -122,13 +122,12 @@ export const askedQueryRouter = createTRPCRouter({
     }),  
 
   getUserQuery: protectedProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx}) => {
       const { prisma } = ctx;
 
       const querys = await prisma.askedQuery.findMany({
         where: {
-          userId: input.userId,
+          userId: ctx.session.user.id,
         },
         include: {
           user: true,
