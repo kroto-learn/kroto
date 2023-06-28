@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
@@ -75,18 +74,6 @@ export const askedQueryRouter = createTRPCRouter({
       return query;
     }),
 
-  getAllUser: protectedProcedure.query(async ({ ctx }) => {
-    const { prisma } = ctx;
-
-    const query = await prisma.askedQuery.findMany({
-      where: {
-        userId: ctx.session.user.id,
-      },
-    });
-
-    return query;
-  }),
-
   getOne: protectedProcedure
     .input(z.object({ creatorProfile: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -100,7 +87,7 @@ export const askedQueryRouter = createTRPCRouter({
       return querys;
     }),
 
-  getAllPending: publicProcedure
+  getAllPending: protectedProcedure
     .input(z.object({ creatorProfile: z.string() }))
     .query(async ({ ctx, input }) => {
       const { prisma } = ctx;
@@ -117,7 +104,7 @@ export const askedQueryRouter = createTRPCRouter({
       return querys;
     }),
 
-  getAllReplied: publicProcedure
+  getAllReplied: protectedProcedure
     .input(z.object({ creatorProfile: z.string() }))
     .query(async ({ ctx, input }) => {
       const { prisma } = ctx;
@@ -134,7 +121,7 @@ export const askedQueryRouter = createTRPCRouter({
       return querys;
     }),  
 
-  getUserQuery: publicProcedure
+  getUserQuery: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const { prisma } = ctx;
