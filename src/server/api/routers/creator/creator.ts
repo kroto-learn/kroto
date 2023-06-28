@@ -52,6 +52,7 @@ export const creatorRouter = createTRPCRouter({
                   chapters: true,
                 },
               },
+              discount: true,
             },
           },
           accounts: true,
@@ -82,6 +83,7 @@ export const creatorRouter = createTRPCRouter({
         socialLinks: true,
         testimonials: true,
         registrations: true,
+        learningStreak: true,
       },
     });
 

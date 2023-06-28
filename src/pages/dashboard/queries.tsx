@@ -10,10 +10,9 @@ import ImageWF from "@/components/ImageWF";
 import { useSession } from "next-auth/react";
 
 const Index = () => {
-  const { data: session } = useSession();
 
   const { data: queries, isLoading: queriesLoading } =
-    api.askedQuery.getUserQuery.useQuery({ userId: session?.user.id ?? "" });
+    api.askedQuery.getUserQuery.useQuery();
 
   if (queriesLoading)
     return (

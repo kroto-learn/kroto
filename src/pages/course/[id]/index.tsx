@@ -19,7 +19,7 @@ import CoursePreviewModal from "@/components/CoursePreviewModal";
 import { useRouter } from "next/router";
 import { prisma } from "@/server/db";
 import CheckoutModal from "@/components/CheckoutModal";
-import { type Course } from "@prisma/client";
+import { type Discount, type Course } from "@prisma/client";
 import { MixPannelClient } from "@/analytics/mixpanel";
 import ImageWF from "@/components/ImageWF";
 
@@ -70,6 +70,12 @@ const Index = ({ courseId }: Props) => {
   }&chapters=${course?.chapters?.length ?? 0}&creatorName=${
     course?.creator?.name ?? course?.ytChannelName ?? ""
   }`;
+
+  const price =
+    course?.discount &&
+    course?.discount?.deadline?.getTime() > new Date().getTime()
+      ? course?.discount?.price
+      : course?.price;
 
   return (
     <>
@@ -180,15 +186,46 @@ const Index = ({ courseId }: Props) => {
                 </Link>
               ) : (
                 <>
-                  {course?.price === 0 ? (
-                    <span className="uppercase tracking-wider text-green-600">
-                      FREE
-                    </span>
-                  ) : (
-                    <span className="font-bold uppercase tracking-wider text-white">
-                      ₹ {course?.price}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {course?.discount &&
+                    course?.discount?.deadline?.getTime() >
+                      new Date().getTime() ? (
+                      course?.discount?.price === 0 ? (
+                        <p
+                          className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+                        >
+                          free
+                        </p>
+                      ) : (
+                        <p
+                          className={`text-xs font-bold uppercase tracking-wide sm:text-sm`}
+                        >
+                          ₹{course?.discount?.price}
+                        </p>
+                      )
+                    ) : (
+                      <></>
+                    )}
+                    {course?.price === 0 ? (
+                      <p
+                        className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
+                      >
+                        free
+                      </p>
+                    ) : (
+                      <p
+                        className={`text-xs font-semibold uppercase tracking-wide sm:text-sm ${
+                          course?.discount &&
+                          course?.discount?.deadline?.getTime() >
+                            new Date().getTime()
+                            ? "font-thin line-through"
+                            : "font-bold"
+                        }`}
+                      >
+                        ₹{course?.price}
+                      </p>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={async () => {
@@ -199,7 +236,7 @@ const Index = ({ courseId }: Props) => {
 
                           return;
                         }
-                        if (course.price === 0)
+                        if (price === 0)
                           await enrollMutation(
                             { courseId: course?.id },
                             {
@@ -301,7 +338,7 @@ const Index = ({ courseId }: Props) => {
       />
       <CheckoutModal
         course={{
-          ...(course as Course),
+          ...(course as Course & { discount: Discount | null }),
           _count: { chapters: course?.chapters.length },
         }}
         isOpen={checkoutModalOpen}

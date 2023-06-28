@@ -74,6 +74,7 @@ model User {
   learnTracks           LearnTrack[]
   askedQueries          AskedQuery[]
   SuggestedCourse       SuggestedCourse[]
+  learningStreak        DailyStreak?
 }
 
 model Event {
@@ -341,9 +342,9 @@ model LearnTrack {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   courseId  String
-  course    Course?  @relation(fields: [courseId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   chapterId String
-  chapter   Chapter? @relation(fields: [chapterId], references: [id])
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   minutes   Int      @default(1)
@@ -411,4 +412,14 @@ model SuggestedCourse {
   playlistId String
 
   @@index([userId])
+}
+
+model DailyStreak {
+  id        String    @id @default(cuid())
+  start     DateTime?
+  days      Int       @default(1)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

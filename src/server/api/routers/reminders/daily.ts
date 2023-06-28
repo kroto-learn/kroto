@@ -39,6 +39,7 @@ export const dailyReminderRouter = createTRPCRouter({
           },
           take: 1,
         },
+        learningStreak: true,
       },
     });
 
@@ -77,7 +78,7 @@ export const dailyReminderRouter = createTRPCRouter({
           },
         });
 
-        const yesterdayMinutes = yesterdayTracks.reduce((total, current) => {
+        const prevMinutes = yesterdayTracks.reduce((total, current) => {
           return total + current.minutes;
         }, 0);
 
@@ -85,45 +86,85 @@ export const dailyReminderRouter = createTRPCRouter({
           return total + current.minutes;
         }, 0);
 
-        const diff = yesterdayMinutes
-          ? ((minutes - yesterdayMinutes) / yesterdayMinutes) * 100
-          : 100;
-
-        // TODO: implement streak calculation
-
-        // const allTracks = await prisma.learnTrack.findMany({
-        //   where: {
-        //     userId: user.id,
-        //   },
-        //   orderBy: {
-        //     createdAt: "desc",
-        //   },
-        // });
-
-        // let streak = 0;
-        // let lastDate = new Date();
-
-        // for (const track in allTracks) {
-        //   if (allTracks[track].createdAt.getDate() === lastDate.getDate()) {
-        //     streak++;
-        //   } else {
-        //     streak = 0;
-        //   }
-
-        //   lastDate = allTracks[track].createdAt;
-
-        // }
-
         void dailyLearningReport({
           name: user.name,
           email: user.email,
           courseId: tracks[0]?.courseId ?? "",
           courseName: tracks[0]?.course?.title ?? "",
           chsWatched: tracks.length,
-          moreLearned: diff >= 0 ? `${Math.abs(diff)}% more` : "",
-          lessLearned: diff < 0 ? `${diff}% less` : "",
+          prevMinutes,
+          streak: user?.learningStreak?.days ?? 1,
           minutes,
         });
+      }
+    }
+  }),
+
+  updateDailyStreak: publicProcedure.mutation(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const users = await prisma.user.findMany();
+
+    const currentDate = new Date();
+
+    const startDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
+
+    const endDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate() + 1
+    );
+
+    for (const user of users) {
+      const tracks = await prisma.learnTrack.findMany({
+        where: {
+          userId: user.id,
+          createdAt: {
+            gte: startDate,
+            lt: endDate,
+          },
+        },
+        include: {
+          course: true,
+        },
+      });
+
+      const streak = await prisma.dailyStreak.findUnique({
+        where: {
+          userId: user.id,
+        },
+      });
+
+      if (tracks.length === 0) {
+        if (streak) {
+          const data: { days: number; start: Date | undefined } = {
+            days: streak.days + 1,
+            start: new Date(),
+          };
+
+          if (streak.days === 0) delete data.start;
+          await prisma.dailyStreak.update({
+            where: { userId: user.id },
+            data,
+          });
+        } else
+          await prisma.dailyStreak.create({
+            data: {
+              userId: user.id,
+            },
+          });
+      } else {
+        if (streak)
+          await prisma.dailyStreak.update({
+            where: { userId: user.id },
+            data: {
+              days: 0,
+            },
+          });
       }
     }
   }),

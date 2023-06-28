@@ -81,30 +81,38 @@ export const authOptions: NextAuthOptions = {
       const dbAccount = dbUser?.accounts[0];
 
       if (isNewUser) {
-        mixpanel.track("User Sign Up", {
-          provider: dbAccount.provider,
-          email: dbUser.email,
-          name: dbUser.name,
-          id: dbUser.id,
-        });
-        if (dbUser.isCreator) {
-          mixpanel.track("Creator Sign In", {
-            provider: dbAccount.provider,
-            email: dbUser.email,
-            name: dbUser.name,
-            id: dbUser.id,
-          });
-        }
-
         mixpanel.people.set(dbUser.id, {
           $email: dbUser.email,
           $name: dbUser.name,
           $created: new Date().toISOString(),
           $avatar: dbUser.image,
         });
+
+        mixpanel.track("User Sign Up", {
+          provider: dbAccount.provider,
+          email: dbUser.email,
+          name: dbUser.name,
+          id: dbUser.id,
+        });
+
+        if (dbUser.isCreator) {
+          mixpanel.track("Creator Sign Up", {
+            provider: dbAccount.provider,
+            email: dbUser.email,
+            name: dbUser.name,
+            id: dbUser.id,
+          });
+        }
       }
 
       if (dbUser.isCreator) {
+        mixpanel.people.set(dbUser.id, {
+          $email: dbUser.email,
+          $name: dbUser.name,
+          $created: new Date().toISOString(),
+          $avatar: dbUser.image,
+        });
+
         mixpanel.track("Creator Sign In", {
           provider: dbAccount.provider,
           email: dbUser.email,
@@ -117,13 +125,6 @@ export const authOptions: NextAuthOptions = {
           email: dbUser.email,
           name: dbUser.name,
           id: dbUser.id,
-        });
-
-        mixpanel.people.set(dbUser.id, {
-          $email: dbUser.email,
-          $name: dbUser.name,
-          $created: new Date().toISOString(),
-          $avatar: dbUser.image,
         });
       }
 
