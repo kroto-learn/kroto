@@ -107,7 +107,7 @@ export const LearningReminderEmail = ({
                 pY={10}
                 style={button}
                 className="cursor-pointer bg-pink-500 hover:bg-pink-600"
-                href={courseUrl}
+                href="https://www.kroto.in/book-doubt-session"
               >
                 Book a free session now!
               </Button>
