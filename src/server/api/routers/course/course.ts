@@ -13,6 +13,7 @@ import { ogImageUpload } from "@/server/helpers/s3";
 import { settingsFormSchema } from "../../../../pages/creator/dashboard/course/[id]/settings";
 import { adminImportCourseFormSchema } from "@/pages/course/admin-import";
 import { isAdmin } from "@/server/helpers/admin";
+import { sendClaimCourseRequest } from "@/server/helpers/emailHelper";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -599,6 +600,21 @@ export const courseRouter = createTRPCRouter({
       }
 
       return updatedCourse;
+    }),
+
+  addClaimCourseRequest: publicProcedure
+    .input(z.object({ courseId: z.string(), email: z.string().email() }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const claimRequest = await prisma.claimCourseRequest.create({
+        data: {
+          ...input,
+        },
+      });
+      await sendClaimCourseRequest({ ...input });
+
+      return claimRequest;
     }),
 
   delete: protectedProcedure

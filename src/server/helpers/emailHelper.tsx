@@ -338,6 +338,55 @@ const sendContactus = async (contact: {
   }
 };
 
+const sendClaimCourseRequest = async (request: {
+  email: string;
+  courseId: string;
+}) => {
+  const converter = new showdown.Converter();
+  const bodyHtml = converter.makeHtml(
+    `Email: ${request.email}<br/>CourseId: ${request.courseId}`
+  );
+
+  const subject = `Course Claim request from ${request.email}`;
+
+  const data = {
+    title: subject,
+    heading: subject,
+    content: bodyHtml,
+  };
+
+  const html = template(data);
+
+  const mailOptions: AWS.SES.SendEmailRequest = {
+    Source: "kamal@kroto.in", // sender email
+    Destination: {
+      ToAddresses: ["kamal@kroto.in"],
+    }, // recipient email
+    Message: {
+      Subject: {
+        Charset: "UTF-8",
+        Data: subject,
+      },
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+      },
+    },
+  };
+
+  try {
+    await AWS_SES.sendEmail(mailOptions).promise();
+  } catch (err) {
+    if (err instanceof Error)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: err.message,
+      });
+  }
+};
+
 const dailyReminderNotLearned = async ({
   name,
   email,
@@ -435,4 +484,5 @@ export {
   sendContactus,
   dailyLearningReport,
   dailyReminderNotLearned,
+  sendClaimCourseRequest,
 };
