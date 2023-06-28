@@ -61,21 +61,21 @@ const Index = () => {
                         <></>
                       )}
                     </div>
-                    {query.answer ? (
-                      <div className="flex w-full pt-2">
-                        <div>
-                          <SenderImage query={query} />
-                        </div>
-                        <div className="w-full break-all pl-3">
-                          <SenderName query={query} />
+                    <div className="flex w-full pt-2">
+                      <div>
+                        <SenderImage query={query} />
+                      </div>
+                      <div className="w-full break-all pl-3">
+                        <SenderName query={query} />
+                        {query.answer ? (
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>
                             {query.answer ?? ""}
                           </ReactMarkdown>
-                        </div>
+                        ) : (
+                          <p className="text-yellow-300">wait for response</p>
+                        )}
                       </div>
-                    ) : (
-                      <></>
-                    )}
+                    </div>
                   </div>
                 </div>
               ))}

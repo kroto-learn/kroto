@@ -1,20 +1,22 @@
-import { EventCard } from "@/components/EventCard";
-import { type Creator } from "interfaces/Creator";
-import { getCreators } from "mock/getCreators";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import ImageWF from "@/components/ImageWF";
-import Layout from "@/components/layouts/main";
-import { api } from "@/utils/api";
-import { Loader } from "@/components/Loader";
+import { Menu, Transition } from "@headlessui/react";
+import { signOut, useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { Fragment, useEffect } from "react";
+import CalenderIcon from "@heroicons/react/20/solid/CalendarIcon";
+import { CalendarIcon } from "@heroicons/react/24/outline";
+import UserGroupIcon from "@heroicons/react/20/solid/UserGroupIcon";
 import AnimatedSection from "@/components/AnimatedSection";
-import { ClaimLinkBanner } from "..";
-import Link from "next/link";
+import { UserGroupIcon as UserGroupIconO } from "@heroicons/react/24/outline";
+import Bars3Icon from "@heroicons/react/20/solid/Bars3Icon";
+import ChevronDownIcon from "@heroicons/react/20/solid/ChevronDownIcon";
+import { Loader } from "@/components/Loader";
 import { GlobeAltIcon } from "@heroicons/react/20/solid";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
-import EnrolledCourseCard from "@/components/EnrolledCourseCard";
+import ArrowLeftOnRectangleIcon from "@heroicons/react/20/solid/ArrowLeftOnRectangleIcon";
+import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
+import { useRouter } from "next/router";
+import { Line } from "react-chartjs-2";
 import Head from "next/head";
+import { MixPannelClient } from "@/analytics/mixpanel";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,26 +30,20 @@ import {
   type ChartData,
   type TooltipItem,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
-import { MixPannelClient } from "@/analytics/mixpanel";
-import { useEffect } from "react";
+import { RectangleStackIcon } from "@heroicons/react/20/solid";
+import { RectangleStackIcon as RectangleStackIconO } from "@heroicons/react/24/outline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
+import { type ReactNode } from "react";
+import ImageWF from "@/components/ImageWF";
+import { api } from "@/utils/api";
+import Link from "next/link";
 
 export default function Dashboard() {
   const { data: session } = useSession();
-  const router = useRouter();
-  const { data: profile, isLoading } = api.creator.getProfile.useQuery();
-  const { data: pastRegisteredEvents, isLoading: isPastLoading } =
-    api.creator.getPastEvents.useQuery();
-  const { data: enrollments, isLoading: enrollmentsLoading } =
-    api.enrollmentCourse.getEnrollments.useQuery();
 
   const { data: lastWeekLearning, isLoading: lastWeekLearningLoading } =
     api.tracking.getPastWeek.useQuery();
-
-  const isPastTab = router.query.events === "past";
-  const upcomingEvents = profile?.registrations;
-  const pastEvents = pastRegisteredEvents;
-  const events = isPastTab ? pastEvents : upcomingEvents;
 
   ChartJS.register(
     CategoryScale,
@@ -156,12 +152,8 @@ export default function Dashboard() {
     MixPannelClient.getInstance().dashboardViewed();
   }, []);
 
-  useEffect(() => {
-    if (isPastTab) MixPannelClient.getInstance().pastEventTabViewed();
-  }, [isPastTab]);
-
   return (
-    <Layout>
+    <main>
       <div className="flex w-full flex-col items-center px-4">
         <Head>
           <title>Dashboard | Kroto</title>
@@ -190,12 +182,6 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="flex flex-row items-center gap-3 sm:flex-col sm:items-end">
-                <Link
-                  href="/dashboard/testimonials"
-                  className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
-                >
-                  <FontAwesomeIcon icon={faQuoteLeft} /> Testimonials
-                </Link>
                 <Link
                   href="/dashboard/queries"
                   className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
@@ -229,162 +215,268 @@ export default function Dashboard() {
             </div>
           )}
         </AnimatedSection>
-        <AnimatedSection
-          delay={0.2}
-          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-6 sm:gap-4  sm:p-8"
-        >
-          <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
-            Enrolled Courses
-          </h1>
-          <div className="flex w-full flex-col items-center">
-            {enrollmentsLoading ? (
-              <div className="flex h-64 items-center justify-center">
-                <Loader size="lg" />
-              </div>
-            ) : (
-              <>
-                {enrollments && enrollments?.length > 0 ? (
-                  <>
-                    <div className="my-2 flex w-full flex-col items-center gap-2">
-                      {enrollments?.map((enrollment) => (
-                        <EnrolledCourseCard
-                          key={enrollment.id}
-                          enrollment={enrollment}
-                        />
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
-                    <div className="relative aspect-square w-40 object-contain">
-                      <ImageWF src="/empty/course_empty.svg" alt="empty" fill />
-                    </div>
-                    <p className="mb-2 text-center text-neutral-400 sm:text-left">
-                      You have not enrolled in any course.
-                    </p>
+      </div>
+    </main>
+  );
+}
+
+Dashboard.getLayout = DashboardLayout;
+
+function DashboardLayoutR({ children }: { children: ReactNode }) {
+  const { data: creator } = api.creator.getProfile.useQuery();
+  const router = useRouter();
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (creator && !creator?.isCreator) void router.replace("/dashboard");
+  }, [creator, router]);
+
+  return (
+    <main className="flex h-screen w-full justify-center overflow-x-hidden">
+      <div className="flex h-full w-full max-w-4xl items-start">
+        <div className="fixed z-20 flex h-full flex-col items-center justify-start gap-8 bg-neutral-900 pb-12 pt-8 text-neutral-400 sm:mt-5 sm:h-[96%] sm:rounded-xl md:w-60">
+          {creator ? (
+            <div className="flex w-full justify-center p-0 md:p-4">
+              <Link
+                href={`/${creator?.creatorProfile ?? ""}`}
+                className="flex w-full justify-center rounded-xl p-0 duration-300 md:bg-neutral-800  md:p-2 md:hover:bg-neutral-700"
+              >
+                <div className="h-16 w-16 p-2 md:hidden">
+                  <div
+                    className={`relative h-full w-full overflow-hidden rounded-full`}
+                  >
+                    <ImageWF
+                      src={creator?.image ?? ""}
+                      alt={creator?.name ?? ""}
+                      fill
+                    />
                   </div>
-                )}
-              </>
-            )}
-          </div>
-        </AnimatedSection>
-
-        <AnimatedSection
-          delay={0.3}
-          className="mb-10 flex w-full max-w-4xl flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-6 sm:gap-4 sm:p-8"
-        >
-          <div className="flex w-full flex-col items-start justify-between sm:flex-row sm:items-center">
-            <h1 className="text-lg font-medium text-neutral-200 sm:text-2xl">
-              Registered Events
-            </h1>
-            <div className="border-b border-neutral-400 text-center text-sm font-medium text-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
-              <ul className="-mb-px flex flex-wrap">
-                <li className="mr-2">
-                  <Link
-                    href="/dashboard"
-                    className={`inline-block rounded-t-lg p-4 ${
-                      !isPastTab
-                        ? "border-b-2 border-pink-500 text-pink-500 transition"
-                        : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
-                    }`}
+                </div>
+                <div className="hidden w-full gap-3 md:flex">
+                  <div
+                    className={`relative aspect-square h-[2.5rem] overflow-hidden rounded-full`}
                   >
-                    Upcoming
-                  </Link>
-                </li>
-                <li className="/creator/dashboard/events">
-                  <Link
-                    href="/dashboard?events=past"
-                    className={`inline-block rounded-t-lg p-4 transition ${
-                      isPastTab
-                        ? "border-b-2 border-pink-500 text-pink-500"
-                        : "border-transparent hover:border-neutral-400 hover:text-neutral-400"
-                    }`}
-                    aria-current="page"
-                  >
-                    Past
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {(isPastTab ? isPastLoading : isLoading) ? (
-            <div className="flex h-full items-center justify-center">
-              <Loader size="lg" />
+                    <ImageWF
+                      src={creator?.image ?? ""}
+                      alt={creator?.name ?? ""}
+                      fill
+                    />
+                  </div>
+                  <div className="flex flex-col items-start gap-1">
+                    <p className="max-w-[8rem] truncate text-sm font-medium text-neutral-200">
+                      {creator.name}
+                    </p>
+                    <div className="flex items-center text-xs font-medium text-neutral-300 decoration-neutral-400">
+                      <span className="max-w-[7.5rem] truncate">
+                        {creator?.creatorProfile}
+                      </span>{" "}
+                      <ArrowUpRightIcon className="w-4 text-pink-600" />
+                    </div>
+                  </div>
+                </div>
+              </Link>
             </div>
           ) : (
             <>
-              {events && events.length > 0 ? (
-                <>
-                  <div className="my-2 flex flex-col gap-2">
-                    {events?.map((e) => (
-                      <div key={e.id ?? ""}>
-                        <EventCard event={e} />
-                      </div>
-                    ))}
+              <div className="flex w-full justify-center p-0 md:p-4">
+                <div className="flex w-full justify-center rounded-xl p-0 duration-300 md:bg-neutral-800 md:p-2">
+                  <div className="h-16 w-16 overflow-hidden  p-2 md:hidden">
+                    <div className="h-full w-full rounded-full bg-neutral-800"></div>
                   </div>
-                  {/* <div className="mx-5 mb-2 flex justify-between">
-                    <button className="text-pink-500 transition hover:text-pink-600">
-                      View More
-                    </button>
-                    <button className="text-pink-500 transition hover:text-pink-600">
-                      Show past
-                    </button>
-                  </div> */}
-                </>
-              ) : (
-                <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
-                  <div className="relative aspect-square w-40 object-contain">
-                    <ImageWF src="/empty/event_empty.svg" alt="empty" fill />
-                  </div>
-                  <p className="mb-2 text-center text-neutral-400 sm:text-left">
-                    {isPastTab
-                      ? "You don't have any past registered events."
-                      : "You don't have any upcoming registered events."}
-                  </p>
+                  <div className="h-[2.5rem]"></div>
                 </div>
-              )}
+              </div>
             </>
           )}
-        </AnimatedSection>
-        <ClaimLinkBanner />
-      </div>
-    </Layout>
-  );
-}
+          <div className="flex w-full flex-grow flex-col items-center">
+            <Link
+              href="/dashboard"
+              className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+                pathname && pathname === "/dashboard"
+                  ? "text-pink-500"
+                  : "hover:text-neutral-200"
+              }`}
+            >
+              <span className="w-1/3" />
+              <div className="flex  w-full items-center gap-2">
+                <RectangleStackIconO
+                  className={`w-6 ${
+                    pathname && pathname === "/dashboard" ? "hidden" : ""
+                  }`}
+                />{" "}
+                <RectangleStackIcon
+                  className={`w-6 ${
+                    pathname && pathname === "/dashboard" ? "flex" : "hidden"
+                  }`}
+                />{" "}
+                <span className="hidden md:block">Dashboard</span>
+              </div>
+              <span
+                className={`h-full w-1 rounded-l-lg bg-pink-600 ${
+                  pathname && pathname === "/dashboard"
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              />
+            </Link>
+            <Link
+              href="/dashboard/courses"
+              className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+                pathname && pathname.startsWith("/dashboard/courses")
+                  ? "text-pink-500"
+                  : "hover:text-neutral-200"
+              }`}
+            >
+              <span className="w-1/3" />
+              <div className="flex  w-full items-center gap-2">
+                <CalendarIcon
+                  className={`w-6 ${
+                    pathname && pathname.startsWith("/dashboard/courses")
+                      ? "hidden"
+                      : ""
+                  }`}
+                />{" "}
+                <CalenderIcon
+                  className={` w-6 ${
+                    pathname && pathname.startsWith("/dashboard/courses")
+                      ? "flex"
+                      : "hidden"
+                  }`}
+                />{" "}
+                <span className="hidden md:block">Courses</span>
+              </div>
+              <span
+                className={`h-full w-1 rounded-l-lg bg-pink-600 ${
+                  pathname && pathname.startsWith("/dashboard/courses")
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              />
+            </Link>
+            <Link
+              href="/dashboard/events"
+              className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
+                pathname && pathname.startsWith("/dashboard/events")
+                  ? "text-pink-500"
+                  : "hover:text-neutral-200"
+              }`}
+            >
+              <span className="w-1/3" />
 
-export async function getStaticProps() {
-  const creators = await getCreators();
+              <div className="flex w-full items-center gap-2">
+                <UserGroupIconO
+                  className={` w-6 ${
+                    pathname && pathname.startsWith("/dashboard/events")
+                      ? "hidden"
+                      : ""
+                  }`}
+                />{" "}
+                <UserGroupIcon
+                  className={`w-6 ${
+                    pathname && pathname.startsWith("/dashboard/events")
+                      ? "flex"
+                      : "hidden"
+                  }`}
+                />{" "}
+                <span className="hidden md:block">Events</span>
+              </div>
+              <span
+                className={`h-full w-1 rounded-l-lg bg-pink-600 ${
+                  pathname && pathname.startsWith("/dashboard/events")
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              />
+            </Link>
+            <Link
+              href="/courses"
+              className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-lg transition duration-200 ease-linear hover:bg-neutral-700/50`}
+            >
+              <span className="w-1/3" />
 
-  return {
-    props: { creators },
-  };
-}
-
-export const CreatorCard = ({ creator }: { creator: Creator }) => {
-  const router = useRouter();
-  return (
-    <div
-      onClick={() => void router.push(`/${creator.id}`)}
-      className="my-10 cursor-pointer rounded-xl border border-neutral-800 bg-neutral-900 p-5 transition hover:border-neutral-600"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-5">
-          <ImageWF
-            width={80}
-            height={80}
-            className="aspect-square w-28 rounded-full"
-            src={creator?.image_url ?? ""}
-            alt={creator?.name ?? ""}
-          />
-          <div>
-            <h3 className="mb-1 text-3xl font-medium text-neutral-200">
-              {creator.name}
-            </h3>
-            <p className="text-neutral-400">{creator.bio}</p>
+              <div className="flex w-full items-center gap-2">
+                <UserGroupIconO className={` w-6 `} />{" "}
+                <span className="hidden md:block">Discover</span>
+              </div>
+              <span
+                className={`h-full w-1 rounded-l-lg bg-pink-600 ${
+                  pathname && pathname.startsWith("/creator/dashboard/queries")
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              />
+            </Link>
+            <Menu>
+              {({ open }) => (
+                <>
+                  <Menu.Button className="flex h-12 w-full grid-cols-3 items-center gap-3 text-xl transition duration-300 hover:bg-neutral-800 hover:text-pink-500 active:bg-neutral-800  active:text-pink-500">
+                    <span className="w-1/3" />
+                    <div className="flex w-full items-center justify-start gap-2 transition-transform duration-300">
+                      {open ? (
+                        <ChevronDownIcon className="w-6" />
+                      ) : (
+                        <Bars3Icon className="w-6" />
+                      )}
+                      <span className="hidden md:block">More</span>
+                    </div>
+                    <span className="w-1" />
+                  </Menu.Button>
+                  <div className="flex w-full flex-col items-center md:p-2">
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="flex w-full flex-col overflow-hidden rounded-lg bg-neutral-800 transition-all duration-300">
+                        <Link
+                          href={`/dashboard/testimonials`}
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-12"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <FontAwesomeIcon icon={faQuoteLeft} />{" "}
+                              <span className="hidden md:block">
+                                Testimonials
+                              </span>{" "}
+                            </div>
+                          </Menu.Item>
+                        </Link>
+                        <button
+                          onClick={() => void signOut({ callbackUrl: "/" })}
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-12"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <ArrowLeftOnRectangleIcon className="w-4" />{" "}
+                              <span className="hidden md:block">Sign Out</span>{" "}
+                            </div>
+                          </Menu.Item>
+                        </button>
+                      </Menu.Items>
+                    </Transition>
+                  </div>
+                </>
+              )}
+            </Menu>
           </div>
+          <button
+            onClick={() => void signOut({ callbackUrl: "/" })}
+            className="flex items-center gap-1 text-sm text-neutral-200 transition duration-300 hover:text-neutral-400"
+          ></button>
         </div>
+        <div className="ml-12 w-[90%] md:ml-[15rem]">{children}</div>
       </div>
-    </div>
+    </main>
   );
-};
+}
+
+function DashboardLayout(page: ReactNode) {
+  return <DashboardLayoutR>{page}</DashboardLayoutR>;
+}
+
+export { DashboardLayout };

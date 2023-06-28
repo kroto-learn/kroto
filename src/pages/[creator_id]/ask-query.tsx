@@ -45,8 +45,6 @@ const Index = () => {
   const router = useRouter();
   const session = useSession();
 
-  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
-
   const { creator_id } = router.query as { creator_id: string };
   console.log(creator_id);
   const { data: creator, isLoading: creatorLoading } =
@@ -65,9 +63,6 @@ const Index = () => {
 
   const { mutateAsync: addQueryMutation, isLoading: addQueryLoading } =
     api.askedQuery.add.useMutation();
-
-  const { mutateAsync: importAudienceMutation } =
-    api.creator.audience.importAudience.useMutation();
 
   const [submitted, setSubmitted] = useState(false);
 
@@ -104,10 +99,6 @@ const Index = () => {
               warningToast("You cannot submit Query for yourself!");
               return;
             } else {
-              setSelectedEmails([...(creator?.email ?? "")]);
-              await importAudienceMutation({
-                email: selectedEmails,
-              });
               await addQueryMutation(
                 {
                   ...values,
