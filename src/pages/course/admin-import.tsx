@@ -181,7 +181,7 @@ const Index = () => {
       // if (!playlistDetailInit) {
       // setPlaylistDetailInit(true);
       methods.setValue("title", playlistData.title);
-      methods.setValue("description", playlistData.description);
+      methods.setValue("description", playlistData.description.slice(0, 3000));
       methods.setValue("thumbnail", playlistData.thumbnail);
       methods.setValue("ytChannelId", playlistData.ytChannelId);
       methods.setValue("ytChannelName", playlistData.ytChannelName);
@@ -324,6 +324,9 @@ const Index = () => {
             </div>
           )}
         </div>
+        {/* <pre className="w-full overflow-hidden">
+          {JSON.stringify(methods.watch(), undefined, 2)}
+        </pre> */}
         <form
           onSubmit={methods.handleSubmit(async (values) => {
             await importCourseMutation(values, {
@@ -356,6 +359,11 @@ const Index = () => {
                 />
               )}
             </div>
+            {methods.formState.errors?.thumbnail?.message && (
+              <p className="text-red-700">
+                {methods.formState.errors?.thumbnail?.message}
+              </p>
+            )}
             <div className="w-2/3">
               <label
                 htmlFor="title"
@@ -366,6 +374,11 @@ const Index = () => {
               <p className="w-full text-sm font-medium text-neutral-200 duration-300 sm:text-base">
                 {methods.watch()?.title}
               </p>
+              {methods.formState.errors?.title?.message && (
+                <p className="text-red-700">
+                  {methods.formState.errors?.title?.message}
+                </p>
+              )}
 
               {methods.watch().description &&
               methods.watch().description != "" ? (
@@ -396,6 +409,11 @@ const Index = () => {
                 </>
               ) : (
                 <></>
+              )}
+              {methods.formState.errors?.description?.message && (
+                <p className="text-red-700">
+                  {methods.formState.errors?.description?.message}
+                </p>
               )}
             </div>
           </div>
@@ -448,6 +466,11 @@ const Index = () => {
               )}
             </div>
           </div>
+          {methods.formState.errors?.chapters?.message && (
+            <p className="text-red-700">
+              {methods.formState.errors?.chapters?.message}
+            </p>
+          )}
 
           {playlistData ? (
             <div className="mt-4 flex flex-col gap-2">
@@ -509,6 +532,11 @@ const Index = () => {
             </div>
           ) : (
             <></>
+          )}
+          {methods.formState.errors?.category?.message && (
+            <p className="text-red-700">
+              {methods.formState.errors?.category?.message}
+            </p>
           )}
 
           {playlistData ? (
@@ -604,6 +632,11 @@ const Index = () => {
           ) : (
             <></>
           )}
+          {methods.formState.errors?.tags?.message && (
+            <p className="text-red-700">
+              {methods.formState.errors?.tags?.message}
+            </p>
+          )}
 
           {playlistData ? (
             <div className="mt-4 flex flex-col gap-3">
@@ -678,6 +711,11 @@ const Index = () => {
                 </div>
               ) : (
                 <></>
+              )}
+              {methods.formState.errors?.price?.message && (
+                <p className="text-red-700">
+                  {methods.formState.errors?.price?.message}
+                </p>
               )}
             </div>
           ) : (
@@ -914,6 +952,16 @@ const Index = () => {
                     </span>{" "}
                     remaining for discount.
                   </p>
+                  {methods.formState.errors.discount?.message && (
+                    <p className="text-red-700">
+                      {methods.formState.errors.discount?.message}
+                    </p>
+                  )}
+                  {methods.formState.errors.discount?.price?.message && (
+                    <p className="text-red-700">
+                      {methods.formState.errors.discount?.price?.message}
+                    </p>
+                  )}
                   {methods.formState.errors.discount?.deadline?.message && (
                     <p className="text-red-700">
                       {methods.formState.errors.discount?.deadline?.message}

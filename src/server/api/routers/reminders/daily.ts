@@ -5,7 +5,7 @@ import {
 } from "@/server/helpers/emailHelper";
 
 export const dailyReminderRouter = createTRPCRouter({
-  sendDailyLearningReminder: publicProcedure.mutation(async ({ ctx }) => {
+  sendDailyLearningReminder: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
     const currentDate = new Date();
@@ -100,7 +100,7 @@ export const dailyReminderRouter = createTRPCRouter({
     }
   }),
 
-  updateDailyStreak: publicProcedure.mutation(async ({ ctx }) => {
+  updateDailyStreak: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
     const users = await prisma.user.findMany();

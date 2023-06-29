@@ -19,6 +19,7 @@ import { categoriesCourseRouter } from "./routers/course/categories";
 import { enrollmentCourseRouter } from "./routers/course/enrollment";
 import { suggestionCourseRouter } from "./routers/course/suggestions";
 import { dailyReminderRouter } from "./routers/reminders/daily";
+import { cronTestRouter } from "./cront-test";
 
 /**
  * This is the primary router for your server.
@@ -38,6 +39,7 @@ export const appRouter = createTRPCRouter({
   tagsCourse: tagsCourseRouter,
   categoriesCourse: categoriesCourseRouter,
   suggestionsCourse: suggestionCourseRouter,
+
   emailReminder: dailyReminderRouter,
 
   event: eventRouter,
@@ -50,6 +52,8 @@ export const appRouter = createTRPCRouter({
   testimonial: testimonialRouter,
 
   askedQuery: askedQueryRouter,
+
+  cronEmailTesting: cronTestRouter,
 
   contact: contactRouter,
 });
