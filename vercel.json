@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/trpc/emailReminder.sendDailyLearningReminder",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/trpc/emailReminder.updateDailyStreak",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}
