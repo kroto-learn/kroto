@@ -22,6 +22,7 @@ import CheckoutModal from "@/components/CheckoutModal";
 import { type Discount, type Course } from "@prisma/client";
 import { MixPannelClient } from "@/analytics/mixpanel";
 import ImageWF from "@/components/ImageWF";
+import ClaimCourseModal from "@/components/ClaimCourseModal";
 
 type Props = {
   courseId: string;
@@ -40,6 +41,7 @@ const Index = ({ courseId }: Props) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState<boolean>(false);
   const router = useRouter();
+  const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (courseId && session.status !== "loading")
@@ -112,7 +114,26 @@ const Index = ({ courseId }: Props) => {
           />
           <meta name="twitter:card" content="summary_large_image" />
         </Head>
-        <div className="hide-scroll mx-auto mb-8 mt-16 flex w-full max-w-4xl flex-col gap-4 overflow-x-hidden p-4 sm:h-[80vh] sm:flex-row">
+        {!course?.creatorId ? (
+          <AnimatedSection
+            delay={0.2}
+            className="mt-16 flex w-full justify-center px-4"
+          >
+            <p className="text-center">
+              Are you the creator of this course?{" "}
+              <button
+                onClick={() => setClaimModalOpen(true)}
+                className="font-bold text-pink-500 hover:text-pink-600"
+              >
+                Click here
+              </button>{" "}
+              to claim this course now!
+            </p>
+          </AnimatedSection>
+        ) : (
+          <></>
+        )}
+        <div className="hide-scroll mx-auto mb-8 flex w-full max-w-4xl flex-col gap-4 overflow-x-hidden p-4 sm:h-[80vh] sm:flex-row">
           <AnimatedSection className="flex h-full w-full flex-col items-start gap-2 rounded-xl bg-gradient-to-b from-neutral-700 via-neutral-800 to-transparent p-4 backdrop-blur-sm sm:w-[30rem]">
             <div className="relative aspect-video w-full content-center overflow-hidden rounded-xl">
               <ImageWF
@@ -343,6 +364,11 @@ const Index = ({ courseId }: Props) => {
         }}
         isOpen={checkoutModalOpen}
         setIsOpen={setCheckoutModalOpen}
+      />
+      <ClaimCourseModal
+        courseId={courseId}
+        isOpen={claimModalOpen}
+        setIsOpen={setClaimModalOpen}
       />
     </>
   );

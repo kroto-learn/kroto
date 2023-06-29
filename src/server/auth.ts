@@ -166,6 +166,7 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           scope: `openid ${scopes.join(" ")}`,
+          prompt: "consent",
         },
       },
     }),
