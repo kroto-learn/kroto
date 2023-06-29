@@ -46,7 +46,7 @@ const Index = () => {
       </Head>
       <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden p-4 pb-24">
         <AnimatedSection className="flex w-full max-w-4xl flex-col items-center gap-2">
-          <h3>All Categories</h3>
+          <h3 className="font-bold">All Categories</h3>
           <div className="flex w-full flex-wrap justify-center gap-2">
             {categories?.map((catg) => (
               <Link
@@ -56,10 +56,10 @@ const Index = () => {
                     ? "/courses"
                     : `/courses?category=${catg?.title}`
                 }
-                className={`rounded-full border border-neutral-500 px-3 py-1 text-xs font-bold uppercase ${
+                className={`rounded-full border-2 border-neutral-200 px-4 py-1 text-sm font-bold uppercase ${
                   category === catg?.title
-                    ? "border-pink-500 bg-pink-500 text-neutral-200"
-                    : "text-neutral-300/50"
+                    ? "bg-pink-500 text-neutral-200"
+                    : "text-neutral-200"
                 }`}
               >
                 {catg?.title}
@@ -78,11 +78,11 @@ const Index = () => {
                 placeholder="What do you want to learn today?"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="peer w-full rounded-lg bg-pink-500/10 px-3 py-2 pl-8 font-medium text-neutral-200   outline outline-2 outline-pink-500/40 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
+                className="peer w-full rounded-lg bg-transparent px-3 py-2 pl-10 font-medium text-neutral-200 outline outline-2 outline-pink-500 backdrop-blur-sm transition-all duration-300 placeholder:text-neutral-200/50 hover:outline-pink-500/80 focus:outline-pink-500"
               />
               <div className="absolute right-4">{false && <Loader />}</div>
 
-              <MagnifyingGlassIcon className="absolute ml-2 w-4 text-pink-500/50 duration-300 peer-hover:text-pink-500/80 peer-focus:text-pink-500" />
+              <MagnifyingGlassIcon className="absolute ml-3 w-5 text-pink-500 duration-300 peer-hover:text-pink-500/80 peer-focus:text-pink-500" />
             </div>
             <button
               onClick={() => {
@@ -104,15 +104,15 @@ const Index = () => {
               <Loader size="lg" />
             </div>
           ) : courses && courses?.length > 0 ? (
-            <div className="flex w-full flex-wrap justify-center gap-8">
+            <div className="flex w-full flex-wrap justify-center gap-12">
               {courses?.map((course) => (
                 <Link
                   href={`/course/${course?.id}`}
                   key={course.id}
-                  className="group relative h-[15.5rem] w-64 rounded-lg border border-neutral-800 bg-neutral-200/5 backdrop-blur-sm duration-150 hover:border-neutral-700"
+                  className="group relative h-[15.5rem] w-64 rounded-xl border-2 border-neutral-200 bg-neutral-200/5 shadow-[6px_6px_0px_0px] shadow-neutral-200 backdrop-blur-sm duration-150 hover:shadow-[12px_12px_0px_0px]"
                 >
-                  <div className="flex w-full flex-col gap-1 p-2">
-                    <div className="relative mb-1 aspect-video w-full overflow-hidden rounded-lg">
+                  <div className="flex w-full flex-col gap-1 p-3">
+                    <div className="relative mb-1 aspect-video w-full overflow-hidden rounded-xl border-2 border-neutral-200">
                       <ImageWF
                         src={course?.thumbnail ?? ""}
                         alt={course?.title ?? ""}
@@ -132,7 +132,7 @@ const Index = () => {
                             }`
                       }`}
                       target={!course?.creator ? "_blank" : undefined}
-                      className="flex w-full items-center gap-1"
+                      className="flex w-full items-center gap-2"
                     >
                       <ImageWF
                         src={
@@ -141,17 +141,17 @@ const Index = () => {
                         alt={
                           course?.creator?.name ?? course?.ytChannelName ?? ""
                         }
-                        width={18}
-                        height={18}
-                        className="rounded-full"
+                        width={25}
+                        height={25}
+                        className="rounded-full border-2 border-neutral-200"
                       />
-                      <p className="w-full text-xs duration-150 hover:text-neutral-200 hover:underline">
+                      <p className="w-full text-xs font-bold duration-150 hover:text-neutral-200 hover:underline">
                         {course?.creator?.name ?? course?.ytChannelName ?? ""}
                       </p>
                     </Link>
                   </div>
-                  <div className="absolute bottom-0 flex w-full items-center justify-center gap-1 border-t border-neutral-800 px-2 py-1 text-xs duration-150 group-hover:border-neutral-700">
-                    <BookOpenIcon className="w-3" /> {course?._count.chapters}{" "}
+                  <div className="absolute bottom-0 flex w-full items-center justify-center gap-1 border-t-2 border-neutral-200 px-2 py-1 text-xs font-bold">
+                    <BookOpenIcon className="w-4" /> {course?._count.chapters}{" "}
                     Chapters
                   </div>
                 </Link>
