@@ -60,7 +60,7 @@ const sendUpdatePreview = async (
   const html = template(data);
 
   const mailOptions: AWS.SES.SendEmailRequest = {
-    Source: "kamal@kroto.in", // sender email
+    Source: "Kroto Notifications", // sender email
     Destination: {
       ToAddresses: [email],
     }, // recipient email
@@ -106,7 +106,7 @@ const sendEventUpdate = async (
   const html = template(data);
 
   const mailOptions: AWS.SES.SendEmailRequest = {
-    Source: "kamal@kroto.in", // sender email
+    Source: "Kroto Notifications", // sender email
     Destination: {
       ToAddresses: email,
     },
@@ -152,7 +152,7 @@ const sendEventStarted = async (event: Event, email: string[]) => {
   const html = template(data);
 
   const mailOptions: AWS.SES.SendEmailRequest = {
-    Source: "kamal@kroto.in", // sender email
+    Source: "Kroto Notifications", // sender email
     Destination: {
       ToAddresses: email,
     }, // recipient email
@@ -200,7 +200,7 @@ const sendRegistrationConfirmation = async (
   const html = registration(data);
 
   const mailOptions: AWS.SES.SendEmailRequest = {
-    Source: "kamal@kroto.in", // sender email
+    Source: "Kroto Notifications", // sender email
     Destination: {
       ToAddresses: [email],
     }, // recipient email
@@ -264,7 +264,7 @@ const sendCalendarInvite = async (
   const html = template(data);
 
   const mailOptions = {
-    from: "kamal@kroto.in", // sender email
+    from: "Kroto Notifications", // sender email
     to: email, // recipient email
     subject: `Calendar Invite for ${event?.title ?? "Event"}`,
     html: html,
@@ -309,7 +309,7 @@ const sendContactus = async (contact: {
   const html = template(data);
 
   const mailOptions: AWS.SES.SendEmailRequest = {
-    Source: "kamal@kroto.in", // sender email
+    Source: "Kroto Notifications", // sender email
     Destination: {
       ToAddresses: ["kamal@kroto.in"],
     }, // recipient email
@@ -409,7 +409,7 @@ const dailyReminderNotLearned = async ({
   const emailHtml = render(<LearningReminderEmail {...data} />);
 
   const mailOptions = {
-    from: "kamal@kroto.in", // sender email
+    from: "Kroto Notifications", // sender email
     to: email, // recipient email
     subject: "You're falling behind!",
     html: emailHtml,
@@ -458,7 +458,7 @@ const dailyLearningReport = async ({
   const emailHtml = render(<LearningReportEmail {...data} />);
 
   const mailOptions = {
-    from: "kamal@kroto.in", // sender email
+    from: "Kroto Notifications", // sender email
     to: email, // recipient email
     subject: "Your learning report is here!",
     html: emailHtml,
