@@ -156,7 +156,7 @@ const Index = () => {
       // if (!playlistDetailInit) {
       // setPlaylistDetailInit(true);
       methods.setValue("title", playlistData.title);
-      methods.setValue("description", playlistData.description);
+      methods.setValue("description", playlistData.description.slice(0, 3000));
       methods.setValue("thumbnail", playlistData.thumbnail);
       // }
       methods.setValue("chapters", playlistData.videos);
@@ -345,6 +345,11 @@ const Index = () => {
                 />
               )}
             </div>
+            {methods.formState.errors?.thumbnail?.message && (
+              <p className="text-red-700">
+                {methods.formState.errors?.thumbnail?.message}
+              </p>
+            )}
             <div className="w-2/3">
               <label
                 htmlFor="title"
@@ -355,6 +360,11 @@ const Index = () => {
               <p className="w-full text-sm font-medium text-neutral-200 duration-300 sm:text-base">
                 {methods.watch()?.title}
               </p>
+              {methods.formState.errors?.title?.message && (
+                <p className="text-red-700">
+                  {methods.formState.errors?.title?.message}
+                </p>
+              )}
 
               {methods.watch().description &&
               methods.watch().description != "" ? (
@@ -385,6 +395,11 @@ const Index = () => {
                 </>
               ) : (
                 <></>
+              )}
+              {methods.formState.errors?.description?.message && (
+                <p className="text-red-700">
+                  {methods.formState.errors?.description?.message}
+                </p>
               )}
             </div>
           </div>
@@ -430,6 +445,80 @@ const Index = () => {
               )}
             </div>
           </div>
+          {methods.formState.errors?.chapters?.message && (
+            <p className="text-red-700">
+              {methods.formState.errors?.chapters?.message}
+            </p>
+          )}
+
+          {playlistData ? (
+            <div className="mt-4 flex flex-col gap-2">
+              <label htmlFor="category" className="text-lg  text-neutral-200">
+                Category
+              </label>
+              <div className="relative flex w-full max-w-sm items-center justify-end">
+                <Listbox
+                  value={methods.watch().category?.id ?? "none"}
+                  onChange={(val) => {
+                    const selectedCatg = catgs?.find((ctg) => ctg.id === val);
+                    if (selectedCatg)
+                      methods.setValue("category", selectedCatg);
+                    else methods.setValue("category", undefined);
+                  }}
+                >
+                  {({ open }) => (
+                    <div className="flex w-full flex-col gap-2">
+                      <div className="relative flex w-full items-center justify-end">
+                        <Listbox.Button className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 pr-8 text-left">
+                          {methods.watch().category?.title ?? "none"}
+                        </Listbox.Button>
+                        <ChevronDownIcon
+                          className={`${
+                            open ? "rotate-180 duration-150" : ""
+                          } absolute mr-4 w-4`}
+                        />
+                      </div>
+                      <div
+                        className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
+                      >
+                        <Listbox.Options className="flex w-full flex-col overflow-hidden rounded border border-neutral-600 bg-neutral-800/70 backdrop-blur">
+                          <Listbox.Option
+                            key={"none"}
+                            value={"none"}
+                            className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
+                          >
+                            none
+                          </Listbox.Option>
+                          {catgs && catgs.length > 0 ? (
+                            catgs.map((ctg) => (
+                              <Listbox.Option
+                                key={ctg.id}
+                                value={ctg.id}
+                                className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
+                              >
+                                {ctg.title}
+                              </Listbox.Option>
+                            ))
+                          ) : (
+                            <></>
+                          )}
+                        </Listbox.Options>
+                      </div>
+                    </div>
+                  )}
+                </Listbox>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+
+          {methods.formState.errors?.category?.message && (
+            <p className="text-red-700">
+              {methods.formState.errors?.category?.message}
+            </p>
+          )}
+
           {playlistData ? (
             <div className="mt-4 flex flex-col gap-2">
               <label htmlFor="tags" className="text-lg  text-neutral-200">
@@ -523,67 +612,12 @@ const Index = () => {
           ) : (
             <></>
           )}
-          {playlistData ? (
-            <div className="mt-4 flex flex-col gap-2">
-              <label htmlFor="category" className="text-lg  text-neutral-200">
-                Category
-              </label>
-              <div className="relative flex w-full max-w-sm items-center justify-end">
-                <Listbox
-                  value={methods.watch().category?.id ?? "none"}
-                  onChange={(val) => {
-                    const selectedCatg = catgs?.find((ctg) => ctg.id === val);
-                    if (selectedCatg)
-                      methods.setValue("category", selectedCatg);
-                    else methods.setValue("category", undefined);
-                  }}
-                >
-                  {({ open }) => (
-                    <div className="flex w-full flex-col gap-2">
-                      <div className="relative flex w-full items-center justify-end">
-                        <Listbox.Button className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 pr-8 text-left">
-                          {methods.watch().category?.title ?? "none"}
-                        </Listbox.Button>
-                        <ChevronDownIcon
-                          className={`${
-                            open ? "rotate-180 duration-150" : ""
-                          } absolute mr-4 w-4`}
-                        />
-                      </div>
-                      <div
-                        className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
-                      >
-                        <Listbox.Options className="flex w-full flex-col overflow-hidden rounded border border-neutral-600 bg-neutral-800/70 backdrop-blur">
-                          <Listbox.Option
-                            key={"none"}
-                            value={"none"}
-                            className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
-                          >
-                            none
-                          </Listbox.Option>
-                          {catgs && catgs.length > 0 ? (
-                            catgs.map((ctg) => (
-                              <Listbox.Option
-                                key={ctg.id}
-                                value={ctg.id}
-                                className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
-                              >
-                                {ctg.title}
-                              </Listbox.Option>
-                            ))
-                          ) : (
-                            <></>
-                          )}
-                        </Listbox.Options>
-                      </div>
-                    </div>
-                  )}
-                </Listbox>
-              </div>
-            </div>
-          ) : (
-            <></>
+          {methods.formState.errors?.tags?.message && (
+            <p className="text-red-700">
+              {methods.formState.errors?.tags?.message}
+            </p>
           )}
+
           {playlistData ? (
             <div className="mt-4 flex flex-col gap-3">
               <label htmlFor="price" className="text-lg  text-neutral-200">
@@ -657,6 +691,11 @@ const Index = () => {
                 </div>
               ) : (
                 <></>
+              )}
+              {methods.formState.errors?.price?.message && (
+                <p className="text-red-700">
+                  {methods.formState.errors?.price?.message}
+                </p>
               )}
             </div>
           ) : (
@@ -894,6 +933,16 @@ const Index = () => {
                     </span>{" "}
                     remaining for discount.
                   </p>
+                  {methods.formState.errors.discount?.message && (
+                    <p className="text-red-700">
+                      {methods.formState.errors.discount?.message}
+                    </p>
+                  )}
+                  {methods.formState.errors.discount?.price?.message && (
+                    <p className="text-red-700">
+                      {methods.formState.errors.discount?.price?.message}
+                    </p>
+                  )}
                   {methods.formState.errors.discount?.deadline?.message && (
                     <p className="text-red-700">
                       {methods.formState.errors.discount?.deadline?.message}
