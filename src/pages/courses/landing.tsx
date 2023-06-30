@@ -1,10 +1,16 @@
+import { MixPannelClient } from "@/analytics/mixpanel";
 import ImageWF from "@/components/ImageWF";
 import ScrollAnimatedSection from "@/components/ScrollAnimatedSection";
 import Layout from "@/components/layouts/main";
 import Head from "next/head";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const Index = () => {
+  useEffect(() => {
+    MixPannelClient.getInstance().courseLandingViewed();
+  }, []);
+
   return (
     <Layout>
       <Head>
@@ -35,6 +41,11 @@ const Index = () => {
           </h1>
           <div className="relative mt-4 sm:mt-12">
             <Link
+              onClick={() => {
+                MixPannelClient.getInstance().exploreCoursesClicked({
+                  position: 1,
+                });
+              }}
               href="/courses"
               className="z-20 block rounded-full border-2 border-neutral-200 px-12 py-4 text-2xl font-bold text-neutral-200 shadow-[4px_4px_0px_0px] shadow-neutral-200 duration-300 hover:scale-95 hover:bg-pink-600 active:scale-90"
             >
@@ -273,6 +284,11 @@ const Index = () => {
           />
         </ScrollAnimatedSection>
         <Link
+          onClick={() => {
+            MixPannelClient.getInstance().exploreCoursesClicked({
+              position: 1,
+            });
+          }}
           href="/courses"
           className="z-20 block rounded-full border-2 border-neutral-200 px-12 py-4 text-2xl font-bold text-neutral-200 shadow-[4px_4px_0px_0px] shadow-neutral-200 duration-300 hover:scale-95 hover:bg-pink-600 active:scale-90"
         >

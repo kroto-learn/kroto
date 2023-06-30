@@ -183,6 +183,14 @@ export class MixPannelClient {
     this.track(CourseEvents.COURSE_SHARE_CLICKED, data);
   }
 
+  public courseLandingViewed() {
+    this.track(CourseEvents.COURSE_LANDING_VIEWED);
+  }
+
+  public exploreCoursesClicked(data: { position: 1 | 2 }) {
+    this.track(CourseEvents.EXPLORE_COURSE_CLICKED, data);
+  }
+
   public courseSharedType(data: {
     courseId: string;
     userId: string;
