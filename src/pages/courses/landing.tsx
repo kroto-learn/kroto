@@ -135,7 +135,7 @@ const Index = () => {
           height={89}
         /> */}
           <ImageWF
-            className="absolute -top-24 left-48 rotate-90 opacity-20 hue-rotate-[143deg] backdrop-blur"
+            className="absolute -left-12 bottom-0 rotate-90 hue-rotate-[143deg] backdrop-blur"
             src="/poly.png"
             alt=""
             width={80}
@@ -149,7 +149,7 @@ const Index = () => {
           height={89}
         /> */}
           <ImageWF
-            className="absolute right-12 top-12 -rotate-180 opacity-20 hue-rotate-[224deg]"
+            className="absolute right-12 top-12 -rotate-180 hue-rotate-[224deg]"
             src="/poly.png"
             alt=""
             width={80}
@@ -191,33 +191,13 @@ const Index = () => {
           </div>
 
           <ImageWF
-            className="absolute bottom-12 left-32 rotate-90 opacity-20"
+            className="absolute -bottom-12 left-32 rotate-180"
             src="/poly.png"
             alt=""
             width={80}
             height={89}
           />
-          <ImageWF
-            className="absolute left-48 top-12 rotate-180 opacity-20 hue-rotate-180"
-            src="/poly.png"
-            alt=""
-            width={80}
-            height={89}
-          />
-          <ImageWF
-            className="absolute -top-32 right-48 rotate-45 opacity-20 hue-rotate-60"
-            src="/poly.png"
-            alt=""
-            width={80}
-            height={89}
-          />
-          <ImageWF
-            className="absolute bottom-12 right-12 -rotate-90 opacity-20 hue-rotate-[2260deg]"
-            src="/poly.png"
-            alt=""
-            width={80}
-            height={89}
-          />
+
           <ImageWF
             className="absolute bottom-12 right-48 opacity-30"
             src="/thin-stroke.png"
@@ -256,7 +236,7 @@ const Index = () => {
             </span>
           </h2>
           <ImageWF
-            className="absolute -bottom-12 -left-32 rotate-90 opacity-20"
+            className="absolute -bottom-12 -left-32 rotate-90 hue-rotate-60"
             src="/poly.png"
             alt=""
             width={80}
@@ -269,15 +249,9 @@ const Index = () => {
           width={80}
           height={89}
         /> */}
+
           <ImageWF
-            className="absolute right-48 top-12 rotate-45 opacity-20 hue-rotate-60"
-            src="/poly.png"
-            alt=""
-            width={80}
-            height={89}
-          />
-          <ImageWF
-            className="absolute bottom-12 right-12 -rotate-90 opacity-20 hue-rotate-[2260deg]"
+            className="absolute bottom-12 right-12 -rotate-90 hue-rotate-[260deg]"
             src="/poly.png"
             alt=""
             width={80}
