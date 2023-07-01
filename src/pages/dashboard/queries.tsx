@@ -7,10 +7,8 @@ import Head from "next/head";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import ImageWF from "@/components/ImageWF";
-import { useSession } from "next-auth/react";
 
 const Index = () => {
-
   const { data: queries, isLoading: queriesLoading } =
     api.askedQuery.getUserQuery.useQuery();
 

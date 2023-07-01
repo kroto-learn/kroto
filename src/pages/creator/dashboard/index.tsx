@@ -17,8 +17,14 @@ import ArrowLeftOnRectangleIcon from "@heroicons/react/20/solid/ArrowLeftOnRecta
 import WindowIcon from "@heroicons/react/20/solid/WindowIcon";
 import ArrowUpRightIcon from "@heroicons/react/20/solid/ArrowUpRightIcon";
 import { useRouter } from "next/router";
-import { RectangleStackIcon } from "@heroicons/react/20/solid";
-import { RectangleStackIcon as RectangleStackIconO } from "@heroicons/react/24/outline";
+import {
+  QuestionMarkCircleIcon,
+  RectangleStackIcon,
+} from "@heroicons/react/20/solid";
+import {
+  RectangleStackIcon as RectangleStackIconO,
+  QuestionMarkCircleIcon as QuestionMarkCircleIconO,
+} from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -252,7 +258,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               <span className="w-1/3" />
 
               <div className="flex w-full items-center gap-2">
-                <UserGroupIconO
+                <QuestionMarkCircleIconO
                   className={` w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/queries")
@@ -260,7 +266,7 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                       : ""
                   }`}
                 />{" "}
-                <UserGroupIcon
+                <QuestionMarkCircleIcon
                   className={`w-6 ${
                     pathname &&
                     pathname.startsWith("/creator/dashboard/queries")
