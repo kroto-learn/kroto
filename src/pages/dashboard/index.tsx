@@ -10,7 +10,10 @@ import { Loader } from "@/components/Loader";
 import AnimatedSection from "@/components/AnimatedSection";
 import { ClaimLinkBanner } from "..";
 import Link from "next/link";
-import { GlobeAltIcon } from "@heroicons/react/20/solid";
+import {
+  GlobeAltIcon,
+  QuestionMarkCircleIcon,
+} from "@heroicons/react/20/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 import EnrolledCourseCard from "@/components/EnrolledCourseCard";
@@ -200,7 +203,7 @@ export default function Dashboard() {
                   href="/dashboard/queries"
                   className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
                 >
-                  <FontAwesomeIcon icon={faQuoteLeft} /> Queries
+                  <QuestionMarkCircleIcon className="w-4" /> Queries
                 </Link>
                 <button
                   disabled
