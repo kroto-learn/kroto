@@ -24,7 +24,7 @@ const Index = () => {
   return (
     <AnimatedSection
       delay={0.2}
-      className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6"
+      className="min-h-[80%] w-full max-w-3xl rounded-xl bg-neutral-900 p-6"
     >
       <h3 className="mb-6 text-lg font-medium  sm:text-2xl">Feedbacks</h3>
       {feedbacksLoading ? (

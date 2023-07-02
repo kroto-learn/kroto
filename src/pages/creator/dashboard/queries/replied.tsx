@@ -23,7 +23,7 @@ const RepliedAnswer = () => {
       <Head>
         <title>Queries | Dashboard</title>
       </Head>
-      <div className="flex w-full flex-col items-center py-8">
+      <div className="flex w-full max-w-3xl flex-col items-center py-8">
         {queries && queries.length > 0 ? (
           <div className="flex w-full flex-col gap-4">
             {queries.map((query) => {

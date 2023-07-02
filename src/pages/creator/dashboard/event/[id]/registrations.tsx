@@ -89,7 +89,7 @@ const EventRegistrations = () => {
       <Head>
         <title>{(event?.title ?? "Event") + " | Registrations"}</title>
       </Head>
-      <div className="min-h-[80%] w-full p-6">
+      <div className="min-h-[80%] w-full max-w-3xl p-6">
         <h3 className="mb-4 text-lg font-medium  sm:text-2xl">Registrations</h3>
         <AnimatedSection
           delay={0.2}
