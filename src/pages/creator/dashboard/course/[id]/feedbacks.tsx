@@ -62,7 +62,7 @@ const CourseFeedback = () => {
                     </p>
                   </div>
                   <ChevronDownIcon
-                    className={`${open ? "rotate-180 duration-150" : ""} w-5`}
+                    className={`duration-150 ${open ? "rotate-180" : ""} w-5`}
                   />
                 </Disclosure.Button>
                 <Disclosure.Panel className="z-0 w-full -translate-y-2 rounded-b-xl bg-neutral-800 px-4 py-4 text-gray-300">

@@ -85,8 +85,8 @@ const Index = () => {
                             Edit
                           </button>
                           <ChevronDownIcon
-                            className={`${
-                              open ? "rotate-180 duration-150" : ""
+                            className={`duration-150 ${
+                              open ? "rotate-180" : ""
                             } w-5`}
                           />
                         </div>
