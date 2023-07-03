@@ -49,6 +49,9 @@ export enum CourseEvents {
   COURSE_SHARE_CLICKED = "Course Shared Clicked",
   COURSE_SHARED_TYPE = "Course Shared Type",
 
+  COURSE_LANDING_VIEWED = "Course Landing Viewed",
+  EXPLORE_COURSE_CLICKED = "Explore Course Clicked",
+
   CREATOR_PROFILE_CLICKED_FROM_COURSE = "Creator Profile Clicked From Course",
 }
 

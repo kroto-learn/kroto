@@ -154,7 +154,11 @@ export function Hero({ word }: { word: number }) {
               {/*     </div> */}
               {/*   </div> */}
               {/* </div> */}
-              <div className="mt-10 flex w-full justify-center">
+              <p className="text-base font-bold sm:text-xl lg:text-lg xl:text-2xl">
+                Become a <span className="text-pink-600">Kreator</span> now, and
+                claim your kreator proflie.
+              </p>
+              <div className="mt-6 flex w-full justify-center">
                 <ClaimLinkLanding />
               </div>
             </div>
@@ -398,7 +402,7 @@ export const ClaimLinkBanner = () => {
   };
 
   return (
-    <div className="relative my-8 flex w-full max-w-4xl flex-col items-center gap-4 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-6 px-8 md:items-start md:p-10 md:px-12">
+    <div className="relative flex w-full max-w-4xl flex-col items-center gap-4 overflow-hidden rounded-xl bg-gradient-to-l from-neutral-900 to-neutral-800 p-6 px-8 md:items-start md:p-10 md:px-12">
       <h3 className="text-center text-2xl font-medium md:text-left">
         Become a <span className="text-pink-600">Kreator</span> now, and claim
         your proflie

@@ -46,7 +46,6 @@ const Index = () => {
   const session = useSession();
 
   const { creator_id } = router.query as { creator_id: string };
-  console.log(creator_id);
   const { data: creator, isLoading: creatorLoading } =
     api.creator.getPublicProfile.useQuery({
       creatorProfile: creator_id,

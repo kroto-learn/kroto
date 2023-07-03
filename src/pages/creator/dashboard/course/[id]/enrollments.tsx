@@ -27,7 +27,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { Loader } from "@/components/Loader";
 import { TRPCError } from "@trpc/server";
 
-const Index = () => {
+const CourseEnrollment = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
@@ -89,7 +89,7 @@ const Index = () => {
       <Head>
         <title>{(course?.title ?? "Course") + " | Enrollments"}</title>
       </Head>
-      <div className="min-h-[80%] w-full p-6">
+      <div className="min-h-[80%] w-full max-w-3xl p-6">
         <h3 className="mb-4 text-lg font-medium  sm:text-2xl">Enrollments</h3>
         <AnimatedSection
           delay={0.1}
@@ -284,6 +284,6 @@ const Index = () => {
   );
 };
 
-Index.getLayout = CourseNestedLayout;
+CourseEnrollment.getLayout = CourseNestedLayout;
 
-export default Index;
+export default CourseEnrollment;

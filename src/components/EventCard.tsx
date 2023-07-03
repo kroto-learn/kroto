@@ -120,7 +120,7 @@ export const EventCard = ({
         </div>
       )}
       <div
-        className={`relative aspect-[18/9] w-full object-cover transition-all xs:w-2/5`}
+        className={`relative aspect-[18/9] w-full max-w-[12rem] object-cover transition-all xs:w-2/5`}
       >
         <ImageWF
           src={event?.thumbnail ?? ""}

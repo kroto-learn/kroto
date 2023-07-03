@@ -30,7 +30,7 @@ export default function CourseLayoutR({ children }: { children: ReactNode }) {
   if (course instanceof TRPCError || !course) return <></>;
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
+    <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8 pr-4">
       <AnimatedSection className="flex w-full flex-col items-start justify-between gap-4 sm:px-4 md:flex-row">
         <div className="flex w-full items-center justify-between gap-2">
           <h1 className="line-clamp-1 overflow-hidden text-ellipsis text-base text-neutral-200 sm:text-xl">

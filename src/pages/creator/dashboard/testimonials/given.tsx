@@ -48,7 +48,7 @@ const Index = () => {
         <title>Testimonials Given | Dashboard</title>
       </Head>
       {testimonials && testimonials.length > 0 ? (
-        <div className="flex w-full flex-col items-start gap-4">
+        <div className="flex w-full max-w-3xl flex-col items-start gap-4">
           {testimonials.map((testimonial) => (
             <Disclosure key={testimonial?.id ?? ""}>
               {({ open }) => (
@@ -84,8 +84,8 @@ const Index = () => {
                         Edit
                       </button>
                       <ChevronDownIcon
-                        className={`${
-                          open ? "rotate-180 duration-150" : ""
+                        className={`duration-150 ${
+                          open ? "rotate-180" : ""
                         } w-5`}
                       />
                     </div>
