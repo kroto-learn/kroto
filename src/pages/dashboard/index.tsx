@@ -8,13 +8,8 @@ import Layout from "@/components/layouts/main";
 import { api } from "@/utils/api";
 import { Loader } from "@/components/Loader";
 import AnimatedSection from "@/components/AnimatedSection";
-import { ClaimLinkBanner } from "..";
 import Link from "next/link";
-import {
-  Bars3Icon,
-  GlobeAltIcon,
-  QuestionMarkCircleIcon,
-} from "@heroicons/react/20/solid";
+import { Bars3Icon, QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 import Head from "next/head";
@@ -37,6 +32,7 @@ import { MixPannelClient } from "@/analytics/mixpanel";
 import { Fragment, useEffect } from "react";
 import ContinueLearningCard from "@/components/ContinueLearningCard";
 import { Menu, Transition } from "@headlessui/react";
+import Streaks, { StreaksMobile } from "@/components/Streaks";
 
 export default function Dashboard() {
   const { data: session } = useSession();
@@ -270,10 +266,16 @@ export default function Dashboard() {
                 </div>
               </div>
             </AnimatedSection>
-            <div className="flex w-full max-w-3xl flex-col lg:hidden">
+            <div className="flex w-full max-w-3xl flex-col gap-4 lg:hidden">
               <AnimatedSection
                 delay={0.1}
-                className="flex w-full flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-4 sm:gap-4  sm:p-4"
+                className="flex w-full flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-2 px-4"
+              >
+                <StreaksMobile />
+              </AnimatedSection>
+              <AnimatedSection
+                delay={0.2}
+                className="flex w-full flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-4"
               >
                 <h1 className="text-base font-medium text-neutral-200 sm:text-lg">
                   Learning Graph
@@ -425,12 +427,14 @@ export default function Dashboard() {
                 </>
               )}
             </AnimatedSection>
-            <ClaimLinkBanner />
           </div>
 
-          <div className="hidden w-full max-w-md flex-col lg:flex">
+          <div className="hidden w-full max-w-md flex-col gap-8 lg:flex">
+            <AnimatedSection delay={0.1}>
+              <Streaks />
+            </AnimatedSection>
             <AnimatedSection
-              delay={0.1}
+              delay={0.2}
               className="mb-10 flex w-full flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-2 sm:gap-4  sm:p-4"
             >
               <h1 className="text-sm font-medium text-neutral-200 sm:text-lg">
