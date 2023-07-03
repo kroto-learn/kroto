@@ -118,7 +118,7 @@ const Audience = () => {
       <Head>
         <title>Audience | Dashboard</title>
       </Head>
-      <div className="mx-2 my-8 min-h-[80%] w-full px-6">
+      <div className="mx-2 my-8 min-h-[80%] w-full max-w-3xl px-6">
         <h3 className="mb-4 text-2xl font-medium">Audience</h3>
         <AnimatedSection className="mb-6 flex w-full items-start justify-between gap-2">
           <div className="flex flex-col items-start">

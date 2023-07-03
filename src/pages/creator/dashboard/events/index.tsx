@@ -34,7 +34,7 @@ const UpcomingEvents = () => {
       {events && events.length > 0 ? (
         <AnimatedSection
           delay={0.2}
-          className="flex w-full flex-col items-start gap-4"
+          className="flex w-full max-w-3xl flex-col items-start gap-4"
         >
           {events?.map((event) => (
             <EventCard key={event?.id ?? ""} manage event={event} />

@@ -31,7 +31,7 @@ const Index = () => {
         <title>Testimonials Received | Dashboard</title>
       </Head>
       {testimonials && testimonials.length > 0 ? (
-        <div className="flex w-full flex-col items-start gap-4">
+        <div className="flex w-full max-w-3xl flex-col items-start gap-4">
           {testimonials.map((testimonial) => (
             <TestimonialDisclosure
               key={testimonial.id}

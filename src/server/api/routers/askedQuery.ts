@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 export const askedQueryRouter = createTRPCRouter({
@@ -13,40 +10,37 @@ export const askedQueryRouter = createTRPCRouter({
       const { creatorProfile, question } = input;
       const { prisma } = ctx;
 
-      if (!ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-
       const creator = await prisma.user.findUnique({
         where: {
           creatorProfile: input.creatorProfile,
         },
       });
 
-
       if (!creator) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (creator.id === ctx.session.user.id)
         throw new TRPCError({ code: "BAD_REQUEST" });
 
-        const audienceMember = await prisma.audienceMember.findFirst({
-          where: {
-            userId: ctx.session.user.id,
-            creatorId:creator.id
+      const audienceMember = await prisma.audienceMember.findFirst({
+        where: {
+          userId: ctx.session.user.id,
+          creatorId: creator.id,
+        },
+      });
+
+      if (!audienceMember) {
+        // if audience member doesn't exist, create one
+        await prisma.audienceMember.create({
+          data: {
+            email: ctx.session.user.email ?? "",
+            name: ctx.session.user.name ?? "",
+            userId: ctx.session.user.id ?? "",
+            creatorId: creator.id,
           },
         });
-  
-        if (!audienceMember) {
-          // if audience member doesn't exist, create one
-           await prisma.audienceMember.create({
-            data: {
-              email: ctx.session.user.email ?? "",
-              name: ctx.session.user.name ?? "",
-              userId: ctx.session.user.id ?? "",
-              creatorId: creator.id
-            },
-          });
-        }  
+      }
 
-      const querys = await prisma.askedQuery.create({
+      const query = await prisma.askedQuery.create({
         data: {
           userId: ctx.session.user.id,
           question,
@@ -54,7 +48,7 @@ export const askedQueryRouter = createTRPCRouter({
         },
       });
 
-      return querys;
+      return query;
     }),
 
   answerQuery: protectedProcedure
@@ -119,21 +113,20 @@ export const askedQueryRouter = createTRPCRouter({
       });
 
       return querys;
-    }),  
+    }),
 
-  getUserQuery: protectedProcedure
-    .query(async ({ ctx}) => {
-      const { prisma } = ctx;
+  getUserQuery: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
 
-      const querys = await prisma.askedQuery.findMany({
-        where: {
-          userId: ctx.session.user.id,
-        },
-        include: {
-          user: true,
-        },
-      });
+    const querys = await prisma.askedQuery.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+      include: {
+        user: true,
+      },
+    });
 
-      return querys;
-    }), 
+    return querys;
+  }),
 });

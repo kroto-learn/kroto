@@ -28,7 +28,7 @@ const TestimonialDisclosure = ({ testimonial }: Props) => {
               </p>
             </div>
             <ChevronDownIcon
-              className={`${open ? "rotate-180 duration-150" : ""} w-5`}
+              className={`duration-150 ${open ? "rotate-180" : ""} w-5`}
             />
           </Disclosure.Button>
           <Disclosure.Panel className="realtive z-0 w-full -translate-y-6 rounded-b-xl bg-neutral-700 px-4 py-4 text-gray-300">

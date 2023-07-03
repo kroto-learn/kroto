@@ -406,17 +406,31 @@ const dailyReminderNotLearned = async ({
 
   // const html = reminderTemplate(data);
 
-  const emailHtml = render(<LearningReminderEmail {...data} />);
+  const html = render(<LearningReminderEmail {...data} />);
 
-  const mailOptions = {
-    from: "kamal@kroto.in", // sender email
-    to: email, // recipient email
-    subject: "You're falling behind!",
-    html: emailHtml,
+  const subject = "You're falling behind!";
+
+  const mailOptions: AWS.SES.SendEmailRequest = {
+    Source: "kamal@kroto.in", // sender email
+    Destination: {
+      ToAddresses: [email],
+    }, // recipient email
+    Message: {
+      Subject: {
+        Charset: "UTF-8",
+        Data: subject,
+      },
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+      },
+    },
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await AWS_SES.sendEmail(mailOptions).promise();
   } catch (err) {
     if (err instanceof Error)
       throw new TRPCError({
@@ -455,17 +469,31 @@ const dailyLearningReport = async ({
     streak,
   };
 
-  const emailHtml = render(<LearningReportEmail {...data} />);
+  const html = render(<LearningReportEmail {...data} />);
 
-  const mailOptions = {
-    from: "kamal@kroto.in", // sender email
-    to: email, // recipient email
-    subject: "Your learning report is here!",
-    html: emailHtml,
+  const subject = "Your learning report is here!";
+
+  const mailOptions: AWS.SES.SendEmailRequest = {
+    Source: "kamal@kroto.in", // sender email
+    Destination: {
+      ToAddresses: [email],
+    }, // recipient email
+    Message: {
+      Subject: {
+        Charset: "UTF-8",
+        Data: subject,
+      },
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+      },
+    },
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    await AWS_SES.sendEmail(mailOptions).promise();
   } catch (err) {
     if (err instanceof Error)
       throw new TRPCError({

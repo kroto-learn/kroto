@@ -13,7 +13,7 @@ import { type Feedback, type User } from "@prisma/client";
 import { Loader } from "@/components/Loader";
 import AnimatedSection from "@/components/AnimatedSection";
 
-const Index = () => {
+const CourseFeedback = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
@@ -23,7 +23,7 @@ const Index = () => {
   return (
     <AnimatedSection
       delay={0.2}
-      className="min-h-[80%] w-full rounded-xl bg-neutral-900 p-6"
+      className="min-h-[80%] w-full max-w-3xl rounded-xl bg-neutral-900 p-6"
     >
       <h3 className="mb-6 text-lg font-medium  sm:text-2xl">Feedbacks</h3>
       {feedbacksLoading ? (
@@ -62,7 +62,7 @@ const Index = () => {
                     </p>
                   </div>
                   <ChevronDownIcon
-                    className={`${open ? "rotate-180 duration-150" : ""} w-5`}
+                    className={`duration-150 ${open ? "rotate-180" : ""} w-5`}
                   />
                 </Disclosure.Button>
                 <Disclosure.Panel className="z-0 w-full -translate-y-2 rounded-b-xl bg-neutral-800 px-4 py-4 text-gray-300">
@@ -89,6 +89,6 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default CourseFeedback;
 
-Index.getLayout = CourseNestedLayout;
+CourseFeedback.getLayout = CourseNestedLayout;

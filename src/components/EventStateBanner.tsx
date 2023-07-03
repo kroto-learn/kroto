@@ -36,7 +36,7 @@ const EventStateBanner = ({ setStartEventModal }: Props) => {
       ) : isEventLive ? (
         <AnimatedSection
           delay={0.1}
-          className="flex w-full flex-col items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2 sm:flex-row"
+          className="flex w-full max-w-3xl flex-col items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2 sm:flex-row"
         >
           <div className="flex items-center gap-2">
             <span className="relative flex h-3 w-3 items-center justify-center">
@@ -61,7 +61,7 @@ const EventStateBanner = ({ setStartEventModal }: Props) => {
       ) : isEventIn10min ? (
         <AnimatedSection
           delay={0.1}
-          className="flex w-full items-center justify-between gap-4 rounded-xl bg-yellow-500/20 px-3 py-2 text-yellow-500"
+          className="flex w-full max-w-3xl items-center justify-between gap-4 rounded-xl bg-yellow-500/20 px-3 py-2 text-yellow-500"
         >
           <div className="flex items-center gap-2">
             <span className="relative flex h-3 w-3 items-center justify-center">
@@ -74,7 +74,7 @@ const EventStateBanner = ({ setStartEventModal }: Props) => {
       ) : isEventOver ? (
         <AnimatedSection
           delay={0.1}
-          className="flex w-full flex-col items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2 sm:flex-row"
+          className="flex w-full max-w-3xl flex-col items-center justify-between gap-4 rounded-xl bg-neutral-800 px-3 py-2 sm:flex-row"
         >
           <div className="flex items-center gap-2">
             The Event has concluded.

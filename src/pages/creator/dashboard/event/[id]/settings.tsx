@@ -34,7 +34,7 @@ const EventSettings = () => {
       </Head>
       <AnimatedSection
         delay={0.2}
-        className="w-full rounded-xl bg-neutral-900 p-8"
+        className="w-full max-w-3xl rounded-xl bg-neutral-900 p-8"
       >
         <div className="flex flex-col items-start gap-3">
           <label className="line-clamp-2 overflow-hidden text-ellipsis text-lg font-medium">

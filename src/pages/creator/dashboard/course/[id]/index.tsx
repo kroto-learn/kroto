@@ -83,7 +83,7 @@ const CourseOverview = () => {
         <div className="mx-auto flex w-full flex-col items-start gap-2">
           <AnimatedSection
             delay={0.2}
-            className="mb-2 flex w-full flex-col items-start gap-4 rounded-xl bg-neutral-800 p-4 sm:flex-row"
+            className="mb-2 flex w-full max-w-3xl flex-col items-start gap-4 rounded-xl bg-neutral-800 p-4 sm:flex-row"
           >
             <div className="flex w-full flex-col gap-4 sm:w-1/3">
               <div className="relative flex aspect-video w-full  items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
