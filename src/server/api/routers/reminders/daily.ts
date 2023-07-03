@@ -139,14 +139,15 @@ export const dailyReminderRouter = createTRPCRouter({
         },
       });
 
-      if (tracks.length === 0) {
+      if (tracks.length > 0) {
         if (streak) {
           const data: { days: number; start: Date | undefined } = {
             days: streak.days + 1,
             start: new Date(),
           };
 
-          if (streak.days === 0) delete data.start;
+          if (streak.days > 0) delete data.start;
+
           await prisma.dailyStreak.update({
             where: { userId: user.id },
             data,
