@@ -212,7 +212,7 @@ model Testimonial {
 
 model AskedQuery {
   id             String  @id @default(cuid())
-  question       String
+  question       String  @db.Text
   answer         String?
   creatorProfile String
   userId         String
