@@ -139,4 +139,20 @@ export const enrollmentCourseRouter = createTRPCRouter({
 
     return enrollments;
   }),
+
+  getLastLearnedCourses: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const coursesProgresses = await prisma.courseProgress.findMany({
+      where: {
+        watchedById: ctx.session.user.id,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+      take: 2,
+    });
+
+    return coursesProgresses;
+  }),
 });

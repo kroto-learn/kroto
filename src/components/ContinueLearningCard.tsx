@@ -3,7 +3,6 @@ import {
   ChevronDownIcon,
   PlayIcon,
 } from "@heroicons/react/20/solid";
-import { type CourseProgress, type Course, type Chapter } from "@prisma/client";
 import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 import { Doughnut } from "react-chartjs-2";
@@ -12,28 +11,14 @@ import { TRPCError } from "@trpc/server";
 import { Disclosure } from "@headlessui/react";
 
 type Props = {
-  enrollment: {
-    course: Course & {
-      courseProgress:
-        | (CourseProgress & {
-            lastChapter: Chapter;
-          })
-        | undefined;
-      _count: {
-        chapters: number;
-      };
-    };
-    id: string;
-    courseId: string;
-    userId: string;
-  };
+  courseId: string;
   defaultOpen?: boolean;
 };
 
-const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
+const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
   const { data: courseFull, isLoading: courseFullLoading } =
     api.course.get.useQuery({
-      id: enrollment.courseId,
+      id: courseId,
     });
 
   if (courseFullLoading)
@@ -98,8 +83,8 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
                 className={`relative hidden aspect-video w-48 overflow-hidden rounded-lg sm:block`}
               >
                 <ImageWF
-                  src={enrollment?.course?.thumbnail ?? ""}
-                  alt={enrollment?.course?.title ?? ""}
+                  src={courseFull?.thumbnail ?? ""}
+                  alt={courseFull?.title ?? ""}
                   fill
                   className="object-cover"
                 />
@@ -108,14 +93,13 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
                 <h5
                   className={`line-clamp-1 w-full overflow-hidden text-ellipsis text-left text-xs font-medium sm:text-sm`}
                 >
-                  {enrollment?.course?.title}
+                  {courseFull?.title}
                 </h5>
                 <p className={`flex items-center text-xs text-neutral-300`}>
-                  {chaptersWatched} / {enrollment.course._count.chapters}{" "}
-                  Chapters
+                  {chaptersWatched} / {courseFull?.chapters?.length} Chapters
                 </p>
                 <Link
-                  href={`/course/play/${enrollment?.course.id}`}
+                  href={`/course/play/${courseFull.id}`}
                   className="flex items-center gap-1 rounded-lg bg-pink-500 px-3 py-1 text-xs font-bold hover:bg-pink-600"
                 >
                   <PlayIcon className="w-3" /> Resume Learning
@@ -146,7 +130,7 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
           </Disclosure.Button>
           <Disclosure.Panel className="mb-2 ml-4 mt-8 flex w-full flex-col">
             {nextUnwatchedChIdx - 3 >= 0 &&
-            nextUnwatchedChIdx - 3 < enrollment?.course?._count?.chapters ? (
+            nextUnwatchedChIdx - 3 < courseFull?.chapters?.length ? (
               <>
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx - 3]?.chapterProgress
@@ -165,8 +149,7 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
                   </h4>
                 </div>
                 {nextUnwatchedChIdx - 2 >= 0 &&
-                nextUnwatchedChIdx - 2 <
-                  enrollment?.course?._count?.chapters ? (
+                nextUnwatchedChIdx - 2 < courseFull?.chapters?.length ? (
                   <div
                     className={`ml-3 h-4 w-px scale-[1.2] ${
                       courseFull?.chapters[nextUnwatchedChIdx - 3]
@@ -183,7 +166,7 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
               <></>
             )}
             {nextUnwatchedChIdx - 2 >= 0 &&
-            nextUnwatchedChIdx - 2 < enrollment?.course?._count?.chapters ? (
+            nextUnwatchedChIdx - 2 < courseFull?.chapters?.length ? (
               <>
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx - 2]?.chapterProgress
@@ -197,8 +180,7 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
                   </h4>
                 </div>
                 {nextUnwatchedChIdx - 1 >= 0 &&
-                nextUnwatchedChIdx - 1 <
-                  enrollment?.course?._count?.chapters ? (
+                nextUnwatchedChIdx - 1 < courseFull?.chapters?.length ? (
                   <div
                     className={`ml-3 h-4 w-px scale-[1.2] ${
                       courseFull?.chapters[nextUnwatchedChIdx - 2]
@@ -215,7 +197,7 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
               <></>
             )}
             {nextUnwatchedChIdx - 1 >= 0 &&
-            nextUnwatchedChIdx - 1 < enrollment?.course?._count?.chapters ? (
+            nextUnwatchedChIdx - 1 < courseFull?.chapters?.length ? (
               <>
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx - 1]?.chapterProgress
@@ -229,7 +211,7 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
                   </h4>
                 </div>
                 {nextUnwatchedChIdx >= 0 &&
-                nextUnwatchedChIdx < enrollment?.course?._count?.chapters ? (
+                nextUnwatchedChIdx < courseFull?.chapters?.length ? (
                   <div
                     className={`ml-3 h-4 w-px scale-[1.2] ${
                       courseFull?.chapters[nextUnwatchedChIdx - 1]
@@ -246,7 +228,7 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
               <></>
             )}
             {nextUnwatchedChIdx >= 0 &&
-            nextUnwatchedChIdx < enrollment?.course?._count?.chapters ? (
+            nextUnwatchedChIdx < courseFull?.chapters?.length ? (
               <>
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx]?.chapterProgress
@@ -260,8 +242,7 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
                   </h4>
                 </div>
                 {nextUnwatchedChIdx + 1 >= 0 &&
-                nextUnwatchedChIdx + 1 <
-                  enrollment?.course?._count?.chapters ? (
+                nextUnwatchedChIdx + 1 < courseFull?.chapters?.length ? (
                   <div
                     className={`ml-3 h-4 w-px scale-[1.2] ${
                       courseFull?.chapters[nextUnwatchedChIdx]?.chapterProgress
@@ -278,7 +259,7 @@ const ContinueLearningCard = ({ enrollment, defaultOpen }: Props) => {
               <></>
             )}
             {nextUnwatchedChIdx + 1 >= 0 &&
-            nextUnwatchedChIdx + 1 < enrollment?.course?._count?.chapters ? (
+            nextUnwatchedChIdx + 1 < courseFull?.chapters?.length ? (
               <>
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx + 1]?.chapterProgress

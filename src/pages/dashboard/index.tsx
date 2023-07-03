@@ -40,8 +40,9 @@ export default function Dashboard() {
   const { data: profile, isLoading } = api.creator.getProfile.useQuery();
   const { data: pastRegisteredEvents, isLoading: isPastLoading } =
     api.creator.getPastEvents.useQuery();
-  const { data: enrollments, isLoading: enrollmentsLoading } =
-    api.enrollmentCourse.getEnrollments.useQuery();
+
+  const { data: lastLearnedCourses, isLoading: lastLearnedLoading } =
+    api.enrollmentCourse.getLastLearnedCourses.useQuery();
 
   const { data: lastWeekLearning, isLoading: lastWeekLearningLoading } =
     api.tracking.getPastWeek.useQuery();
@@ -309,19 +310,19 @@ export default function Dashboard() {
               </div>
 
               <div className="flex w-full flex-col items-center">
-                {enrollmentsLoading ? (
+                {lastLearnedLoading ? (
                   <div className="flex h-64 items-center justify-center">
                     <Loader size="lg" />
                   </div>
                 ) : (
                   <>
-                    {enrollments && enrollments?.length > 0 ? (
+                    {lastLearnedCourses && lastLearnedCourses?.length > 0 ? (
                       <>
                         <div className="my-2 flex w-full flex-col items-center gap-4">
-                          {enrollments?.slice(0, 2)?.map((enrollment, idx) => (
+                          {lastLearnedCourses?.map((c, idx) => (
                             <ContinueLearningCard
-                              key={enrollment.id}
-                              enrollment={enrollment}
+                              key={c?.id}
+                              courseId={c?.courseId}
                               defaultOpen={idx === 0}
                             />
                           ))}
