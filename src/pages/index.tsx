@@ -154,7 +154,11 @@ export function Hero({ word }: { word: number }) {
               {/*     </div> */}
               {/*   </div> */}
               {/* </div> */}
-              <div className="mt-10 flex w-full justify-center">
+              <p className="text-base font-bold sm:text-xl lg:text-lg xl:text-2xl">
+                Become a <span className="text-pink-600">Kreator</span> now, and
+                claim your kreator proflie.
+              </p>
+              <div className="mt-6 flex w-full justify-center">
                 <ClaimLinkLanding />
               </div>
             </div>

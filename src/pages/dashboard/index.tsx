@@ -248,23 +248,24 @@ export default function Dashboard() {
                   </div>
                   <div className="hidden flex-col items-center gap-3 sm:flex">
                     <Link
-                      href="/dashboard/testimonials"
-                      className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
-                    >
-                      <FontAwesomeIcon icon={faQuoteLeft} /> Testimonials
-                    </Link>
-                    <Link
                       href="/dashboard/queries"
                       className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
                     >
                       <QuestionMarkCircleIcon className="w-4" /> Queries
                     </Link>
-                    <button
+                    <Link
+                      href="/dashboard/testimonials"
+                      className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
+                    >
+                      <FontAwesomeIcon icon={faQuoteLeft} /> Testimonials
+                    </Link>
+
+                    {/* <button
                       disabled
                       className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 disabled:cursor-not-allowed disabled:border-neutral-500 disabled:text-neutral-500 disabled:hover:bg-transparent sm:min-w-[10rem]"
                     >
                       <GlobeAltIcon className="w-4" /> Your Public Page
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
@@ -427,7 +428,7 @@ export default function Dashboard() {
             <ClaimLinkBanner />
           </div>
 
-          <div className="mt-2 hidden w-full max-w-md flex-col lg:flex">
+          <div className="hidden w-full max-w-md flex-col lg:flex">
             <AnimatedSection
               delay={0.1}
               className="mb-10 flex w-full flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-2 sm:gap-4  sm:p-4"

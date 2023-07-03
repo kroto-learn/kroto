@@ -840,7 +840,7 @@ const Index = () => {
                   >
                     Discount Deadline
                   </label>
-                  <div className="flex max-w-xs items-center gap-3 rounded-lg border border-neutral-700 bg-neutral-800 p-2">
+                  <div className="flex max-w-xs items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-2 sm:gap-3">
                     <ConfigProvider
                       theme={{
                         algorithm: darkAlgorithm,
