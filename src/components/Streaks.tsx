@@ -25,7 +25,7 @@ export default function Streaks() {
   }
 
   return (
-    <div className="flex w-full flex-col gap-2 rounded-lg bg-neutral-900 p-4">
+    <div className="flex w-full flex-col gap-2 rounded-lg border border-neutral-800 bg-neutral-900 p-4">
       {profile?.learningStreak?.days &&
       profile?.learningStreak?.days > 0 &&
       !!profile?.learningStreak?.start ? (
