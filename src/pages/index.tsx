@@ -154,9 +154,9 @@ export function Hero({ word }: { word: number }) {
               {/*     </div> */}
               {/*   </div> */}
               {/* </div> */}
-              <p className="text-base font-bold sm:text-xl lg:text-lg xl:text-2xl">
+              <p className="mt-8 text-base font-bold sm:text-xl lg:text-lg xl:text-2xl">
                 Become a <span className="text-pink-600">Kreator</span> now, and
-                claim your kreator proflie.
+                claim your proflie.
               </p>
               <div className="mt-6 flex w-full justify-center">
                 <ClaimLinkLanding />
@@ -380,7 +380,7 @@ export const ClaimLinkBannerLanding = () => {
             <span className="cursor-none text-pink-500 transition duration-300 hover:text-pink-600">
               Kreator
             </span>{" "}
-            now, and claim your kreator proflie
+            now, and claim your proflie
           </h2>
           <p className="tex-md mx-auto mt-4 max-w-3xl text-center text-neutral-400 md:text-xl">
             Monetize your audience, and provide them with value like never
