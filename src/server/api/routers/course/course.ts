@@ -270,6 +270,7 @@ export const courseRouter = createTRPCRouter({
           description: input.description,
           creatorId: ctx.session.user.id,
           price: parseInt(input.price),
+          permanentDiscount: parseInt(input.permanentDiscount),
           tags: {
             connectOrCreate: input.tags.map((tag) => ({
               where: { id: tag.id },
@@ -357,6 +358,7 @@ export const courseRouter = createTRPCRouter({
           creatorId: ctx.session.user.id,
           ytId: input.ytId,
           price: parseInt(input.price),
+          permanentDiscount: parseInt(input.permanentDiscount),
           tags: {
             connectOrCreate: input.tags.map((tag) => ({
               where: { id: tag.id },
@@ -444,6 +446,7 @@ export const courseRouter = createTRPCRouter({
           // creatorId: ctx.session.user.id,
           ytId: input.ytId,
           price: parseInt(input.price),
+          permanentDiscount: parseInt(input.permanentDiscount),
           ytChannelId: input.ytChannelId,
           ytChannelName: input.ytChannelName,
           ytChannelImage: input.ytChannelImage,
