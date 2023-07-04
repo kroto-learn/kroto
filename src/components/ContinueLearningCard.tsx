@@ -128,18 +128,18 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
               } w-5`}
             />
           </Disclosure.Button>
-          <Disclosure.Panel className="mb-2 ml-4 mt-8 flex w-full flex-col">
+          <Disclosure.Panel className="mb-2 ml-2 mt-8 flex w-full flex-col sm:ml-4">
             {nextUnwatchedChIdx - 3 >= 0 &&
             nextUnwatchedChIdx - 3 < courseFull?.chapters?.length ? (
               <>
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx - 3]?.chapterProgress
                     ?.watched ? (
-                    <CheckCircleIcon className="m-0 w-6 p-0 text-pink-600" />
+                    <CheckCircleIcon className="m-0 w-6 min-w-[1.5rem] p-0 text-pink-600" />
                   ) : (
-                    <div className="z-10 ml-[2px] h-5 w-5 rounded-full bg-neutral-700" />
+                    <div className="z-10 ml-[2px] h-5 w-5 min-w-[1.25rem] rounded-full bg-neutral-700" />
                   )}
-                  <h4 className="m-0 line-clamp-1 overflow-hidden text-ellipsis p-0 text-xs font-medium">
+                  <h4 className="m-0 line-clamp-1 w-full overflow-hidden text-ellipsis p-0 text-xs font-medium">
                     {/* <span className="w-6 rounded border border-pink-500/30 bg-pink-500/10 p-1 text-center text-xs font-bold  text-pink-500">
                   Ch.{" "}
                   {(courseFull?.chapters[nextUnwatchedChIdx - 2]?.position ??
@@ -152,7 +152,7 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
                 nextUnwatchedChIdx - 2 < courseFull?.chapters?.length ? (
                   <div
                     className={`ml-3 h-4 w-px scale-[1.2] ${
-                      courseFull?.chapters[nextUnwatchedChIdx - 3]
+                      courseFull?.chapters[nextUnwatchedChIdx - 2]
                         ?.chapterProgress?.watched
                         ? "bg-pink-600"
                         : "bg-neutral-700"
@@ -171,11 +171,11 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx - 2]?.chapterProgress
                     ?.watched ? (
-                    <CheckCircleIcon className="m-0 w-6 p-0 text-pink-600" />
+                    <CheckCircleIcon className="m-0 w-6 min-w-[1.5rem] p-0 text-pink-600" />
                   ) : (
-                    <div className="z-10 ml-[2px] h-5 w-5 rounded-full bg-neutral-700" />
+                    <div className="z-10 ml-[2px] h-5 w-5 min-w-[1.25rem] rounded-full bg-neutral-700" />
                   )}
-                  <h4 className="m-0 line-clamp-1 overflow-hidden text-ellipsis  p-0 text-xs font-medium">
+                  <h4 className="m-0 line-clamp-1 w-full overflow-hidden text-ellipsis  p-0 text-xs font-medium">
                     {courseFull?.chapters[nextUnwatchedChIdx - 2]?.title}
                   </h4>
                 </div>
@@ -183,7 +183,7 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
                 nextUnwatchedChIdx - 1 < courseFull?.chapters?.length ? (
                   <div
                     className={`ml-3 h-4 w-px scale-[1.2] ${
-                      courseFull?.chapters[nextUnwatchedChIdx - 2]
+                      courseFull?.chapters[nextUnwatchedChIdx - 1]
                         ?.chapterProgress?.watched
                         ? "bg-pink-600"
                         : "bg-neutral-700"
@@ -202,11 +202,11 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx - 1]?.chapterProgress
                     ?.watched ? (
-                    <CheckCircleIcon className="m-0 w-6 p-0 text-pink-600" />
+                    <CheckCircleIcon className="m-0 w-6 min-w-[1.5rem] p-0 text-pink-600" />
                   ) : (
-                    <div className="z-10 ml-[2px] h-5 w-5 rounded-full bg-neutral-700" />
+                    <div className="z-10 ml-[2px] h-5 w-5 min-w-[1.25rem] rounded-full bg-neutral-700" />
                   )}
-                  <h4 className="m-0 line-clamp-1 overflow-hidden text-ellipsis  p-0 text-xs font-medium">
+                  <h4 className="m-0 line-clamp-1 w-full overflow-hidden text-ellipsis  p-0 text-xs font-medium">
                     {courseFull?.chapters[nextUnwatchedChIdx - 1]?.title}
                   </h4>
                 </div>
@@ -214,8 +214,8 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
                 nextUnwatchedChIdx < courseFull?.chapters?.length ? (
                   <div
                     className={`ml-3 h-4 w-px scale-[1.2] ${
-                      courseFull?.chapters[nextUnwatchedChIdx - 1]
-                        ?.chapterProgress?.watched
+                      courseFull?.chapters[nextUnwatchedChIdx]?.chapterProgress
+                        ?.watched
                         ? "bg-pink-600"
                         : "bg-neutral-700"
                     }`}
@@ -233,11 +233,11 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx]?.chapterProgress
                     ?.watched ? (
-                    <CheckCircleIcon className="m-0 w-6 p-0 text-pink-600" />
+                    <CheckCircleIcon className="m-0 w-6 min-w-[1.5rem] p-0 text-pink-600" />
                   ) : (
-                    <div className="z-10 ml-[2px] h-5 w-5 rounded-full bg-neutral-700" />
+                    <div className="z-10 ml-[2px] h-5 w-5 min-w-[1.25rem] rounded-full bg-neutral-700" />
                   )}
-                  <h4 className="m-0 line-clamp-1 overflow-hidden text-ellipsis  p-0 text-xs font-medium">
+                  <h4 className="m-0 line-clamp-1 w-full overflow-hidden text-ellipsis  p-0 text-xs font-medium">
                     {courseFull?.chapters[nextUnwatchedChIdx]?.title}
                   </h4>
                 </div>
@@ -245,8 +245,8 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
                 nextUnwatchedChIdx + 1 < courseFull?.chapters?.length ? (
                   <div
                     className={`ml-3 h-4 w-px scale-[1.2] ${
-                      courseFull?.chapters[nextUnwatchedChIdx]?.chapterProgress
-                        ?.watched
+                      courseFull?.chapters[nextUnwatchedChIdx + 1]
+                        ?.chapterProgress?.watched
                         ? "bg-pink-600"
                         : "bg-neutral-700"
                     }`}
@@ -264,11 +264,11 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
                 <div className="flex w-full items-center gap-2">
                   {courseFull?.chapters[nextUnwatchedChIdx + 1]?.chapterProgress
                     ?.watched ? (
-                    <CheckCircleIcon className="m-0 w-6 p-0 text-pink-600" />
+                    <CheckCircleIcon className="m-0 w-6 min-w-[1.5rem] p-0 text-pink-600" />
                   ) : (
-                    <div className="z-10 ml-[2px] h-5 w-5 rounded-full bg-neutral-700" />
+                    <div className="z-10 ml-[2px] h-5 w-5 min-w-[1.25rem] rounded-full bg-neutral-700" />
                   )}
-                  <h4 className="m-0 line-clamp-1 overflow-hidden text-ellipsis  p-0 text-xs font-medium">
+                  <h4 className="m-0 line-clamp-1 w-full overflow-hidden text-ellipsis  p-0 text-xs font-medium">
                     {courseFull?.chapters[nextUnwatchedChIdx + 1]?.title}
                   </h4>
                 </div>

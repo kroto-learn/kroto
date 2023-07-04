@@ -111,22 +111,28 @@ export default function Streaks() {
 const StreaksMobile = () => {
   const { data: profile } = api.creator.getProfile.useQuery();
 
-  return profile?.learningStreak?.days &&
-    profile?.learningStreak?.days > 0 &&
-    !!profile?.learningStreak?.start ? (
-    <div className="flex w-full justify-center p-2 px-4">
-      <div className="flex items-center text-center">
-        You are on a <FireIcons className="ml-1 w-6 text-pink-500" />
-        <span className="mr-1 text-2xl font-bold">
-          {profile?.learningStreak?.days ?? 0}
-        </span>
-        day
-        {profile?.learningStreak?.days > 1 ? "s " : " "}
-        streak.
-      </div>
-    </div>
-  ) : (
-    <></>
+  return (
+    <>
+      {profile?.learningStreak?.days &&
+      profile?.learningStreak?.days > 0 &&
+      !!profile?.learningStreak?.start ? (
+        <div className="flex w-full flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-2 px-4">
+          <div className="flex w-full justify-center p-2 px-4">
+            <div className="flex items-center text-center">
+              You are on a <FireIcons className="ml-1 w-6 text-pink-500" />
+              <span className="mr-1 text-2xl font-bold">
+                {profile?.learningStreak?.days ?? 0}
+              </span>
+              day
+              {profile?.learningStreak?.days > 1 ? "s " : " "}
+              streak.
+            </div>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 

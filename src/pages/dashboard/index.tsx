@@ -268,10 +268,7 @@ export default function Dashboard() {
               </div>
             </AnimatedSection>
             <div className="flex w-full max-w-3xl flex-col gap-4 lg:hidden">
-              <AnimatedSection
-                delay={0.1}
-                className="flex w-full flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900 p-2 px-4"
-              >
+              <AnimatedSection delay={0.1} className="w-full">
                 <StreaksMobile />
               </AnimatedSection>
               <AnimatedSection
