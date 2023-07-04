@@ -70,8 +70,12 @@ export default function Streaks() {
           return (
             <>
               <div
-                className={`mx-1 flex flex-col items-center gap-1 rounded-lg border border-neutral-700 p-2 text-neutral-300 ${
-                  ignore ? "bg-neutral-900" : "bg-neutral-800"
+                className={`mx-1 flex flex-col items-center gap-1 rounded-lg border  p-2 text-neutral-300 ${
+                  ignore
+                    ? "border-neutral-700 bg-transparent"
+                    : isFilled
+                    ? "border-pink-500/20 bg-pink-500/10"
+                    : "border-neutral-700 bg-neutral-800"
                 }`}
               >
                 {!ignore ? (

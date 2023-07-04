@@ -340,35 +340,41 @@ const CourseOverview = () => {
             delay={0.2}
             className="flex flex-col gap-2 sm:flex-row sm:items-center"
           >
-            <button
-              onClick={() => {
-                void syncImportMutation(
-                  { id: course?.id },
-                  {
-                    onSuccess: () => {
-                      MixPannelClient.getInstance().courseUpdated({
-                        courseId: course?.id,
-                      });
-                      void ctx.course.get.invalidate();
-                      void revalidate(`/course/${course?.id}`);
-                      if (course?.creator)
-                        void revalidate(
-                          `/${course?.creator.creatorProfile ?? ""}`
+            {course?.ytId ? (
+              <button
+                onClick={() => {
+                  void syncImportMutation(
+                    { id: course?.id },
+                    {
+                      onSuccess: () => {
+                        MixPannelClient.getInstance().courseUpdated({
+                          courseId: course?.id,
+                        });
+                        void ctx.course.get.invalidate();
+                        void revalidate(`/course/${course?.id}`);
+                        if (course?.creator)
+                          void revalidate(
+                            `/${course?.creator.creatorProfile ?? ""}`
+                          );
+                        successToast(
+                          "Course synced from YouTube successfully!"
                         );
-                      successToast("Course synced from YouTube successfully!");
-                    },
-                  }
-                );
-              }}
-              className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800 sm:text-xs`}
-            >
-              {syncImportLoading ? (
-                <Loader />
-              ) : (
-                <FontAwesomeIcon icon={faRotate} />
-              )}
-              Sync from YouTube
-            </button>
+                      },
+                    }
+                  );
+                }}
+                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800 sm:text-xs`}
+              >
+                {syncImportLoading ? (
+                  <Loader />
+                ) : (
+                  <FontAwesomeIcon icon={faRotate} />
+                )}
+                Sync from YouTube
+              </button>
+            ) : (
+              <></>
+            )}
 
             <Link
               href={`/course/play/${course?.id}`}

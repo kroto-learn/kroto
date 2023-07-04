@@ -7,7 +7,10 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { api } from "@/utils/api";
 import ImageWF from "@/components/ImageWF";
 import CourseCard from "@/components/CourseCard";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faYoutube } from "@fortawesome/free-brands-svg-icons";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -33,13 +36,50 @@ const Index = () => {
       <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">
         <AnimatedSection className="flex w-full items-center justify-between gap-4 sm:px-4">
           <h1 className="text-2xl text-neutral-200">Courses</h1>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/course/import"
-              className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-xs font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:text-sm"
-            >
-              <PlusIcon className="w-5" /> Import Course
-            </Link>
+          <div className="relative flex w-full justify-end">
+            <Menu as="div" className="inline-block text-left">
+              <div className="flex flex-col items-end">
+                <Menu.Button
+                  as="button"
+                  className="flex items-center gap-1 rounded-xl border border-pink-600 px-4 py-2 text-xs font-semibold text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:text-sm"
+                >
+                  <PlusIcon className="w-5" /> Create Course
+                </Menu.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute top-[3rem] z-10 mt-2 flex origin-top-right flex-col divide-y divide-neutral-800 overflow-hidden rounded-xl bg-neutral-900/80 backdrop-blur-sm duration-300">
+                    <Menu.Item>
+                      <Link
+                        href="/course/create"
+                        className={`flex w-full items-center gap-1 px-4 py-3 text-xs font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600 sm:text-sm`}
+                      >
+                        <PlusIcon className="w-4" />
+                        Create new
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <Link
+                        href="/course/import"
+                        className={`flex w-full items-center gap-1 px-4 py-3 text-xs font-bold transition-all duration-300 hover:text-pink-500 active:text-pink-600 sm:text-sm`}
+                      >
+                        <FontAwesomeIcon
+                          icon={faYoutube}
+                          className="mr-1 text-xs"
+                        />
+                        Import YouTube playlist
+                      </Link>
+                    </Menu.Item>
+                  </Menu.Items>
+                </Transition>
+              </div>
+            </Menu>
           </div>
         </AnimatedSection>
         {searchOpen ? (
