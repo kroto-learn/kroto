@@ -9,11 +9,12 @@ import { getPlaylistDataService } from "@/server/services/youtube";
 import { importCourseFormSchema } from "@/pages/course/import";
 import { generateStaticCourseOgImage } from "@/server/services/og";
 import { env } from "@/env.mjs";
-import { ogImageUpload } from "@/server/helpers/s3";
+import { imageUpload, ogImageUpload } from "@/server/helpers/s3";
 import { settingsFormSchema } from "../../../../pages/creator/dashboard/course/[id]/settings";
 import { adminImportCourseFormSchema } from "@/pages/course/admin-import";
 import { isAdmin } from "@/server/helpers/admin";
 import { sendClaimCourseRequest } from "@/server/helpers/emailHelper";
+import { createCourseFormSchema } from "@/pages/course/create";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -60,7 +61,7 @@ export const courseRouter = createTRPCRouter({
 
       if (!course) return new TRPCError({ code: "BAD_REQUEST" });
       const isEnrolled = course?.enrollments.find(
-        (er) => ctx.session.user.id === er.id
+        (er) => ctx.session.user.id === er.userId
       );
 
       if (
@@ -254,6 +255,85 @@ export const courseRouter = createTRPCRouter({
       });
 
       return [...myCourses, ...unclaimedCourses];
+    }),
+
+  create: protectedProcedure
+    .input(createCourseFormSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+
+      const course = await prisma.course.create({
+        data: {
+          title: input.title,
+          description: input.description,
+          creatorId: ctx.session.user.id,
+          price: parseInt(input.price),
+          tags: {
+            connectOrCreate: input.tags.map((tag) => ({
+              where: { id: tag.id },
+              create: { title: tag.title },
+            })),
+          },
+          categoryId: input?.category?.id,
+        },
+      });
+
+      const thumbnail = await imageUpload(input.thumbnail, course.id, "course");
+
+      const discount = input.discount
+        ? await prisma.discount.create({
+            data: {
+              courseId: course.id,
+              price: parseInt(input.discount.price),
+              deadline: input.discount.deadline,
+            },
+          })
+        : undefined;
+
+      // const chapters = await Promise.all(
+      //   input.chapters.map(async (cb, position) => {
+      //     return await prisma.chapter.create({
+      //       data: {
+      //         ...cb,
+      //         courseId: course.id,
+      //         position,
+      //       },
+      //     });
+      //   })
+      // );
+
+      const ogImageRes = await generateStaticCourseOgImage({
+        ogUrl: OG_URL,
+        title: course.title,
+        creatorName: ctx.session.user.name ?? "",
+        chapters: 0,
+        thumbnail,
+      });
+
+      const ogImage = ogImageRes
+        ? await ogImageUpload(
+            ogImageRes.data as AWS.S3.Body,
+            course.id,
+            "course"
+          )
+        : undefined;
+
+      const updatedCourse = await prisma.course.update({
+        where: {
+          id: course.id,
+        },
+        data: {
+          ogImage,
+          thumbnail,
+        },
+        include: {
+          creator: true,
+        },
+      });
+
+      return { ...updatedCourse, discount };
     }),
 
   import: protectedProcedure

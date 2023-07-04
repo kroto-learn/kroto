@@ -321,7 +321,6 @@ const Index = () => {
                   void router.push(
                     `/creator/dashboard/course/${courseCreated?.id}`
                   );
-                  void revalidate(`/course/${courseCreated?.id}`);
                   void revalidate(
                     `/${courseCreated?.creator?.creatorProfile ?? ""}`
                   );
