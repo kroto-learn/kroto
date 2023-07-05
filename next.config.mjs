@@ -7,7 +7,7 @@ const config = {
   swcMinify: true,
 
   images: {
-    unoptimzed: true,
+    unoptimized: true,
     // remotePatterns: [
     //   {
     //     protocol: "https",
