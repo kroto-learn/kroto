@@ -29,7 +29,7 @@ const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 const Index = () => {
   const { data: creator } = api.creator.getProfile.useQuery();
 
-  const { data: queries } = api.askedQuery.getAllPending.useQuery({
+  const { data: queries, isLoading } = api.askedQuery.getAllPending.useQuery({
     creatorProfile: creator?.creatorProfile ?? "",
   });
 
@@ -45,7 +45,7 @@ const Index = () => {
       </Head>
       <div className="flex w-full max-w-3xl flex-col items-center py-8">
         {queries && queries.length > 0 ? (
-          <div className="flex w-full flex-col gap-4">
+          <AnimatedSection delay={0.1} className="flex w-full flex-col gap-4">
             {queries.map((query) => {
               return query.answer ? (
                 <></>
@@ -108,7 +108,9 @@ const Index = () => {
                 setCreateReply={setCreateReply}
               />
             </div>
-          </div>
+          </AnimatedSection>
+        ) : isLoading ? (
+          <Loader size="lg" />
         ) : (
           <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
             <div className="aspect-square object-contain">
@@ -119,7 +121,7 @@ const Index = () => {
               />
             </div>
             <p className="mb-2 text-center text-sm text-neutral-400 sm:text-base">
-              You have not recieved any queries
+              You have not any queries for reply
             </p>
           </div>
         )}
