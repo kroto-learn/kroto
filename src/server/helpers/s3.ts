@@ -69,14 +69,14 @@ export const ogImageUpload = async (
   variant: "event" | "creator" | "course"
 ): Promise<string> => {
   // Configure AWS with your access and secret key.
-  const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET } = env;
+  const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, REGION, S3_BUCKET } = env;
 
   // Configure AWS to use promise
   AWS.config.setPromisesDependency(Promise);
   AWS.config.update({
     accessKeyId: ACCESS_KEY_ID,
     secretAccessKey: SECRET_ACCESS_KEY,
-    region: AWS_REGION,
+    region: REGION,
   });
 
   // Create an s3 instance
@@ -114,7 +114,7 @@ export const ogImageUpload = async (
 };
 
 export const deleteS3Image = async ({ key }: { key: string }) => {
-  const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, AWS_REGION, S3_BUCKET } = env;
+  const { ACCESS_KEY_ID, SECRET_ACCESS_KEY, REGION, S3_BUCKET } = env;
 
   AWS.config.setPromisesDependency(Promise);
   AWS.config.update({

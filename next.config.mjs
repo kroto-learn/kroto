@@ -5,8 +5,6 @@ import removeImports from "next-remove-imports";
 const config = {
   reactStrictMode: true,
 
-
-
   images: {
     remotePatterns: [
       {
