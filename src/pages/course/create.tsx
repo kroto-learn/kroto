@@ -14,9 +14,11 @@ import { Loader } from "@/components/Loader";
 import dayjs from "dayjs";
 
 import {
+  CheckIcon,
   ChevronDownIcon,
   PhotoIcon,
   PlusIcon,
+  TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
@@ -34,6 +36,7 @@ const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
 });
 
 const titleLimit = 100;
+const outcomeLimit = 100;
 
 export const createCourseFormSchema = z.object({
   thumbnail: z.string().nonempty("Please upload a cover"),
@@ -54,6 +57,10 @@ export const createCourseFormSchema = z.object({
     .optional(),
   tags: z.array(z.object({ id: z.string(), title: z.string() })),
   category: z.object({ id: z.string(), title: z.string() }).optional(),
+  outcomes: z.array(
+    z.string().max(outcomeLimit).nonempty("Please enter course outcome.")
+  ),
+
   // courseBlocks: z.array(
   //   z.object({
   //     title: z.string(),
@@ -86,6 +93,7 @@ const Index = () => {
       price: "0",
       permanentDiscount: "0",
       tags: [],
+      outcomes: [],
     },
   });
 
@@ -206,7 +214,7 @@ const Index = () => {
                   e.target?.value.substring(0, titleLimit)
                 );
               }}
-              placeholder="Course Title"
+              placeholder="Write course title..."
               className="w-full rounded-lg bg-neutral-800 px-3 py-1 font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500 sm:text-lg"
             />
             {
@@ -220,6 +228,77 @@ const Index = () => {
               </p>
             )}
           </div>
+
+          {methods.watch()?.outcomes?.length > 0 ? (
+            <div className="mb-4 flex w-full flex-col gap-3">
+              <label htmlFor="outcomes" className="text-lg  text-neutral-200">
+                What learners will learn from this course?
+              </label>
+
+              <div className="flex w-full flex-col items-start gap-3">
+                {methods.watch().outcomes?.map((o, idx) => (
+                  <div className="flex w-full flex-col" key={`o-${idx}`}>
+                    <div className="flex w-full items-center gap-2">
+                      <CheckIcon className="w-4" />
+                      <input
+                        value={o}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                          methods.setValue(
+                            `outcomes.${idx}`,
+                            e.target?.value.substring(0, outcomeLimit)
+                          );
+                        }}
+                        placeholder="Write a course outcome..."
+                        className="w-full rounded-lg bg-neutral-800 px-3 py-1 text-sm font-medium text-neutral-200 outline outline-1 outline-neutral-700 transition-all duration-300 hover:outline-neutral-600 focus:outline-neutral-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          methods.setValue(
+                            "outcomes",
+                            methods
+                              .watch()
+                              .outcomes?.filter((ou, id) => id !== idx)
+                          );
+                        }}
+                      >
+                        <TrashIcon className="w-4 text-red-500" />
+                      </button>
+                    </div>
+                    {
+                      <p className="mr-6 mt-1 text-end text-xs text-neutral-400">
+                        {methods.watch()?.outcomes[idx]?.length}/{outcomeLimit}
+                      </p>
+                    }
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    methods.setValue("outcomes", [
+                      ...methods.watch().outcomes,
+                      "",
+                    ]);
+                  }}
+                  className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-3 py-1 text-sm font-bold text-pink-600"
+                >
+                  <PlusIcon className="w-4" /> Add another
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="mb-4 w-full">
+              <button
+                type="button"
+                onClick={() => {
+                  methods.setValue("outcomes", [""]);
+                }}
+                className="flex items-center gap-1 rounded-lg border border-pink-600 bg-pink-600/10 px-3 py-1 font-bold text-pink-600"
+              >
+                <PlusIcon className="w-4" /> Add a course outcome
+              </button>
+            </div>
+          )}
 
           <div className="flex flex-col gap-3">
             <label htmlFor="description" className="text-lg  text-neutral-200">
@@ -433,7 +512,7 @@ const Index = () => {
               <div className="relative flex w-full max-w-[7rem] items-center">
                 <input
                   type="number"
-                  {...methods.register("price")}
+                  {...methods.register("permanentDiscount")}
                   className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   placeholder="00"
                   defaultValue={50}

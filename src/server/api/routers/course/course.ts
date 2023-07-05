@@ -6,15 +6,15 @@ import {
 } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { getPlaylistDataService } from "@/server/services/youtube";
-import { importCourseFormSchema } from "@/pages/course/import";
 import { generateStaticCourseOgImage } from "@/server/services/og";
 import { env } from "@/env.mjs";
 import { imageUpload, ogImageUpload } from "@/server/helpers/s3";
 import { settingsFormSchema } from "../../../../pages/creator/dashboard/course/[id]/settings";
-import { adminImportCourseFormSchema } from "@/pages/course/admin-import";
 import { isAdmin } from "@/server/helpers/admin";
 import { sendClaimCourseRequest } from "@/server/helpers/emailHelper";
 import { createCourseFormSchema } from "@/pages/course/create";
+import { importCourseFormSchema } from "@/pages/course/import";
+import { adminImportCourseFormSchema } from "@/pages/course/admin-import";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -278,6 +278,7 @@ export const courseRouter = createTRPCRouter({
             })),
           },
           categoryId: input?.category?.id,
+          outcomes: input.outcomes,
         },
       });
 

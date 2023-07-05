@@ -321,7 +321,12 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
               className="flex w-full flex-col items-center gap-4"
             >
               {creator?.courses?.map((course) => (
-                <CourseCard key={course?.id ?? ""} course={course} lg />
+                <CourseCard
+                  key={course?.id ?? ""}
+                  creatorProfile={creator?.creatorProfile ?? undefined}
+                  course={course}
+                  lg
+                />
               ))}
             </AnimatedSection>
           ) : (

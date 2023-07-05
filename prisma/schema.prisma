@@ -240,6 +240,7 @@ model Course {
   enrollments       Enrollment[]
   courseProgress    CourseProgress[]
   chapters          Chapter[]
+  outcomes          Json?
   feedbacks         Feedback[]
   audienceMember    AudienceMember[]
   tags              Tag[]

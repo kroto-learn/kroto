@@ -20,6 +20,17 @@ export default function CheckoutModal({
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const isDiscount =
+    course?.permanentDiscount !== null ||
+    (course?.discount &&
+      course?.discount?.deadline?.getTime() > new Date().getTime());
+
+  const discount =
+    course?.discount &&
+    course?.discount?.deadline?.getTime() > new Date().getTime()
+      ? course?.discount?.price
+      : course?.permanentDiscount ?? 0;
+
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -115,18 +126,13 @@ export default function CheckoutModal({
                       <label>Price</label>
                       <p>₹{course?.price}</p>
                     </div>
-                    {course?.discount &&
-                    course?.discount?.deadline?.getTime() >
-                      new Date().getTime() ? (
+                    {isDiscount ? (
                       <div className="flex w-full justify-between px-1 py-1">
                         <label>Discount</label>
                         <p className="text-green-500">
                           -
                           {100 -
-                            Math.round(
-                              (course?.discount?.price / course?.price ?? 1) *
-                                100
-                            )}
+                            Math.round((discount / course?.price ?? 1) * 100)}
                           %
                         </p>
                       </div>
@@ -136,12 +142,7 @@ export default function CheckoutModal({
                     <div className="flex w-full justify-between border-b border-t border-neutral-300 px-1 py-1">
                       <label>To pay</label>
                       <p className="font-bold">
-                        ₹
-                        {course?.discount &&
-                        course?.discount?.deadline?.getTime() >
-                          new Date().getTime()
-                          ? course?.discount?.price
-                          : course?.price}
+                        ₹{isDiscount ? discount : course?.price}
                       </p>
                     </div>
                   </div>

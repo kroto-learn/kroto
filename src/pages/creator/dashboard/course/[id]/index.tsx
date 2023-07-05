@@ -74,6 +74,17 @@ const CourseOverview = () => {
 
   const courseUrl = `https://kroto.in/course/${course?.id ?? ""}`;
 
+  const isDiscount =
+    course?.permanentDiscount !== null ||
+    (course?.discount &&
+      course?.discount?.deadline?.getTime() > new Date().getTime());
+
+  const discount =
+    course?.discount &&
+    course?.discount?.deadline?.getTime() > new Date().getTime()
+      ? course?.discount?.price
+      : course?.permanentDiscount ?? 0;
+
   if (course)
     return (
       <>
@@ -211,10 +222,8 @@ const CourseOverview = () => {
                   Price
                 </label>
                 <div className="flex items-center gap-2">
-                  {course?.discount &&
-                  course?.discount?.deadline?.getTime() >
-                    new Date().getTime() ? (
-                    course?.discount?.price === 0 ? (
+                  {isDiscount ? (
+                    discount === 0 ? (
                       <p
                         className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
                       >
@@ -224,7 +233,7 @@ const CourseOverview = () => {
                       <p
                         className={`text-xs font-bold uppercase tracking-wide sm:text-sm`}
                       >
-                        ₹{course?.discount?.price}
+                        ₹{discount}
                       </p>
                     )
                   ) : (
@@ -239,10 +248,8 @@ const CourseOverview = () => {
                   ) : (
                     <p
                       className={`text-xs font-semibold uppercase tracking-wide sm:text-sm ${
-                        course?.discount &&
-                        course?.discount?.deadline?.getTime() >
-                          new Date().getTime()
-                          ? "font-thin line-through"
+                        isDiscount
+                          ? "font-thin line-through decoration-1"
                           : "font-bold"
                       }`}
                     >

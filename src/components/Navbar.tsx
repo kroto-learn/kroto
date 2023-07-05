@@ -8,6 +8,7 @@ import { Fragment } from "react";
 import { useRouter } from "next/router";
 import { isAdmin } from "@/server/helpers/admin";
 import { MixPannelClient } from "@/analytics/mixpanel";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 export default function Navbar() {
   const router = useRouter();
@@ -29,16 +30,16 @@ export default function Navbar() {
             {router.asPath.includes(`${creator_id}`) ? (
               <Link
                 href={`/${UnknownCreator?.creatorProfile ?? ""}`}
-                className="group mx-4 mt-2 flex items-center gap-2"
+                className="group mx-4 flex items-center gap-2"
               >
                 <ImageWF
                   src={UnknownCreator?.image ?? ""}
                   alt={UnknownCreator?.name as string}
-                  width={30}
-                  height={30}
+                  width={38}
+                  height={38}
                   className="rounded-full"
                 />
-                <p className="font-medium text-neutral-300 duration-150 group-hover:text-neutral-200">
+                <p className="font-medium text-neutral-200 duration-150 group-hover:text-neutral-100">
                   {UnknownCreator?.name}
                 </p>
               </Link>
@@ -47,27 +48,44 @@ export default function Navbar() {
             )}
           </div>
           <div className="flex items-center gap-8">
-            <Link
-              className="font-bold transition-all duration-300 hover:text-neutral-400"
-              href="/courses"
-            >
-              Courses
-            </Link>
+            {router.asPath.includes(`${creator_id}`) ? (
+              <></>
+            ) : (
+              <Link
+                className="font-bold transition-all duration-300 hover:text-neutral-400"
+                href="/courses"
+              >
+                Courses
+              </Link>
+            )}
             {session.status === "authenticated" && !creatorLoading ? (
               <Menu as="div" className="relative inline-block text-left">
                 {({ open }) => (
                   <div className="flex flex-col items-end">
                     <Menu.Button>
-                      <div className="relative h-9 w-9 rounded-full">
-                        <ImageWF
-                          src={session?.data?.user?.image ?? ""}
-                          alt="Profile Image"
-                          className={`rounded-full transition-all ${
-                            open ? "ring ring-neutral-700" : ""
-                          }`}
-                          fill
-                        />
-                      </div>
+                      {router.asPath.includes(`${creator_id}`) ? (
+                        <div className="relative flex items-center rounded-full bg-neutral-800 px-4 py-1">
+                          <h6 className="text-sm font-bold">
+                            {session?.data?.user?.name?.split(" ")[0]}
+                          </h6>
+                          <ChevronDownIcon
+                            className={`duration-150 ${
+                              open ? "rotate-180" : ""
+                            } w-5`}
+                          />
+                        </div>
+                      ) : (
+                        <div className="relative h-9 w-9 rounded-full">
+                          <ImageWF
+                            src={session?.data?.user?.image ?? ""}
+                            alt="Profile Image"
+                            className={`rounded-full transition-all ${
+                              open ? "ring ring-neutral-700" : ""
+                            }`}
+                            fill
+                          />
+                        </div>
+                      )}
                     </Menu.Button>
                     <Transition
                       as={Fragment}
@@ -142,6 +160,10 @@ export default function Navbar() {
               >
                 Sign In
               </button>
+            ) : router.asPath.includes(`${creator_id}`) ? (
+              <div className="relative flex animate-pulse items-center rounded-full bg-neutral-800 px-4 py-1">
+                <h6 className="text-sm font-bold text-neutral-800">loading</h6>
+              </div>
             ) : (
               <div className="h-9 w-9 animate-pulse rounded-full bg-neutral-800" />
             )}
