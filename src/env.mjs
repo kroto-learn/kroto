@@ -34,7 +34,7 @@ const server = z.object({
   NEXT_PUBLIC_MIXPANEL_ID: z.string(),
 
   // AWS
-  AWS_REGION: z.string(),
+  REGION: z.string(),
 
   // S3
   ACCESS_KEY_ID: z.string(),
@@ -89,7 +89,7 @@ const processEnv = {
   NEXT_PUBLIC_MIXPANEL_ID: process.env.NEXT_PUBLIC_MIXPANEL_ID,
 
   // AWS
-  AWS_REGION: process.env.AWS_REGION,
+  REGION: process.env.REGION,
 
   // S3
   ACCESS_KEY_ID: process.env.ACCESS_KEY_ID,
