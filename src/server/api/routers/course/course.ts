@@ -277,8 +277,8 @@ export const courseRouter = createTRPCRouter({
               create: { title: tag.title },
             })),
           },
-          categoryId: input?.category?.id,
           outcomes: input.outcomes,
+          startsAt: input.startsAt,
         },
       });
 

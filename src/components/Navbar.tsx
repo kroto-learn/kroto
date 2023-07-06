@@ -98,7 +98,7 @@ export default function Navbar() {
                                 name: session?.data?.user?.name ?? "",
                                 id: session?.data?.user?.id ?? "",
                               });
-                              void signOut({ callbackUrl: "/" });
+                              void signOut({ callbackUrl: router.asPath });
                             }}
                             href="/"
                           >

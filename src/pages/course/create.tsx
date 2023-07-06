@@ -15,14 +15,12 @@ import dayjs from "dayjs";
 
 import {
   CheckIcon,
-  ChevronDownIcon,
   PhotoIcon,
   PlusIcon,
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
-import { Listbox } from "@headlessui/react";
 import { api } from "@/utils/api";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import { getDateTimeDiffString } from "@/helpers/time";
@@ -56,10 +54,10 @@ export const createCourseFormSchema = z.object({
     })
     .optional(),
   tags: z.array(z.object({ id: z.string(), title: z.string() })),
-  category: z.object({ id: z.string(), title: z.string() }).optional(),
   outcomes: z.array(
     z.string().max(outcomeLimit).nonempty("Please enter course outcome.")
   ),
+  startsAt: z.date().optional(),
 
   // courseBlocks: z.array(
   //   z.object({
@@ -108,8 +106,6 @@ const Index = () => {
   const { data: searchedTags, isLoading: searchingtags } =
     api.tagsCourse.searchTags.useQuery(debouncedTagInput);
 
-  const { data: catgs } = api.categoriesCourse.getCategories.useQuery();
-
   const {
     mutateAsync: createCourseMutation,
     isLoading: createMutationLoading,
@@ -152,13 +148,13 @@ const Index = () => {
                 }
               },
               onError: () => {
-                errorToast("Error in importing course from YouTube!");
+                errorToast("Error in creating course!");
               },
             });
           })}
           className="mt-12s mx-auto flex w-full flex-col gap-4"
         >
-          <div className="relative mb-4 flex aspect-video w-full items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
+          <div className="relative mb-4 flex aspect-video w-full max-w-xs items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
             {methods.getValues("thumbnail") && (
               <ImageWF
                 src={methods.getValues("thumbnail")}
@@ -287,7 +283,8 @@ const Index = () => {
               </div>
             </div>
           ) : (
-            <div className="mb-4 w-full">
+            <div className="mb-4 flex w-full flex-col items-start gap-2">
+              <p>Describe what this course offers?</p>
               <button
                 type="button"
                 onClick={() => {
@@ -298,6 +295,78 @@ const Index = () => {
                 <PlusIcon className="w-4" /> Add a course outcome
               </button>
             </div>
+          )}
+
+          <div
+            className={`flex w-full items-center gap-2 ${
+              methods.watch()?.startsAt ? "mb-1" : "mb-4"
+            }`}
+          >
+            <p>Course starts in future?</p>
+            <button
+              type="button"
+              className={`flex  h-[1.2rem] w-[2.4rem] cursor-pointer items-center rounded-full border border-neutral-700 p-px ${
+                methods.watch()?.startsAt
+                  ? "justify-end bg-pink-600"
+                  : "justify-start bg-neutral-800"
+              }`}
+              onClick={() => {
+                if (methods.watch()?.startsAt)
+                  methods.setValue("startsAt", undefined);
+                else
+                  methods.setValue(
+                    "startsAt",
+                    new Date(new Date().setDate(new Date().getDate() + 7))
+                  );
+              }}
+            >
+              <div className="aspect-square h-full rounded-full bg-neutral-200" />
+            </button>
+          </div>
+
+          {methods.watch()?.startsAt ? (
+            <div className="mb-4 flex w-full flex-col items-start gap-1">
+              <div className="flex w-full items-center gap-8">
+                <label htmlFor="dDeadline" className="text-lg text-neutral-200">
+                  Course start date
+                </label>
+              </div>
+              <div className="flex max-w-xs items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-2 sm:gap-3">
+                <ConfigProvider
+                  theme={{
+                    algorithm: darkAlgorithm,
+                    token: {
+                      colorPrimary: "#ec4899",
+                    },
+                  }}
+                >
+                  <DatePicker
+                    format="DD-MM-YYYY"
+                    autoFocus={false}
+                    bordered={false}
+                    disabledDate={(currentDate) =>
+                      currentDate.isBefore(dayjs(new Date()), "day")
+                    }
+                    value={dayjs(
+                      (
+                        methods.watch()?.startsAt ?? new Date()
+                      )?.toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      }),
+                      "DD-MM-YYYY"
+                    )}
+                    onChange={(selectedDate) => {
+                      methods.setValue("startsAt", selectedDate?.toDate());
+                    }}
+                  />
+                </ConfigProvider>
+                {/* <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" /> */}
+              </div>
+            </div>
+          ) : (
+            <></>
           )}
 
           <div className="flex flex-col gap-3">
@@ -319,69 +388,6 @@ const Index = () => {
               </p>
             )}
           </div>
-
-          <div className="mt-4 flex flex-col gap-2">
-            <label htmlFor="category" className="text-lg  text-neutral-200">
-              Category
-            </label>
-            <div className="relative flex w-full max-w-sm items-center justify-end">
-              <Listbox
-                value={methods.watch().category?.id ?? "none"}
-                onChange={(val) => {
-                  const selectedCatg = catgs?.find((ctg) => ctg.id === val);
-                  if (selectedCatg) methods.setValue("category", selectedCatg);
-                  else methods.setValue("category", undefined);
-                }}
-              >
-                {({ open }) => (
-                  <div className="flex w-full flex-col gap-2">
-                    <div className="relative flex w-full items-center justify-end">
-                      <Listbox.Button className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 pr-8 text-left">
-                        {methods.watch().category?.title ?? "none"}
-                      </Listbox.Button>
-                      <ChevronDownIcon
-                        className={`${
-                          open ? "rotate-180 duration-150" : ""
-                        } absolute mr-4 w-4`}
-                      />
-                    </div>
-                    <div
-                      className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
-                    >
-                      <Listbox.Options className="flex w-full flex-col overflow-hidden rounded border border-neutral-600 bg-neutral-800/70 backdrop-blur">
-                        <Listbox.Option
-                          key={"none"}
-                          value={"none"}
-                          className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
-                        >
-                          none
-                        </Listbox.Option>
-                        {catgs && catgs.length > 0 ? (
-                          catgs.map((ctg) => (
-                            <Listbox.Option
-                              key={ctg.id}
-                              value={ctg.id}
-                              className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
-                            >
-                              {ctg.title}
-                            </Listbox.Option>
-                          ))
-                        ) : (
-                          <></>
-                        )}
-                      </Listbox.Options>
-                    </div>
-                  </div>
-                )}
-              </Listbox>
-            </div>
-          </div>
-
-          {methods.formState.errors?.category?.message && (
-            <p className="text-red-700">
-              {methods.formState.errors?.category?.message}
-            </p>
-          )}
 
           <div className="mt-4 flex flex-col gap-2">
             <label htmlFor="tags" className="text-lg  text-neutral-200">

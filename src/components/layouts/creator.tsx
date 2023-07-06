@@ -2,7 +2,7 @@ import Link from "next/link";
 import ImageWF from "../ImageWF";
 import { Menu, Transition } from "@headlessui/react";
 import { type User } from "@prisma/client";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { isAdmin } from "@/server/helpers/admin";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -23,6 +23,10 @@ export default function CreatorLayout({
 
   const { data: user, isLoading: userLoading } =
     api.creator.getProfile.useQuery();
+
+  useEffect(() => {
+    console.log("router", router.asPath);
+  }, [router]);
 
   return (
     <div>
@@ -115,7 +119,7 @@ export default function CreatorLayout({
                                     name: session?.data?.user?.name ?? "",
                                     id: session?.data?.user?.id ?? "",
                                   });
-                                  void signOut({ callbackUrl: "/" });
+                                  void signOut({ callbackUrl: router.asPath });
                                 }}
                                 href="/"
                               >

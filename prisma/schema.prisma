@@ -248,6 +248,7 @@ model Course {
   categoryId        String?
   learnTracks       LearnTrack[]
   discount          Discount?
+  startsAt          DateTime?
 
   @@index([categoryId])
   @@index([creatorId])

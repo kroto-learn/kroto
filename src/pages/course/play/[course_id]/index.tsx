@@ -412,12 +412,9 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
                 {sideDrawerCollapsed ? (
                   <></>
                 ) : (
-                  <Link
-                    href={`/course/${course?.id ?? ""}`}
-                    className="line-clamp-1 overflow-hidden text-ellipsis text-lg font-medium duration-150 hover:text-neutral-100"
-                  >
+                  <h2 className="line-clamp-1 overflow-hidden text-ellipsis text-lg font-medium duration-150 hover:text-neutral-100">
                     {course?.title}
-                  </Link>
+                  </h2>
                 )}
               </div>
 

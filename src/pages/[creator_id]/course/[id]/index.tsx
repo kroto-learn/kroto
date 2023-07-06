@@ -3,12 +3,7 @@ import { Loader } from "@/components/Loader";
 import useToast from "@/hooks/useToast";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
-import {
-  ArrowLeftIcon,
-  Bars3CenterLeftIcon,
-  CheckIcon,
-  PlayIcon,
-} from "@heroicons/react/20/solid";
+import { ArrowLeftIcon, CheckIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { TRPCError } from "@trpc/server";
 import { type GetStaticPropsContext } from "next";
@@ -96,22 +91,22 @@ const Index = ({ courseId, creatorProfile }: Props) => {
     course?.creator?.name ?? course?.ytChannelName ?? ""
   }`;
 
-  const isDiscount =
-    course?.permanentDiscount !== null ||
-    (course?.discount &&
-      course?.discount?.deadline?.getTime() > new Date().getTime());
+  // const isDiscount =
+  //   course?.permanentDiscount !== null ||
+  //   (course?.discount &&
+  //     course?.discount?.deadline?.getTime() > new Date().getTime());
 
-  const isPreSaleDiscount =
-    course?.discount &&
-    course?.discount?.deadline?.getTime() > new Date().getTime();
+  // const isPreSaleDiscount =
+  //   course?.discount &&
+  //   course?.discount?.deadline?.getTime() > new Date().getTime();
 
-  const discount =
-    course?.discount &&
-    course?.discount?.deadline?.getTime() > new Date().getTime()
-      ? course?.discount?.price
-      : course?.permanentDiscount ?? 0;
+  // const discount =
+  //   course?.discount &&
+  //   course?.discount?.deadline?.getTime() > new Date().getTime()
+  //     ? course?.discount?.price
+  //     : course?.permanentDiscount ?? 0;
 
-  const price = isDiscount ? discount : course?.price;
+  // const price = isDiscount ? discount : course?.price;
 
   return (
     <>
@@ -149,13 +144,15 @@ const Index = ({ courseId, creatorProfile }: Props) => {
           <meta name="twitter:card" content="summary_large_image" />
         </Head>
         {scrollY > 300 ? (
-          <div className="fixed left-20 top-20 z-10">
-            <BuyCourseBox
-              creatorProfile={creatorProfile}
-              courseId={courseId}
-              setCheckoutModalOpen={setCheckoutModalOpen}
-              setPreviewOpen={setPreviewOpen}
-            />
+          <div className="fixed top-20 z-10 flex w-full justify-center">
+            <div className="flex w-full max-w-5xl justify-end">
+              <BuyCourseBox
+                creatorProfile={creatorProfile}
+                courseId={courseId}
+                setCheckoutModalOpen={setCheckoutModalOpen}
+                setPreviewOpen={setPreviewOpen}
+              />
+            </div>
           </div>
         ) : (
           <></>
@@ -163,22 +160,14 @@ const Index = ({ courseId, creatorProfile }: Props) => {
         <div
           style={{
             backgroundImage: "url(" + (course?.thumbnail ?? "") + ")",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundPosition: "center center",
           }}
           className={`m-0 w-full p-0`}
         >
-          <div className="flex w-full justify-center bg-neutral-900/80 p-4 backdrop-blur-lg">
-            <div className="flex w-full max-w-7xl items-center gap-8">
-              {scrollY <= 300 ? (
-                <BuyCourseBox
-                  courseId={courseId}
-                  creatorProfile={creatorProfile}
-                  setCheckoutModalOpen={setCheckoutModalOpen}
-                  setPreviewOpen={setPreviewOpen}
-                />
-              ) : (
-                <div className="w-80 min-w-[20rem]" />
-              )}
-
+          <div className="flex w-full justify-center bg-neutral-900/75 p-4 backdrop-blur-lg">
+            <div className="flex w-full max-w-5xl items-center gap-8">
               <div className="flex h-full w-full flex-col items-start gap-4 p-4">
                 <h1 className="text-4xl font-bold text-neutral-100">
                   {course?.title}
@@ -215,37 +204,59 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                     </p>
                   </Link>
                 </div>
-                <div className="mt-8 flex flex-col items-start gap-4 rounded-lg border border-neutral-200/20 p-4">
-                  <h3 className="text-base font-bold sm:text-lg">
-                    What you&apos;ll learn
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3 gap-x-6">
-                    {(course?.outcomes as string[])?.map((o, idx) => (
-                      <div key={`o-${idx}`} className="flex items-center gap-2">
-                        <CheckIcon className="w-4" />{" "}
-                        <h4 className="text-neutral-100">{o}</h4>
-                      </div>
-                    ))}
+                {course?.outcomes &&
+                (course?.outcomes as string[]).length > 0 ? (
+                  <div className="mt-8 flex flex-col items-start gap-4 rounded-lg border border-neutral-200/20 p-4">
+                    <h3 className="text-base font-bold sm:text-lg">
+                      What you&apos;ll learn
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3 gap-x-6">
+                      {(course?.outcomes as string[])?.map((o, idx) => (
+                        <div
+                          key={`o-${idx}`}
+                          className="flex items-center gap-2"
+                        >
+                          <CheckIcon className="w-5 text-pink-600" />{" "}
+                          <h4 className="text-neutral-100">{o}</h4>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <></>
+                )}
               </div>
+
+              {scrollY <= 300 ? (
+                <BuyCourseBox
+                  courseId={courseId}
+                  creatorProfile={creatorProfile}
+                  setCheckoutModalOpen={setCheckoutModalOpen}
+                  setPreviewOpen={setPreviewOpen}
+                />
+              ) : (
+                <div className="w-72 min-w-[18rem]" />
+              )}
             </div>
           </div>
         </div>
-        <div className="flex w-full flex-col items-center">
-          <div className="mt-8 flex w-full max-w-7xl gap-8">
-            <div className="w-[21rem] min-w-[21rem]" />
-            <AnimatedSection delay={0.1} className="flex w-full  flex-col">
-              <div className="flex items-center gap-2 px-4 py-3 text-neutral-200">
-                <Bars3CenterLeftIcon className="w-5" />
-                <h2 className="text-xl font-bold">Description</h2>
-              </div>
-              <div className="prose prose-invert prose-pink w-full px-4 pb-4">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {course?.description ?? ""}
-                </ReactMarkdown>
-              </div>
-            </AnimatedSection>
+        <div className="flex min-h-[60vh] w-full flex-col items-center">
+          <div className="mt-8 flex w-full max-w-5xl gap-8">
+            {course?.description && course?.description.length > 0 ? (
+              <AnimatedSection delay={0.1} className="flex w-full flex-col">
+                <div className="flex items-center gap-2 px-4 py-3 text-neutral-200">
+                  <h2 className="text-xl font-bold sm:text-2xl">Description</h2>
+                </div>
+                <div className="prose prose-invert prose-pink w-full min-w-full px-4 pb-4">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {course?.description ?? ""}
+                  </ReactMarkdown>
+                </div>
+              </AnimatedSection>
+            ) : (
+              <></>
+            )}
+            <div className="w-[18rem] min-w-[18rem]" />
           </div>
         </div>
       </CreatorLayout>
@@ -310,8 +321,29 @@ const BuyCourseBox = ({
   const price = isDiscount ? discount : course?.price;
 
   return (
-    <AnimatedSection className="rounded-lg bg-neutral-600/20 p-2">
-      <div className="w-80 min-w-[20rem] flex-col gap-2 overflow-hidden rounded-lg bg-neutral-600/40">
+    <AnimatedSection className="relative rounded-lg border border-white/10 bg-neutral-800/30 p-2">
+      {/* <div
+        style={{
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          backgroundRepeat: "repeat",
+          backgroundImage:
+            "url('data:image/svg+xml;utf8,%3Csvg viewBox=%220 0 1000 1000%22 xmlns=%22http:%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3CclipPath id=%22a%22%3E%3Cpath fill=%22currentColor%22 d=%22M745 642q-81 142-245.5 142.5T237 642.5q-98-142.5-8-299t302-211Q743 78 784.5 289T745 642Z%22%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3Cg clip-path=%22url(%23a)%22%3E%3Cpath fill=%22%23ff47fe%22 d=%22M745 642q-81 142-245.5 142.5T237 642.5q-98-142.5-8-299t302-211Q743 78 784.5 289T745 642Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E')",
+        }}
+        className="absolute -bottom-12 -left-12 -z-10 h-60 w-60 opacity-60 blur-2xl"
+      />
+      <div
+        style={{
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          backgroundRepeat: "repeat",
+
+          backgroundImage:
+            "url('data:image/svg+xml;utf8,%3Csvg viewBox=%220 0 1000 1000%22 xmlns=%22http:%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3CclipPath id=%22a%22%3E%3Cpath fill=%22currentColor%22 d=%22M786.5 682Q710 864 490 881.5t-263.5-182Q183 500 254 348.5t237-136Q657 228 760 364t26.5 318Z%22%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3Cg clip-path=%22url(%23a)%22%3E%3Cpath fill=%22%23ff47c1%22 d=%22M786.5 682Q710 864 490 881.5t-263.5-182Q183 500 254 348.5t237-136Q657 228 760 364t26.5 318Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E')",
+        }}
+        className="absolute -right-12 top-8 -z-10 h-60 w-60 opacity-60 blur-2xl"
+      /> */}
+      <div className="z-10 w-72 min-w-[18rem] flex-col gap-2 overflow-hidden rounded-lg border border-white/10 bg-neutral-800/30 drop-shadow">
         <div className="relative aspect-video w-full object-cover">
           <ImageWF
             src={course?.thumbnail ?? ""}
@@ -328,7 +360,7 @@ const BuyCourseBox = ({
               <div className="mt-4 flex items-center gap-2">
                 <Link
                   href={`/course/play/${course?.id}`}
-                  className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                  className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-full bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
                 >
                   <>
                     <PlayIcon className="w-4" />
@@ -337,7 +369,7 @@ const BuyCourseBox = ({
                 </Link>
                 <Link
                   href={`/creator/dashboard/course/${course?.id}`}
-                  className={`group my-4 inline-flex items-center justify-center gap-1 rounded-xl bg-pink-500/10 px-6 py-1  text-center font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200`}
+                  className={`group my-4 inline-flex items-center justify-center gap-1 rounded-full bg-pink-500/10 px-6 py-1  text-center font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200`}
                 >
                   <>
                     <AdjustmentsHorizontalIcon className="w-4" />
@@ -348,7 +380,7 @@ const BuyCourseBox = ({
             ) : isEnrolled ? (
               <Link
                 href={`/course/play/${course?.id}`}
-                className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-full bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
               >
                 <>
                   <PlayIcon className="w-4" />
@@ -357,11 +389,11 @@ const BuyCourseBox = ({
               </Link>
             ) : (
               <>
-                <div className="flex items-center gap-2">
+                <div className="flex items-end gap-2">
                   {isDiscount ? (
                     discount === 0 ? (
                       <p
-                        className={`text-sm font-bold uppercase tracking-widest text-green-500/80 sm:text-base`}
+                        className={`text-xl font-bold uppercase tracking-widest text-green-500/80 sm:text-3xl`}
                       >
                         free
                       </p>
@@ -370,7 +402,7 @@ const BuyCourseBox = ({
                         className={`font-bold uppercase tracking-wide  ${
                           !isDiscount
                             ? "text-base sm:text-lg"
-                            : "text-lg font-black sm:text-2xl"
+                            : "text-xl font-black sm:text-3xl"
                         }`}
                       >
                         ₹{discount}
@@ -381,7 +413,7 @@ const BuyCourseBox = ({
                   )}
                   {course?.price === 0 ? (
                     <p
-                      className={`text-base font-bold uppercase tracking-widest text-green-500/80 sm:text-lg`}
+                      className={`text-xl font-bold uppercase tracking-widest text-green-500/80 sm:text-3xl`}
                     >
                       free
                     </p>
@@ -390,7 +422,7 @@ const BuyCourseBox = ({
                       className={` font-semibold uppercase tracking-wide  ${
                         isDiscount
                           ? "text-base font-thin line-through decoration-1 sm:text-lg"
-                          : "text-lg font-bold sm:text-2xl"
+                          : "text-xl font-bold sm:text-3xl"
                       }`}
                     >
                       ₹{course?.price}
@@ -412,7 +444,7 @@ const BuyCourseBox = ({
                   <></>
                 )}
 
-                <div className="mt-4 flex items-center gap-2">
+                <div className="mt-4 flex flex-col items-center gap-2">
                   <button
                     onClick={async () => {
                       if (!session.data) {
@@ -441,27 +473,45 @@ const BuyCourseBox = ({
                         );
                       else setCheckoutModalOpen(true);
                     }}
-                    className={`group my-1 inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-500 px-6 py-1 text-center font-bold text-neutral-200 transition-all duration-300 hover:bg-pink-600 sm:text-lg`}
+                    className={`group my-1 inline-flex w-full items-center justify-center gap-[0.15rem] rounded-full bg-pink-500 px-6 py-2 text-center font-bold text-neutral-200 transition-all duration-300 hover:bg-pink-600 sm:text-xl`}
                   >
                     {enrollLoading ? (
                       <div>
                         <Loader white />
                       </div>
                     ) : (
-                      <>
+                      <div className="flex flex-col items-center">
                         <span>Enroll now</span>
-                      </>
+                        {course?.startsAt &&
+                        course?.startsAt?.getTime() > new Date().getTime() ? (
+                          <span className="text-sm font-medium">
+                            starts on{" "}
+                            <span className="font-bold uppercase">
+                              {course?.startsAt?.toLocaleDateString("en-GB", {
+                                day: "numeric",
+                                month: "short",
+                              })}
+                            </span>
+                          </span>
+                        ) : (
+                          <></>
+                        )}
+                      </div>
                     )}
                   </button>
-                  <button
-                    onClick={() => setPreviewOpen(true)}
-                    className={`group my-1 inline-flex items-center justify-center gap-[0.15rem] rounded-xl border border-pink-500 px-6  py-1 text-center font-bold text-pink-500 transition-all duration-300 hover:border-pink-600 hover:bg-pink-600/10 hover:text-pink-600`}
-                  >
-                    <>
-                      <PlayIcon className="w-4" />
-                      <span>Preview</span>
-                    </>
-                  </button>
+                  {course?.ytId ? (
+                    <button
+                      onClick={() => setPreviewOpen(true)}
+                      className={`group my-1 inline-flex w-full items-center justify-center gap-[0.15rem] rounded-full border border-pink-500 px-6  py-2 text-center font-bold text-pink-500 transition-all duration-300 hover:border-pink-600 hover:bg-pink-600/10 hover:text-pink-600`}
+                    >
+                      <>
+                        <PlayIcon className="w-4" />
+                        <span>Preview</span>
+                      </>
+                    </button>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </>
             )
