@@ -1,6 +1,5 @@
 import AnimatedSection from "@/components/AnimatedSection";
 import { Loader } from "@/components/Loader";
-import Layout from "@/components/layouts/main";
 import useToast from "@/hooks/useToast";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
@@ -19,37 +18,33 @@ import Image from "next/image";
 import Link from "next/link";
 // import { useRouter } from "next/router";
 import { type ParsedUrlQuery } from "querystring";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import CoursePreviewModal from "@/components/CoursePreviewModal";
-import { useRouter } from "next/router";
 import { prisma } from "@/server/db";
 import CheckoutModal from "@/components/CheckoutModal";
-import { type Discount, type Course } from "@prisma/client";
+import { type Discount, type Course, type User } from "@prisma/client";
 import { MixPannelClient } from "@/analytics/mixpanel";
 import ImageWF from "@/components/ImageWF";
-import ClaimCourseModal from "@/components/ClaimCourseModal";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import remarkGfm from "remark-gfm";
 import { getDateTimeDiffString } from "@/helpers/time";
+import CreatorLayout from "@/components/layouts/creator";
 
 type Props = {
   courseId: string;
+  creatorProfile: string;
 };
 
-const Index = ({ courseId }: Props) => {
+const Index = ({ courseId, creatorProfile }: Props) => {
   const { data: course } = api.course.getCourse.useQuery({ id: courseId });
   const session = useSession();
   // const router = useRouter();
-  const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
-    api.enrollmentCourse.enroll.useMutation();
-  const { data: isEnrolled, isLoading: isEnrolledLoading } =
-    api.enrollmentCourse.isEnrolled.useQuery({ courseId });
-  const { successToast, errorToast } = useToast();
-  const ctx = api.useContext();
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState<boolean>(false);
-  const router = useRouter();
-  const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
+  const { data: creator } = api.creator.getPublicProfile.useQuery({
+    creatorProfile,
+  });
 
   const [scrollY, setScrollY] = useState(0);
 
@@ -120,7 +115,7 @@ const Index = ({ courseId }: Props) => {
 
   return (
     <>
-      <Layout>
+      <CreatorLayout creator={creator as User}>
         <Head>
           <title>{course?.title}</title>
           <meta name="description" content={course?.description ?? ""} />
@@ -156,6 +151,7 @@ const Index = ({ courseId }: Props) => {
         {scrollY > 300 ? (
           <div className="fixed left-20 top-20 z-10">
             <BuyCourseBox
+              creatorProfile={creatorProfile}
               courseId={courseId}
               setCheckoutModalOpen={setCheckoutModalOpen}
               setPreviewOpen={setPreviewOpen}
@@ -175,6 +171,7 @@ const Index = ({ courseId }: Props) => {
               {scrollY <= 300 ? (
                 <BuyCourseBox
                   courseId={courseId}
+                  creatorProfile={creatorProfile}
                   setCheckoutModalOpen={setCheckoutModalOpen}
                   setPreviewOpen={setPreviewOpen}
                 />
@@ -251,7 +248,7 @@ const Index = ({ courseId }: Props) => {
             </AnimatedSection>
           </div>
         </div>
-      </Layout>
+      </CreatorLayout>
       <CoursePreviewModal
         courseId={courseId}
         isOpen={previewOpen}
@@ -266,16 +263,12 @@ const Index = ({ courseId }: Props) => {
         isOpen={checkoutModalOpen}
         setIsOpen={setCheckoutModalOpen}
       />
-      <ClaimCourseModal
-        courseId={courseId}
-        isOpen={claimModalOpen}
-        setIsOpen={setClaimModalOpen}
-      />
     </>
   );
 };
 
 type BProps = {
+  creatorProfile: string;
   courseId: string;
   setCheckoutModalOpen: Dispatch<SetStateAction<boolean>>;
   setPreviewOpen: Dispatch<SetStateAction<boolean>>;
@@ -283,6 +276,7 @@ type BProps = {
 
 const BuyCourseBox = ({
   courseId,
+  creatorProfile,
   setCheckoutModalOpen,
   setPreviewOpen,
 }: BProps) => {
@@ -423,7 +417,7 @@ const BuyCourseBox = ({
                     onClick={async () => {
                       if (!session.data) {
                         void signIn(undefined, {
-                          callbackUrl: `/course/${courseId}`,
+                          callbackUrl: `/${creatorProfile}/course/${courseId}`,
                         });
 
                         return;
@@ -528,17 +522,18 @@ interface CParams extends ParsedUrlQuery {
 export async function getStaticProps(context: GetStaticPropsContext) {
   const ssg = generateSSGHelper();
   const courseId = (context.params as CParams).id;
-  const creatorId = (context.params as CParams).creator_id;
+  const creatorProfile = (context.params as CParams).creator_id;
 
   if (typeof courseId !== "string") throw new Error("no slug");
 
   await ssg.course.getCourse.prefetch({ id: courseId });
+  await ssg.creator.getPublicProfile.prefetch({ creatorProfile });
 
   return {
     props: {
       trpcState: ssg.dehydrate(),
       courseId,
-      creatorId,
+      creatorProfile,
     },
   };
 }
