@@ -1,4 +1,3 @@
-import AnimatedSection from "@/components/AnimatedSection";
 import { Loader } from "@/components/Loader";
 import useToast from "@/hooks/useToast";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
@@ -24,6 +23,7 @@ import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import remarkGfm from "remark-gfm";
 import { getDateTimeDiffString } from "@/helpers/time";
 import CreatorLayout from "@/components/layouts/creator";
+import { motion } from "framer-motion";
 
 type Props = {
   courseId: string;
@@ -31,15 +31,20 @@ type Props = {
 };
 
 const Index = ({ courseId, creatorProfile }: Props) => {
-  const { data: course } = api.course.getCourse.useQuery({ id: courseId });
-  const session = useSession();
-  // const router = useRouter();
-
   const [previewOpen, setPreviewOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState<boolean>(false);
   const { data: creator } = api.creator.getPublicProfile.useQuery({
     creatorProfile,
   });
+  const session = useSession();
+  const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
+    api.enrollmentCourse.enroll.useMutation();
+  const { data: isEnrolled, isLoading: isEnrolledLoading } =
+    api.enrollmentCourse.isEnrolled.useQuery({ courseId });
+  const { successToast, errorToast } = useToast();
+  const ctx = api.useContext();
+
+  const { data: course } = api.course.getCourse.useQuery({ id: courseId });
 
   const [scrollY, setScrollY] = useState(0);
 
@@ -91,22 +96,22 @@ const Index = ({ courseId, creatorProfile }: Props) => {
     course?.creator?.name ?? course?.ytChannelName ?? ""
   }`;
 
-  // const isDiscount =
-  //   course?.permanentDiscount !== null ||
-  //   (course?.discount &&
-  //     course?.discount?.deadline?.getTime() > new Date().getTime());
+  const isDiscount =
+    course?.permanentDiscount !== null ||
+    (course?.discount &&
+      course?.discount?.deadline?.getTime() > new Date().getTime());
 
-  // const isPreSaleDiscount =
-  //   course?.discount &&
-  //   course?.discount?.deadline?.getTime() > new Date().getTime();
+  const isPreSaleDiscount =
+    course?.discount &&
+    course?.discount?.deadline?.getTime() > new Date().getTime();
 
-  // const discount =
-  //   course?.discount &&
-  //   course?.discount?.deadline?.getTime() > new Date().getTime()
-  //     ? course?.discount?.price
-  //     : course?.permanentDiscount ?? 0;
+  const discount =
+    course?.discount &&
+    course?.discount?.deadline?.getTime() > new Date().getTime()
+      ? course?.discount?.price
+      : course?.permanentDiscount ?? 0;
 
-  // const price = isDiscount ? discount : course?.price;
+  const price = isDiscount ? discount : course?.price;
 
   return (
     <>
@@ -166,13 +171,37 @@ const Index = ({ courseId, creatorProfile }: Props) => {
           }}
           className={`m-0 w-full p-0`}
         >
-          <div className="flex w-full justify-center bg-neutral-900/75 p-4 backdrop-blur-lg">
-            <div className="flex w-full max-w-5xl items-center gap-8">
+          <div className="flex w-full justify-center bg-neutral-900/75 backdrop-blur-lg sm:p-4">
+            <div className="flex w-full max-w-5xl flex-col items-center gap-2 sm:flex-row sm:gap-8">
+              <motion.div
+                initial={{ y: 300, opacity: 0 }}
+                animate={{ y: 0, opacity: 100 }}
+                transition={{ delay: 0, type: "tween" }}
+                className="relative aspect-video w-full min-w-full object-cover sm:hidden"
+              >
+                <ImageWF
+                  src={course?.thumbnail ?? ""}
+                  alt=""
+                  fill
+                  className="aspect-video object-cover"
+                />
+              </motion.div>
+
               <div className="flex h-full w-full flex-col items-start gap-4 p-4">
-                <h1 className="text-4xl font-bold text-neutral-100">
+                <motion.h1
+                  initial={{ x: 300, opacity: 0 }}
+                  animate={{ x: 0, opacity: 100 }}
+                  transition={{ delay: 0.5, type: "tween" }}
+                  className="text-xl font-bold text-neutral-100 sm:text-3xl md:text-4xl"
+                >
                   {course?.title}
-                </h1>
-                <div className="flex w-full items-center gap-6">
+                </motion.h1>
+                <motion.div
+                  initial={{ x: 300, opacity: 0 }}
+                  animate={{ x: 0, opacity: 100 }}
+                  transition={{ delay: 1, type: "tween" }}
+                  className="flex w-full items-center gap-6"
+                >
                   {course?.chapters.length > 0 ? (
                     <p className="mb-1 text-sm text-neutral-300">
                       {course?.chapters.length} Chapters
@@ -203,39 +232,240 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                       {course?.creator?.name ?? course?.ytChannelName ?? ""}
                     </p>
                   </Link>
-                </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ x: 300, opacity: 0 }}
+                  animate={{ x: 0, opacity: 100 }}
+                  transition={{ delay: 1.3, type: "tween" }}
+                  className="flex w-full flex-col sm:hidden"
+                >
+                  {session.status !== "loading" && !isEnrolledLoading ? (
+                    course?.creator?.id &&
+                    session.data?.user.id === course?.creator?.id ? (
+                      <div className="mt-4 flex items-center gap-2">
+                        <Link
+                          href={`/course/play/${course?.id}`}
+                          className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-full bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                        >
+                          <>
+                            <PlayIcon className="w-4" />
+                            <span>Play</span>
+                          </>
+                        </Link>
+                        <Link
+                          href={`/creator/dashboard/course/${course?.id}`}
+                          className={`group my-4 inline-flex items-center justify-center gap-1 rounded-full bg-pink-500/10 px-6 py-1  text-center font-medium text-pink-500 transition-all duration-300 hover:bg-pink-600 hover:text-neutral-200`}
+                        >
+                          <>
+                            <AdjustmentsHorizontalIcon className="w-4" />
+                            <span>Manage</span>
+                          </>
+                        </Link>
+                      </div>
+                    ) : isEnrolled ? (
+                      <Link
+                        href={`/course/play/${course?.id}`}
+                        className={`group my-4 inline-flex items-center justify-center gap-[0.15rem] rounded-full bg-pink-500 px-6 py-1  text-center font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                      >
+                        <>
+                          <PlayIcon className="w-4" />
+                          <span>Play</span>
+                        </>
+                      </Link>
+                    ) : (
+                      <>
+                        <div className="flex items-end gap-2">
+                          {isDiscount ? (
+                            discount === 0 ? (
+                              <p
+                                className={` text-3xl font-bold uppercase tracking-widest text-green-500/80`}
+                              >
+                                free
+                              </p>
+                            ) : (
+                              <p
+                                className={`font-bold uppercase tracking-wide  ${
+                                  !isDiscount
+                                    ? " text-lg"
+                                    : " text-3xl font-black"
+                                }`}
+                              >
+                                ₹{discount}
+                              </p>
+                            )
+                          ) : (
+                            <></>
+                          )}
+                          {course?.price === 0 ? (
+                            <p
+                              className={`text-3xl font-bold uppercase tracking-widest text-green-500/80`}
+                            >
+                              free
+                            </p>
+                          ) : (
+                            <p
+                              className={` font-semibold uppercase tracking-wide  ${
+                                isDiscount
+                                  ? "text-lg font-thin line-through decoration-1"
+                                  : "text-3xl font-bold"
+                              }`}
+                            >
+                              ₹{course?.price}
+                            </p>
+                          )}
+                        </div>
+
+                        {isPreSaleDiscount ? (
+                          <p className="mt-1 text-sm text-pink-500">
+                            <span className="font-bold">
+                              {getDateTimeDiffString(
+                                course?.discount?.deadline ?? new Date(),
+                                new Date()
+                              )}
+                            </span>{" "}
+                            remaining on this price!
+                          </p>
+                        ) : (
+                          <></>
+                        )}
+
+                        <div className="mt-4 flex flex-col items-center gap-2">
+                          <button
+                            onClick={async () => {
+                              if (!session.data) {
+                                void signIn(undefined, {
+                                  callbackUrl: `/${creatorProfile}/course/${courseId}`,
+                                });
+
+                                return;
+                              }
+                              if (price === 0)
+                                await enrollMutation(
+                                  { courseId: course?.id },
+                                  {
+                                    onSuccess: () => {
+                                      MixPannelClient.getInstance().courseEnrolled(
+                                        {
+                                          courseId,
+                                          userId: session?.data.user?.id ?? "",
+                                        }
+                                      );
+                                      void ctx.enrollmentCourse.isEnrolled.invalidate();
+                                      successToast(
+                                        "Successfully enrolled in course!"
+                                      );
+                                    },
+                                    onError: () => {
+                                      errorToast(
+                                        "Error in enrolling in course!"
+                                      );
+                                    },
+                                  }
+                                );
+                              else setCheckoutModalOpen(true);
+                            }}
+                            className={`group my-1 inline-flex w-full items-center justify-center gap-[0.15rem] rounded-full bg-pink-500 px-6 py-2 text-center text-2xl font-bold text-neutral-200 transition-all duration-300 hover:bg-pink-600`}
+                          >
+                            {enrollLoading ? (
+                              <div>
+                                <Loader white />
+                              </div>
+                            ) : (
+                              <div className="flex flex-col items-center">
+                                <span>Enroll now</span>
+                                {course?.startsAt &&
+                                course?.startsAt?.getTime() >
+                                  new Date().getTime() ? (
+                                  <span className="text-sm font-medium">
+                                    starts on{" "}
+                                    <span className="font-bold uppercase">
+                                      {course?.startsAt?.toLocaleDateString(
+                                        "en-GB",
+                                        {
+                                          day: "numeric",
+                                          month: "short",
+                                        }
+                                      )}
+                                    </span>
+                                  </span>
+                                ) : (
+                                  <></>
+                                )}
+                              </div>
+                            )}
+                          </button>
+                          {course?.ytId ? (
+                            <button
+                              onClick={() => setPreviewOpen(true)}
+                              className={`group my-1 inline-flex w-full items-center justify-center gap-[0.15rem] rounded-full border border-pink-500 px-6  py-2 text-center font-bold text-pink-500 transition-all duration-300 hover:border-pink-600 hover:bg-pink-600/10 hover:text-pink-600`}
+                            >
+                              <>
+                                <PlayIcon className="w-4" />
+                                <span>Preview</span>
+                              </>
+                            </button>
+                          ) : (
+                            <></>
+                          )}
+                        </div>
+                      </>
+                    )
+                  ) : (
+                    <div className="flex w-full flex-col gap-1">
+                      <div className="mt-2 h-4 w-20 animate-pulse rounded-lg bg-neutral-200/20" />
+                      <div className="mt-2 h-8 w-40 animate-pulse rounded-xl bg-neutral-200/20" />
+                      <div className="mt-2" />
+                      <div className="mt-2 h-4 w-20 animate-pulse rounded-lg bg-neutral-200/20" />
+                      <div className="mt-2 h-8 w-full animate-pulse rounded-xl bg-neutral-200/20" />
+                    </div>
+                  )}
+                </motion.div>
+
                 {course?.outcomes &&
                 (course?.outcomes as string[]).length > 0 ? (
-                  <div className="mt-8 flex flex-col items-start gap-4 rounded-lg border border-neutral-200/20 p-4">
+                  <motion.div
+                    initial={{ x: 300, opacity: 0 }}
+                    animate={{ x: 0, opacity: 100 }}
+                    transition={{ delay: 1.5, type: "tween" }}
+                    className="mt-2 flex w-full flex-col items-start gap-4 rounded-lg border border-neutral-200/20 p-4 sm:mt-6 sm:w-auto"
+                  >
                     <h3 className="text-base font-bold sm:text-lg">
                       What you&apos;ll learn
                     </h3>
-                    <div className="grid grid-cols-2 gap-3 gap-x-6">
+                    <div className="grid w-full grid-cols-1 gap-3 gap-x-6 sm:w-auto sm:grid-cols-2">
                       {(course?.outcomes as string[])?.map((o, idx) => (
                         <div
                           key={`o-${idx}`}
                           className="flex items-center gap-2"
                         >
-                          <CheckIcon className="w-5 text-pink-600" />{" "}
+                          <CheckIcon className="w-5 min-w-[1.25rem] text-pink-600" />{" "}
                           <h4 className="text-neutral-100">{o}</h4>
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 ) : (
                   <></>
                 )}
               </div>
 
               {scrollY <= 300 ? (
-                <BuyCourseBox
-                  courseId={courseId}
-                  creatorProfile={creatorProfile}
-                  setCheckoutModalOpen={setCheckoutModalOpen}
-                  setPreviewOpen={setPreviewOpen}
-                />
+                <motion.div
+                  initial={{ y: 300, opacity: 0 }}
+                  animate={{ y: 0, opacity: 100 }}
+                  transition={{ delay: 0, type: "tween" }}
+                  className="hidden sm:block"
+                >
+                  <BuyCourseBox
+                    courseId={courseId}
+                    creatorProfile={creatorProfile}
+                    setCheckoutModalOpen={setCheckoutModalOpen}
+                    setPreviewOpen={setPreviewOpen}
+                  />
+                </motion.div>
               ) : (
-                <div className="w-72 min-w-[18rem]" />
+                <div className="hidden w-72 min-w-[18rem] sm:block" />
               )}
             </div>
           </div>
@@ -243,7 +473,12 @@ const Index = ({ courseId, creatorProfile }: Props) => {
         <div className="flex min-h-[60vh] w-full flex-col items-center">
           <div className="mt-8 flex w-full max-w-5xl gap-8">
             {course?.description && course?.description.length > 0 ? (
-              <AnimatedSection delay={0.1} className="flex w-full flex-col">
+              <motion.div
+                initial={{ x: 300, opacity: 0 }}
+                animate={{ x: 0, opacity: 100 }}
+                transition={{ delay: 2, type: "tween" }}
+                className="flex w-full flex-col"
+              >
                 <div className="flex items-center gap-2 px-4 py-3 text-neutral-200">
                   <h2 className="text-xl font-bold sm:text-2xl">Description</h2>
                 </div>
@@ -252,11 +487,11 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                     {course?.description ?? ""}
                   </ReactMarkdown>
                 </div>
-              </AnimatedSection>
+              </motion.div>
             ) : (
               <></>
             )}
-            <div className="w-[18rem] min-w-[18rem]" />
+            <div className="hidden w-[18rem] min-w-[18rem] sm:block" />
           </div>
         </div>
       </CreatorLayout>
@@ -321,7 +556,7 @@ const BuyCourseBox = ({
   const price = isDiscount ? discount : course?.price;
 
   return (
-    <AnimatedSection className="relative rounded-lg border border-white/10 bg-neutral-800/30 p-2">
+    <div className="relative hidden rounded-lg border border-white/10 bg-neutral-800/30 p-2 sm:block">
       {/* <div
         style={{
           backgroundSize: "cover",
@@ -517,13 +752,16 @@ const BuyCourseBox = ({
             )
           ) : (
             <div className="flex w-full flex-col gap-1">
-              <div className="mt-2 h-4 w-20 animate-pulse rounded-lg bg-neutral-500" />
-              <div className="mt-2 h-8 w-32 animate-pulse rounded-xl bg-neutral-500" />
+              <div className="mt-2 h-4 w-20 animate-pulse rounded-lg bg-neutral-700" />
+              <div className="mt-2 h-8 w-40 animate-pulse rounded-xl bg-neutral-700" />
+              <div className="mt-2" />
+              <div className="mt-2 h-4 w-20 animate-pulse rounded-lg bg-neutral-700" />
+              <div className="mt-2 h-8 w-full animate-pulse rounded-xl bg-neutral-700" />
             </div>
           )}
         </div>
       </div>
-    </AnimatedSection>
+    </div>
   );
 };
 
