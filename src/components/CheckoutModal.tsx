@@ -20,6 +20,19 @@ export default function CheckoutModal({
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const isDiscount =
+    course?.permanentDiscount !== null ||
+    (course?.discount &&
+      course?.discount?.deadline?.getTime() > new Date().getTime());
+
+  const discount =
+    course?.discount &&
+    course?.discount?.deadline?.getTime() > new Date().getTime()
+      ? course?.discount?.price
+      : course?.permanentDiscount ?? 0;
+
+  const price = isDiscount ? discount : course?.price;
+
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -84,11 +97,15 @@ export default function CheckoutModal({
                         >
                           {course?.title}
                         </h5>
-                        <p
-                          className={`flex items-center text-xs text-neutral-300`}
-                        >
-                          {course._count.chapters} Chapters
-                        </p>
+                        {course._count.chapters > 0 ? (
+                          <p
+                            className={`flex items-center text-xs text-neutral-300`}
+                          >
+                            {course._count.chapters} Chapters
+                          </p>
+                        ) : (
+                          <></>
+                        )}
                         {course?.price === 0 ? (
                           <p
                             className={`text-xs font-semibold uppercase tracking-widest text-green-500/80 sm:text-sm`}
@@ -113,19 +130,20 @@ export default function CheckoutModal({
                   <div className="mb-4 flex w-full flex-col">
                     <div className="flex w-full justify-between px-1 py-1">
                       <label>Price</label>
-                      <p>₹{course?.price}</p>
+                      <p>₹{(course?.price).toFixed(2)}</p>
                     </div>
-                    {course?.discount &&
-                    course?.discount?.deadline?.getTime() >
-                      new Date().getTime() ? (
+                    <div className="flex w-full justify-between px-1 py-1">
+                      <label>Charges</label>
+                      <p>₹{(0.02 * price).toFixed(2)}</p>
+                    </div>
+                    {isDiscount ? (
                       <div className="flex w-full justify-between px-1 py-1">
                         <label>Discount</label>
                         <p className="text-green-500">
                           -
                           {100 -
-                            Math.round(
-                              (course?.discount?.price / course?.price ?? 1) *
-                                100
+                            parseFloat(
+                              ((discount / course?.price ?? 1) * 100).toFixed(2)
                             )}
                           %
                         </p>
@@ -135,13 +153,8 @@ export default function CheckoutModal({
                     )}
                     <div className="flex w-full justify-between border-b border-t border-neutral-300 px-1 py-1">
                       <label>To pay</label>
-                      <p className="font-bold">
-                        ₹
-                        {course?.discount &&
-                        course?.discount?.deadline?.getTime() >
-                          new Date().getTime()
-                          ? course?.discount?.price
-                          : course?.price}
+                      <p className="text-xl font-bold">
+                        ₹{(price + 0.02 * price).toFixed(2)}
                       </p>
                     </div>
                   </div>

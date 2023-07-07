@@ -17,7 +17,6 @@ import {
   faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
-import Layout from "@/components/layouts/main";
 import CourseCard from "@/components/CourseCard";
 import TestimonialDisclosure from "@/components/TestimonialDisclosure";
 import { Tooltip } from "antd";
@@ -25,6 +24,8 @@ import { prisma } from "@/server/db";
 import AnimatedSection from "@/components/AnimatedSection";
 import { MixPannelClient } from "@/analytics/mixpanel";
 import { useSession } from "next-auth/react";
+import CreatorLayout from "@/components/layouts/creator";
+import { type User } from "@prisma/client";
 
 type CreatorPageProps = {
   creatorProfile: string;
@@ -104,7 +105,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
   }
 
   return (
-    <Layout>
+    <CreatorLayout creator={creator as User}>
       <Head>
         <title>{`${creator?.name ?? ""} - Kroto`}</title>
         <meta name="description" content={creator?.bio ?? ""} />
@@ -321,7 +322,12 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
               className="flex w-full flex-col items-center gap-4"
             >
               {creator?.courses?.map((course) => (
-                <CourseCard key={course?.id ?? ""} course={course} lg />
+                <CourseCard
+                  key={course?.id ?? ""}
+                  creatorProfile={creator?.creatorProfile ?? undefined}
+                  course={course}
+                  lg
+                />
               ))}
             </AnimatedSection>
           ) : (
@@ -352,7 +358,7 @@ const Index = ({ creatorProfile }: CreatorPageProps) => {
           <FontAwesomeIcon icon={faQuoteLeft} /> Write a Testimonial for me
         </Link>
       </main>
-    </Layout>
+    </CreatorLayout>
   );
 };
 

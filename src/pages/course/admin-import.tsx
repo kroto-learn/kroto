@@ -56,6 +56,9 @@ export const adminImportCourseFormSchema = z.object({
     })
   ),
   price: z.string().nonempty("Please enter course price."),
+  permanentDiscount: z
+    .string()
+    .nonempty("Please enter course discounted price."),
   discount: z
     .object({
       price: z.string().nonempty("Please enter discount price."),
@@ -92,6 +95,7 @@ const Index = () => {
       thumbnail: "",
       chapters: [],
       price: "0",
+      permanentDiscount: "0",
       tags: [],
     },
   });
@@ -639,64 +643,11 @@ const Index = () => {
           )}
 
           {playlistData ? (
-            <div className="mt-4 flex flex-col gap-3">
-              <label htmlFor="price" className="text-lg  text-neutral-200">
-                Price
-              </label>
-              <div className="flex items-center gap-2">
-                <div
-                  className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                    methods.watch().price === "0"
-                      ? "border-green-600 bg-green-600/40"
-                      : "border-neutral-500 text-neutral-500"
-                  }`}
-                  onClick={() => {
-                    methods.setValue("price", "0");
-                  }}
-                >
-                  <div
-                    className={`flex h-3 w-3 items-center rounded-full border ${
-                      methods.watch().price === "0"
-                        ? "border-neutral-300"
-                        : "border-neutral-500"
-                    }`}
-                  >
-                    {methods.watch().price === "0" ? (
-                      <div className="h-full w-full rounded-full bg-neutral-300" />
-                    ) : (
-                      <></>
-                    )}
-                  </div>{" "}
-                  Free
-                </div>
-
-                <div
-                  className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                    methods.watch().price !== "0"
-                      ? "border-pink-600 bg-pink-600/40"
-                      : "border-neutral-500 text-neutral-500"
-                  }`}
-                  onClick={() => {
-                    methods.setValue("price", "50");
-                  }}
-                >
-                  <div
-                    className={`flex h-3 w-3 items-center justify-center rounded-full border ${
-                      methods.watch().price !== "0"
-                        ? "border-neutral-300"
-                        : "border-neutral-500"
-                    }`}
-                  >
-                    {methods.watch().price !== "0" ? (
-                      <div className="h-full w-full rounded-full bg-neutral-300" />
-                    ) : (
-                      <></>
-                    )}
-                  </div>{" "}
-                  Paid
-                </div>
-              </div>
-              {methods.watch().price !== "0" ? (
+            <div className="flex items-start gap-4 sm:gap-8">
+              <div className="mt-4 flex flex-col gap-3">
+                <label htmlFor="price" className="text-lg  text-neutral-200">
+                  Price
+                </label>
                 <div className="relative flex w-full max-w-[7rem] items-center">
                   <input
                     type="number"
@@ -709,14 +660,41 @@ const Index = () => {
                     ₹
                   </p>
                 </div>
-              ) : (
-                <></>
-              )}
-              {methods.formState.errors?.price?.message && (
-                <p className="text-red-700">
-                  {methods.formState.errors?.price?.message}
-                </p>
-              )}
+
+                {methods.formState.errors?.price?.message && (
+                  <p className="text-red-700">
+                    {methods.formState.errors?.price?.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-4 flex flex-col gap-3">
+                <label
+                  htmlFor="permanentDiscount"
+                  className="text-lg  text-neutral-200"
+                >
+                  Discounted Price
+                </label>
+
+                <div className="relative flex w-full max-w-[7rem] items-center">
+                  <input
+                    type="number"
+                    {...methods.register("permanentDiscount")}
+                    className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    placeholder="00"
+                    defaultValue={50}
+                  />
+                  <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                    ₹
+                  </p>
+                </div>
+
+                {methods.formState.errors?.price?.message && (
+                  <p className="text-red-700">
+                    {methods.formState.errors?.price?.message}
+                  </p>
+                )}
+              </div>
             </div>
           ) : (
             <></>
@@ -731,7 +709,7 @@ const Index = () => {
                       htmlFor="discount"
                       className="text-lg text-neutral-200"
                     >
-                      Discount
+                      Pre Sale
                     </label>
                     <button
                       type="button"
@@ -740,7 +718,7 @@ const Index = () => {
                       }}
                       className="rounded-lg border border-pink-500 px-2 py-1 text-sm font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
                     >
-                      Clear Discount
+                      Clear Pre-sale
                     </button>
                   </>
                 ) : (
@@ -756,89 +734,34 @@ const Index = () => {
                     }}
                     className="flex items-center gap-1 rounded-lg border border-pink-500 px-2 py-1 text-sm font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
                   >
-                    <PlusIcon className="w-4" /> Add a Discount
+                    <PlusIcon className="w-4" /> Add a Pre-sale Price
                   </button>
                 )}
               </div>
               {methods.watch().discount ? (
                 <>
                   <label htmlFor="dPrice" className="text-sm text-neutral-200">
-                    Discounted Price
+                    Price
                   </label>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                        methods.watch().discount?.price === "0"
-                          ? "border-green-600 bg-green-600/40"
-                          : "border-neutral-500 text-neutral-500"
-                      }`}
-                      onClick={() => {
-                        methods.setValue("discount.price", "0");
-                      }}
-                    >
-                      <div
-                        className={`flex h-3 w-3 items-center rounded-full border ${
-                          methods.watch().discount?.price === "0"
-                            ? "border-neutral-300"
-                            : "border-neutral-500"
-                        }`}
-                      >
-                        {methods.watch().discount?.price === "0" ? (
-                          <div className="h-full w-full rounded-full bg-neutral-300" />
-                        ) : (
-                          <></>
-                        )}
-                      </div>{" "}
-                      Free
-                    </div>
 
-                    <div
-                      className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                        methods.watch().discount?.price !== "0"
-                          ? "border-pink-600 bg-pink-600/40"
-                          : "border-neutral-500 text-neutral-500"
-                      }`}
-                      onClick={() => {
-                        methods.setValue("discount.price", "50");
-                      }}
-                    >
-                      <div
-                        className={`flex h-3 w-3 items-center justify-center rounded-full border ${
-                          methods.watch().discount?.price !== "0"
-                            ? "border-neutral-300"
-                            : "border-neutral-500"
-                        }`}
-                      >
-                        {methods.watch().discount?.price !== "0" ? (
-                          <div className="h-full w-full rounded-full bg-neutral-300" />
-                        ) : (
-                          <></>
-                        )}
-                      </div>{" "}
-                      Paid
-                    </div>
+                  <div className="relative flex w-full max-w-[7rem] items-center">
+                    <input
+                      type="number"
+                      {...methods.register("discount.price")}
+                      className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      placeholder="00"
+                      defaultValue={50}
+                    />
+                    <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                      ₹
+                    </p>
                   </div>
-                  {methods.watch().discount?.price !== "0" ? (
-                    <div className="relative flex w-full max-w-[7rem] items-center">
-                      <input
-                        type="number"
-                        {...methods.register("discount.price")}
-                        className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                        placeholder="00"
-                        defaultValue={50}
-                      />
-                      <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
-                        ₹
-                      </p>
-                    </div>
-                  ) : (
-                    <></>
-                  )}
+
                   <label
                     htmlFor="dDeadline"
                     className="text-sm text-neutral-200"
                   >
-                    Discount Deadline
+                    Deadline
                   </label>
                   <div className="flex max-w-xs items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-2 sm:gap-3">
                     <ConfigProvider
@@ -942,6 +865,7 @@ const Index = () => {
                         }}
                       />
                     </ConfigProvider>
+                    {/* <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" /> */}
                   </div>
                   <p className="text-sm text-yellow-600">
                     <span className="font-bold">
@@ -950,7 +874,7 @@ const Index = () => {
                         methods.watch().discount?.deadline ?? new Date()
                       )}
                     </span>{" "}
-                    remaining for discount.
+                    remaining on pre-sale price.
                   </p>
                   {methods.formState.errors.discount?.message && (
                     <p className="text-red-700">

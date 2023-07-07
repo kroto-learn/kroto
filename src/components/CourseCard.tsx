@@ -10,9 +10,21 @@ type Props = {
   manage?: boolean;
   admin?: boolean;
   lg?: boolean;
+  creatorProfile?: string;
 };
 
-const CourseCard = ({ course, manage, lg, admin }: Props) => {
+const CourseCard = ({ course, manage, lg, admin, creatorProfile }: Props) => {
+  const isDiscount =
+    course?.permanentDiscount !== null ||
+    (course?.discount &&
+      course?.discount?.deadline?.getTime() > new Date().getTime());
+
+  const discount =
+    course?.discount &&
+    course?.discount?.deadline?.getTime() > new Date().getTime()
+      ? course?.discount?.price
+      : course?.permanentDiscount ?? 0;
+
   return (
     <Link
       href={
@@ -20,6 +32,8 @@ const CourseCard = ({ course, manage, lg, admin }: Props) => {
           ? `/creator/dashboard/course/${course?.id}`
           : admin
           ? `/admin/dashboard/course/${course?.id}`
+          : course?.creatorId && creatorProfile
+          ? `/${creatorProfile}/course/${course?.id}`
           : `/course/${course?.id}`
       }
       className="flex w-full max-w-lg items-start gap-3 rounded-xl p-2 backdrop-blur-sm duration-150 hover:bg-neutral-200/10"
@@ -54,9 +68,8 @@ const CourseCard = ({ course, manage, lg, admin }: Props) => {
         </p>
         {!manage ? (
           <div className="flex items-center gap-2">
-            {course?.discount &&
-            course?.discount?.deadline?.getTime() > new Date().getTime() ? (
-              course?.discount?.price === 0 ? (
+            {isDiscount ? (
+              discount === 0 ? (
                 <p
                   className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
                 >
@@ -66,7 +79,7 @@ const CourseCard = ({ course, manage, lg, admin }: Props) => {
                 <p
                   className={`text-xs font-bold uppercase tracking-wide sm:text-sm`}
                 >
-                  ₹{course?.discount?.price}
+                  ₹{discount}
                 </p>
               )
             ) : (
@@ -81,9 +94,8 @@ const CourseCard = ({ course, manage, lg, admin }: Props) => {
             ) : (
               <p
                 className={`text-xs font-semibold uppercase tracking-wide sm:text-sm ${
-                  course?.discount &&
-                  course?.discount?.deadline?.getTime() > new Date().getTime()
-                    ? "font-thin line-through"
+                  isDiscount
+                    ? "font-thin line-through decoration-1"
                     : "font-bold"
                 }`}
               >
