@@ -1,4 +1,3 @@
-import AnimatedSection from "@/components/AnimatedSection";
 import { Loader } from "@/components/Loader";
 import useToast from "@/hooks/useToast";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
