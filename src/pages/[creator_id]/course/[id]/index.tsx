@@ -318,7 +318,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
           }}
           className={`m-0 w-full p-0`}
         >
-          <div className="flex w-full justify-center bg-neutral-900/75 backdrop-blur-lg sm:p-4">
+          <div className="flex w-full justify-center bg-neutral-900/90 backdrop-blur-xl sm:p-4">
             <div className="flex w-full max-w-5xl flex-col items-center gap-2 sm:flex-row sm:gap-8">
               <motion.div
                 initial={{ y: 300, opacity: 0 }}
@@ -642,7 +642,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                 <></>
               )}
 
-              {course?.id ==="cljsnzcld0001oy01pnas73bj" ? (
+              {course?.id === "cljsnzcld0001oy01pnas73bj" ? (
                 <motion.div
                   initial={{ x: 300, opacity: 0 }}
                   animate={{ x: 0, opacity: 100 }}
