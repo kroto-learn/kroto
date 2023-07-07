@@ -130,11 +130,11 @@ export default function CheckoutModal({
                   <div className="mb-4 flex w-full flex-col">
                     <div className="flex w-full justify-between px-1 py-1">
                       <label>Price</label>
-                      <p>₹{parseFloat((course?.price).toFixed(2))}</p>
+                      <p>₹{(course?.price).toFixed(2)}</p>
                     </div>
                     <div className="flex w-full justify-between px-1 py-1">
                       <label>Charges</label>
-                      <p>₹{parseFloat((0.02 * price).toFixed(2))}</p>
+                      <p>₹{(0.02 * price).toFixed(2)}</p>
                     </div>
                     {isDiscount ? (
                       <div className="flex w-full justify-between px-1 py-1">
@@ -154,7 +154,7 @@ export default function CheckoutModal({
                     <div className="flex w-full justify-between border-b border-t border-neutral-300 px-1 py-1">
                       <label>To pay</label>
                       <p className="text-xl font-bold">
-                        ₹{parseFloat((price + 0.02 * price).toFixed(2))}
+                        ₹{(price + 0.02 * price).toFixed(2)}
                       </p>
                     </div>
                   </div>

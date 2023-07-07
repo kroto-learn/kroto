@@ -30,6 +30,7 @@ import { MixPannelClient } from "@/analytics/mixpanel";
 import { TRPCError } from "@trpc/server";
 import CoursePricingInfoModal from "@/components/CoursePricingInfoModal";
 import Switch from "@/components/Switch";
+import { krotoCharge, paymentGatewayCharge } from "@/constants/values";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -745,8 +746,11 @@ const Index = () => {
             <div className="w-full rounded-lg bg-neutral-900 p-4">
               <p className="text-sm">
                 Course learners will have to pay ₹
-                {price > 0 ? (price + 0.02 * price).toFixed(2) : 0} & you will
-                get ₹{price > 0 ? (price - 0.05 * price).toFixed(2) : 0} .
+                {price > 0
+                  ? (price + paymentGatewayCharge * price).toFixed(2)
+                  : 0}{" "}
+                & you will get ₹
+                {price > 0 ? (price - krotoCharge * price).toFixed(2) : 0} .
               </p>
 
               <button

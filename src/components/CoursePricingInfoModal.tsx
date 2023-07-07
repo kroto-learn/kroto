@@ -1,3 +1,4 @@
+import { krotoCharge, paymentGatewayCharge } from "@/constants/values";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { type Dispatch, Fragment, type SetStateAction } from "react";
@@ -60,13 +61,15 @@ export default function CoursePricingInfoModal({
                   <div className="flex flex-col items-start gap-4 p-6">
                     <p className="text-neutral-200">
                       The actual course price will be the sum of the course
-                      price and 2% more. This 2% is charged to accommodate for
-                      the payment gateway charges.
+                      price and {paymentGatewayCharge * 100}% more. This{" "}
+                      {paymentGatewayCharge * 100}% is charged to accommodate
+                      for the payment gateway charges.
                     </p>
 
                     <p className="text-neutral-200">
-                      For every course purchase, we will charge 5% for our
-                      services and creator will get 95% of there course price.
+                      For every course purchase, we will charge{" "}
+                      {krotoCharge * 100}% for our services and creator will get{" "}
+                      {100 - krotoCharge * 100}% of there course price.
                     </p>
                   </div>
                 </Dialog.Panel>
