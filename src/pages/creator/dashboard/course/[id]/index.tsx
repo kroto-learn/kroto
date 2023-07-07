@@ -17,7 +17,12 @@ import {
   LinkedinShareButton,
   LinkedinIcon,
 } from "next-share";
-import { LinkIcon, PlayIcon } from "@heroicons/react/20/solid";
+import {
+  LinkIcon,
+  PencilIcon,
+  PlayIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
 import dynamic from "next/dynamic";
 import { TRPCError } from "@trpc/server";
 import ChapterManagePreviewModal from "@/components/ChapterManagePreviewModal";
@@ -29,6 +34,10 @@ import Link from "next/link";
 import AnimatedSection from "@/components/AnimatedSection";
 import { MixPannelClient } from "@/analytics/mixpanel";
 import { useSession } from "next-auth/react";
+
+const CourseEditModal = dynamic(() => import("@/components/CourseEditModal"), {
+  ssr: false,
+});
 
 const CourseLayoutR = dynamic(
   () => import("@/components/layouts/courseDashboard"),
@@ -57,6 +66,7 @@ const CourseOverview = () => {
   const revalidate = useRevalidateSSG();
 
   const { successToast } = useToast();
+  const [editCourse, setEditCourse] = useState(false);
 
   if (courseLoading)
     return (
@@ -390,6 +400,18 @@ const CourseOverview = () => {
               <PlayIcon className="w-3" />
               View in Course Player
             </Link>
+
+            {!course?.ytId ? (
+              <button
+                onClick={() => setEditCourse(true)}
+                className={`group inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-700 px-4 py-2 text-center text-xs font-medium text-neutral-200 transition-all duration-300 hover:bg-neutral-200 hover:text-neutral-800 sm:text-xs`}
+              >
+                <PencilIcon className="w-3" />
+                Edit Course
+              </button>
+            ) : (
+              <></>
+            )}
           </AnimatedSection>
           <AnimatedSection delay={0.3} className="mt-4 flex flex-col gap-3">
             <div className="flex w-full justify-between">
@@ -442,6 +464,22 @@ const CourseOverview = () => {
           position={previewPos}
           setPosition={setPreviewPos}
         />
+        <div
+          className={`fixed right-0 top-0 z-40 flex h-screen w-full max-w-xl flex-col gap-4 overflow-y-auto bg-neutral-800 p-4 drop-shadow-2xl transition-transform ${
+            editCourse ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          <button
+            onClick={() => {
+              setEditCourse(false);
+            }}
+            className="self-start rounded-xl border border-neutral-500 p-1 text-xl text-neutral-400"
+          >
+            <XMarkIcon className="w-5" />
+          </button>
+
+          <CourseEditModal />
+        </div>
       </>
     );
   else return <></>;
