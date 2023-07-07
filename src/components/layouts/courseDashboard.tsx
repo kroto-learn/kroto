@@ -117,7 +117,11 @@ export default function CourseLayoutR({ children }: { children: ReactNode }) {
           </div>
         </div>
         <Link
-          href={`/course/${id}`}
+          href={
+            course?.creator && course?.creator?.creatorProfile
+              ? `/${course?.creator?.creatorProfile}/course/${id}`
+              : `/course/${id}`
+          }
           className="flex min-w-[8rem] items-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200"
         >
           <GlobeAltIcon className="w-4" />

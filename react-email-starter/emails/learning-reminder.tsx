@@ -45,7 +45,7 @@ export const LearningReminderEmail = ({
               src={`https://www.kroto.in/kroto-f.png`}
               width="85"
               height="40"
-              alt="Stripe"
+              alt="Kroto"
               className="mx-auto my-8"
             />
             <Container className="w-full bg-neutral-900 p-4">

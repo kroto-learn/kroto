@@ -60,7 +60,7 @@ export const LearningReportEmail = ({
                 src={`https://www.kroto.in/kroto-f.png`}
                 width="85"
                 height="40"
-                alt="Stripe"
+                alt="Kroto"
                 className="mx-auto my-8"
               />
               <Container className="w-full bg-neutral-900 p-4">
@@ -145,12 +145,14 @@ export const LearningReportEmail = ({
                           <span className="text-4xl">
                             {diff
                               ? (diff >= 0 ? "+" : "") + diff.toFixed(0) + "%"
-                              : `${minsLearned} minute${
-                                  minsLearned > 1 ? "s" : ""
-                                } more`}
+                              : `${minsLearned}`}
                           </span>
-                          {diff ? (diff >= 0 ? " more" : " less") : ""}
-                          {" learning"}
+                          {diff
+                            ? diff >= 0
+                              ? " more"
+                              : " less"
+                            : `minute${minsLearned > 1 ? "s" : ""} more`}
+                          {" learned"}
                         </Text>
                       </td>
 
@@ -309,7 +311,7 @@ LearningReportEmail.defaultProps = {
   chsWatched: 0,
   minsLearned: 5,
   streak: 1,
-  prevMinutes: 1,
+  prevMinutes: 2,
 };
 
 const main = {

@@ -20,6 +20,7 @@ const ProtectedRoutes = () => {
       "/refund-policy",
       "/auth/sign-in",
       "/[creator_id]",
+      "/[creator_id]/course/[id]",
       "/event/[id]",
       "/course/[id]",
       "/courses",
