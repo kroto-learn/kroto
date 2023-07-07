@@ -642,7 +642,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                 <></>
               )}
 
-              {course?.id === "cljsnzcld0001oy01pnas73bj" ? (
+              {course?.id ==="cljsnzcld0001oy01pnas73bj" ? (
                 <motion.div
                   initial={{ x: 300, opacity: 0 }}
                   animate={{ x: 0, opacity: 100 }}
@@ -707,7 +707,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                                       open ? "rotate-180" : "rotate-0"
                                     } w-5 min-w-[1.25rem]`}
                                   />
-                                  <h4 className="line-clamp-1 w-full overflow-hidden text-ellipsis text-left font-bold">
+                                  <h4 className="line-clamp-1 w-full overflow-hidden text-ellipsis text-left text-sm font-bold sm:text-base">
                                     {module.title}
                                   </h4>
                                   <div className="flex min-w-max items-center gap-1 text-xs">
@@ -720,7 +720,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                                       ) : (
                                         <></>
                                       )}
-                                      {mDuration % 60} m total length
+                                      {mDuration % 60} m
                                     </p>
                                   </div>
                                 </div>
