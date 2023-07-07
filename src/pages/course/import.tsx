@@ -633,7 +633,7 @@ const Index = () => {
                     {...methods.register("price")}
                     className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     placeholder="00"
-                    defaultValue={50}
+                    defaultValue={0}
                   />
                   <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
                     ₹
@@ -661,7 +661,7 @@ const Index = () => {
                     {...methods.register("permanentDiscount")}
                     className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     placeholder="00"
-                    defaultValue={50}
+                    defaultValue={0}
                   />
                   <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
                     ₹
@@ -729,7 +729,7 @@ const Index = () => {
                       {...methods.register("discount.price")}
                       className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       placeholder="00"
-                      defaultValue={50}
+                      defaultValue={0}
                     />
                     <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
                       ₹

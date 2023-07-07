@@ -28,6 +28,8 @@ import ImageWF from "@/components/ImageWF";
 import { useRouter } from "next/router";
 import { MixPannelClient } from "@/analytics/mixpanel";
 import { TRPCError } from "@trpc/server";
+import CoursePricingInfoModal from "@/components/CoursePricingInfoModal";
+import Switch from "@/components/Switch";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -111,7 +113,26 @@ const Index = () => {
     isLoading: createMutationLoading,
   } = api.course.create.useMutation();
 
+  const [pricingInfo, setPricingInfo] = useState(false);
+
   const router = useRouter();
+
+  const isDiscount =
+    methods.watch()?.permanentDiscount !== null ||
+    (methods.watch()?.discount &&
+      (methods.watch()?.discount?.deadline ?? new Date())?.getTime() >
+        new Date().getTime());
+
+  const discount =
+    methods.watch()?.discount &&
+    (methods.watch()?.discount?.deadline ?? new Date()).getTime() >
+      new Date().getTime()
+      ? methods.watch()?.discount?.price ?? "0"
+      : methods.watch()?.permanentDiscount ?? "0";
+
+  const price = isDiscount
+    ? parseInt(discount)
+    : parseInt(methods.watch()?.price) ?? 0;
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -131,6 +152,7 @@ const Index = () => {
         <title>Create Course</title>
       </Head>
       <div className="relative mx-auto my-12 flex min-h-screen w-full max-w-2xl flex-col gap-8">
+        <h1 className="m-0 p-0 text-2xl font-medium">Create Course</h1>
         <form
           onSubmit={methods.handleSubmit(async (values) => {
             await createCourseMutation(values, {
@@ -152,7 +174,7 @@ const Index = () => {
               },
             });
           })}
-          className="mt-12s mx-auto flex w-full flex-col gap-4"
+          className="mx-auto flex w-full flex-col gap-4"
         >
           <div className="relative mb-4 flex aspect-video w-full max-w-xs items-end justify-start overflow-hidden rounded-xl bg-neutral-700">
             {methods.getValues("thumbnail") && (
@@ -303,13 +325,9 @@ const Index = () => {
             }`}
           >
             <p>Course starts in future?</p>
-            <button
-              type="button"
-              className={`flex  h-[1.2rem] w-[2.4rem] cursor-pointer items-center rounded-full border border-neutral-700 p-px ${
-                methods.watch()?.startsAt
-                  ? "justify-end bg-pink-600"
-                  : "justify-start bg-neutral-800"
-              }`}
+
+            <Switch
+              value={!!methods.watch()?.startsAt}
               onClick={() => {
                 if (methods.watch()?.startsAt)
                   methods.setValue("startsAt", undefined);
@@ -319,9 +337,7 @@ const Index = () => {
                     new Date(new Date().setDate(new Date().getDate() + 7))
                   );
               }}
-            >
-              <div className="aspect-square h-full rounded-full bg-neutral-200" />
-            </button>
+            />
           </div>
 
           {methods.watch()?.startsAt ? (
@@ -493,7 +509,7 @@ const Index = () => {
                   {...methods.register("price")}
                   className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   placeholder="00"
-                  defaultValue={50}
+                  defaultValue={0}
                 />
                 <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
                   ₹
@@ -521,7 +537,7 @@ const Index = () => {
                   {...methods.register("permanentDiscount")}
                   className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   placeholder="00"
-                  defaultValue={50}
+                  defaultValue={0}
                 />
                 <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
                   ₹
@@ -585,7 +601,7 @@ const Index = () => {
                     {...methods.register("discount.price")}
                     className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     placeholder="00"
-                    defaultValue={50}
+                    defaultValue={0}
                   />
                   <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
                     ₹
@@ -725,6 +741,26 @@ const Index = () => {
             )}
           </div>
 
+          {price > 0 ? (
+            <div className="w-full rounded-lg bg-neutral-900 p-4">
+              <p className="text-sm">
+                Course learners will have to pay ₹
+                {price > 0 ? (price + 0.02 * price).toFixed(2) : 0} & you will
+                get ₹{price > 0 ? (price - 0.05 * price).toFixed(2) : 0} .
+              </p>
+
+              <button
+                type="button"
+                onClick={() => setPricingInfo(true)}
+                className="mt-4 text-sm underline"
+              >
+                How is this calculated?
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
+
           <button
             className={`group inline-flex items-center justify-center gap-[0.15rem] rounded-xl bg-pink-600 px-[1.5rem] py-2  text-center text-lg font-medium text-neutral-200 transition-all duration-300 hover:bg-pink-700 disabled:bg-neutral-700 disabled:text-neutral-300`}
             type="submit"
@@ -734,6 +770,7 @@ const Index = () => {
           </button>
         </form>
       </div>
+      <CoursePricingInfoModal isOpen={pricingInfo} setIsOpen={setPricingInfo} />
     </Layout>
   );
 };
