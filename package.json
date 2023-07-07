@@ -78,6 +78,7 @@
     "react-hot-toast": "^2.4.0",
     "react-linkify": "^1.0.0-alpha",
     "react-markdown": "^8.0.7",
+    "react-multi-carousel": "^2.8.4",
     "react-resizable": "^3.0.5",
     "react-table": "^7.8.0",
     "react-youtube": "^10.1.0",
