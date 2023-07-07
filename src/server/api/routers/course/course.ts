@@ -15,6 +15,8 @@ import { sendClaimCourseRequest } from "@/server/helpers/emailHelper";
 import { createCourseFormSchema } from "@/pages/course/create";
 import { importCourseFormSchema } from "@/pages/course/import";
 import { adminImportCourseFormSchema } from "@/pages/course/admin-import";
+import { editCourseFormSchema } from "@/components/CourseEditModal";
+import isBase64 from "is-base64";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -622,6 +624,99 @@ export const courseRouter = createTRPCRouter({
     }),
 
   update: protectedProcedure
+    .input(editCourseFormSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+
+      const course = await prisma.course.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+
+      let thumbnail = input.thumbnail;
+      if (isBase64(input.thumbnail, { allowMime: true })) {
+        thumbnail = await imageUpload(input.thumbnail, input.id, "course");
+      }
+
+      const ogImageRes = await generateStaticCourseOgImage({
+        ogUrl: OG_URL,
+        title: course.title,
+        creatorName: ctx.session.user.name ?? "",
+        chapters: 0,
+        thumbnail,
+      });
+
+      const ogImage: string | undefined = ogImageRes
+        ? await ogImageUpload(
+            ogImageRes.data as AWS.S3.Body,
+            input.id,
+            "course"
+          )
+        : undefined;
+
+      if (
+        course?.creatorId !== ctx.session.user.id &&
+        !isAdmin(ctx.session.user.email ?? "")
+      )
+        return new TRPCError({ code: "BAD_REQUEST" });
+
+      const updatedCourse = await prisma.course.update({
+        where: { id: input.id },
+        data: {
+          title: input.title,
+          description: input.description,
+          thumbnail,
+          ogImage,
+          price: parseInt(input.price),
+          permanentDiscount: parseInt(input.permanentDiscount),
+          outcomes: input.outcomes,
+          tags: {
+            connectOrCreate: input.tags.map((tag) => ({
+              where: { id: tag.id },
+              create: { title: tag.title },
+            })),
+          },
+          startsAt: input.startsAt,
+        },
+        include: {
+          discount: true,
+          creator: true,
+        },
+      });
+
+      if (updatedCourse?.discount) {
+        if (input.discount)
+          await prisma.discount.update({
+            where: {
+              id: updatedCourse?.discount?.id,
+            },
+            data: {
+              price: parseInt(input?.discount?.price),
+              deadline: input?.discount?.deadline,
+            },
+          });
+        else
+          await prisma.discount.delete({
+            where: {
+              id: updatedCourse?.discount?.id,
+            },
+          });
+      } else {
+        if (input.discount)
+          await prisma.discount.create({
+            data: {
+              courseId: updatedCourse?.id,
+              price: parseInt(input?.discount?.price),
+              deadline: input?.discount?.deadline,
+            },
+          });
+      }
+
+      return updatedCourse;
+    }),
+
+  settingsUpdate: protectedProcedure
     .input(settingsFormSchema)
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
