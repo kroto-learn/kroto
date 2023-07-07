@@ -5,8 +5,7 @@ import {
 } from "@/server/helpers/emailHelper";
 
 export const dailyReminderRouter = createTRPCRouter({
-  // FIXME: make query
-  sendDailyLearningReminder: publicProcedure.mutation(async ({ ctx }) => {
+  sendDailyLearningReminder: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
     const currentDate = new Date();
@@ -62,14 +61,18 @@ export const dailyReminderRouter = createTRPCRouter({
 
       if (tracks.length === 0) {
         console.log(user.email, "not studied");
-        console.log(user.email, "sending reminder");
 
-        void dailyReminderNotLearned({
-          name: user.name,
-          email: user.email,
-          courseId: user.courseProgress[0]?.courseId ?? "",
-          courseName: user.courseProgress[0]?.course?.title ?? "",
-        });
+        if (user.courseProgress[0]?.courseId) {
+          console.log(user.email, "sending reminder");
+          void dailyReminderNotLearned({
+            name: user.name,
+            email: user.email,
+            courseId: user.courseProgress[0]?.courseId ?? "",
+            courseName: user.courseProgress[0]?.course?.title ?? "",
+          });
+        } else {
+          console.log(user.email, "no previous record so skipping");
+        }
       } else {
         console.log(user.email, "studied");
         const yesterdayTracks = await prisma.learnTrack.findMany({
@@ -109,7 +112,7 @@ export const dailyReminderRouter = createTRPCRouter({
     }
   }),
 
-  updateDailyStreak: publicProcedure.mutation(async ({ ctx }) => {
+  updateDailyStreak: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
     const users = await prisma.user.findMany();
