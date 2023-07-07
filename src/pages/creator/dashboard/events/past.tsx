@@ -6,7 +6,7 @@ import { Loader } from "@/components/Loader";
 import AnimatedSection from "@/components/AnimatedSection";
 import Head from "next/head";
 import { EventCard } from "@/components/EventCard";
-import Image from "next/image";
+import ImageWF from "@/components/ImageWF";
 
 export const metadata = {
   title: "Past Events | Dashboard",
@@ -48,7 +48,7 @@ const PastEvents = () => {
           className="flex w-full flex-col items-center justify-center gap-2 p-4"
         >
           <div className="relative aspect-square w-40 object-contain">
-            <Image src="/empty/event_empty.svg" alt="empty" fill />
+            <ImageWF src="/empty/event_empty.svg" alt="empty" fill />
           </div>
           <p className="mb-2 text-center text-neutral-400">
             You don&apos;t have any past events.

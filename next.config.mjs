@@ -4,27 +4,29 @@ import removeImports from "next-remove-imports";
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  swcMinify: true,
 
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-      {
-        hostname: "cdn.discordapp.com",
-      },
-      {
-        hostname: "lh3.googleusercontent.com",
-      },
-      {
-        hostname: "kroto.s3.ap-south-1.amazonaws.com",
-      },
-      {
-        hostname: "i.ytimg.com",
-      },
-      { hostname: "yt3.ggpht.com" },
-    ],
+    unoptimized: true,
+    // remotePatterns: [
+    //   {
+    //     protocol: "https",
+    //     hostname: "res.cloudinary.com",
+    //   },
+    //   {
+    //     hostname: "cdn.discordapp.com",
+    //   },
+    //   {
+    //     hostname: "lh3.googleusercontent.com",
+    //   },
+    //   {
+    //     hostname: "kroto.s3.ap-south-1.amazonaws.com",
+    //   },
+    //   {
+    //     hostname: "i.ytimg.com",
+    //   },
+    //   { hostname: "yt3.ggpht.com" },
+    // ],
   },
 };
 export default removeImports()(config);

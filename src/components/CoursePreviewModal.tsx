@@ -48,11 +48,18 @@ const CoursePreviewModal = ({
 
   if (course instanceof TRPCError || !course) return <>Course not found!</>;
 
-  const price =
+  const isDiscount =
+    course?.permanentDiscount !== null ||
+    (course?.discount &&
+      course?.discount?.deadline?.getTime() > new Date().getTime());
+
+  const discount =
     course?.discount &&
     course?.discount?.deadline?.getTime() > new Date().getTime()
       ? course?.discount?.price
-      : course?.price;
+      : course?.permanentDiscount ?? 0;
+
+  const price = isDiscount ? discount : course?.price;
 
   return (
     <>
@@ -210,10 +217,8 @@ const CoursePreviewModal = ({
                           <span>Enroll now</span>
                         </button>
                         <div className="flex items-center gap-2">
-                          {course?.discount &&
-                          course?.discount?.deadline?.getTime() >
-                            new Date().getTime() ? (
-                            course?.discount?.price === 0 ? (
+                          {isDiscount ? (
+                            discount === 0 ? (
                               <p
                                 className={`text-xs font-bold uppercase tracking-widest text-green-500/80 sm:text-sm`}
                               >
@@ -223,7 +228,7 @@ const CoursePreviewModal = ({
                               <p
                                 className={`text-xs font-bold uppercase tracking-wide sm:text-sm`}
                               >
-                                ₹{course?.discount?.price}
+                                ₹{discount}
                               </p>
                             )
                           ) : (
@@ -238,10 +243,8 @@ const CoursePreviewModal = ({
                           ) : (
                             <p
                               className={`text-xs font-semibold uppercase tracking-wide sm:text-sm ${
-                                course?.discount &&
-                                course?.discount?.deadline?.getTime() >
-                                  new Date().getTime()
-                                  ? "font-thin line-through"
+                                isDiscount
+                                  ? "font-thin line-through decoration-1"
                                   : "font-bold"
                               }`}
                             >

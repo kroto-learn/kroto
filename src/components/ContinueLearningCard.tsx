@@ -276,7 +276,6 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
             ) : (
               <></>
             )}
-            {}
           </Disclosure.Panel>
         </div>
       )}

@@ -31,6 +31,9 @@ import { getDateTimeDiffString } from "@/helpers/time";
 
 export const settingsFormSchema = z.object({
   price: z.string().nonempty("Please enter course price."),
+  permanentDiscount: z
+    .string()
+    .nonempty("Please enter course discounted price."),
   discount: z
     .object({
       price: z.string().nonempty("Please enter discount price."),
@@ -68,6 +71,7 @@ const CourseSettings = () => {
     schema: settingsFormSchema,
     defaultValues: {
       price: "0",
+      permanentDiscount: "0",
       tags: [],
     },
   });
@@ -77,7 +81,7 @@ const CourseSettings = () => {
   const [debouncedTagInput, setDebouncedTagInput] = useState(tagInput);
 
   const { mutateAsync: courseUpdateMutation, isLoading: priceMutateLoading } =
-    api.course.update.useMutation();
+    api.course.settingsUpdate.useMutation();
 
   const { data: searchedTags, isLoading: searchingtags } =
     api.tagsCourse.searchTags.useQuery(debouncedTagInput);
@@ -102,6 +106,10 @@ const CourseSettings = () => {
     if (!(course instanceof TRPCError) && course && !initData) {
       setInitData(true);
       methods.setValue("price", course?.price?.toString());
+      methods.setValue(
+        "permanentDiscount",
+        (course?.permanentDiscount ?? 0)?.toString()
+      );
       methods.setValue(
         "discount",
         course?.discount
@@ -130,219 +138,141 @@ const CourseSettings = () => {
         delay={0.2}
         className="w-full max-w-3xl rounded-xl bg-neutral-900 p-8"
       >
-        <form
-          onSubmit={methods.handleSubmit(async (values) => {
-            await courseUpdateMutation(values, {
-              onSuccess: () => {
-                MixPannelClient.getInstance().courseUpdated({
-                  courseId: course?.id,
-                });
-                void ctx.course.get.invalidate();
-                void ctx.course.getCourse.invalidate();
-                void revalidate(`/course/${course?.id}`);
-                if (course?.creator)
-                  void revalidate(`/${course?.creator?.creatorProfile ?? ""}`);
-              },
-            });
-          })}
-          className="mb-8 mt-1 flex w-full flex-col items-start gap-2 border-b border-neutral-700 pb-8"
-        >
-          <div className="mt-4 flex w-full flex-col gap-2">
-            <label htmlFor="price" className="text-sm  text-neutral-200">
-              Price
-            </label>
-            <div className="flex items-center gap-2">
-              <div
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                  methods.watch().price === "0"
-                    ? "border-green-600 bg-green-600/40"
-                    : "border-neutral-500 text-neutral-500"
-                }`}
-                onClick={() => {
-                  methods.setValue("price", "0");
-                }}
-              >
-                <div
-                  className={`flex h-3 w-3 items-center rounded-full border text-xs ${
-                    methods.watch().price === "0"
-                      ? "border-neutral-300"
-                      : "border-neutral-500"
-                  }`}
-                >
-                  {methods.watch().price === "0" ? (
-                    <div className="h-full w-full rounded-full bg-neutral-300 text-xs" />
-                  ) : (
-                    <></>
-                  )}
-                </div>{" "}
-                Free
+        {course?.ytId ? (
+          <form
+            onSubmit={methods.handleSubmit(async (values) => {
+              await courseUpdateMutation(values, {
+                onSuccess: () => {
+                  MixPannelClient.getInstance().courseUpdated({
+                    courseId: course?.id,
+                  });
+                  void ctx.course.get.invalidate();
+                  void ctx.course.getCourse.invalidate();
+                  void revalidate(`/course/${course?.id}`);
+                  if (course?.creator)
+                    void revalidate(
+                      `/${course?.creator?.creatorProfile ?? ""}`
+                    );
+                },
+              });
+            })}
+            className="mb-8 mt-1 flex w-full flex-col items-start gap-2 border-b border-neutral-700 pb-8"
+          >
+            <div className="flex items-start gap-4 sm:gap-8">
+              <div className="mt-4 flex flex-col gap-3">
+                <label htmlFor="price" className="text-lg  text-neutral-200">
+                  Price
+                </label>
+                <div className="relative flex w-full max-w-[7rem] items-center">
+                  <input
+                    type="number"
+                    {...methods.register("price")}
+                    className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    placeholder="00"
+                    defaultValue={50}
+                  />
+                  <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                    ₹
+                  </p>
+                </div>
+
+                {methods.formState.errors?.price?.message && (
+                  <p className="text-red-700">
+                    {methods.formState.errors?.price?.message}
+                  </p>
+                )}
               </div>
 
-              <div
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                  methods.watch().price !== "0"
-                    ? "border-pink-600 bg-pink-600/40"
-                    : "border-neutral-500 text-neutral-500"
-                }`}
-                onClick={() => {
-                  methods.setValue("price", "50");
-                }}
-              >
-                <div
-                  className={`flex h-3 w-3 items-center justify-center rounded-full border text-xs ${
-                    methods.watch().price !== "0"
-                      ? "border-neutral-300"
-                      : "border-neutral-500"
-                  }`}
+              <div className="mt-4 flex flex-col gap-3">
+                <label
+                  htmlFor="permanentDiscount"
+                  className="text-lg  text-neutral-200"
                 >
-                  {methods.watch().price !== "0" ? (
-                    <div className="h-full w-full rounded-full bg-neutral-300 text-xs" />
-                  ) : (
-                    <></>
-                  )}
-                </div>{" "}
-                Paid
+                  Discounted Price
+                </label>
+
+                <div className="relative flex w-full max-w-[7rem] items-center">
+                  <input
+                    type="number"
+                    {...methods.register("permanentDiscount")}
+                    className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    placeholder="00"
+                    defaultValue={50}
+                  />
+                  <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                    ₹
+                  </p>
+                </div>
+
+                {methods.formState.errors?.price?.message && (
+                  <p className="text-red-700">
+                    {methods.formState.errors?.price?.message}
+                  </p>
+                )}
               </div>
             </div>
-            {methods.watch().price !== "0" ? (
-              <div className="relative flex w-full max-w-[7rem] items-center">
-                <input
-                  type="number"
-                  {...methods.register("price")}
-                  className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  placeholder="00"
-                  defaultValue={50}
-                />
-                <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
-                  ₹
-                </p>
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
 
-          <div className="mt-2 flex w-full flex-col gap-3">
-            <div className="flex items-center gap-4">
-              {methods.watch().discount ? (
-                <>
-                  <label
-                    htmlFor="discount"
-                    className="text-sm text-neutral-200"
-                  >
-                    Discount
-                  </label>
+            <div className="mt-4 flex flex-col gap-3">
+              <div className="flex items-center gap-4">
+                {methods.watch().discount ? (
+                  <>
+                    <label
+                      htmlFor="discount"
+                      className="text-lg text-neutral-200"
+                    >
+                      Pre Sale
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        methods.setValue("discount", undefined);
+                      }}
+                      className="rounded-lg border border-pink-500 px-2 py-1 text-sm font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
+                    >
+                      Clear Pre-sale
+                    </button>
+                  </>
+                ) : (
                   <button
                     type="button"
                     onClick={() => {
-                      methods.setValue("discount", undefined);
+                      methods.setValue("discount", {
+                        price: "0",
+                        deadline: new Date(
+                          new Date().setDate(new Date().getDate() + 1)
+                        ),
+                      });
                     }}
-                    className="rounded-lg border border-pink-500 px-2 py-1 text-xs font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
+                    className="flex items-center gap-1 rounded-lg border border-pink-500 px-2 py-1 text-sm font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
                   >
-                    Clear Discount
+                    <PlusIcon className="w-4" /> Add a Pre-sale Price
                   </button>
-                </>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    methods.setValue("discount", {
-                      price: "0",
-                      deadline: new Date(
-                        new Date().setDate(new Date().getDate() + 1)
-                      ),
-                    });
-                  }}
-                  className="flex items-center gap-1 rounded-lg border border-pink-500 px-2 py-1 text-xs font-bold text-pink-500 duration-150 hover:border-pink-600 hover:text-pink-600"
-                >
-                  <PlusIcon className="w-4" /> Add a Discount
-                </button>
-              )}
-            </div>
-            {methods.watch().discount ? (
-              <div className="flex flex-wrap gap-4">
-                <div className="flex flex-col gap-3">
-                  {" "}
-                  <label htmlFor="dPrice" className="text-xs text-neutral-200">
-                    Discounted Price
+                )}
+              </div>
+              {methods.watch().discount ? (
+                <>
+                  <label htmlFor="dPrice" className="text-sm text-neutral-200">
+                    Price
                   </label>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                        methods.watch().discount?.price === "0"
-                          ? "border-green-600 bg-green-600/40"
-                          : "border-neutral-500 text-neutral-500"
-                      }`}
-                      onClick={() => {
-                        methods.setValue("discount.price", "0");
-                      }}
-                    >
-                      <div
-                        className={`flex h-3 w-3 items-center rounded-full border text-xs ${
-                          methods.watch().discount?.price === "0"
-                            ? "border-neutral-300"
-                            : "border-neutral-500"
-                        }`}
-                      >
-                        {methods.watch().discount?.price === "0" ? (
-                          <div className="h-full w-full rounded-full bg-neutral-300 text-xs" />
-                        ) : (
-                          <></>
-                        )}
-                      </div>{" "}
-                      Free
-                    </div>
 
-                    <div
-                      className={`flex cursor-pointer items-center gap-2 rounded-lg border p-1 px-3 text-sm font-bold ${
-                        methods.watch().discount?.price !== "0"
-                          ? "border-pink-600 bg-pink-600/40"
-                          : "border-neutral-500 text-neutral-500"
-                      }`}
-                      onClick={() => {
-                        methods.setValue("discount.price", "50");
-                      }}
-                    >
-                      <div
-                        className={`flex h-3 w-3 items-center justify-center rounded-full border text-xs ${
-                          methods.watch().discount?.price !== "0"
-                            ? "border-neutral-300"
-                            : "border-neutral-500"
-                        }`}
-                      >
-                        {methods.watch().discount?.price !== "0" ? (
-                          <div className="h-full w-full  rounded-full bg-neutral-300 text-xs" />
-                        ) : (
-                          <></>
-                        )}
-                      </div>{" "}
-                      Paid
-                    </div>
+                  <div className="relative flex w-full max-w-[7rem] items-center">
+                    <input
+                      type="number"
+                      {...methods.register("discount.price")}
+                      className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      placeholder="00"
+                      defaultValue={50}
+                    />
+                    <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
+                      ₹
+                    </p>
                   </div>
-                  {methods.watch().discount?.price !== "0" ? (
-                    <div className="relative flex w-full max-w-[7rem] items-center">
-                      <input
-                        type="number"
-                        {...methods.register("discount.price")}
-                        className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 pl-8 placeholder-neutral-500 outline-none ring-transparent transition duration-300 [appearance:textfield] hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                        placeholder="00"
-                        defaultValue={50}
-                      />
-                      <p className="absolute ml-3 text-neutral-400 duration-150 peer-focus:text-neutral-300">
-                        ₹
-                      </p>
-                    </div>
-                  ) : (
-                    <></>
-                  )}
-                </div>
 
-                <div className="flex flex-col gap-3">
                   <label
                     htmlFor="dDeadline"
-                    className="text-xs text-neutral-200"
+                    className="text-sm text-neutral-200"
                   >
-                    Discount Deadline
+                    Deadline
                   </label>
                   <div className="flex max-w-xs items-center gap-1 rounded-lg border border-neutral-700 bg-neutral-800 p-2 sm:gap-3">
                     <ConfigProvider
@@ -446,6 +376,7 @@ const CourseSettings = () => {
                         }}
                       />
                     </ConfigProvider>
+                    {/* <BsCalendar3Event className="absolute ml-3 text-neutral-400 peer-focus:text-neutral-200" /> */}
                   </div>
                   <p className="text-sm text-yellow-600">
                     <span className="font-bold">
@@ -454,169 +385,184 @@ const CourseSettings = () => {
                         methods.watch().discount?.deadline ?? new Date()
                       )}
                     </span>{" "}
-                    remaining for discount.
+                    remaining on pre-sale price.
                   </p>
+                  {methods.formState.errors.discount?.message && (
+                    <p className="text-red-700">
+                      {methods.formState.errors.discount?.message}
+                    </p>
+                  )}
+                  {methods.formState.errors.discount?.price?.message && (
+                    <p className="text-red-700">
+                      {methods.formState.errors.discount?.price?.message}
+                    </p>
+                  )}
                   {methods.formState.errors.discount?.deadline?.message && (
                     <p className="text-red-700">
                       {methods.formState.errors.discount?.deadline?.message}
                     </p>
                   )}
-                </div>
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
 
-          <div className="mt-4 flex flex-col gap-2">
-            <label htmlFor="tags" className="text-sm  text-neutral-200">
-              Tags
-            </label>
-            <div className="flex flex-wrap items-center gap-2">
-              {methods.watch().tags.map((tag) => (
-                <span
-                  className="flex items-center gap-1 overflow-hidden rounded bg-pink-600/30 pl-2 text-xs"
-                  key={tag.id}
-                >
-                  {tag.title}{" "}
-                  <button
-                    onClick={() => {
-                      methods.setValue(
-                        "tags",
-                        methods.watch().tags.filter((t) => t.id !== tag.id)
-                      );
-                    }}
-                    type="button"
-                    className="ml-1 p-1 text-neutral-200 duration-150 hover:bg-pink-600"
+            <div className="mt-4 flex flex-col gap-2">
+              <label htmlFor="tags" className="text-sm  text-neutral-200">
+                Tags
+              </label>
+              <div className="flex flex-wrap items-center gap-2">
+                {methods.watch().tags.map((tag) => (
+                  <span
+                    className="flex items-center gap-1 overflow-hidden rounded bg-pink-600/30 pl-2 text-xs"
+                    key={tag.id}
                   >
-                    <XMarkIcon className="w-4" />
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="relative flex w-full max-w-sm items-center justify-end">
-              <input
-                type="text"
-                onFocus={() => setTagInputFocused(true)}
-                onBlur={() =>
-                  setTimeout(() => {
-                    setTagInputFocused(false);
-                  }, 200)
-                }
-                value={tagInput}
-                onChange={(e) => {
-                  setTagInput(e?.target?.value.substring(0, 30));
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    methods.setValue("tags", [
-                      ...methods.watch().tags,
-                      {
-                        id: tagInput,
-                        title: tagInput,
-                      },
-                    ]);
-                    setTagInput("");
-                  }
-                }}
-                className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-1 pr-6 text-sm placeholder-neutral-500 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
-                placeholder="Add tags..."
-              />
-              <div className="absolute">
-                {searchingtags ? <Loader /> : <></>}
-              </div>
-            </div>
-            {tagInputFocused && searchedTags && searchedTags?.length > 0 ? (
-              <div
-                className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
-              >
-                <div className="flex w-full flex-col overflow-hidden rounded border border-neutral-600 bg-neutral-800/70 backdrop-blur">
-                  {searchedTags?.map((st) => (
+                    {tag.title}{" "}
                     <button
-                      type="button"
-                      className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
                       onClick={() => {
-                        setTagInput("");
-                        if (!methods.watch().tags.find((tg) => tg.id === st.id))
-                          methods.setValue("tags", [
-                            ...methods.watch().tags,
-                            st,
-                          ]);
+                        methods.setValue(
+                          "tags",
+                          methods.watch().tags.filter((t) => t.id !== tag.id)
+                        );
                       }}
-                      key={st.id}
+                      type="button"
+                      className="ml-1 p-1 text-neutral-200 duration-150 hover:bg-pink-600"
                     >
-                      {st.title}
+                      <XMarkIcon className="w-4" />
                     </button>
-                  ))}
+                  </span>
+                ))}
+              </div>
+              <div className="relative flex w-full max-w-sm items-center justify-end">
+                <input
+                  type="text"
+                  onFocus={() => setTagInputFocused(true)}
+                  onBlur={() =>
+                    setTimeout(() => {
+                      setTagInputFocused(false);
+                    }, 200)
+                  }
+                  value={tagInput}
+                  onChange={(e) => {
+                    setTagInput(e?.target?.value.substring(0, 30));
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      methods.setValue("tags", [
+                        ...methods.watch().tags,
+                        {
+                          id: tagInput,
+                          title: tagInput,
+                        },
+                      ]);
+                      setTagInput("");
+                    }
+                  }}
+                  className="peer block w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-1 pr-6 text-sm placeholder-neutral-500 outline-none ring-transparent transition duration-300 hover:border-neutral-500 focus:border-neutral-400 focus:ring-neutral-500 active:outline-none active:ring-transparent"
+                  placeholder="Add tags..."
+                />
+                <div className="absolute">
+                  {searchingtags ? <Loader /> : <></>}
                 </div>
               </div>
-            ) : (
-              <></>
-            )}
-          </div>
-
-          <div className="mt-4 flex flex-col gap-2">
-            <label htmlFor="category" className="text-sm  text-neutral-200">
-              Category
-            </label>
-            <div className="relative flex w-full max-w-sm items-center justify-end">
-              <Listbox
-                value={methods.watch().category?.id ?? "none"}
-                onChange={(val) => {
-                  const selectedCatg = catgs?.find((ctg) => ctg.id === val);
-                  if (selectedCatg) methods.setValue("category", selectedCatg);
-                  else methods.setValue("category", undefined);
-                }}
-              >
-                {({ open }) => (
-                  <div className="flex w-full flex-col gap-2">
-                    <div className="relative flex w-full items-center justify-end">
-                      <Listbox.Button className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 pr-8 text-left text-xs">
-                        {methods.watch().category?.title ?? "none"}
-                      </Listbox.Button>
-                      <ChevronDownIcon
-                        className={`${
-                          open ? "rotate-180 duration-150" : ""
-                        } absolute mr-4 w-4`}
-                      />
-                    </div>
-                    <div
-                      className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
-                    >
-                      <Listbox.Options className="flex w-full flex-col overflow-hidden rounded border border-neutral-600 bg-neutral-800/70 backdrop-blur">
-                        <Listbox.Option
-                          key={"none"}
-                          value={"none"}
-                          className="w-full border-b border-neutral-600 px-3 py-1 text-left text-xs hover:text-pink-600"
-                        >
-                          none
-                        </Listbox.Option>
-                        {catgs && catgs.length > 0 ? (
-                          catgs.map((ctg) => (
-                            <Listbox.Option
-                              key={ctg.id}
-                              value={ctg.id}
-                              className="w-full border-b border-neutral-600 px-3 py-1 text-left text-xs hover:text-pink-600"
-                            >
-                              {ctg.title}
-                            </Listbox.Option>
-                          ))
-                        ) : (
-                          <></>
-                        )}
-                      </Listbox.Options>
-                    </div>
+              {tagInputFocused && searchedTags && searchedTags?.length > 0 ? (
+                <div
+                  className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
+                >
+                  <div className="flex w-full flex-col overflow-hidden rounded border border-neutral-600 bg-neutral-800/70 backdrop-blur">
+                    {searchedTags?.map((st) => (
+                      <button
+                        type="button"
+                        className="w-full border-b border-neutral-600 px-3 py-1 text-left text-sm hover:text-pink-600"
+                        onClick={() => {
+                          setTagInput("");
+                          if (
+                            !methods.watch().tags.find((tg) => tg.id === st.id)
+                          )
+                            methods.setValue("tags", [
+                              ...methods.watch().tags,
+                              st,
+                            ]);
+                        }}
+                        key={st.id}
+                      >
+                        {st.title}
+                      </button>
+                    ))}
                   </div>
-                )}
-              </Listbox>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
-          </div>
 
-          <button className="mt-4 flex items-center gap-1 rounded-lg bg-pink-500 px-4 py-2 font-bold duration-150 hover:bg-pink-600">
-            {priceMutateLoading ? <Loader white /> : <></>} Update Course
-          </button>
-        </form>
+            <div className="mt-4 flex flex-col gap-2">
+              <label htmlFor="category" className="text-sm  text-neutral-200">
+                Category
+              </label>
+              <div className="relative flex w-full max-w-sm items-center justify-end">
+                <Listbox
+                  value={methods.watch().category?.id ?? "none"}
+                  onChange={(val) => {
+                    const selectedCatg = catgs?.find((ctg) => ctg.id === val);
+                    if (selectedCatg)
+                      methods.setValue("category", selectedCatg);
+                    else methods.setValue("category", undefined);
+                  }}
+                >
+                  {({ open }) => (
+                    <div className="flex w-full flex-col gap-2">
+                      <div className="relative flex w-full items-center justify-end">
+                        <Listbox.Button className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 pr-8 text-left text-xs">
+                          {methods.watch().category?.title ?? "none"}
+                        </Listbox.Button>
+                        <ChevronDownIcon
+                          className={`${
+                            open ? "rotate-180 duration-150" : ""
+                          } absolute mr-4 w-4`}
+                        />
+                      </div>
+                      <div
+                        className={`hide-scroll max-h-60 w-full max-w-sm overflow-y-auto`}
+                      >
+                        <Listbox.Options className="flex w-full flex-col overflow-hidden rounded border border-neutral-600 bg-neutral-800/70 backdrop-blur">
+                          <Listbox.Option
+                            key={"none"}
+                            value={"none"}
+                            className="w-full border-b border-neutral-600 px-3 py-1 text-left text-xs hover:text-pink-600"
+                          >
+                            none
+                          </Listbox.Option>
+                          {catgs && catgs.length > 0 ? (
+                            catgs.map((ctg) => (
+                              <Listbox.Option
+                                key={ctg.id}
+                                value={ctg.id}
+                                className="w-full border-b border-neutral-600 px-3 py-1 text-left text-xs hover:text-pink-600"
+                              >
+                                {ctg.title}
+                              </Listbox.Option>
+                            ))
+                          ) : (
+                            <></>
+                          )}
+                        </Listbox.Options>
+                      </div>
+                    </div>
+                  )}
+                </Listbox>
+              </div>
+            </div>
+
+            <button className="mt-4 flex items-center gap-1 rounded-lg bg-pink-500 px-4 py-2 font-bold duration-150 hover:bg-pink-600">
+              {priceMutateLoading ? <Loader white /> : <></>} Update Course
+            </button>
+          </form>
+        ) : (
+          <></>
+        )}
         <div className="flex flex-col items-start gap-3">
           <label className="text-lg font-medium">
             Delete &quot;{course?.title ?? ""}&quot; course ?

@@ -28,6 +28,8 @@ export const dailyReminderRouter = createTRPCRouter({
       currentDate.getDate() + 1
     );
 
+    console.log("send reminder & report crone on ", currentDate.toDateString());
+
     const users = await prisma.user.findMany({
       include: {
         courseProgress: {
@@ -58,13 +60,21 @@ export const dailyReminderRouter = createTRPCRouter({
       });
 
       if (tracks.length === 0) {
-        void dailyReminderNotLearned({
-          name: user.name,
-          email: user.email,
-          courseId: user.courseProgress[0]?.courseId ?? "",
-          courseName: user.courseProgress[0]?.course?.title ?? "",
-        });
+        console.log(user.email, "not studied");
+
+        if (user.courseProgress[0]?.courseId) {
+          console.log(user.email, "sending reminder");
+          void dailyReminderNotLearned({
+            name: user.name,
+            email: user.email,
+            courseId: user.courseProgress[0]?.courseId ?? "",
+            courseName: user.courseProgress[0]?.course?.title ?? "",
+          });
+        } else {
+          console.log(user.email, "no previous record so skipping");
+        }
       } else {
+        console.log(user.email, "studied");
         const yesterdayTracks = await prisma.learnTrack.findMany({
           where: {
             userId: user.id,
@@ -86,6 +96,8 @@ export const dailyReminderRouter = createTRPCRouter({
           return total + current.minutes;
         }, 0);
 
+        console.log(user.email, "sending report");
+
         void dailyLearningReport({
           name: user.name,
           email: user.email,
@@ -106,6 +118,8 @@ export const dailyReminderRouter = createTRPCRouter({
     const users = await prisma.user.findMany();
 
     const currentDate = new Date();
+
+    console.log("update streak crone on ", currentDate.toDateString());
 
     const startDate = new Date(
       currentDate.getFullYear(),
@@ -140,7 +154,10 @@ export const dailyReminderRouter = createTRPCRouter({
       });
 
       if (tracks.length > 0) {
+        console.log(user.email, "should increase streak");
         if (streak) {
+          console.log(user.email, "streak exists");
+
           const data: { days: number; start: Date | undefined } = {
             days: streak.days + 1,
             start: new Date(),
@@ -152,20 +169,32 @@ export const dailyReminderRouter = createTRPCRouter({
             where: { userId: user.id },
             data,
           });
-        } else
+
+          console.log(user.email, "streak increased");
+        } else {
           await prisma.dailyStreak.create({
             data: {
               userId: user.id,
+              start: new Date(),
             },
           });
+          console.log(user.email, "streak created");
+        }
       } else {
-        if (streak)
+        console.log(user.email, "should clear streak");
+
+        if (streak) {
+          console.log(user.email, "streak exists");
           await prisma.dailyStreak.update({
             where: { userId: user.id },
             data: {
               days: 0,
             },
           });
+          console.log(user.email, "streak cleared");
+        } else {
+          console.log(user.email, "skip");
+        }
       }
     }
   }),

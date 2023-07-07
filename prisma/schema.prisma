@@ -240,6 +240,7 @@ model Course {
   enrollments       Enrollment[]
   courseProgress    CourseProgress[]
   chapters          Chapter[]
+  outcomes          Json?
   feedbacks         Feedback[]
   audienceMember    AudienceMember[]
   tags              Tag[]
@@ -247,6 +248,7 @@ model Course {
   categoryId        String?
   learnTracks       LearnTrack[]
   discount          Discount?
+  startsAt          DateTime?
 
   @@index([categoryId])
   @@index([creatorId])

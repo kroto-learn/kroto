@@ -15,6 +15,7 @@ const ImageWF = (props: ImagePropsWF) => {
 
   return (
     <Image
+      unoptimized
       {...rest}
       src={imgSrc}
       onError={() => {
