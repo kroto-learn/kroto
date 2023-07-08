@@ -25,7 +25,7 @@ export default function Footer() {
               Created by{" "}
               <span className="text-neutral-200">Kroto Kreator Labs</span>
             </div>
-            <p className="ml-3 flex items-center gap-2 text-xs text-neutral-500">
+            <p className="ml-3 items-center gap-2 text-xs text-neutral-500 sm:flex hidden">
               Pbt by pass road, street bo-3, PN/11/14/2 <br /> Shamat Ganj,
               Bareilly, 243005, Uttar Pradesh.
             </p>
@@ -87,7 +87,7 @@ export default function Footer() {
           </span>
         </div>
 
-        <div className="mb-3 flex flex-col items-center gap-8 sm:flex-row">
+        <div className="mb-3 flex flex-col items-center sm:gap-8 gap-2 sm:flex-row">
           <Link
             className="text-sm text-neutral-400 transition duration-300 hover:text-neutral-200"
             href="/terms-and-conditions"
