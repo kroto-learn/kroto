@@ -158,19 +158,23 @@ export const dailyReminderRouter = createTRPCRouter({
         if (streak) {
           console.log(user.email, "streak exists");
 
-          const data: { days: number; start: Date | undefined } = {
-            days: streak.days + 1,
-            start: new Date(),
-          };
+          if (streak.updatedAt?.getDate() !== new Date().getDate()) {
+            const data: { days: number; start: Date | undefined } = {
+              days: streak.days + 1,
+              start: new Date(),
+            };
 
-          if (streak.days > 0) delete data.start;
+            if (streak.days > 0) delete data.start;
 
-          await prisma.dailyStreak.update({
-            where: { userId: user.id },
-            data,
-          });
+            await prisma.dailyStreak.update({
+              where: { userId: user.id },
+              data,
+            });
 
-          console.log(user.email, "streak increased");
+            console.log(user.email, "streak increased");
+          } else {
+            console.log(user.email, "todays streak already given so skipping");
+          }
         } else {
           await prisma.dailyStreak.create({
             data: {
