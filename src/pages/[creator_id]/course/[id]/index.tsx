@@ -2,8 +2,18 @@ import { Loader } from "@/components/Loader";
 import useToast from "@/hooks/useToast";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
-import { ArrowLeftIcon, CheckIcon, PlayIcon } from "@heroicons/react/20/solid";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  PlayIcon,
+} from "@heroicons/react/20/solid";
+import {
+  AdjustmentsHorizontalIcon,
+  DocumentTextIcon,
+  LockClosedIcon,
+  VideoCameraIcon,
+} from "@heroicons/react/24/outline";
 import { TRPCError } from "@trpc/server";
 import { type GetStaticPropsContext } from "next";
 import { signIn, useSession } from "next-auth/react";
@@ -24,6 +34,7 @@ import remarkGfm from "remark-gfm";
 import { getDateTimeDiffString } from "@/helpers/time";
 import CreatorLayout from "@/components/layouts/creator";
 import { motion } from "framer-motion";
+import { Disclosure } from "@headlessui/react";
 
 type Props = {
   courseId: string;
@@ -113,6 +124,142 @@ const Index = ({ courseId, creatorProfile }: Props) => {
 
   const price = isDiscount ? discount : course?.price;
 
+  type Module = {
+    title: string;
+    chapters: {
+      title: string;
+      type: "video" | "article";
+      duration: number;
+      isPublic?: boolean;
+    }[];
+  };
+
+  const modules: Module[] = [
+    {
+      title: "Get Started",
+      chapters: [
+        {
+          title: "What we will learn in this course?",
+          type: "video",
+          duration: 12,
+          isPublic: true,
+        },
+        {
+          title: "Introduction to Nextjs",
+          type: "video",
+          duration: 12,
+        },
+        {
+          title: "Why Nextjs?",
+          type: "video",
+          duration: 12,
+        },
+        {
+          title: "Server Side Rendering",
+          type: "article",
+          duration: 5,
+        },
+      ],
+    },
+    {
+      title: "Building Components",
+      chapters: [
+        {
+          title: "Working with React Components",
+          type: "video",
+          duration: 18,
+        },
+        {
+          title: "State and Props",
+          type: "video",
+          duration: 15,
+        },
+        {
+          title: "Component Lifecycle",
+          type: "video",
+          duration: 20,
+        },
+        {
+          title: "Handling Events",
+          type: "video",
+          duration: 14,
+        },
+        {
+          title: "Reusable Component Patterns",
+          type: "article",
+          duration: 7,
+        },
+      ],
+    },
+    {
+      title: "Routing and Data Fetching",
+      chapters: [
+        {
+          title: "Client-Side Routing",
+          type: "video",
+          duration: 16,
+        },
+        {
+          title: "Server-Side Rendering",
+          type: "video",
+          duration: 22,
+        },
+        {
+          title: "Data Fetching Methods",
+          type: "video",
+          duration: 18,
+        },
+        {
+          title: "Handling API Responses",
+          type: "video",
+          duration: 14,
+        },
+        {
+          title: "Authentication and Protected Routes",
+          type: "article",
+          duration: 9,
+        },
+      ],
+    },
+    {
+      title: "Styling in Nextjs",
+      chapters: [
+        {
+          title: "CSS-in-JS with Styled Components",
+          type: "video",
+          duration: 16,
+        },
+        {
+          title: "CSS Modules and Scoped Styles",
+          type: "video",
+          duration: 20,
+        },
+        {
+          title: "Global Styles and Theming",
+          type: "video",
+          duration: 18,
+        },
+        {
+          title: "Responsive Design Techniques",
+          type: "article",
+          duration: 8,
+        },
+        {
+          title: "Optimizing CSS Performance",
+          type: "article",
+          duration: 6,
+        },
+      ],
+    },
+  ];
+
+  const totalDuration = modules.reduce((totalDuration, module) => {
+    const duration = module.chapters.reduce((moduleDuration, chapter) => {
+      return moduleDuration + chapter.duration;
+    }, 0);
+    return totalDuration + duration;
+  }, 0);
+
   return (
     <>
       <CreatorLayout creator={creator as User}>
@@ -171,7 +318,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
           }}
           className={`m-0 w-full p-0`}
         >
-          <div className="flex w-full justify-center bg-neutral-900/75 backdrop-blur-lg sm:p-4">
+          <div className="flex w-full justify-center bg-neutral-900/90 backdrop-blur-xl sm:p-4">
             <div className="flex w-full max-w-5xl flex-col items-center gap-2 sm:flex-row sm:gap-8">
               <motion.div
                 initial={{ y: 300, opacity: 0 }}
@@ -191,7 +338,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                 <motion.h1
                   initial={{ x: 300, opacity: 0 }}
                   animate={{ x: 0, opacity: 100 }}
-                  transition={{ delay: 0.5, type: "tween" }}
+                  transition={{ delay: 0.05, type: "tween" }}
                   className="text-xl font-bold text-neutral-100 sm:text-3xl md:text-4xl"
                 >
                   {course?.title}
@@ -199,7 +346,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                 <motion.div
                   initial={{ x: 300, opacity: 0 }}
                   animate={{ x: 0, opacity: 100 }}
-                  transition={{ delay: 1, type: "tween" }}
+                  transition={{ delay: 0.1, type: "tween" }}
                   className="flex w-full items-center gap-6"
                 >
                   {course?.chapters.length > 0 ? (
@@ -237,7 +384,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                 <motion.div
                   initial={{ x: 300, opacity: 0 }}
                   animate={{ x: 0, opacity: 100 }}
-                  transition={{ delay: 1.3, type: "tween" }}
+                  transition={{ delay: 0.15, type: "tween" }}
                   className="flex w-full flex-col sm:hidden"
                 >
                   {session.status !== "loading" && !isEnrolledLoading ? (
@@ -427,7 +574,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                   <motion.div
                     initial={{ x: 300, opacity: 0 }}
                     animate={{ x: 0, opacity: 100 }}
-                    transition={{ delay: 1.5, type: "tween" }}
+                    transition={{ delay: 0.2, type: "tween" }}
                     className="mt-2 flex w-full flex-col items-start gap-4 rounded-lg border border-neutral-200/20 p-4 sm:mt-6 sm:w-auto"
                   >
                     <h3 className="text-base font-bold sm:text-lg">
@@ -472,25 +619,179 @@ const Index = ({ courseId, creatorProfile }: Props) => {
         </div>
         <div className="flex min-h-[60vh] w-full flex-col items-center">
           <div className="mt-8 flex w-full max-w-5xl gap-8">
-            {course?.description && course?.description.length > 0 ? (
-              <motion.div
-                initial={{ x: 300, opacity: 0 }}
-                animate={{ x: 0, opacity: 100 }}
-                transition={{ delay: 2, type: "tween" }}
-                className="flex w-full flex-col"
-              >
-                <div className="flex items-center gap-2 px-4 py-3 text-neutral-200">
-                  <h2 className="text-xl font-bold sm:text-2xl">Description</h2>
-                </div>
-                <div className="prose prose-invert prose-pink w-full min-w-full px-4 pb-4">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {course?.description ?? ""}
-                  </ReactMarkdown>
-                </div>
-              </motion.div>
-            ) : (
-              <></>
-            )}
+            <div className="flex w-full flex-col items-start gap-4">
+              {course?.description && course?.description.length > 0 ? (
+                <motion.div
+                  initial={{ x: 300, opacity: 0 }}
+                  animate={{ x: 0, opacity: 100 }}
+                  transition={{ delay: 0.25, type: "tween" }}
+                  className="flex w-full flex-col"
+                >
+                  <div className="flex items-center gap-2 px-4 py-3 text-neutral-200">
+                    <h2 className="text-xl font-bold sm:text-2xl">
+                      Description
+                    </h2>
+                  </div>
+                  <div className="prose prose-invert prose-pink w-full min-w-full px-4 pb-4">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {course?.description ?? ""}
+                    </ReactMarkdown>
+                  </div>
+                </motion.div>
+              ) : (
+                <></>
+              )}
+
+              {course?.id === "cljsnzcld0001oy01pnas73bj" ? (
+                <motion.div
+                  initial={{ x: 300, opacity: 0 }}
+                  animate={{ x: 0, opacity: 100 }}
+                  transition={{ delay: 0.3, type: "tween" }}
+                  className="flex w-full flex-col p-4"
+                >
+                  <h2 className="text-xl font-bold sm:text-2xl">
+                    Course Content
+                  </h2>
+                  <div className="mt-2 flex items-center gap-2 text-sm">
+                    <p>
+                      <span className="font-bold">{modules.length}</span>{" "}
+                      modules
+                    </p>{" "}
+                    •{" "}
+                    <p>
+                      <span className="font-bold">
+                        {modules.reduce((chsLength, module) => {
+                          return chsLength + module.chapters.length;
+                        }, 0)}
+                      </span>{" "}
+                      chapters
+                    </p>{" "}
+                    •{" "}
+                    <p>
+                      <span className=" font-bold">
+                        {(totalDuration / 60).toFixed(0)}
+                      </span>{" "}
+                      h
+                      <span className="ml-1 font-bold">
+                        {totalDuration % 60}
+                      </span>{" "}
+                      m total length
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex w-full flex-col">
+                    {modules.map((module, mIdx) => {
+                      const mDuration = module.chapters.reduce(
+                        (moduleDuration, chapter) => {
+                          return moduleDuration + chapter.duration;
+                        },
+                        0
+                      );
+
+                      return (
+                        <Disclosure key={`m-${mIdx}`} defaultOpen={mIdx === 0}>
+                          {({ open }) => (
+                            <div
+                              className={`flex w-full flex-col border-l border-r border-t border-neutral-700 bg-neutral-200/5 backdrop-blur-sm duration-150 ${
+                                mIdx === 0 ? "rounded-t" : ""
+                              } ${
+                                mIdx === modules.length - 1
+                                  ? "rounded-b border-b"
+                                  : ""
+                              }`}
+                            >
+                              <Disclosure.Button className="z-10 w-full">
+                                <div className="flex w-full items-center justify-start gap-3 p-3">
+                                  <ChevronDownIcon
+                                    className={`text-neutral-500 duration-150 ${
+                                      open ? "rotate-180" : "rotate-0"
+                                    } w-5 min-w-[1.25rem]`}
+                                  />
+                                  <h4 className="line-clamp-1 w-full overflow-hidden text-ellipsis text-left text-sm font-bold sm:text-base">
+                                    {module.title}
+                                  </h4>
+                                  <div className="flex min-w-max items-center gap-1 text-xs">
+                                    <p>{module.chapters.length} chapters</p> •{" "}
+                                    <p>
+                                      {mDuration / 60 > 0 ? (
+                                        <span className="mr-1">
+                                          {(mDuration / 60).toFixed(0)} h
+                                        </span>
+                                      ) : (
+                                        <></>
+                                      )}
+                                      {mDuration % 60} m
+                                    </p>
+                                  </div>
+                                </div>
+                              </Disclosure.Button>
+                              <Disclosure.Panel className="z-0 flex w-full flex-col border-t border-neutral-700 py-3">
+                                {module.chapters.map((chapter, cIdx) => {
+                                  const date = new Date();
+                                  date.setHours(0);
+                                  date.setMinutes(0);
+                                  date.setSeconds(chapter.duration * 60);
+
+                                  const hours = date
+                                    .getHours()
+                                    .toString()
+                                    .padStart(2, "0");
+                                  const minutes = date
+                                    .getMinutes()
+                                    .toString()
+                                    .padStart(2, "0");
+                                  const seconds = date
+                                    .getSeconds()
+                                    .toString()
+                                    .padStart(2, "0");
+
+                                  const formattedTime =
+                                    hours === "00"
+                                      ? `${minutes}:${seconds}`
+                                      : `${hours}:${minutes}:${seconds}`;
+
+                                  return (
+                                    <div
+                                      key={`c-${cIdx}`}
+                                      className="flex w-full gap-3 px-4 py-2"
+                                    >
+                                      {chapter.type === "video" ? (
+                                        <VideoCameraIcon className="w-4 min-w-[1rem]" />
+                                      ) : (
+                                        <DocumentTextIcon className="w-4 min-w-[1rem]" />
+                                      )}
+                                      <h5 className="line-clamp-1 w-full overflow-hidden text-ellipsis text-left text-sm">
+                                        {chapter.title}
+                                      </h5>
+                                      <div className="flex min-w-max items-center gap-4 text-xs">
+                                        {chapter.isPublic ? (
+                                          <Link
+                                            href="/"
+                                            className="text-sm font-bold text-pink-600"
+                                          >
+                                            Preview
+                                          </Link>
+                                        ) : (
+                                          <LockClosedIcon className="w-4" />
+                                        )}
+                                        <p>{formattedTime}</p>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </Disclosure.Panel>
+                            </div>
+                          )}
+                        </Disclosure>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              ) : (
+                <></>
+              )}
+            </div>
+
             <div className="hidden w-[18rem] min-w-[18rem] sm:block" />
           </div>
         </div>

@@ -61,14 +61,6 @@ export const createCourseFormSchema = z.object({
     z.string().max(outcomeLimit).nonempty("Please enter course outcome.")
   ),
   startsAt: z.date().optional(),
-
-  // courseBlocks: z.array(
-  //   z.object({
-  //     title: z.string(),
-  //     thumbnail: z.string(),
-  //     videoUrl: z.string(),
-  //   })
-  // ),
 });
 
 function useZodForm<TSchema extends z.ZodType>(
