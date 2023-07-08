@@ -31,7 +31,7 @@ type Props = {
 const Index = ({ courseId }: Props) => {
   const { data: course } = api.course.getCourse.useQuery({ id: courseId });
   const session = useSession();
-  // const router = useRouter();
+  const router = useRouter();
   const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
     api.enrollmentCourse.enroll.useMutation();
   const { data: isEnrolled, isLoading: isEnrolledLoading } =
@@ -40,7 +40,6 @@ const Index = ({ courseId }: Props) => {
   const ctx = api.useContext();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState<boolean>(false);
-  const router = useRouter();
   const [claimModalOpen, setClaimModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
