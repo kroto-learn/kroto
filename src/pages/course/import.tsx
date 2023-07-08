@@ -274,17 +274,17 @@ const Index = () => {
                   </button>
                 ))
               ) : (
-                <div className="flex flex-col gap-2 p-2 text-sm">
+                <div className="flex flex-col items-start gap-2 p-4 text-sm">
                   <p className="text-neutral-300">
                     {"🥲"} No public playlist found in your YouTube account.
                     Make sure you have granted sufficient permissions.
                   </p>
                   <div className="mb-1 flex items-center gap-2">
-                    Click below and grant us permission to access your YouTube
-                    playlist.
+                    Click on the YouTube logo below and grant us permission to
+                    access your YouTube playlist.
                   </div>
                   <button
-                    className="mb-4 flex w-44 items-center gap-1 bg-[#4285F4] pr-2 text-sm font-bold drop-shadow"
+                    className="mb-4"
                     onClick={() => {
                       void signIn(
                         "google",
@@ -302,12 +302,11 @@ const Index = () => {
                     }}
                   >
                     <ImageWF
-                      src="/btn_google_dark_normal_ios.svg"
+                      src="/yt_logo_rgb_dark.png"
                       alt="Google"
-                      height={30}
-                      width={30}
+                      height={26.9}
+                      width={120}
                     />
-                    Sign in with Google
                   </button>
                 </div>
               )}
