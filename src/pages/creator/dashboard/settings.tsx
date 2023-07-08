@@ -91,6 +91,29 @@ const Settings = () => {
     }
   }, [creator, methods, creatorinit]);
 
+  const socialOptions: { type: string; title: string }[] = [
+    {
+      type: "youtube",
+      title: "YouTube",
+    },
+    {
+      type: "twitter",
+      title: "Twitter",
+    },
+    {
+      type: "instagram",
+      title: "Instagram",
+    },
+    {
+      type: "linkedin",
+      title: "Linkedin",
+    },
+    {
+      type: "website",
+      title: "Website",
+    },
+  ];
+
   const revalidate = useRevalidateSSG();
   const ctx = api.useContext();
 
@@ -258,11 +281,19 @@ const Settings = () => {
                           }
                           className="z-10 items-center rounded-l-lg border border-neutral-700 bg-neutral-800 px-2 py-2 text-center font-medium text-neutral-200 outline-0"
                         >
-                          <option value="youtube">YouTube</option>
-                          <option value="twitter">Twitter</option>
-                          <option value="instagram">Instagram</option>
-                          <option value="linkedin">Linkedin</option>
-                          <option value="website">Website</option>
+                          {socialOptions.map((so) => (
+                            <option
+                              disabled={
+                                !!methods
+                                  .watch()
+                                  .socialLinks.find((sl) => sl.type === so.type)
+                              }
+                              key={so.type}
+                              value={so.type}
+                            >
+                              {so.title}
+                            </option>
+                          ))}
                           <option value="other">Other</option>
                         </select>
                         <input
