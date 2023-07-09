@@ -1,7 +1,7 @@
 import { Loader } from "@/components/Loader";
 import YouTube from "react-youtube";
 import { api } from "@/utils/api";
-import { TRPCError } from "@trpc/server";
+
 import ImageWF from "@/components/ImageWF";
 import { useRouter } from "next/router";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
@@ -104,7 +104,6 @@ const Index = () => {
       player &&
       progress &&
       progress / player.getDuration() >= 0.9 &&
-      !(chapter instanceof TRPCError) &&
       !(chapter?.chapterProgress && chapter?.chapterProgress?.watched) &&
       chapter_id === chapter?.id
     ) {
@@ -143,10 +142,8 @@ const Index = () => {
         if (stackedProgress >= 60) {
           if (
             session.data?.user.id &&
-            !(course instanceof TRPCError) &&
             course &&
             course.id &&
-            !(chapter instanceof TRPCError) &&
             chapter &&
             chapter.id
           )
@@ -156,7 +153,7 @@ const Index = () => {
               chapterId: chapter?.id,
             });
 
-          if (!(chapter instanceof TRPCError) && chapter && chapter.id)
+          if (chapter && chapter.id)
             void updateChapterProgressMutation({
               chapterId: chapter.id,
               videoProgress: progress + 1,
@@ -237,7 +234,7 @@ const Index = () => {
   const [seekedInit, setSeekedInit] = useState(false);
 
   useEffect(() => {
-    if (!(chapter instanceof TRPCError) && chapter) {
+    if (chapter) {
       setWatchChecked(
         !!chapter?.chapterProgress && chapter?.chapterProgress?.watched
       );
@@ -273,12 +270,7 @@ const Index = () => {
       </div>
     );
 
-  if (
-    chapter instanceof TRPCError ||
-    !chapter ||
-    course instanceof TRPCError ||
-    !course
-  )
+  if (!chapter || !course)
     return (
       <div className="flex min-h-screen items-center justify-center">
         <h1>Chapter not found!</h1>

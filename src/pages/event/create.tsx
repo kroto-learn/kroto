@@ -8,7 +8,7 @@ import Head from "next/head";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { type z } from "zod";
 import { api } from "@/utils/api";
-import { TRPCError } from "@trpc/server";
+
 import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
 import "@uiw/react-md-editor/markdown-editor.css";
@@ -162,7 +162,7 @@ const CreateEvent = () => {
                 },
                 {
                   onSuccess: (createdEvent) => {
-                    if (!(createdEvent instanceof TRPCError)) {
+                    if (createdEvent) {
                       void router.push(
                         `/creator/dashboard/event/${createdEvent.id}`
                       );

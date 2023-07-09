@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Loader } from "@/components/Loader";
 import AnimatedSection from "@/components/AnimatedSection";
 import { api } from "@/utils/api";
-import { TRPCError } from "@trpc/server";
+
 import { AdminDashboardLayout } from "..";
 import { z } from "zod";
 import { type UseFormProps, useForm } from "react-hook-form";
@@ -55,9 +55,7 @@ const Index = () => {
           <div className="flex h-[50vh] w-full items-center justify-center">
             <Loader size="lg" />
           </div>
-        ) : !(categories instanceof TRPCError) &&
-          categories &&
-          categories.length > 0 ? (
+        ) : categories && categories.length > 0 ? (
           <AnimatedSection
             delay={0.2}
             className="flex w-full flex-col items-start gap-4 sm:p-4"
@@ -81,7 +79,7 @@ const Index = () => {
             onSubmit={methods.handleSubmit(async (values) => {
               await createCategoryMutation(values, {
                 onSuccess: (catg) => {
-                  if (catg && !(catg instanceof TRPCError)) {
+                  if (catg) {
                     successToast(`New category ${catg.title} created.`);
                   }
                   methods.setValue("title", "");

@@ -11,15 +11,15 @@ import {
   searchYoutubePlaylistsAdminService,
   searchYoutubePlaylistsService,
 } from "@/server/services/youtube";
-import { TRPCError } from "@trpc/server";
+
 import { isAdmin } from "@/server/helpers/admin";
+import { TRPCError } from "@trpc/server";
 
 export const ytCourseRouter = createTRPCRouter({
   searchYoutubePlaylists: protectedProcedure
     .input(z.object({ searchQuery: z.string() }))
     .query(async ({ ctx, input }) => {
-      if (!ctx.session.user.token)
-        return new TRPCError({ code: "BAD_REQUEST" });
+      if (!ctx.session.user.token) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const playlists = await searchYoutubePlaylistsService({
         searchQuery: input.searchQuery,
@@ -32,11 +32,10 @@ export const ytCourseRouter = createTRPCRouter({
   searchYoutubePlaylistsAdmin: protectedProcedure
     .input(z.object({ searchQuery: z.string() }))
     .query(async ({ ctx, input }) => {
-      if (!ctx.session.user.token)
-        return new TRPCError({ code: "BAD_REQUEST" });
+      if (!ctx.session.user.token) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (!isAdmin(ctx.session.user.email as string))
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const playlists = await searchYoutubePlaylistsAdminService({
         searchQuery: input.searchQuery,

@@ -9,11 +9,12 @@ import {
   protectedProcedure,
 } from "@/server/api/trpc";
 import { createFormSchema } from "@/pages/event/create";
-import { TRPCError } from "@trpc/server";
+
 import { deleteS3Image, imageUpload, ogImageUpload } from "@/server/helpers/s3";
 import isBase64 from "is-base64";
 import { sendRegistrationConfirmation } from "@/server/helpers/emailHelper";
 import { generateStaticEventOgImage } from "@/server/services/og";
+import { TRPCError } from "@trpc/server";
 
 const OG_URL = `${
   process.env.VERCEL ? "https://" : ""
@@ -40,7 +41,7 @@ export const eventRouter = createTRPCRouter({
       });
 
       if (event?.creator.id !== ctx.session.user.id)
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       return event;
     }),
@@ -135,7 +136,7 @@ export const eventRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
 
-      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!input) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const event = await prisma.event.create({
         data: {
@@ -186,7 +187,7 @@ export const eventRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
 
-      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!input) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const checkIsCreator = await prisma.event.findUnique({
         where: {
@@ -195,13 +196,13 @@ export const eventRouter = createTRPCRouter({
       });
 
       if (!checkIsCreator)
-        return new TRPCError({
+        throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Event doesn't exist",
         });
 
       if (checkIsCreator.creatorId !== ctx.session.user.id)
-        return new TRPCError({
+        throw new TRPCError({
           code: "BAD_REQUEST",
           message: "You didn't create this event",
         });
@@ -212,7 +213,7 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      if (!event) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!event) throw new TRPCError({ code: "BAD_REQUEST" });
 
       let thumbnail = input.thumbnail;
       if (isBase64(input.thumbnail, { allowMime: true })) {
@@ -267,10 +268,10 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!event || !user) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (event.creatorId === user.id)
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const registration = await prisma.registration.create({
         data: {

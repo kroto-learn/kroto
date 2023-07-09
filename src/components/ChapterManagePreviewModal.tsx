@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { type Dispatch, Fragment, type SetStateAction } from "react";
 import { Loader } from "./Loader";
-import { TRPCError } from "@trpc/server";
+
 import YouTube from "react-youtube";
 
 const ChapterManagePreviewModal = ({
@@ -40,7 +40,7 @@ const ChapterManagePreviewModal = ({
     },
   };
 
-  if (course instanceof TRPCError || !course) return <>Course not found!</>;
+  if (!course) return <>Course not found!</>;
 
   return (
     <>

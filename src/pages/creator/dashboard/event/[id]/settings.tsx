@@ -15,7 +15,7 @@ import { Transition, Dialog } from "@headlessui/react";
 import { Loader } from "@/components/Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import useToast from "@/hooks/useToast";
-import { TRPCError } from "@trpc/server";
+
 import AnimatedSection from "@/components/AnimatedSection";
 
 const EventSettings = () => {
@@ -25,7 +25,7 @@ const EventSettings = () => {
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  if (event instanceof TRPCError || !event) return <>Event not found!</>;
+  if (!event) return <>Event not found!</>;
 
   return (
     <>

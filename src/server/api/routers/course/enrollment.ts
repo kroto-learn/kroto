@@ -22,10 +22,10 @@ export const enrollmentCourseRouter = createTRPCRouter({
         },
       });
 
-      if (!course || !user) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course || !user) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (course.creatorId === user.id)
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const enrollment = await prisma.enrollment.create({
         data: {
