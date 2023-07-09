@@ -254,6 +254,35 @@ export const creatorRouter = createTRPCRouter({
       return { ...user, socialLinks };
     }),
 
+  updateDashboardProfile: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        image: z.string().nonempty(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+      const { name } = input;
+
+      let image = input.image;
+      if (isBase64(input.image, { allowMime: true })) {
+        image = await imageUpload(input.image, ctx.session.user.id, "creator");
+      }
+
+      const user = await prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          name: name,
+          image,
+        },
+      });
+
+      return { ...user };
+    }),  
+
   makeCreator: protectedProcedure
     .input(z.object({ creatorProfile: z.string().optional() }))
     .mutation(async ({ ctx, input }) => {
