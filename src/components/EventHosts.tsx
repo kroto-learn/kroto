@@ -1,7 +1,7 @@
 import useToast from "@/hooks/useToast";
 import { api } from "@/utils/api";
 import { UserPlusIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { TRPCError } from "@trpc/server";
+
 import Link from "next/link";
 import { type Dispatch, type SetStateAction } from "react";
 import { Loader } from "./Loader";
@@ -20,10 +20,13 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
   const { data: event } = api.event.get.useQuery({
     id,
   });
-  const { data: hosts, refetch: refetchHosts } =
-    api.eventHost.getHosts.useQuery({
-      eventId: id,
-    });
+  const {
+    data: hosts,
+    refetch: refetchHosts,
+    isError: isHostsError,
+  } = api.eventHost.getHosts.useQuery({
+    eventId: id,
+  });
 
   const { mutateAsync: removeHost, isLoading: removingHost } =
     api.eventHost.removeHost.useMutation();
@@ -33,7 +36,7 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
   const revalidate = useRevalidateSSG();
   const ctx = api.useContext();
 
-  if (event instanceof TRPCError || !event) return <></>;
+  if (!event) return <></>;
 
   const isEventOver = event && event?.endTime?.getTime() < new Date().getTime();
 
@@ -54,70 +57,72 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
           )}
         </div>
         <ul className="w-full divide-y divide-neutral-700">
-          {hosts instanceof TRPCError
-            ? ""
-            : hosts?.map((host) => {
-                const isHostCreator = host?.user?.id === event?.creatorId;
+          {isHostsError ? (
+            <></>
+          ) : (
+            hosts?.map((host) => {
+              const isHostCreator = host?.user?.id === event?.creatorId;
 
-                return (
-                  <li key={host?.id} className="py-3 sm:py-2">
-                    <div className="flex w-full items-center space-x-4">
-                      <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
-                        <ImageWF
-                          className="rounded-full"
-                          src={host?.user?.image ?? ""}
-                          alt="host img"
-                          fill
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <Link href={`/${host?.user?.creatorProfile ?? ""}`}>
-                          <Link
-                            href={`/${host?.user?.creatorProfile ?? ""}`}
-                            className="truncate text-sm font-medium text-neutral-200 hover:underline"
-                          >
-                            {host?.user?.name ?? ""}
-                          </Link>
-                          <p className="truncate text-sm text-neutral-400">
-                            {host?.user?.email ?? ""}
-                          </p>
-                        </Link>
-                      </div>
-                      {!isEventOver && !isHostCreator ? (
-                        <button
-                          onClick={async () => {
-                            await removeHost(
-                              {
-                                id: host?.id ?? "",
-                              },
-                              {
-                                onSuccess: () => {
-                                  void revalidate(`/event/${id}`);
-                                  void ctx.event.get.invalidate();
-                                },
-                                onError: () => {
-                                  errorToast("Error in removing host!");
-                                },
-                              }
-                            );
-                            void refetchHosts();
-                          }}
-                          className="flex items-center gap-1 rounded-lg bg-red-500/20 p-1 px-2 text-xs font-medium text-red-800 backdrop-blur-sm transition duration-300 hover:bg-red-600 hover:text-neutral-200"
-                        >
-                          {removingHost ? (
-                            <Loader />
-                          ) : (
-                            <TrashIcon className="w-3" />
-                          )}{" "}
-                          Remove
-                        </button>
-                      ) : (
-                        <></>
-                      )}
+              return (
+                <li key={host?.id} className="py-3 sm:py-2">
+                  <div className="flex w-full items-center space-x-4">
+                    <div className="relative h-8 w-8 flex-shrink-0 rounded-full">
+                      <ImageWF
+                        className="rounded-full"
+                        src={host?.user?.image ?? ""}
+                        alt="host img"
+                        fill
+                      />
                     </div>
-                  </li>
-                );
-              })}
+                    <div className="min-w-0 flex-1">
+                      <Link href={`/${host?.user?.creatorProfile ?? ""}`}>
+                        <Link
+                          href={`/${host?.user?.creatorProfile ?? ""}`}
+                          className="truncate text-sm font-medium text-neutral-200 hover:underline"
+                        >
+                          {host?.user?.name ?? ""}
+                        </Link>
+                        <p className="truncate text-sm text-neutral-400">
+                          {host?.user?.email ?? ""}
+                        </p>
+                      </Link>
+                    </div>
+                    {!isEventOver && !isHostCreator ? (
+                      <button
+                        onClick={async () => {
+                          await removeHost(
+                            {
+                              id: host?.id ?? "",
+                            },
+                            {
+                              onSuccess: () => {
+                                void revalidate(`/event/${id}`);
+                                void ctx.event.get.invalidate();
+                              },
+                              onError: () => {
+                                errorToast("Error in removing host!");
+                              },
+                            }
+                          );
+                          void refetchHosts();
+                        }}
+                        className="flex items-center gap-1 rounded-lg bg-red-500/20 p-1 px-2 text-xs font-medium text-red-800 backdrop-blur-sm transition duration-300 hover:bg-red-600 hover:text-neutral-200"
+                      >
+                        {removingHost ? (
+                          <Loader />
+                        ) : (
+                          <TrashIcon className="w-3" />
+                        )}{" "}
+                        Remove
+                      </button>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </li>
+              );
+            })
+          )}
         </ul>
       </AnimatedSection>
     </>

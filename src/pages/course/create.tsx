@@ -27,7 +27,7 @@ import { getDateTimeDiffString } from "@/helpers/time";
 import ImageWF from "@/components/ImageWF";
 import { useRouter } from "next/router";
 import { MixPannelClient } from "@/analytics/mixpanel";
-import { TRPCError } from "@trpc/server";
+
 import CoursePricingInfoModal from "@/components/CoursePricingInfoModal";
 import Switch from "@/components/Switch";
 import { krotoCharge, paymentGatewayCharge } from "@/constants/values";
@@ -150,7 +150,7 @@ const Index = () => {
           onSubmit={methods.handleSubmit(async (values) => {
             await createCourseMutation(values, {
               onSuccess: (courseCreated) => {
-                if (courseCreated && !(courseCreated instanceof TRPCError)) {
+                if (courseCreated) {
                   MixPannelClient.getInstance().courseCreated({
                     courseId: courseCreated?.id,
                   });

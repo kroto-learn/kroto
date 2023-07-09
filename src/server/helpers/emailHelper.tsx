@@ -5,13 +5,14 @@ import showdown from "showdown";
 import handlebars from "handlebars";
 import nodemailer from "nodemailer";
 import fs from "fs";
-import { TRPCError } from "@trpc/server";
+
 import { env } from "@/env.mjs";
 import { render } from "@react-email/render";
 import LearningReminderEmail from "react-email-starter/emails/learning-reminder";
 
 import AWS from "aws-sdk";
 import LearningReportEmail from "react-email-starter/emails/learning-report";
+import { TRPCError } from "@trpc/server";
 
 const templateSource = fs.readFileSync(
   `${process.cwd()}/templates/base.hbs`,

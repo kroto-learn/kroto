@@ -20,7 +20,7 @@ import { Transition, Dialog, Listbox } from "@headlessui/react";
 import { Loader } from "@/components/Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import useToast from "@/hooks/useToast";
-import { TRPCError } from "@trpc/server";
+
 import { z } from "zod";
 import { useForm, type UseFormProps } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -103,7 +103,7 @@ const CourseSettings = () => {
   }, [tagInput]);
 
   useEffect(() => {
-    if (!(course instanceof TRPCError) && course && !initData) {
+    if (course && !initData) {
       setInitData(true);
       methods.setValue("price", course?.price?.toString());
       methods.setValue(
@@ -127,7 +127,7 @@ const CourseSettings = () => {
 
   if (courseLoading) return <></>;
 
-  if (course instanceof TRPCError || !course) return <>Not Found</>;
+  if (!course) return <>Not Found</>;
 
   return (
     <>

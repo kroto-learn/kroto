@@ -2,7 +2,7 @@ import { api } from "@/utils/api";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
-import { TRPCError } from "@trpc/server";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
@@ -27,7 +27,7 @@ export default function CourseLayoutR({ children }: { children: ReactNode }) {
       </div>
     );
 
-  if (course instanceof TRPCError || !course) return <></>;
+  if (!course) return <></>;
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">

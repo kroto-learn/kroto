@@ -14,7 +14,7 @@ import {
   LockClosedIcon,
   VideoCameraIcon,
 } from "@heroicons/react/24/outline";
-import { TRPCError } from "@trpc/server";
+
 import { type GetStaticPropsContext } from "next";
 import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
@@ -85,7 +85,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
       });
   }, [courseId, session]);
 
-  if (course instanceof TRPCError || !course)
+  if (!course)
     return (
       <div className="flex h-screen flex-col items-center justify-center">
         <h1 className="text-4xl font-medium text-neutral-200">
@@ -837,7 +837,7 @@ const BuyCourseBox = ({
 
   const { data: course } = api.course.getCourse.useQuery({ id: courseId });
 
-  if (course instanceof TRPCError || !course) return <></>;
+  if (!course) return <></>;
 
   const isDiscount =
     course?.permanentDiscount !== null ||

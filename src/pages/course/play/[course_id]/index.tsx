@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { type Chapter, type ChapterProgress } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
+
 import { Checkbox, ConfigProvider, theme } from "antd";
 import Image from "next/image";
 import Link from "next/link";
@@ -41,12 +41,7 @@ const Index = () => {
   const { data: course } = api.course.get.useQuery({ id: course_id });
 
   useEffect(() => {
-    if (
-      !(course instanceof TRPCError) &&
-      course &&
-      course?.chapters?.length > 0 &&
-      !chapter_id
-    ) {
+    if (course && course?.chapters?.length > 0 && !chapter_id) {
       const lastChIdx = course?.chapters?.findIndex(
         (ch) => ch.id === course?.courseProgress?.lastChapterId
       );
@@ -93,7 +88,6 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
       !isEnrolledLoading &&
       !isEnrolled &&
       !courseLoading &&
-      !(course instanceof TRPCError) &&
       session.data?.user.id !== course?.creatorId
     )
       void router.replace("/");
@@ -148,7 +142,7 @@ const PlayerLayoutR = ({ children }: { children: ReactNode }) => {
 
   const [shareModal, setShareModal] = useState(false);
 
-  if (course instanceof TRPCError || !course) return <></>;
+  if (!course) return <></>;
 
   const chaptersWatched = course.chapters?.filter(
     (ch) => !!ch?.chapterProgress && ch?.chapterProgress?.watched

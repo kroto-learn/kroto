@@ -6,7 +6,7 @@ import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { api } from "@/utils/api";
 import { ArrowLeftIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import { TRPCError } from "@trpc/server";
+
 import { type GetStaticPropsContext } from "next";
 import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
@@ -51,7 +51,7 @@ const Index = ({ courseId }: Props) => {
       });
   }, [courseId, session]);
 
-  if (course instanceof TRPCError || !course)
+  if (!course)
     return (
       <div className="flex h-screen flex-col items-center justify-center">
         <h1 className="text-4xl font-medium text-neutral-200">

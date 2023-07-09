@@ -1,8 +1,9 @@
 import { isAdmin } from "@/server/helpers/admin";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import { suggestCourseSchema } from "@/components/SuggestCourseModal";
-import { TRPCError } from "@trpc/server";
+
 import { getPlaylistDataShallowService } from "@/server/services/youtube";
+import { TRPCError } from "@trpc/server";
 
 export const suggestionCourseRouter = createTRPCRouter({
   suggestCourse: protectedProcedure
@@ -21,7 +22,7 @@ export const suggestionCourseRouter = createTRPCRouter({
     const { prisma } = ctx;
 
     if (!isAdmin(ctx.session.user.email ?? ""))
-      return new TRPCError({ code: "BAD_REQUEST" });
+      throw new TRPCError({ code: "BAD_REQUEST" });
 
     const suggestions = await prisma.suggestedCourse.findMany({
       include: { user: true },

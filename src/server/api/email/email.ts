@@ -91,7 +91,7 @@ export const emailRouter = createTRPCRouter({
         },
       });
 
-      if (!email) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!email) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const recipients = await prisma.recipient.createMany({
         data: input.email.map((e) => ({
