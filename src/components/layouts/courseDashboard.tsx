@@ -105,6 +105,19 @@ export default function CourseLayoutR({ children }: { children: ReactNode }) {
                         <Link
                           className={`w-full px-6 py-2 font-medium active:text-pink-600 ${
                             pathname ===
+                            `/creator/dashboard/course/${id}/promo_codes`
+                              ? "bg-pink-600/20 text-pink-600"
+                              : "hover:text-pink-600"
+                          }`}
+                          href={`/creator/dashboard/course/${id}/promo_codes`}
+                        >
+                          Promo Codes
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item>
+                        <Link
+                          className={`w-full px-6 py-2 font-medium active:text-pink-600 ${
+                            pathname ===
                             `/creator/dashboard/course/${id}/settings`
                               ? "bg-pink-600/20 text-pink-600"
                               : "hover:text-pink-600"
@@ -171,6 +184,19 @@ export default function CourseLayoutR({ children }: { children: ReactNode }) {
               aria-current="page"
             >
               Feedbacks
+            </Link>
+          </li>
+          <li>
+            <Link
+              href={`/creator/dashboard/course/${id}/promo_codes`}
+              className={`inline-block rounded-t-lg px-2 py-4 text-xs sm:p-4 sm:text-base ${
+                pathname === `/creator/dashboard/course/${id}/promo_codes`
+                  ? "border-b-2 border-pink-600 text-pink-600"
+                  : "border-transparent hover:border-neutral-400 hover:text-neutral-300"
+              }`}
+              aria-current="page"
+            >
+              Promo Codes
             </Link>
           </li>
           <li>
