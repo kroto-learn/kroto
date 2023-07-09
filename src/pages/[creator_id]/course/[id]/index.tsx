@@ -48,6 +48,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
     creatorProfile,
   });
   const session = useSession();
+
   const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
     api.enrollmentCourse.enroll.useMutation();
   const { data: isEnrolled, isLoading: isEnrolledLoading } =

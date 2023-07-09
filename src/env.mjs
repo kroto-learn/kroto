@@ -50,7 +50,9 @@ const server = z.object({
   // YouTube
   YOUTUBE_API_KEY: z.string(),
 
+  // Mixpanel
   MIXPANEL_TOKEN: z.string(),
+  MIXPANEL_SECRET: z.string(),
 });
 
 /**
@@ -103,8 +105,9 @@ const processEnv = {
   SES_SMTP_PASSWORD: process.env.SES_SMTP_PASSWORD,
 
   YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
-  
+
   MIXPANEL_TOKEN: process.env.MIXPANEL_TOKEN,
+  MIXPANEL_SECRET: process.env.MIXPANEL_SECRET,
 };
 
 // Don't touch the part below

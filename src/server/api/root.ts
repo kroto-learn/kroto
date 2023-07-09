@@ -20,6 +20,7 @@ import { enrollmentCourseRouter } from "./routers/course/enrollment";
 import { suggestionCourseRouter } from "./routers/course/suggestions";
 import { dailyReminderRouter } from "./routers/reminders/daily";
 import { cronTestRouter } from "./cront-test";
+import { creatorAnalyticsRouter } from "./routers/creator/analytics";
 
 /**
  * This is the primary router for your server.
@@ -29,6 +30,7 @@ import { cronTestRouter } from "./cront-test";
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
   creator: creatorRouter,
+  creatorAnalytics: creatorAnalyticsRouter,
 
   course: courseRouter,
   courseChapter: courseChapterRouter,
