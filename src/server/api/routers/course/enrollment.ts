@@ -8,6 +8,7 @@ import { TRPCError } from "@trpc/server";
 
 import Razorpay from "razorpay";
 import shortid from "shortid";
+import crypto from "crypto";
 import { env } from "@/env.mjs";
 
 const razorpay = new Razorpay({
@@ -151,10 +152,120 @@ export const enrollmentCourseRouter = createTRPCRouter({
       }
     }),
 
-  validateBuyCourseOrder: protectedProcedure
-    .input(z.object({ orderId: z.string() }))
-    .mutation(() => {
-      return null;
+  verifyCoursePurchase: protectedProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+        razorpay_payment_id: z.string(),
+        razorpay_order_id: z.string(),
+        razorpay_signature: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const {
+        courseId,
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+      } = input;
+
+      const generated_signature = crypto
+        .createHmac("sha256", env.RAZORPAY_KEY_SECRET)
+        .update(`${razorpay_order_id}|${env.RAZORPAY_KEY_SECRET}`);
+
+      // if (generated_signature.digest("hex") !== razorpay_signature) {
+      //   throw new TRPCError({
+      //     code: "BAD_REQUEST",
+      //     message: "Invalid signature",
+      //   });
+      // }
+
+      const purchase = await prisma.purchase.create({
+        data: {
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature,
+          userId: ctx.session.user.id,
+        },
+      });
+
+      const course = await prisma.course.findUnique({
+        where: { id: courseId },
+        include: {
+          discount: true,
+          creator: true,
+        },
+      });
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+
+      if (!user || !course || !course.creatorId)
+        throw new TRPCError({ code: "BAD_REQUEST" });
+
+      // Update Creator's Revenue
+      let course_price = course.price;
+      if (course.discount?.price) {
+        course_price = course.discount.price;
+      } else {
+        course_price = course.permanentDiscount ?? course.price;
+      }
+
+      const paymentDataOfCreator = await prisma.payment.findFirst({
+        where: {
+          userId: course.creatorId,
+        },
+      });
+
+      if (!paymentDataOfCreator) {
+        await prisma.payment.create({
+          data: {
+            userId: course.creatorId,
+            withdrawAmount: course_price,
+          },
+        });
+      } else {
+        await prisma.payment.update({
+          where: {
+            id: paymentDataOfCreator.id,
+          },
+          data: {
+            withdrawAmount: paymentDataOfCreator.withdrawAmount + course_price,
+          },
+        });
+      }
+
+      await prisma.enrollment.create({
+        data: {
+          userId: user.id,
+          courseId: course.id,
+        },
+      });
+
+      const audienceMember = await prisma.audienceMember.findFirst({
+        where: {
+          email: user.email,
+          creatorId: course.creatorId ?? "",
+        },
+      });
+
+      /* Adding to audience list */
+      if (!audienceMember) {
+        // if audience member doesn't exist, create one
+        await prisma.audienceMember.create({
+          data: {
+            email: user.email,
+            name: user.name,
+            userId: user.id,
+            creatorId: course.creatorId ?? "",
+            courseId: course.id,
+          },
+        });
+      }
     }),
 
   isEnrolled: publicProcedure

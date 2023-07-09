@@ -49,6 +49,7 @@
     "chart.js": "^4.3.0",
     "class-variance-authority": "^0.4.0",
     "compress-base64": "^1.0.2",
+    "crypto": "^1.0.1",
     "daisyui": "^2.51.5",
     "formik": "^2.2.9",
     "framer-motion": "^10.12.9",

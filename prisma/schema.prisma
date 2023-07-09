@@ -57,6 +57,7 @@ model User {
   bio                   String?                 @db.Text
   topmateUrl            String?
   payment               Payment?
+  purchases             Purchase[]
   bankDetails           BankDetails?
   accounts              Account[]
   sessions              Session[]
@@ -100,6 +101,18 @@ model Payment {
 
   @@unique([userId])
   @@index([userId])
+}
+
+model Purchase {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  razorpay_payment_id String   @unique
+  razorpay_order_id   String
+  razorpay_signature  String
+  createdAt           DateTime @default(now())
+
+  @@index([userId, razorpay_payment_id])
 }
 
 model Event {

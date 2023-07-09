@@ -44,6 +44,11 @@ export default function CheckoutModal({
     isLoading: createCourseOrderLoading,
   } = api.enrollmentCourse.createBuyCourseOrder.useMutation();
 
+  const {
+    mutateAsync: verifyCoursePurchase,
+    isLoading: verifyCoursePurchaseLoading,
+  } = api.enrollmentCourse.verifyCoursePurchase.useMutation();
+
   const handleEnrollCourse = async () => {
     const razorpaySDK = await initializeRazorpay();
 
@@ -65,12 +70,18 @@ export default function CheckoutModal({
         name: session?.user?.name,
         email: session?.user?.email,
       },
-      handler: (response: {
+      handler: async (response: {
         razorpay_payment_id: string;
         razorpay_order_id: string;
         razorpay_signature: string;
       }) => {
-        console.log(response);
+        await verifyCoursePurchase({
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
+          courseId: course.id,
+        });
+        setIsOpen(false);
       },
     };
 
@@ -206,7 +217,7 @@ export default function CheckoutModal({
 
                   <button
                     onClick={() => {
-                      handleEnrollCourse();
+                      void handleEnrollCourse();
                     }}
                     className="flex w-full items-center justify-center rounded-lg bg-pink-500 px-3 py-2  text-center font-bold uppercase tracking-wider duration-150 hover:bg-pink-600"
                   >
