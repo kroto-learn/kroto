@@ -263,7 +263,7 @@ export default function Dashboard() {
                       href="/dashboard/dashboard-update"
                       className="flex items-center justify-center gap-2 rounded-xl border border-pink-600 px-3 py-[0.35rem] text-xs font-medium text-pink-600 duration-300 hover:bg-pink-600 hover:text-neutral-200 sm:min-w-[10rem]"
                     >
-                      <PencilSquareIcon className="w-4" /> Edit
+                      <PencilSquareIcon className="w-4" /> Profile Edit
                     </Link>
                     {/* <button
                       disabled
