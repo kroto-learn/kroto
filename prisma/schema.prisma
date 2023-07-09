@@ -249,6 +249,7 @@ model Course {
   learnTracks       LearnTrack[]
   discount          Discount?
   startsAt          DateTime?
+  PromoCode         PromoCode?
 
   @@index([categoryId])
   @@index([creatorId])
@@ -431,4 +432,19 @@ model ClaimCourseRequest {
   id       String @id @default(cuid())
   email    String
   courseId String
+}
+
+model PromoCode {
+  id              String   @id @default(cuid())
+  code            String
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId        String   @unique
+  discountPercent Int
+  active          Boolean
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([code, courseId])
+  @@index([courseId])
+  @@index([code])
 }
