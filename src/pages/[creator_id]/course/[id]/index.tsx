@@ -42,22 +42,25 @@ type Props = {
 };
 
 const Index = ({ courseId, creatorProfile }: Props) => {
+  const session = useSession();
+  const ctx = api.useContext();
+
+  const { successToast, errorToast } = useToast();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState<boolean>(false);
+  const [scrollY, setScrollY] = useState(0);
+
   const { data: creator } = api.creator.getPublicProfile.useQuery({
     creatorProfile,
   });
-  const session = useSession();
+
   const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
     api.enrollmentCourse.enroll.useMutation();
+
   const { data: isEnrolled, isLoading: isEnrolledLoading } =
     api.enrollmentCourse.isEnrolled.useQuery({ courseId });
-  const { successToast, errorToast } = useToast();
-  const ctx = api.useContext();
 
   const { data: course } = api.course.getCourse.useQuery({ id: courseId });
-
-  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -828,12 +831,15 @@ const BuyCourseBox = ({
   setPreviewOpen,
 }: BProps) => {
   const session = useSession();
+  const ctx = api.useContext();
+
+  const { successToast, errorToast } = useToast();
+
   const { mutateAsync: enrollMutation, isLoading: enrollLoading } =
     api.enrollmentCourse.enroll.useMutation();
+
   const { data: isEnrolled, isLoading: isEnrolledLoading } =
     api.enrollmentCourse.isEnrolled.useQuery({ courseId });
-  const { successToast, errorToast } = useToast();
-  const ctx = api.useContext();
 
   const { data: course } = api.course.getCourse.useQuery({ id: courseId });
 
@@ -1016,7 +1022,7 @@ const BuyCourseBox = ({
                         <Loader white />
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center">
+                      <button className="flex flex-col items-center">
                         <span>Enroll now</span>
                         {course?.startsAt &&
                         course?.startsAt?.getTime() > new Date().getTime() ? (
@@ -1032,7 +1038,7 @@ const BuyCourseBox = ({
                         ) : (
                           <></>
                         )}
-                      </div>
+                      </button>
                     )}
                   </button>
                   {course?.ytId ? (

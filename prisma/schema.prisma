@@ -56,6 +56,8 @@ model User {
   isCreator             Boolean                 @default(false)
   bio                   String?                 @db.Text
   topmateUrl            String?
+  payment               Payment?
+  bankDetails           BankDetails?
   accounts              Account[]
   sessions              Session[]
   socialLinks           SocialLink[]
@@ -75,6 +77,29 @@ model User {
   askedQueries          AskedQuery[]
   SuggestedCourse       SuggestedCourse[]
   learningStreak        DailyStreak?
+}
+
+model BankDetails {
+  id            String @id @default(cuid())
+  userId        String
+  accountName   String
+  accountNumber String
+  ifscCode      String
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@index([userId])
+}
+
+model Payment {
+  id             String @id @default(cuid())
+  userId         String
+  withdrawAmount Int    @default(0)
+  staleAmount    Int    @default(0)
+  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@index([userId])
 }
 
 model Event {

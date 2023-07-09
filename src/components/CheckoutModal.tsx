@@ -5,6 +5,10 @@ import { type Dispatch, Fragment, type SetStateAction } from "react";
 
 import { type Discount, type Course } from "@prisma/client";
 import ImageWF from "@/components/ImageWF";
+import { api } from "@/utils/api";
+import { initializeRazorpay } from "@/helpers/razorpay";
+import useToast from "@/hooks/useToast";
+import { useSession } from "next-auth/react";
 
 export default function CheckoutModal({
   course,
@@ -20,6 +24,8 @@ export default function CheckoutModal({
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const { data: session } = useSession();
+  const { errorToast, successToast } = useToast();
   const isDiscount =
     course?.permanentDiscount !== null ||
     (course?.discount &&
@@ -32,6 +38,45 @@ export default function CheckoutModal({
       : course?.permanentDiscount ?? 0;
 
   const price = isDiscount ? discount : course?.price;
+
+  const {
+    mutateAsync: createCourseOrder,
+    isLoading: createCourseOrderLoading,
+  } = api.enrollmentCourse.createBuyCourseOrder.useMutation();
+
+  const handleEnrollCourse = async () => {
+    const razorpaySDK = await initializeRazorpay();
+
+    if (!razorpaySDK) {
+      errorToast("Something went wrong. Please try again later.");
+    }
+
+    const courseOrder = await createCourseOrder({ courseId: course.id });
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+      name: "Kroto",
+      currency: courseOrder.currency,
+      amount: courseOrder.amount,
+      order_id: courseOrder.id,
+      description: "Hope you make the most out of this course :)",
+      image: "https://kroto.in/kroto-logo-p.png",
+      prefill: {
+        name: session?.user?.name,
+        email: session?.user?.email,
+      },
+      handler: (response: {
+        razorpay_payment_id: string;
+        razorpay_order_id: string;
+        razorpay_signature: string;
+      }) => {
+        console.log(response);
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
 
   return (
     <>
@@ -159,7 +204,12 @@ export default function CheckoutModal({
                     </div>
                   </div>
 
-                  <button className="flex w-full items-center justify-center rounded-lg bg-pink-500 px-3 py-2  text-center font-bold uppercase tracking-wider duration-150 hover:bg-pink-600">
+                  <button
+                    onClick={() => {
+                      handleEnrollCourse();
+                    }}
+                    className="flex w-full items-center justify-center rounded-lg bg-pink-500 px-3 py-2  text-center font-bold uppercase tracking-wider duration-150 hover:bg-pink-600"
+                  >
                     Checkout
                   </button>
                 </Dialog.Panel>
