@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Loader } from "@/components/Loader";
 import AnimatedSection from "@/components/AnimatedSection";
 import { api } from "@/utils/api";
-import { TRPCError } from "@trpc/server";
+
 import { AdminDashboardLayout } from "..";
 import ImageWF from "@/components/ImageWF";
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
@@ -25,9 +25,7 @@ const Index = () => {
           <div className="flex h-[50vh] w-full items-center justify-center">
             <Loader size="lg" />
           </div>
-        ) : !(suggestions instanceof TRPCError) &&
-          suggestions &&
-          suggestions.length > 0 ? (
+        ) : suggestions && suggestions.length > 0 ? (
           <AnimatedSection
             delay={0.2}
             className="flex max-h-[85vh] w-full flex-col items-start gap-4 overflow-y-auto sm:p-4"

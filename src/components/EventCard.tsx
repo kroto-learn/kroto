@@ -5,7 +5,6 @@ import Link from "next/link";
 import { api } from "@/utils/api";
 import { ClockIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import { type Event } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
 
 type Props = {
   eventId: string;
@@ -15,7 +14,7 @@ type Props = {
 const EventCardId = ({ eventId, manage }: Props) => {
   const { data: event } = api.event.get.useQuery({ id: eventId });
 
-  if (event instanceof TRPCError) {
+  if (!event) {
     return (
       <div className="flex w-full cursor-pointer flex-col justify-center gap-4 rounded-xl p-3 backdrop-blur transition-all hover:bg-neutral-700/50 xs:flex-row xs:items-center">
         <h1>Event Not Found</h1>

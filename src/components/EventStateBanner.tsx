@@ -1,6 +1,6 @@
 import { api } from "@/utils/api";
 import { ArrowUpRightIcon, EnvelopeIcon } from "@heroicons/react/20/solid";
-import { TRPCError } from "@trpc/server";
+
 import { useRouter } from "next/router";
 import AnimatedSection from "./AnimatedSection";
 
@@ -15,7 +15,7 @@ const EventStateBanner = ({ setStartEventModal }: Props) => {
     id,
   });
 
-  if (event instanceof TRPCError || !event) return <></>;
+  if (!event) return <></>;
 
   const isEventLive =
     event &&

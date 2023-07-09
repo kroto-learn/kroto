@@ -25,10 +25,10 @@ export const courseFeedbacksRouter = createTRPCRouter({
         },
       });
 
-      if (!course || !user) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course || !user) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (course.creatorId === ctx.session.user.id)
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const isFeedback = await prisma.feedback.findFirst({
         where: {
@@ -48,7 +48,7 @@ export const courseFeedbacksRouter = createTRPCRouter({
         });
         return feedback;
       }
-      return new TRPCError({ code: "BAD_REQUEST" });
+      throw new TRPCError({ code: "BAD_REQUEST" });
     }),
 
   getFeedback: protectedProcedure
@@ -62,7 +62,7 @@ export const courseFeedbacksRouter = createTRPCRouter({
         },
       });
 
-      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const feedback = await prisma.feedback.findFirst({
         where: {
@@ -85,7 +85,7 @@ export const courseFeedbacksRouter = createTRPCRouter({
         },
       });
 
-      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const feedbacks = await prisma.feedback.findMany({
         where: {
@@ -96,7 +96,7 @@ export const courseFeedbacksRouter = createTRPCRouter({
         },
       });
 
-      if (!feedbacks) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!feedbacks) throw new TRPCError({ code: "BAD_REQUEST" });
 
       return feedbacks;
     }),

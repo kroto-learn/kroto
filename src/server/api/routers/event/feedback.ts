@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
 export const feedbacksRouter = createTRPCRouter({
@@ -28,10 +25,10 @@ export const feedbacksRouter = createTRPCRouter({
         },
       });
 
-      if (!event || !user) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!event || !user) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (event.creatorId === ctx.session.user.id)
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const isFeedback = await prisma.feedback.findFirst({
         where: {
@@ -51,7 +48,7 @@ export const feedbacksRouter = createTRPCRouter({
         });
         return feedback;
       }
-      return new TRPCError({ code: "BAD_REQUEST" });
+      throw new TRPCError({ code: "BAD_REQUEST" });
     }),
 
   getFeedback: protectedProcedure
@@ -65,7 +62,7 @@ export const feedbacksRouter = createTRPCRouter({
         },
       });
 
-      if (!event) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!event) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const feedback = await prisma.feedback.findFirst({
         where: {
@@ -88,7 +85,7 @@ export const feedbacksRouter = createTRPCRouter({
         },
       });
 
-      if (!event) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!event) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const feedbacks = await prisma.feedback.findMany({
         where: {
@@ -99,7 +96,7 @@ export const feedbacksRouter = createTRPCRouter({
         },
       });
 
-      if (!feedbacks) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!feedbacks) throw new TRPCError({ code: "BAD_REQUEST" });
 
       return feedbacks;
     }),

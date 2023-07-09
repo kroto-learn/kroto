@@ -21,7 +21,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { Loader } from "./Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
-import { TRPCError } from "@trpc/server";
+
 import Switch from "./Switch";
 import { getDateTimeDiffString } from "@/helpers/time";
 import { krotoCharge, paymentGatewayCharge } from "@/constants/values";
@@ -141,7 +141,7 @@ const CourseEditModal = () => {
   }, [tagInput]);
 
   useEffect(() => {
-    if (course && !courseInit && !(course instanceof TRPCError)) {
+    if (course && !courseInit) {
       setCourseInit(true);
       methods.setValue("id", course?.id);
       methods.setValue("title", course?.title);
@@ -167,14 +167,14 @@ const CourseEditModal = () => {
     }
   }, [course, courseInit, methods]);
 
-  if (course instanceof TRPCError || !course) return <></>;
+  if (!course) return <></>;
 
   return (
     <form
       onSubmit={methods.handleSubmit(async (values) => {
         await updateCourseMutation(values, {
           onSuccess: (courseUpdated) => {
-            if (courseUpdated && !(courseUpdated instanceof TRPCError)) {
+            if (courseUpdated) {
               void ctx.course.get.invalidate();
               void revalidate(
                 `/${courseUpdated?.creator?.creatorProfile ?? ""}`

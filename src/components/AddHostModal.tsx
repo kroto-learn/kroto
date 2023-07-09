@@ -4,8 +4,14 @@ import { type RouterOutputs, api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
 import { UserPlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import AnimatedSection from "./AnimatedSection";
-import { TRPCError } from "@trpc/server";
-import { type Dispatch, Fragment, type SetStateAction, useState } from "react";
+
+import {
+  type Dispatch,
+  Fragment,
+  type SetStateAction,
+  useState,
+  useEffect,
+} from "react";
 import { Loader } from "./Loader";
 import ImageWF from "@/components/ImageWF";
 
@@ -129,7 +135,7 @@ export default function AddHostModal({
                   </div>
                   <div>
                     <div className="flex flex-wrap gap-5 px-4 pb-4">
-                      {!(hosts instanceof TRPCError) &&
+                      {hosts ? (
                         hosts?.map((host) => (
                           <div
                             key={host?.id}
@@ -148,7 +154,10 @@ export default function AddHostModal({
                               {host?.user?.name ?? ""}
                             </p>
                           </div>
-                        ))}
+                        ))
+                      ) : (
+                        <></>
+                      )}
                     </div>
                   </div>
                 </Dialog.Panel>

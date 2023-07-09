@@ -21,7 +21,7 @@ export const courseChapterRouter = createTRPCRouter({
         },
       });
 
-      if (!chapter) return new TRPCError({ code: "NOT_FOUND" });
+      if (!chapter) throw new TRPCError({ code: "NOT_FOUND" });
 
       return { ...chapter, chapterProgress: chapter.chapterProgress[0] };
     }),
