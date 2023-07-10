@@ -115,6 +115,8 @@ const PromoCodeCard = ({
 
   const [active, setActive] = useState(false);
 
+  const { successToast } = useToast();
+
   useEffect(() => {
     if (pc) setActive(pc.active);
   }, [pc]);
@@ -130,7 +132,12 @@ const PromoCodeCard = ({
           </p>
           <div className="flex items-center gap-1 text-2xl font-bold tracking-widest text-neutral-100">
             {pc.code}{" "}
-            <button>
+            <button
+              onClick={() => {
+                void navigator.clipboard.writeText(pc.code);
+                successToast("Promo Code copied to clipboard!");
+              }}
+            >
               <DocumentDuplicateIcon className="w-6 text-pink-600" />
             </button>
           </div>
