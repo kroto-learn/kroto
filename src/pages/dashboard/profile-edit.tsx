@@ -65,7 +65,7 @@ const Index = () => {
   return (
     <Layout>
       <Head>
-        <title>Profile Edit</title>
+        <title>Profile Edit | Dashboard</title>
       </Head>
       <div className="flex w-full justify-center">
         <div className=" flex w-6/12 flex-col items-center gap-4 rounded-md bg-neutral-900 md:w-4/12 md:p-10 ">
@@ -156,7 +156,7 @@ const Index = () => {
               type="submit"
               className={`group mt-3 inline-flex items-center gap-1 rounded-xl bg-pink-600 px-3 py-1 text-center font-semibold text-white transition-all duration-300 hover:bg-pink-700 md:px-5 `}
             >
-              {updating ? <Loader white /> : <></>} Update
+              {updating ? <Loader white /> : <></>} Update Profile
             </button>
           </form>
         </div>
