@@ -89,6 +89,7 @@ export const askedQueryRouter = createTRPCRouter({
       const querys = await prisma.askedQuery.findMany({
         where: {
           creatorProfile: input.creatorProfile,
+          answer: null,
         },
         include: {
           user: true,

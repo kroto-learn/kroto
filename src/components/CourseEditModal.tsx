@@ -143,8 +143,8 @@ const CourseEditModal = () => {
   useEffect(() => {
     if (course && !courseInit) {
       setCourseInit(true);
-      methods.setValue("id", course?.id);
-      methods.setValue("title", course?.title);
+      methods.setValue("id", course?.id ?? "");
+      methods.setValue("title", course?.title ?? "");
       methods.setValue("thumbnail", course?.thumbnail ?? "");
       methods.setValue("description", course?.description ?? "");
       methods.setValue("price", course?.price.toString());
