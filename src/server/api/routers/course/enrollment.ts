@@ -24,6 +24,7 @@ export const enrollmentCourseRouter = createTRPCRouter({
 
       const course = await prisma.course.findUnique({
         where: { id: input.courseId },
+        include: { discount: true },
       });
 
       const user = await prisma.user.findUnique({
@@ -37,7 +38,20 @@ export const enrollmentCourseRouter = createTRPCRouter({
       if (course.creatorId === user.id)
         throw new TRPCError({ code: "BAD_REQUEST" });
 
-      if (course.price > 0) {
+      const isDiscount =
+        course?.permanentDiscount !== null ||
+        (course?.discount &&
+          course?.discount?.deadline?.getTime() > new Date().getTime());
+
+      const discount =
+        course?.discount &&
+        course?.discount?.deadline?.getTime() > new Date().getTime()
+          ? course?.discount?.price
+          : course?.permanentDiscount ?? 0;
+
+      const price = isDiscount ? discount : course?.price;
+
+      if (price > 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Not a free course",
@@ -88,7 +102,7 @@ export const enrollmentCourseRouter = createTRPCRouter({
     }),
 
   createBuyCourseOrder: protectedProcedure
-    .input(z.object({ courseId: z.string() }))
+    .input(z.object({ courseId: z.string(), promoCode: z.string().optional() }))
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { courseId } = input;
@@ -111,12 +125,31 @@ export const enrollmentCourseRouter = createTRPCRouter({
       if (course.creatorId === user.id)
         throw new TRPCError({ code: "BAD_REQUEST" });
 
-      let course_price = course.price;
-      if (course.discount?.price) {
-        course_price = course.discount.price;
-      } else {
-        course_price = course.permanentDiscount ?? course.price;
-      }
+      let promoDiscount = 0;
+
+      const pc = await prisma.promoCode.findFirst({
+        where: {
+          code: input.promoCode,
+          courseId: input.courseId,
+        },
+      });
+
+      if (pc && pc.active) promoDiscount = pc.discountPercent;
+
+      const isDiscount =
+        course?.permanentDiscount !== null ||
+        (course?.discount &&
+          course?.discount?.deadline?.getTime() > new Date().getTime());
+
+      const discount =
+        course?.discount &&
+        course?.discount?.deadline?.getTime() > new Date().getTime()
+          ? course?.discount?.price
+          : course?.permanentDiscount ?? 0;
+
+      const course_price = isDiscount
+        ? discount - (promoDiscount / 100) * discount
+        : course?.price - (promoDiscount / 100) * course?.price;
 
       const payment_capture = 1;
       const amount = course_price * 100;

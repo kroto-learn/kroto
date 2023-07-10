@@ -1,11 +1,13 @@
 import QueriesLayout, { QueriesNestedLayout } from ".";
 import React from "react";
+import AnimatedSection from "@/components/AnimatedSection";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Loader } from "@/components/Loader";
 import Image from "next/image";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 
@@ -14,7 +16,7 @@ const RepliedAnswer = () => {
 
   const { data: creator } = api.creator.getProfile.useQuery();
 
-  const { data: queries } = api.askedQuery.getAllReplied.useQuery({
+  const { data: queries, isLoading } = api.askedQuery.getAllReplied.useQuery({
     creatorProfile: creator?.creatorProfile ?? "",
   });
 
@@ -25,7 +27,7 @@ const RepliedAnswer = () => {
       </Head>
       <div className="flex w-full max-w-3xl flex-col items-center py-8">
         {queries && queries.length > 0 ? (
-          <div className="flex w-full flex-col gap-4">
+          <AnimatedSection delay={0.1} className="flex w-full flex-col gap-4">
             {queries.map((query) => {
               return query.answer ? (
                 <div key={query?.id ?? ""}>
@@ -70,7 +72,9 @@ const RepliedAnswer = () => {
                 <></>
               );
             })}
-          </div>
+          </AnimatedSection>
+        ) : isLoading ? (
+          <Loader size="lg" />
         ) : (
           <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
             <div className="aspect-square object-contain">
