@@ -268,6 +268,8 @@ export const enrollmentCourseRouter = createTRPCRouter({
           },
           data: {
             withdrawAmount: paymentDataOfCreator.withdrawAmount + course_price,
+            lifeTimeEarnings:
+              paymentDataOfCreator.lifeTimeEarnings + course_price,
           },
         });
       }

@@ -1,0 +1,51 @@
+import { z } from "zod";
+
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+
+export const exampleRouter = createTRPCRouter({
+  getPaymentDetails: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+    const paymentDetails = await prisma.payment.findFirst({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
+
+    return paymentDetails;
+  }),
+
+  getBankDetails: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+    const bankDetails = await prisma.bankDetails.findFirst({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
+
+    return bankDetails;
+  }),
+
+  updateBankDetails: protectedProcedure
+    .input(
+      z.object({
+        accountName: z.string(),
+        accountNumber: z.string(),
+        ifscCode: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const bankDetails = await prisma.bankDetails.update({
+        where: {
+          userId: ctx.session.user.id,
+        },
+        data: {
+          accountName: input.accountName,
+          accountNumber: input.accountNumber,
+          ifscCode: input.ifscCode,
+        },
+      });
+
+      return bankDetails;
+    }),
+});

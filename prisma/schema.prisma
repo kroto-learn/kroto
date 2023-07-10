@@ -93,11 +93,12 @@ model BankDetails {
 }
 
 model Payment {
-  id             String @id @default(cuid())
-  userId         String
-  withdrawAmount Int    @default(0)
-  staleAmount    Int    @default(0)
-  user           User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String @id @default(cuid())
+  userId           String
+  lifeTimeEarnings Int    @default(0)
+  withdrawAmount   Int    @default(0)
+  staleAmount      Int    @default(0)
+  user             User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
   @@index([userId])
