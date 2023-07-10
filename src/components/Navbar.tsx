@@ -24,13 +24,6 @@ export default function Navbar() {
             <KrotoLogo />
           </div>
           <div className="flex items-center gap-8">
-            <Link
-              className="font-bold transition-all duration-300 hover:text-neutral-400"
-              href="/courses"
-            >
-              Courses
-            </Link>
-
             {session.status === "authenticated" && !creatorLoading ? (
               <Menu as="div" className="relative inline-block text-left">
                 {({ open }) => (
