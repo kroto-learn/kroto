@@ -51,6 +51,11 @@ const server = z.object({
   YOUTUBE_API_KEY: z.string(),
 
   MIXPANEL_TOKEN: z.string(),
+
+
+  // Razorpay
+  RAZORPAY_KEY_ID: z.string(),
+  RAZORPAY_KEY_SECRET: z.string(),
 });
 
 /**
@@ -105,6 +110,11 @@ const processEnv = {
   YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
   
   MIXPANEL_TOKEN: process.env.MIXPANEL_TOKEN,
+
+
+  // Razorpay
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
 };
 
 // Don't touch the part below
