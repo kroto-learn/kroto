@@ -26,7 +26,7 @@ export default function CheckoutModal({
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const { data: session } = useSession();
-  const { errorToast, successToast } = useToast();
+  const { errorToast } = useToast();
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [applyPromoCodeModal, setApplyPromoCodeModal] = useState(false);
 
@@ -47,12 +47,12 @@ export default function CheckoutModal({
 
   const {
     mutateAsync: createCourseOrder,
-    isLoading: createCourseOrderLoading,
+    // isLoading: createCourseOrderLoading,
   } = api.enrollmentCourse.createBuyCourseOrder.useMutation();
 
   const {
     mutateAsync: verifyCoursePurchase,
-    isLoading: verifyCoursePurchaseLoading,
+    // isLoading: verifyCoursePurchaseLoading,
   } = api.enrollmentCourse.verifyCoursePurchase.useMutation();
 
   const handleEnrollCourse = async () => {
