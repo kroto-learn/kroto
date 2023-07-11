@@ -29,21 +29,30 @@ import { ConfigProvider, DatePicker, TimePicker, theme } from "antd";
 import dayjs from "dayjs";
 import { getDateTimeDiffString } from "@/helpers/time";
 
-export const settingsFormSchema = z.object({
-  price: z.string().nonempty("Please enter course price."),
-  permanentDiscount: z
-    .string()
-    .nonempty("Please enter course discounted price."),
-  discount: z
-    .object({
-      price: z.string().nonempty("Please enter discount price."),
-      deadline: z.date({ required_error: "Please enter discount deadline." }),
-    })
-    .optional(),
-  tags: z.array(z.object({ id: z.string(), title: z.string() })),
-  category: z.object({ id: z.string(), title: z.string() }).optional(),
-  id: z.string(),
-});
+export const settingsFormSchema = z
+  .object({
+    price: z.string().nonempty("Please enter course price."),
+    permanentDiscount: z
+      .string()
+      .nonempty("Please enter course discounted price."),
+    discount: z
+      .object({
+        price: z.string().nonempty("Please enter discount price."),
+        deadline: z.date({ required_error: "Please enter discount deadline." }),
+      })
+      .optional(),
+    tags: z.array(z.object({ id: z.string(), title: z.string() })),
+    category: z.object({ id: z.string(), title: z.string() }).optional(),
+    id: z.string(),
+  })
+  .refine((data) => {
+    return (
+      parseInt(data.price) > parseInt(data.permanentDiscount) &&
+      (!!data?.discount
+        ? parseInt(data.permanentDiscount) > parseInt(data?.discount?.price)
+        : true)
+    );
+  });
 
 function useZodForm<TSchema extends z.ZodType>(
   props: Omit<UseFormProps<TSchema["_input"]>, "resolver"> & {

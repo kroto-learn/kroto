@@ -34,29 +34,38 @@ import "@blocknote/core/style.css";
 const titleLimit = 100;
 const outcomeLimit = 100;
 
-export const createCourseFormSchema = z.object({
-  thumbnail: z.string().nonempty("Please upload a cover"),
-  title: z.string().max(titleLimit).nonempty("Please enter course title."),
-  description: z
-    .string()
-    .max(3000)
-    .nonempty("Please enter course description."),
-  price: z.string().nonempty("Please enter course price."),
-  permanentDiscount: z
-    .string()
-    .nonempty("Please enter course discounted price."),
-  discount: z
-    .object({
-      price: z.string().nonempty("Please enter discount price."),
-      deadline: z.date({ required_error: "Please enter discount deadline." }),
-    })
-    .optional(),
-  tags: z.array(z.object({ id: z.string(), title: z.string() })),
-  outcomes: z.array(
-    z.string().max(outcomeLimit).nonempty("Please enter course outcome.")
-  ),
-  startsAt: z.date().optional(),
-});
+export const createCourseFormSchema = z
+  .object({
+    thumbnail: z.string().nonempty("Please upload a cover"),
+    title: z.string().max(titleLimit).nonempty("Please enter course title."),
+    description: z
+      .string()
+      .max(3000)
+      .nonempty("Please enter course description."),
+    price: z.string().nonempty("Please enter course price."),
+    permanentDiscount: z
+      .string()
+      .nonempty("Please enter course discounted price."),
+    discount: z
+      .object({
+        price: z.string().nonempty("Please enter discount price."),
+        deadline: z.date({ required_error: "Please enter discount deadline." }),
+      })
+      .optional(),
+    tags: z.array(z.object({ id: z.string(), title: z.string() })),
+    outcomes: z.array(
+      z.string().max(outcomeLimit).nonempty("Please enter course outcome.")
+    ),
+    startsAt: z.date().optional(),
+  })
+  .refine((data) => {
+    return (
+      parseInt(data.price) > parseInt(data.permanentDiscount) &&
+      (!!data?.discount
+        ? parseInt(data.permanentDiscount) > parseInt(data?.discount?.price)
+        : true)
+    );
+  });
 
 function useZodForm<TSchema extends z.ZodType>(
   props: Omit<UseFormProps<TSchema["_input"]>, "resolver"> & {
