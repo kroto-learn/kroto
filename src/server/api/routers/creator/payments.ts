@@ -35,11 +35,17 @@ export const exampleRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const bankDetails = await prisma.bankDetails.update({
+      const bankDetails = await prisma.bankDetails.upsert({
         where: {
           userId: ctx.session.user.id,
         },
-        data: {
+        create: {
+          userId: ctx.session.user.id,
+          accountName: input.accountName,
+          accountNumber: input.accountNumber,
+          ifscCode: input.ifscCode,
+        },
+        update: {
           accountName: input.accountName,
           accountNumber: input.accountNumber,
           ifscCode: input.ifscCode,
