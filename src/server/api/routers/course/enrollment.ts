@@ -191,14 +191,15 @@ export const enrollmentCourseRouter = createTRPCRouter({
 
       const generated_signature = crypto
         .createHmac("sha256", env.RAZORPAY_KEY_SECRET)
-        .update(`${razorpay_order_id}|${env.RAZORPAY_KEY_SECRET}`);
+        .update(razorpay_order_id + "|" + razorpay_payment_id)
+        .digest("hex");
 
-      // if (generated_signature.digest("hex") !== razorpay_signature) {
-      //   throw new TRPCError({
-      //     code: "BAD_REQUEST",
-      //     message: "Invalid signature",
-      //   });
-      // }
+      if (generated_signature !== razorpay_signature) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid signature",
+        });
+      }
 
       const course = await prisma.course.findUnique({
         where: { id: courseId },
