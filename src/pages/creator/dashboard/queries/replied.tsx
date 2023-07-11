@@ -5,11 +5,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { api } from "@/utils/api";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { Loader } from "@/components/Loader";
 import Image from "next/image";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
+import MarkdownView from "@/components/MarkdownView";
 
 const RepliedAnswer = () => {
   const { data: session } = useSession();
@@ -44,9 +43,7 @@ const RepliedAnswer = () => {
                       </div>
                       <div className="w-full break-all pl-3">
                         <p>{query.user.name}</p>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {query.question ?? ""}
-                        </ReactMarkdown>
+                        <MarkdownView>{query.question ?? ""}</MarkdownView>
                       </div>
                     </div>
                     <div className="flex w-full text-ellipsis pt-2">
@@ -61,9 +58,7 @@ const RepliedAnswer = () => {
                       </div>
                       <div className="w-full break-all pl-3">
                         <p>{session?.user.name ?? ""}</p>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {query.answer ?? ""}
-                        </ReactMarkdown>
+                        <MarkdownView>{query.answer ?? ""}</MarkdownView>
                       </div>
                     </div>
                   </div>

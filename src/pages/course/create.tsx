@@ -2,14 +2,10 @@ import Layout from "@/components/layouts/main";
 import { generateRandomGradientImages } from "@/helpers/randomGradientImages";
 import useToast from "@/hooks/useToast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type MDEditorProps } from "@uiw/react-md-editor";
-import dynamic from "next/dynamic";
 import Head from "next/head";
 import { type ChangeEvent, useEffect, useState } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { z } from "zod";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
 import { Loader } from "@/components/Loader";
 import dayjs from "dayjs";
 
@@ -31,10 +27,9 @@ import { MixPannelClient } from "@/analytics/mixpanel";
 import CoursePricingInfoModal from "@/components/CoursePricingInfoModal";
 import Switch from "@/components/Switch";
 import { krotoCharge, paymentGatewayCharge } from "@/constants/values";
-
-const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-});
+import { type BlockNoteEditor } from "@blocknote/core";
+import { BlockNoteView, useBlockNote } from "@blocknote/react";
+import "@blocknote/core/style.css";
 
 const titleLimit = 100;
 const outcomeLimit = 100;
@@ -126,6 +121,15 @@ const Index = () => {
   const price = isDiscount
     ? parseInt(discount)
     : parseInt(methods.watch()?.price) ?? 0;
+
+  const editor: BlockNoteEditor | null = useBlockNote({
+    onEditorContentChange: (editor) => {
+      void editor.blocksToMarkdown(editor.topLevelBlocks).then((md) => {
+        methods.setValue("description", md);
+      });
+    },
+    theme: "dark",
+  });
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -383,13 +387,14 @@ const Index = () => {
               Description
             </label>
             <div data-color-mode="dark">
-              <MDEditor
+              {/* <MDEditor
                 height={350}
                 value={methods.watch()?.description}
                 onChange={(mdtext) => {
                   methods.setValue("description", mdtext ?? "");
                 }}
-              />
+              /> */}
+              <BlockNoteView editor={editor} />
             </div>
             {methods.formState.errors.description?.message && (
               <p className="text-red-700">

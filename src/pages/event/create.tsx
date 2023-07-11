@@ -11,10 +11,6 @@ import { api } from "@/utils/api";
 
 import { useRouter } from "next/router";
 import { Loader } from "@/components/Loader";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-import { type MDEditorProps } from "@uiw/react-md-editor";
-import dynamic from "next/dynamic";
 import Layout from "@/components/layouts/main";
 import useToast from "@/hooks/useToast";
 import { TimePicker, DatePicker, ConfigProvider, theme } from "antd";
@@ -22,10 +18,9 @@ import dayjs from "dayjs";
 import { PhotoIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
-
-const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-});
+import { type BlockNoteEditor } from "@blocknote/core";
+import { BlockNoteView, useBlockNote } from "@blocknote/react";
+import "@blocknote/core/style.css";
 
 const titleLimit = 100;
 
@@ -105,6 +100,15 @@ const CreateEvent = () => {
     api.event.create.useMutation();
 
   const revalidate = useRevalidateSSG();
+
+  const editor: BlockNoteEditor | null = useBlockNote({
+    onEditorContentChange: (editor) => {
+      void editor.blocksToMarkdown(editor.topLevelBlocks).then((md) => {
+        methods.setValue("description", md);
+      });
+    },
+    theme: "dark",
+  });
 
   useEffect(() => {
     methods.setValue("thumbnail", generateRandomGradientImages());
@@ -259,13 +263,14 @@ const CreateEvent = () => {
             Description
           </label>
           <div data-color-mode="dark">
-            <MDEditor
+            {/* <MDEditor
               height={350}
               value={methods.watch()?.description}
               onChange={(mdtext) => {
                 methods.setValue("description", mdtext ?? "");
               }}
-            />
+            /> */}
+            <BlockNoteView editor={editor} />
           </div>
           {methods.formState.errors.description?.message && (
             <p className="text-red-700">

@@ -4,9 +4,8 @@ import Layout from "@/components/layouts/main";
 import { SenderImage, SenderName } from "@/components/CreatorDetails";
 import { api } from "@/utils/api";
 import Head from "next/head";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import ImageWF from "@/components/ImageWF";
+import MarkdownView from "@/components/MarkdownView";
 
 const Index = () => {
   const { data: queries, isLoading: queriesLoading } =
@@ -48,9 +47,7 @@ const Index = () => {
                       </div>
                       <div className="w-full pl-3">
                         <p>{query.user.name}</p>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {query.question ?? ""}
-                        </ReactMarkdown>
+                        <MarkdownView>{query.question ?? ""}</MarkdownView>
                       </div>
                       {query.answer ? (
                         <div className="text-sm">Replied</div>
@@ -65,9 +62,7 @@ const Index = () => {
                       <div className="w-full break-all pl-3">
                         <SenderName query={query} />
                         {query.answer ? (
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {query.answer ?? ""}
-                          </ReactMarkdown>
+                          <MarkdownView>{query.answer ?? ""}</MarkdownView>
                         ) : (
                           <p className="text-yellow-500">wait for response</p>
                         )}

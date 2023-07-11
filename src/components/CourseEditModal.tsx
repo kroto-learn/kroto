@@ -8,10 +8,6 @@ import React, { useEffect, useState, memo, type ChangeEvent } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { z } from "zod";
 import dayjs from "dayjs";
-import dynamic from "next/dynamic";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-import { type MDEditorProps } from "@uiw/react-md-editor";
 import {
   PhotoIcon,
   CheckIcon,
@@ -27,9 +23,9 @@ import { getDateTimeDiffString } from "@/helpers/time";
 import { krotoCharge, paymentGatewayCharge } from "@/constants/values";
 import CoursePricingInfoModal from "./CoursePricingInfoModal";
 
-const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-});
+import { type BlockNoteEditor } from "@blocknote/core";
+import { BlockNoteView, useBlockNote } from "@blocknote/react";
+import "@blocknote/core/style.css";
 
 const titleLimit = 100;
 const outcomeLimit = 100;
@@ -98,6 +94,15 @@ const CourseEditModal = () => {
     },
   });
 
+  const editor: BlockNoteEditor | null = useBlockNote({
+    onEditorContentChange: (editor) => {
+      void editor.blocksToMarkdown(editor.topLevelBlocks).then((md) => {
+        methods.setValue("description", md);
+      });
+    },
+    theme: "dark",
+  });
+
   const { darkAlgorithm } = theme;
 
   const [tagInput, setTagInput] = useState("");
@@ -141,12 +146,17 @@ const CourseEditModal = () => {
   }, [tagInput]);
 
   useEffect(() => {
-    if (course && !courseInit) {
+    if (editor && course && !courseInit) {
       setCourseInit(true);
       methods.setValue("id", course?.id ?? "");
       methods.setValue("title", course?.title ?? "");
       methods.setValue("thumbnail", course?.thumbnail ?? "");
       methods.setValue("description", course?.description ?? "");
+      const loadInitMdText = async () => {
+        const blocks = await editor.markdownToBlocks(course?.description ?? "");
+        if (blocks) editor.replaceBlocks(editor.topLevelBlocks, blocks);
+      };
+      void loadInitMdText();
       methods.setValue("price", course?.price.toString());
       methods.setValue(
         "permanentDiscount",
@@ -165,7 +175,7 @@ const CourseEditModal = () => {
       );
       methods.setValue("startsAt", course?.startsAt ?? undefined);
     }
-  }, [course, courseInit, methods]);
+  }, [course, courseInit, methods, editor]);
 
   if (!course) return <></>;
 
@@ -400,13 +410,14 @@ const CourseEditModal = () => {
           Description
         </label>
         <div data-color-mode="dark">
-          <MDEditor
+          {/* <MDEditor
             height={350}
             value={methods.watch()?.description}
             onChange={(mdtext) => {
               methods.setValue("description", mdtext ?? "");
             }}
-          />
+          /> */}
+          <BlockNoteView editor={editor} />
         </div>
         {methods.formState.errors.description?.message && (
           <p className="text-red-700">

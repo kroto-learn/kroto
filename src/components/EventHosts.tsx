@@ -42,7 +42,7 @@ const Hosts = ({ setIsHostModalOpen }: Props) => {
 
   return (
     <>
-      <AnimatedSection delay={0.3} className="w-full">
+      <AnimatedSection delay={0.3} className="w-full max-w-3xl">
         <div className="mb-2 mt-5 flex w-full items-center justify-between">
           <h3 className="text-2xl font-medium text-neutral-200">Hosts</h3>
           {!isEventOver ? (

@@ -7,8 +7,6 @@ import { faVideo, faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { type GetStaticPropsContext } from "next";
 import { generateSSGHelper } from "@/server/helpers/ssgHelper";
 import { type ParsedUrlQuery } from "querystring";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { signIn, useSession } from "next-auth/react";
 import useToast from "@/hooks/useToast";
 import { useState } from "react";
@@ -23,6 +21,7 @@ import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Layout from "@/components/layouts/main";
 import AnimatedSection from "@/components/AnimatedSection";
+import MarkdownView from "@/components/MarkdownView";
 
 type Props = {
   eventId: string;
@@ -287,9 +286,7 @@ export default function EventPage({ eventId }: Props) {
                 <h2 className="font-medium ">Description</h2>
               </div>
               <div className="prose prose-invert prose-pink px-4 pb-4">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {event?.description ?? ""}
-                </ReactMarkdown>
+                <MarkdownView>{event?.description ?? ""}</MarkdownView>
               </div>
             </AnimatedSection>
             <AnimatedSection

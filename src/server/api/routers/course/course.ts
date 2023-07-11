@@ -825,8 +825,4 @@ export const courseRouter = createTRPCRouter({
       return courseDeleted;
     }),
 
-  // FIXME: remove me
-  testingError: publicProcedure.query(() => {
-    throw new TRPCError({ code: "BAD_REQUEST" });
-  }),
 });

@@ -2,17 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { memo } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
-import dynamic from "next/dynamic";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-import { type MDEditorProps } from "@uiw/react-md-editor";
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import { api } from "@/utils/api";
 import { Loader } from "./Loader";
-
-const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-});
+import { type BlockNoteEditor } from "@blocknote/core";
+import { BlockNoteView, useBlockNote } from "@blocknote/react";
+import "@blocknote/core/style.css";
 
 const subjectLimit = 100;
 
@@ -37,6 +32,15 @@ function useZodForm<TSchema extends z.ZodType>(
 const SendUpdateModal = ({ eventId }: { eventId: string }) => {
   const methods = useZodForm({
     schema: sendUpdateFormSchema,
+  });
+
+  const editor: BlockNoteEditor | null = useBlockNote({
+    onEditorContentChange: (editor) => {
+      void editor.blocksToMarkdown(editor.topLevelBlocks).then((md) => {
+        methods.setValue("body", md);
+      });
+    },
+    theme: "dark",
   });
 
   const { mutateAsync: sendUpdate, isLoading: sendingUpdate } =
@@ -74,13 +78,14 @@ const SendUpdateModal = ({ eventId }: { eventId: string }) => {
           Body
         </label>
         <div data-color-mode="dark">
-          <MDEditor
+          {/* <MDEditor
             height={200}
             value={methods.watch()?.body}
             onChange={(mdtext) => {
               if (mdtext) methods.setValue("body", mdtext);
             }}
-          />
+          /> */}
+          <BlockNoteView editor={editor} />
         </div>
         {methods.formState.errors.body?.message && (
           <p className="text-red-700">

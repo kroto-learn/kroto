@@ -5,13 +5,6 @@ import Head from "next/head";
 import AnimatedSection from "@/components/AnimatedSection";
 import { api } from "@/utils/api";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/20/solid";
-import { Loader } from "@/components/Loader";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import dynamic from "next/dynamic";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-import { type MDEditorProps } from "@uiw/react-md-editor";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
@@ -21,10 +14,11 @@ import Link from "next/link";
 import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 import { type AskedQuery, type User } from "@prisma/client";
 import { usePathname } from "next/navigation";
-
-const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-});
+import MarkdownView from "@/components/MarkdownView";
+import { Loader } from "@/components/Loader";
+import { type BlockNoteEditor } from "@blocknote/core";
+import { BlockNoteView, useBlockNote } from "@blocknote/react";
+import "@blocknote/core/style.css";
 
 const Index = () => {
   const { data: creator } = api.creator.getProfile.useQuery();
@@ -64,9 +58,7 @@ const Index = () => {
                       </div>
                       <div className="w-full break-all pl-3">
                         <p>{query.user.name}</p>
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {query.question ?? ""}
-                        </ReactMarkdown>
+                        <MarkdownView>{query.question ?? ""}</MarkdownView>
                       </div>
                     </div>
                     {query.answer ? (
@@ -164,6 +156,15 @@ export const CreateReply = ({
   // const { mutateAsync: createEmail, isLoading: creatingEmail } =
   //   api.askedQuery.create.useMutation();
 
+  const editor: BlockNoteEditor | null = useBlockNote({
+    onEditorContentChange: (editor) => {
+      void editor.blocksToMarkdown(editor.topLevelBlocks).then((md) => {
+        methods.setValue("answer", md);
+      });
+    },
+    theme: "dark",
+  });
+
   const { mutateAsync: createAnswer, isLoading: createAnswerLoading } =
     api.askedQuery.answerQuery.useMutation();
 
@@ -201,14 +202,12 @@ export const CreateReply = ({
         </div>
         <div className="w-full pl-3">
           <p className="text-sm font-bold">{ReplyModal?.user.name}</p>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {ReplyModal?.question ?? ""}
-          </ReactMarkdown>
+          <MarkdownView>{ReplyModal?.question ?? ""}</MarkdownView>
         </div>
       </div>
       <div data-color-mode="dark" className="flex flex-col gap-3">
         <div>
-          <MDEditor
+          {/* <MDEditor
             height={300}
             value={methods.watch()?.answer}
             onChange={(mdtext) => {
@@ -217,7 +216,8 @@ export const CreateReply = ({
             }}
             className="mt-6 w-full rounded-xl border-0 bg-neutral-700 p-4 outline-0 placeholder:text-neutral-400"
             placeholder="Write me a testimonial..."
-          />
+          /> */}
+          <BlockNoteView editor={editor} />
         </div>
         {methods.formState.errors.answer?.message && (
           <p className="text-red-700">

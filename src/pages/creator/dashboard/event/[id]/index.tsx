@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, type SetStateAction } from "react";
+import { Fragment, type SetStateAction } from "react";
 import React, { type ReactNode, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
@@ -77,18 +77,6 @@ const EventOverview = () => {
 
   const { successToast } = useToast();
 
-  const {
-    data: testError,
-    isError: isTestError,
-    isLoading: isTestLoading,
-  } = api.course.testingError.useQuery();
-
-  useEffect(() => {
-    console.log("data", testError);
-    console.log("isError", isTestError);
-    console.log("isLoading", isTestLoading);
-  }, [testError, isTestError]);
-
   if (!event) return <>Event not found!</>;
 
   const {
@@ -134,14 +122,13 @@ const EventOverview = () => {
               <div
                 className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
               >
-                {/* <ImageWF
+                <ImageWF
                   src={(event?.thumbnail as string) ?? ""}
                   alt={event?.title ?? ""}
                   fill
                   style={{ objectFit: "cover" }}
                   className="rounded-xl"
-                /> */}
-                {isTestError ? "true" : "false"}
+                />
               </div>
             </div>
 

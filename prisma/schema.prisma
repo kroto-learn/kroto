@@ -274,6 +274,7 @@ model Course {
   ytChannelName     String?
   ytChannelImage    String?
   price             Int              @default(0)
+  priceCurrency     Currency         @default(INR)
   permanentDiscount Int?
   creator           User?            @relation(fields: [creatorId], references: [id])
   createdAt         DateTime         @default(now())
@@ -291,9 +292,15 @@ model Course {
   discount          Discount?
   startsAt          DateTime?
   PromoCode         PromoCode?
+  CourseSection     CourseSection[]
 
   @@index([categoryId])
   @@index([creatorId])
+}
+
+enum Currency {
+  INR
+  USD
 }
 
 model Chapter {
@@ -303,6 +310,7 @@ model Chapter {
   thumbnail       String?
   text            String?
   videoUrl        String?
+  sandboxUrl      String?
   description     String?           @db.Text
   ytId            String?
   duration        Int?
@@ -315,14 +323,28 @@ model Chapter {
   chapterProgress ChapterProgress[]
   userId          String?
   learnTracks     LearnTrack[]
+  CourseSection   CourseSection?    @relation(fields: [courseSectionId], references: [id])
+  courseSectionId String?
 
   @@index([courseId])
+  @@index([courseSectionId])
 }
 
 enum ChapterType {
   YTVIDEO
   VIDEO
   TEXT
+  SANDBOX
+}
+
+model CourseSection {
+  id       String    @id @default(cuid())
+  title    String
+  chapters Chapter[]
+  courseId String
+  course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
 }
 
 model Discount {

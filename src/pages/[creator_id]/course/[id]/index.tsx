@@ -29,12 +29,11 @@ import CheckoutModal from "@/components/CheckoutModal";
 import { type Discount, type Course, type User } from "@prisma/client";
 import { MixPannelClient } from "@/analytics/mixpanel";
 import ImageWF from "@/components/ImageWF";
-import { ReactMarkdown } from "react-markdown/lib/react-markdown";
-import remarkGfm from "remark-gfm";
 import { getDateTimeDiffString } from "@/helpers/time";
 import CreatorLayout from "@/components/layouts/creator";
 import { motion } from "framer-motion";
 import { Disclosure } from "@headlessui/react";
+import MarkdownView from "@/components/MarkdownView";
 
 type Props = {
   courseId: string;
@@ -636,9 +635,7 @@ const Index = ({ courseId, creatorProfile }: Props) => {
                     </h2>
                   </div>
                   <div className="prose prose-invert prose-pink w-full min-w-full px-4 pb-4">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {course?.description ?? ""}
-                    </ReactMarkdown>
+                    <MarkdownView>{course?.description ?? ""}</MarkdownView>
                   </div>
                 </motion.div>
               ) : (

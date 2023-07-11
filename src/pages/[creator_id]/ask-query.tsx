@@ -6,10 +6,6 @@ import {
   PaperAirplaneIcon,
 } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import dynamic from "next/dynamic";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-import { type MDEditorProps } from "@uiw/react-md-editor";
 import { useSession } from "next-auth/react";
 import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
@@ -17,10 +13,9 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { object, string, type z } from "zod";
-
-const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-});
+import { type BlockNoteEditor } from "@blocknote/core";
+import { BlockNoteView, useBlockNote } from "@blocknote/react";
+import "@blocknote/core/style.css";
 
 const contentLimit = 500;
 
@@ -66,6 +61,15 @@ const Index = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const { successToast, errorToast, warningToast } = useToast();
+
+  const editor: BlockNoteEditor | null = useBlockNote({
+    onEditorContentChange: (editor) => {
+      void editor.blocksToMarkdown(editor.topLevelBlocks).then((md) => {
+        methods.setValue("question", md);
+      });
+    },
+    theme: "dark",
+  });
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
@@ -130,7 +134,7 @@ const Index = () => {
             <span className="font-medium">{creator?.name ?? ""}</span>
           </div>
           <div data-color-mode="dark" className="w-full">
-            <MDEditor
+            {/* <MDEditor
               height={300}
               value={methods.watch()?.question}
               onChange={(mdtext) => {
@@ -139,7 +143,8 @@ const Index = () => {
               }}
               className="mt-6 w-full rounded-xl border-0 bg-neutral-700 p-4 outline-0 placeholder:text-neutral-400"
               placeholder="Write me a Query..."
-            />
+            /> */}
+            <BlockNoteView editor={editor} />
           </div>
           {
             <p className="w-full text-end text-neutral-600">

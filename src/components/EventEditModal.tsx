@@ -8,18 +8,13 @@ import React, { useEffect, useState, memo, type ChangeEvent } from "react";
 import { type UseFormProps, useForm } from "react-hook-form";
 import { date, object, string, type z } from "zod";
 import dayjs from "dayjs";
-import dynamic from "next/dynamic";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-import { type MDEditorProps } from "@uiw/react-md-editor";
 import { PhotoIcon, LinkIcon } from "@heroicons/react/20/solid";
 import { Loader } from "./Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import { MapPinIcon } from "@heroicons/react/24/outline";
-
-const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
-  ssr: false,
-});
+import { type BlockNoteEditor } from "@blocknote/core";
+import { BlockNoteView, useBlockNote } from "@blocknote/react";
+import "@blocknote/core/style.css";
 
 const titleLimit = 100;
 
@@ -81,6 +76,15 @@ const EventEditModal = () => {
   const ctx = api.useContext();
   const [eventInit, setEventInit] = useState(false);
 
+  const editor: BlockNoteEditor | null = useBlockNote({
+    onEditorContentChange: (editor) => {
+      void editor.blocksToMarkdown(editor.topLevelBlocks).then((md) => {
+        methods.setValue("description", md);
+      });
+    },
+    theme: "dark",
+  });
+
   const router = useRouter();
   const { id } = router.query as { id: string };
 
@@ -115,12 +119,17 @@ const EventEditModal = () => {
   );
 
   useEffect(() => {
-    if (event && !eventInit) {
+    if (editor && event && !eventInit) {
       setEventInit(true);
       methods.setValue("title", event?.title ?? "");
       methods.setValue("thumbnail", event?.thumbnail ?? "");
       methods.setValue("eventType", event?.eventType ?? "");
       methods.setValue("description", event?.description ?? "");
+      const loadInitMdText = async () => {
+        const blocks = await editor.markdownToBlocks(event?.description ?? "");
+        if (blocks) editor.replaceBlocks(editor.topLevelBlocks, blocks);
+      };
+      void loadInitMdText();
       methods.setValue("datetime", event?.datetime ?? new Date());
       methods.setValue("endTime", event?.endTime ?? new Date());
 
@@ -140,7 +149,7 @@ const EventEditModal = () => {
         })
       );
     }
-  }, [event, eventInit, methods]);
+  }, [event, eventInit, methods, editor]);
 
   const revalidate = useRevalidateSSG();
 
@@ -267,13 +276,14 @@ const EventEditModal = () => {
           Description
         </label>
         <div data-color-mode="dark">
-          <MDEditor
+          {/* <MDEditor
             height={200}
             value={methods.watch()?.description}
             onChange={(mdtext) => {
               if (mdtext) methods.setValue("description", mdtext);
             }}
-          />
+          /> */}
+          <BlockNoteView editor={editor} />
         </div>
         {methods.formState.errors.description?.message && (
           <p className="text-red-700">
