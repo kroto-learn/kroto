@@ -86,18 +86,6 @@ export const enrollmentCourseRouter = createTRPCRouter({
         });
       }
 
-      // TODO: send course enrollment confirmation
-      // try {
-      //   await sendRegistrationConfirmation(
-      //     course,
-      //     creator,
-      //     user.email,
-      //     user.name
-      //   );
-      // } catch (e) {
-      //   console.log(e);
-      // }
-
       return enrollment;
     }),
 
@@ -161,8 +149,6 @@ export const enrollmentCourseRouter = createTRPCRouter({
         receipt: shortid.generate(),
         payment_capture,
         notes: {
-          // These notes will be added to your transaction. So you can search it within their dashboard.
-          // Also, it's included in webhooks as well. So you can automate it.
           paymentFor: "course_purchase",
           userId: user.id,
           courseId: course.id,
@@ -205,23 +191,15 @@ export const enrollmentCourseRouter = createTRPCRouter({
 
       const generated_signature = crypto
         .createHmac("sha256", env.RAZORPAY_KEY_SECRET)
-        .update(`${razorpay_order_id}|${env.RAZORPAY_KEY_SECRET}`);
+        .update(razorpay_order_id + "|" + razorpay_payment_id)
+        .digest("hex");
 
-      // if (generated_signature.digest("hex") !== razorpay_signature) {
-      //   throw new TRPCError({
-      //     code: "BAD_REQUEST",
-      //     message: "Invalid signature",
-      //   });
-      // }
-
-      const purchase = await prisma.purchase.create({
-        data: {
-          razorpay_order_id,
-          razorpay_payment_id,
-          razorpay_signature,
-          userId: ctx.session.user.id,
-        },
-      });
+      if (generated_signature !== razorpay_signature) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid signature",
+        });
+      }
 
       const course = await prisma.course.findUnique({
         where: { id: courseId },
@@ -230,7 +208,6 @@ export const enrollmentCourseRouter = createTRPCRouter({
           creator: true,
         },
       });
-
       const user = await prisma.user.findUnique({
         where: {
           id: ctx.session.user.id,
@@ -301,6 +278,17 @@ export const enrollmentCourseRouter = createTRPCRouter({
           },
         });
       }
+
+      await prisma.purchase.create({
+        data: {
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature,
+          creatorId: course.creatorId,
+          amount: course_price,
+          userId: ctx.session.user.id,
+        },
+      });
     }),
 
   isEnrolled: publicProcedure

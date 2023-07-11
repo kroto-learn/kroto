@@ -14,6 +14,20 @@ export const exampleRouter = createTRPCRouter({
     return paymentDetails;
   }),
 
+  getPurchases: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+    const purchases = await prisma.purchase.findMany({
+      where: {
+        creatorId: ctx.session.user.id,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return purchases;
+  }),
+
   getBankDetails: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
     const bankDetails = await prisma.bankDetails.findFirst({
