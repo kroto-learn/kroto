@@ -1,5 +1,5 @@
 import { createTRPCRouter } from "@/server/api/trpc";
-import { exampleRouter } from "@/server/api/routers/example";
+import { paymetnRouter } from "./routers/creator/payments";
 import { creatorRouter } from "@/server/api/routers/creator/creator";
 import { eventRouter } from "./routers/event/event";
 import { emailSenderRouter } from "./email/emailSender";
@@ -28,7 +28,7 @@ import { promoCodeCourseRouter } from "./routers/course/promoCode";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  example: exampleRouter,
+  example: paymetnRouter,
   creator: creatorRouter,
 
   course: courseRouter,

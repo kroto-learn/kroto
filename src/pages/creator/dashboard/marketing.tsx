@@ -265,7 +265,7 @@ export const CreateEmail = ({
       className="mx-auto my-4 flex w-full max-w-2xl flex-col gap-8"
     >
       <div className="flex flex-col gap-3">
-        <label htmlFor="title" className="text-lg  text-neutral-200">
+        <label htmlFor="title" className="text-lg text-neutral-200">
           Subject
         </label>
         <input

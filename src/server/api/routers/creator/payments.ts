@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { AccountType } from "@prisma/client";
 
-export const exampleRouter = createTRPCRouter({
+export const paymetnRouter = createTRPCRouter({
   getPaymentDetails: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
     const paymentDetails = await prisma.payment.findFirst({

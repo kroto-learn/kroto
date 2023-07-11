@@ -51,11 +51,11 @@ model User {
   emailVerified         DateTime?
   image                 String?
   ogImage               String?
-  mobileNumber          String?
   creatorProfile        String?                 @unique
   isCreator             Boolean                 @default(false)
   bio                   String?                 @db.Text
   topmateUrl            String?
+  mobileNumber          String?
   payment               Payment?
   purchases             Purchase[]
   bankDetails           BankDetails?
@@ -86,27 +86,24 @@ enum AccountType {
 }
 
 model BankDetails {
-  id            String      @id @default(cuid())
-  userId        String
-  accountType   AccountType @default(SAVINGS)
+  id            String @id @default(cuid())
+  userId        String @unique
   accountName   String
   accountNumber String
   ifscCode      String
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId])
   @@index([userId])
 }
 
 model Payment {
   id               String @id @default(cuid())
-  userId           String
-  lifeTimeEarnings Int    @default(0)
+  userId           String @unique
   withdrawAmount   Int    @default(0)
   staleAmount      Int    @default(0)
+  lifeTimeEarnings Int    @default(0)
   user             User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId])
   @@index([userId])
 }
 
@@ -114,8 +111,8 @@ model Purchase {
   id                  String   @id @default(cuid())
   creatorId           String   @unique
   userId              String
-  amount              Int      @default(0)
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount              Int      @default(0)
   razorpay_payment_id String   @unique
   razorpay_order_id   String
   razorpay_signature  String
@@ -125,11 +122,11 @@ model Purchase {
 }
 
 model Event {
-  id               String         @id @default(cuid())
+  id               String           @id @default(cuid())
   title            String
   thumbnail        String?
   ogImage          String?
-  description      String?        @db.Text
+  description      String?          @db.Text
   eventUrl         String?
   eventType        String?
   eventLocation    String?
@@ -138,14 +135,13 @@ model Event {
   duration         Int?
   creatorId        String
   audienceMemberId String?
-  creator          User           @relation(fields: [creatorId], references: [id])
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  creator          User             @relation(fields: [creatorId], references: [id])
   registrations    Registration[]
   hosts            Host[]
   feedbacks        Feedback[]
-
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  audienceMember AudienceMember[]
+  audienceMember   AudienceMember[]
 
   @@index([creatorId])
 }
@@ -154,9 +150,9 @@ model Host {
   id       String  @id @default(cuid())
   eventId  String
   userId   String
+  courseId String?
   user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   Event    Event   @relation(fields: [eventId], references: [id])
-  courseId String?
 
   @@unique([eventId, userId])
   @@index([eventId])
@@ -174,8 +170,8 @@ model AudienceMember {
   emailClickRate     Int?
   eventsParticipated Int?
   eventId            String?
-  courseId           String?
   creatorId          String
+  courseId           String?
   creator            User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   course             Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   event              Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -199,10 +195,10 @@ model Registration {
   id        String   @id @default(cuid())
   eventId   String
   userId    String
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   courseId  String?
   createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([eventId, userId])
   @@index([eventId])
@@ -259,10 +255,10 @@ model Testimonial {
 
 model AskedQuery {
   id             String  @id @default(cuid())
-  question       String
-  answer         String?
   creatorProfile String
   userId         String
+  answer         String?
+  question       String
   user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -275,27 +271,27 @@ model Course {
   ogImage           String?
   description       String?          @db.Text
   creatorId         String?
-  ytId              String?
-  ytChannelId       String?
-  ytChannelName     String?
-  ytChannelImage    String?
-  price             Int              @default(0)
-  permanentDiscount Int?
-  creator           User?            @relation(fields: [creatorId], references: [id])
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
+  ytId              String?
+  price             Int              @default(0)
+  ytChannelId       String?
+  ytChannelImage    String?
+  ytChannelName     String?
+  categoryId        String?
+  permanentDiscount Int?
+  outcomes          Json?
+  startsAt          DateTime?
+  creator           User?            @relation(fields: [creatorId], references: [id])
   enrollments       Enrollment[]
   courseProgress    CourseProgress[]
   chapters          Chapter[]
-  outcomes          Json?
   feedbacks         Feedback[]
   audienceMember    AudienceMember[]
   tags              Tag[]
   category          Category?        @relation(fields: [categoryId], references: [id])
-  categoryId        String?
   learnTracks       LearnTrack[]
   discount          Discount?
-  startsAt          DateTime?
   PromoCode         PromoCode?
 
   @@index([categoryId])
@@ -311,41 +307,35 @@ model Chapter {
   videoUrl        String?
   description     String?           @db.Text
   ytId            String?
-  duration        Int?
   type            ChapterType       @default(YTVIDEO)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   courseId        String
+  duration        Int?
+  userId          String?
   course          Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseProgress  CourseProgress[]
   chapterProgress ChapterProgress[]
-  userId          String?
   learnTracks     LearnTrack[]
 
   @@index([courseId])
-}
-
-enum ChapterType {
-  YTVIDEO
-  VIDEO
-  TEXT
 }
 
 model Discount {
   id       String   @id @default(cuid())
   price    Int      @default(0)
   deadline DateTime @default(now())
-  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String   @unique
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
 
 model Enrollment {
   id        String   @id @default(cuid())
   courseId  String
   userId    String
+  createdAt DateTime @default(now())
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
 
   @@unique([courseId, userId])
   @@index([courseId])
@@ -357,12 +347,12 @@ model CourseProgress {
   lastChapterId       String
   courseId            String
   watchedById         String
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @default(now()) @updatedAt
   lastChapter         Chapter          @relation(fields: [lastChapterId], references: [id], onDelete: Cascade)
   lastChapterProgress ChapterProgress? @relation(fields: [lastChapterId, watchedById], references: [chapterId, watchedById], onDelete: Cascade)
   course              Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   watchedBy           User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @default(now()) @updatedAt
 
   @@unique([courseId, watchedById])
   @@index([courseId])
@@ -373,15 +363,15 @@ model CourseProgress {
 
 model ChapterProgress {
   id               String           @id @default(cuid())
-  videoProgress    Int              @default(0)
   chapterId        String
+  videoProgress    Int              @default(0)
   watchedById      String
-  chapter          Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  watchedBy        User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
   watched          Boolean          @default(false)
-  courseProgresses CourseProgress[]
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @default(now()) @updatedAt
+  chapter          Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  watchedBy        User             @relation(fields: [watchedById], references: [id], onDelete: Cascade)
+  courseProgresses CourseProgress[]
 
   @@unique([chapterId, watchedById])
   @@index([chapterId])
@@ -391,18 +381,18 @@ model ChapterProgress {
 model LearnTrack {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   chapterId String
-  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
   minutes   Int      @default(1)
   day       Int      @default(0)
   month     Int      @default(0)
   year      Int      @default(0)
   weekday   Int      @default(0)
+  updatedAt DateTime @default(now()) @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId, chapterId, day, month, year])
   @@index([userId])
@@ -412,19 +402,17 @@ model LearnTrack {
 }
 
 model Email {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  sentAt    DateTime?
-  sent      Boolean   @default(false)
-  from      String
-  subject   String
-  body      String    @db.Text
-
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  sentAt     DateTime?
+  sent       Boolean     @default(false)
+  from       String
+  subject    String
+  body       String      @db.Text
+  creatorId  String
   recipients Recipient[]
-
-  creatorId String
-  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creator    User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   @@unique([creatorId, id])
   @@index([creatorId])
@@ -459,20 +447,20 @@ model SuggestedCourse {
   id         String   @id @default(cuid())
   createdAt  DateTime @default(now())
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   playlistId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model DailyStreak {
   id        String    @id @default(cuid())
-  start     DateTime?
   days      Int       @default(1)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String    @unique
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  start     DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ClaimCourseRequest {
@@ -483,15 +471,30 @@ model ClaimCourseRequest {
 
 model PromoCode {
   id              String   @id @default(cuid())
-  code            String
-  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId        String   @unique
   discountPercent Int
   active          Boolean
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  code            String
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([code, courseId])
   @@index([courseId])
   @@index([code])
+}
+
+model CourseToTag {
+  A String
+  B String
+
+  @@unique([A, B], map: "_CourseToTag_AB_unique")
+  @@index([B], map: "_CourseToTag_B_index")
+  @@map("_CourseToTag")
+}
+
+enum ChapterType {
+  YTVIDEO
+  VIDEO
+  TEXT
 }
