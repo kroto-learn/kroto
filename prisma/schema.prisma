@@ -106,7 +106,7 @@ model Payment {
 
 model Purchase {
   id                  String   @id @default(cuid())
-  creatorId           String
+  creatorId           String   @unique
   userId              String
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   razorpay_payment_id String   @unique
