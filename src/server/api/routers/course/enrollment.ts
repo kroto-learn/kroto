@@ -217,16 +217,6 @@ export const enrollmentCourseRouter = createTRPCRouter({
       if (!user || !course || !course.creatorId)
         throw new TRPCError({ code: "BAD_REQUEST" });
 
-      await prisma.purchase.create({
-        data: {
-          razorpay_order_id,
-          razorpay_payment_id,
-          razorpay_signature,
-          creatorId: course.creatorId,
-          userId: ctx.session.user.id,
-        },
-      });
-
       // Update Creator's Revenue
       let course_price = course.price;
       if (course.discount?.price) {
@@ -288,6 +278,17 @@ export const enrollmentCourseRouter = createTRPCRouter({
           },
         });
       }
+
+      await prisma.purchase.create({
+        data: {
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature,
+          creatorId: course.creatorId,
+          amount: course_price,
+          userId: ctx.session.user.id,
+        },
+      });
     }),
 
   isEnrolled: publicProcedure
