@@ -86,18 +86,6 @@ export const enrollmentCourseRouter = createTRPCRouter({
         });
       }
 
-      // TODO: send course enrollment confirmation
-      // try {
-      //   await sendRegistrationConfirmation(
-      //     course,
-      //     creator,
-      //     user.email,
-      //     user.name
-      //   );
-      // } catch (e) {
-      //   console.log(e);
-      // }
-
       return enrollment;
     }),
 
@@ -161,8 +149,6 @@ export const enrollmentCourseRouter = createTRPCRouter({
         receipt: shortid.generate(),
         payment_capture,
         notes: {
-          // These notes will be added to your transaction. So you can search it within their dashboard.
-          // Also, it's included in webhooks as well. So you can automate it.
           paymentFor: "course_purchase",
           userId: user.id,
           courseId: course.id,
@@ -214,15 +200,6 @@ export const enrollmentCourseRouter = createTRPCRouter({
       //   });
       // }
 
-      const purchase = await prisma.purchase.create({
-        data: {
-          razorpay_order_id,
-          razorpay_payment_id,
-          razorpay_signature,
-          userId: ctx.session.user.id,
-        },
-      });
-
       const course = await prisma.course.findUnique({
         where: { id: courseId },
         include: {
@@ -230,7 +207,6 @@ export const enrollmentCourseRouter = createTRPCRouter({
           creator: true,
         },
       });
-
       const user = await prisma.user.findUnique({
         where: {
           id: ctx.session.user.id,
@@ -239,6 +215,16 @@ export const enrollmentCourseRouter = createTRPCRouter({
 
       if (!user || !course || !course.creatorId)
         throw new TRPCError({ code: "BAD_REQUEST" });
+
+      await prisma.purchase.create({
+        data: {
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature,
+          creatorId: course.creatorId,
+          userId: ctx.session.user.id,
+        },
+      });
 
       // Update Creator's Revenue
       let course_price = course.price;
