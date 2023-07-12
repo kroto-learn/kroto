@@ -44,6 +44,7 @@ export const exampleRouter = createTRPCRouter({
       z.object({
         accountName: z.string(),
         accountNumber: z.string(),
+        accountType: z.string(),
         ifscCode: z.string(),
       })
     )
@@ -57,11 +58,13 @@ export const exampleRouter = createTRPCRouter({
           userId: ctx.session.user.id,
           accountName: input.accountName,
           accountNumber: input.accountNumber,
+          accountType: input.accountType,
           ifscCode: input.ifscCode,
         },
         update: {
           accountName: input.accountName,
           accountNumber: input.accountNumber,
+          accountType: input.accountType,
           ifscCode: input.ifscCode,
         },
       });
