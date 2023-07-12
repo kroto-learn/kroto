@@ -28,6 +28,7 @@ export default function CheckoutModal({
   const { data: session } = useSession();
   const { errorToast } = useToast();
   const [promoDiscount, setPromoDiscount] = useState(0);
+  const [promoCode, setPromoCode] = useState<string | undefined>(undefined);
   const [applyPromoCodeModal, setApplyPromoCodeModal] = useState(false);
 
   const isDiscount =
@@ -55,6 +56,8 @@ export default function CheckoutModal({
     // isLoading: verifyCoursePurchaseLoading,
   } = api.enrollmentCourse.verifyCoursePurchase.useMutation();
 
+  const ctx = api.useContext();
+
   const handleEnrollCourse = async () => {
     const razorpaySDK = await initializeRazorpay();
 
@@ -62,7 +65,10 @@ export default function CheckoutModal({
       errorToast("Something went wrong. Please try again later.");
     }
 
-    const courseOrder = await createCourseOrder({ courseId: course.id });
+    const courseOrder = await createCourseOrder({
+      courseId: course.id,
+      promoCode,
+    });
 
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
@@ -81,12 +87,16 @@ export default function CheckoutModal({
         razorpay_order_id: string;
         razorpay_signature: string;
       }) => {
+        void ctx.course.get.invalidate();
         await verifyCoursePurchase({
           razorpay_payment_id: response.razorpay_payment_id,
           razorpay_order_id: response.razorpay_order_id,
           razorpay_signature: response.razorpay_signature,
           courseId: course.id,
-          amount: price,
+          amount:
+            typeof courseOrder.amount === "string"
+              ? parseInt(courseOrder.amount)
+              : courseOrder.amount,
         });
         setIsOpen(false);
       },
@@ -271,6 +281,7 @@ export default function CheckoutModal({
         isOpen={applyPromoCodeModal}
         setIsOpen={setApplyPromoCodeModal}
         setPromoDiscount={setPromoDiscount}
+        setPromoCode={setPromoCode}
         courseId={course?.id}
       />
     </>

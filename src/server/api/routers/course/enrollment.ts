@@ -10,6 +10,7 @@ import Razorpay from "razorpay";
 import shortid from "shortid";
 import crypto from "crypto";
 import { env } from "@/env.mjs";
+import { paymentGatewayCharge } from "@/constants/values";
 
 const razorpay = new Razorpay({
   key_id: env.RAZORPAY_KEY_ID,
@@ -115,12 +116,14 @@ export const enrollmentCourseRouter = createTRPCRouter({
 
       let promoDiscount = 0;
 
-      const pc = await prisma.promoCode.findFirst({
-        where: {
-          code: input.promoCode,
-          courseId: input.courseId,
-        },
-      });
+      const pc = input.promoCode
+        ? await prisma.promoCode.findFirst({
+            where: {
+              code: input.promoCode,
+              courseId: input.courseId,
+            },
+          })
+        : undefined;
 
       if (pc && pc.active) promoDiscount = pc.discountPercent;
 
@@ -135,9 +138,13 @@ export const enrollmentCourseRouter = createTRPCRouter({
           ? course?.discount?.price
           : course?.permanentDiscount ?? 0;
 
-      const course_price = isDiscount
+      const priceWR = isDiscount
         ? discount - (promoDiscount / 100) * discount
         : course?.price - (promoDiscount / 100) * course?.price;
+
+      const course_price = parseFloat(
+        (priceWR + priceWR * paymentGatewayCharge).toFixed(2)
+      );
 
       const payment_capture = 1;
       const amount = course_price * 100;
@@ -220,12 +227,6 @@ export const enrollmentCourseRouter = createTRPCRouter({
         throw new TRPCError({ code: "BAD_REQUEST" });
 
       // Update Creator's Revenue
-      let course_price = course.price;
-      if (course.discount?.price) {
-        course_price = course.discount.price;
-      } else {
-        course_price = course.permanentDiscount ?? course.price;
-      }
 
       const paymentDataOfCreator = await prisma.payment.findFirst({
         where: {
@@ -237,7 +238,7 @@ export const enrollmentCourseRouter = createTRPCRouter({
         await prisma.payment.create({
           data: {
             userId: course.creatorId,
-            withdrawAmount: amount * 100,
+            withdrawAmount: amount,
           },
         });
       } else {
@@ -246,9 +247,8 @@ export const enrollmentCourseRouter = createTRPCRouter({
             id: paymentDataOfCreator.id,
           },
           data: {
-            withdrawAmount: paymentDataOfCreator.withdrawAmount + amount * 100,
-            lifeTimeEarnings:
-              paymentDataOfCreator.lifeTimeEarnings + amount * 100,
+            withdrawAmount: paymentDataOfCreator.withdrawAmount + amount,
+            lifeTimeEarnings: paymentDataOfCreator.lifeTimeEarnings + amount,
           },
         });
       }
@@ -287,7 +287,7 @@ export const enrollmentCourseRouter = createTRPCRouter({
           razorpay_payment_id,
           razorpay_signature,
           creatorId: course.creatorId,
-          amount: course_price * 100,
+          amount,
           userId: ctx.session.user.id,
         },
       });

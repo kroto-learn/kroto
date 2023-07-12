@@ -30,11 +30,13 @@ export default function ApplyPromoCodeModal({
   isOpen,
   setIsOpen,
   setPromoDiscount,
+  setPromoCode,
 }: {
   courseId: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   setPromoDiscount: Dispatch<SetStateAction<number>>;
+  setPromoCode: Dispatch<SetStateAction<string | undefined>>;
 }) {
   const methods = useZodForm({
     schema: applyPromoCodeSchema,
@@ -105,6 +107,7 @@ export default function ApplyPromoCodeModal({
                             if (discountPercent) {
                               successToast("Promo Code applied successfully!");
                               setPromoDiscount(discountPercent);
+                              setPromoCode(values.code);
                               setIsOpen(false);
                               methods.setValue("code", "");
                             } else {
