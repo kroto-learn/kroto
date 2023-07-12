@@ -25,7 +25,6 @@ import {
 import useToast from "@/hooks/useToast";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Loader } from "@/components/Loader";
-import { TRPCError } from "@trpc/server";
 
 const CourseEnrollment = () => {
   const router = useRouter();
@@ -35,7 +34,7 @@ const CourseEnrollment = () => {
   const { successToast } = useToast();
 
   const tableData = React.useMemo(() => {
-    if (course && !(course instanceof TRPCError) && course?.enrollments)
+    if (course && course?.enrollments)
       return course.enrollments.map((r) => ({
         col1: r.user?.image ?? "",
         col2: r.user?.name ?? "",
@@ -72,7 +71,7 @@ const CourseEnrollment = () => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance;
 
-  if (course instanceof TRPCError || !course) return <>Not Found</>;
+  if (!course) return <>Not Found</>;
 
   const courseUrl = `https://kroto.in/course/${course?.id ?? ""}`;
 

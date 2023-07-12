@@ -56,6 +56,9 @@ model User {
   isCreator             Boolean                 @default(false)
   bio                   String?                 @db.Text
   topmateUrl            String?
+  payment               Payment?
+  purchases             Purchase[]
+  bankDetails           BankDetails?
   accounts              Account[]
   sessions              Session[]
   socialLinks           SocialLink[]
@@ -75,6 +78,49 @@ model User {
   askedQueries          AskedQuery[]
   SuggestedCourse       SuggestedCourse[]
   learningStreak        DailyStreak?
+}
+
+enum AccountType {
+  SAVINGS
+  CURRENT
+}
+
+model BankDetails {
+  id            String @id @default(cuid())
+  userId        String @unique
+  accountName   String
+  accountNumber String
+  ifscCode      String
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@index([userId])
+}
+
+model Payment {
+  id               String @id @default(cuid())
+  userId           String
+  lifeTimeEarnings Int    @default(0)
+  withdrawAmount   Int    @default(0)
+  staleAmount      Int    @default(0)
+  user             User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+  @@index([userId])
+}
+
+model Purchase {
+  id                  String   @id @default(cuid())
+  creatorId           String   @unique
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount              Int      @default(0)
+  razorpay_payment_id String   @unique
+  razorpay_order_id   String
+  razorpay_signature  String
+  createdAt           DateTime @default(now())
+
+  @@index([userId, razorpay_payment_id])
 }
 
 model Event {
@@ -249,6 +295,7 @@ model Course {
   learnTracks       LearnTrack[]
   discount          Discount?
   startsAt          DateTime?
+  PromoCode         PromoCode?
 
   @@index([categoryId])
   @@index([creatorId])
@@ -431,4 +478,19 @@ model ClaimCourseRequest {
   id       String @id @default(cuid())
   email    String
   courseId String
+}
+
+model PromoCode {
+  id              String   @id @default(cuid())
+  code            String
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId        String   @unique
+  discountPercent Int
+  active          Boolean
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([code, courseId])
+  @@index([courseId])
+  @@index([code])
 }

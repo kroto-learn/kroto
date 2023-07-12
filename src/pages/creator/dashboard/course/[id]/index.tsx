@@ -24,7 +24,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import dynamic from "next/dynamic";
-import { TRPCError } from "@trpc/server";
+
 import ChapterManagePreviewModal from "@/components/ChapterManagePreviewModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotate } from "@fortawesome/free-solid-svg-icons";
@@ -80,7 +80,7 @@ const CourseOverview = () => {
       </>
     );
 
-  if (course instanceof TRPCError || !course) return <>Not found</>;
+  if (!course) return <>Not found</>;
 
   const courseUrl = `https://kroto.in/course/${course?.id ?? ""}`;
 

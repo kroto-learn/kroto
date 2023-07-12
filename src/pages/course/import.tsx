@@ -18,7 +18,7 @@ import { z } from "zod";
 // import "@uiw/react-md-editor/markdown-editor.css";
 // import "@uiw/react-markdown-preview/markdown.css";
 import { api } from "@/utils/api";
-import { TRPCError } from "@trpc/server";
+
 import { Loader } from "@/components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faYoutube } from "@fortawesome/free-brands-svg-icons";
@@ -225,7 +225,7 @@ const Index = () => {
             className="mt-1"
           />
 
-          {!playlists || playlists instanceof TRPCError || !searchFocused ? (
+          {!playlists || !searchFocused ? (
             <></>
           ) : (
             <div className="absolute top-36 z-10 mt-2 flex max-h-[65vh] w-full flex-col overflow-y-auto overflow-x-hidden rounded-xl border border-neutral-700 bg-neutral-800/80 backdrop-blur">
@@ -317,7 +317,7 @@ const Index = () => {
           onSubmit={methods.handleSubmit(async (values) => {
             await importCourseMutation(values, {
               onSuccess: (courseCreated) => {
-                if (courseCreated && !(courseCreated instanceof TRPCError)) {
+                if (courseCreated) {
                   MixPannelClient.getInstance().courseCreated({
                     courseId: courseCreated?.id,
                   });

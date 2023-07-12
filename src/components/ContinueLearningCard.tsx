@@ -7,7 +7,7 @@ import ImageWF from "@/components/ImageWF";
 import Link from "next/link";
 import { Doughnut } from "react-chartjs-2";
 import { api } from "@/utils/api";
-import { TRPCError } from "@trpc/server";
+
 import { Disclosure } from "@headlessui/react";
 
 type Props = {
@@ -26,7 +26,7 @@ const ContinueLearningCard = ({ courseId, defaultOpen }: Props) => {
       <div className="h-28 w-full animate-pulse rounded-xl bg-neutral-200/5 p-2 backdrop-blur-sm duration-150" />
     );
 
-  if (!courseFull || courseFull instanceof TRPCError) return <></>;
+  if (!courseFull) return <></>;
 
   const chaptersWatched = courseFull.chapters?.filter(
     (ch) => !!ch?.chapterProgress && ch?.chapterProgress?.watched

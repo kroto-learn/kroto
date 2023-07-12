@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, type SetStateAction } from "react";
+import { Fragment, useEffect, type SetStateAction } from "react";
 import React, { type ReactNode, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
@@ -30,7 +30,7 @@ import {
   CalendarIcon,
 } from "@heroicons/react/20/solid";
 import dynamic from "next/dynamic";
-import { TRPCError } from "@trpc/server";
+
 import AnimatedSection from "@/components/AnimatedSection";
 const CalenderBox = dynamic(() => import("@/components/CalenderBox"), {
   ssr: false,
@@ -77,12 +77,29 @@ const EventOverview = () => {
 
   const { successToast } = useToast();
 
-  if (event instanceof TRPCError || !event) return <>Event not found!</>;
+  const {
+    data: testError,
+    isError: isTestError,
+    isLoading: isTestLoading,
+  } = api.course.testingError.useQuery();
 
-  const { data: hosts, refetch: refetchHosts } =
-    api.eventHost.getHosts.useQuery({
-      eventId: event?.id ?? "",
-    });
+  useEffect(() => {
+    console.log("data", testError);
+    console.log("isError", isTestError);
+    console.log("isLoading", isTestLoading);
+  }, [testError, isTestError]);
+
+  if (!event) return <>Event not found!</>;
+
+  const {
+    data: hosts,
+    refetch: refetchHosts,
+    isError: isHostsError,
+  } = api.eventHost.getHosts.useQuery({
+    eventId: event?.id ?? "",
+  });
+
+  console.log("hosts", hosts, isHostsError);
 
   const { mutateAsync: addToCalendarMutation, isLoading: addingToCalendar } =
     api.emailSender.sendCalendarInvite.useMutation();
@@ -117,13 +134,14 @@ const EventOverview = () => {
               <div
                 className={`relative aspect-[18/9] w-full object-cover transition-all sm:w-[12rem] md:w-[16rem]`}
               >
-                <ImageWF
+                {/* <ImageWF
                   src={(event?.thumbnail as string) ?? ""}
                   alt={event?.title ?? ""}
                   fill
                   style={{ objectFit: "cover" }}
                   className="rounded-xl"
-                />
+                /> */}
+                {isTestError ? "true" : "false"}
               </div>
             </div>
 
@@ -380,7 +398,7 @@ const StartEventModal = ({ isOpen, setIsOpen, event }: SEProps) => {
   const { mutateAsync: sendNotification, isLoading } =
     api.emailSender.eventStarting.useMutation();
 
-  if (event instanceof TRPCError || !event) return <>Event not found!</>;
+  if (!event) return <>Event not found!</>;
 
   return (
     <>

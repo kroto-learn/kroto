@@ -1,5 +1,5 @@
 import { createTRPCRouter } from "@/server/api/trpc";
-import { exampleRouter } from "@/server/api/routers/example";
+import { paymetnRouter } from "./routers/creator/payments";
 import { creatorRouter } from "@/server/api/routers/creator/creator";
 import { eventRouter } from "./routers/event/event";
 import { emailSenderRouter } from "./email/emailSender";
@@ -20,6 +20,7 @@ import { enrollmentCourseRouter } from "./routers/course/enrollment";
 import { suggestionCourseRouter } from "./routers/course/suggestions";
 import { dailyReminderRouter } from "./routers/reminders/daily";
 import { cronTestRouter } from "./cront-test";
+import { promoCodeCourseRouter } from "./routers/course/promoCode";
 
 /**
  * This is the primary router for your server.
@@ -27,7 +28,7 @@ import { cronTestRouter } from "./cront-test";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  example: exampleRouter,
+  example: paymetnRouter,
   creator: creatorRouter,
 
   course: courseRouter,
@@ -38,6 +39,7 @@ export const appRouter = createTRPCRouter({
   ytCourse: ytCourseRouter,
   tagsCourse: tagsCourseRouter,
   categoriesCourse: categoriesCourseRouter,
+  promoCodeCourse: promoCodeCourseRouter,
   suggestionsCourse: suggestionCourseRouter,
 
   emailReminder: dailyReminderRouter,

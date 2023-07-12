@@ -1,10 +1,15 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
-import { type Dispatch, Fragment, type SetStateAction } from "react";
-
+import { type Dispatch, Fragment, type SetStateAction, useState } from "react";
 import { type Discount, type Course } from "@prisma/client";
 import ImageWF from "@/components/ImageWF";
+import { api } from "@/utils/api";
+import { initializeRazorpay } from "@/helpers/razorpay";
+import useToast from "@/hooks/useToast";
+import { useSession } from "next-auth/react";
+import { MinusCircleIcon, TicketIcon } from "@heroicons/react/24/outline";
+import ApplyPromoCodeModal from "./ApplyPromoCodeModal";
 
 export default function CheckoutModal({
   course,
@@ -20,6 +25,11 @@ export default function CheckoutModal({
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) {
+  const { data: session } = useSession();
+  const { errorToast } = useToast();
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [applyPromoCodeModal, setApplyPromoCodeModal] = useState(false);
+
   const isDiscount =
     course?.permanentDiscount !== null ||
     (course?.discount &&
@@ -31,7 +41,62 @@ export default function CheckoutModal({
       ? course?.discount?.price
       : course?.permanentDiscount ?? 0;
 
-  const price = isDiscount ? discount : course?.price;
+  const price = isDiscount
+    ? discount - (promoDiscount / 100) * discount
+    : course?.price - (promoDiscount / 100) * course?.price;
+
+  const {
+    mutateAsync: createCourseOrder,
+    // isLoading: createCourseOrderLoading,
+  } = api.enrollmentCourse.createBuyCourseOrder.useMutation();
+
+  const {
+    mutateAsync: verifyCoursePurchase,
+    // isLoading: verifyCoursePurchaseLoading,
+  } = api.enrollmentCourse.verifyCoursePurchase.useMutation();
+
+  const handleEnrollCourse = async () => {
+    const razorpaySDK = await initializeRazorpay();
+
+    if (!razorpaySDK) {
+      errorToast("Something went wrong. Please try again later.");
+    }
+
+    const courseOrder = await createCourseOrder({ courseId: course.id });
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+      name: "Kroto",
+      currency: courseOrder.currency,
+      amount: courseOrder.amount,
+      order_id: courseOrder.id,
+      description: "Hope you make the most out of this course :)",
+      image: "https://kroto.in/kroto-logo-p.png",
+      prefill: {
+        name: session?.user?.name,
+        email: session?.user?.email,
+      },
+      handler: async (response: {
+        razorpay_payment_id: string;
+        razorpay_order_id: string;
+        razorpay_signature: string;
+      }) => {
+        await verifyCoursePurchase({
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
+          courseId: course.id,
+          amount: price,
+        });
+        setIsOpen(false);
+      },
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const paymentObject = new window.Razorpay(options);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    paymentObject.open();
+  };
 
   return (
     <>
@@ -122,10 +187,31 @@ export default function CheckoutModal({
                       </div>
                     </div>
                   </div>
-                  <div className="mb-2 text-neutral-400 hover:text-neutral-200">
-                    <Link className="text-sm" href="/refund-policy">
+                  <div className="mb-2 flex items-center justify-between gap-4 ">
+                    <Link
+                      className="text-sm text-neutral-400 hover:text-neutral-200"
+                      href="/refund-policy"
+                    >
                       Refund Policy
                     </Link>
+
+                    {promoDiscount <= 0 ? (
+                      <button
+                        onClick={() => setApplyPromoCodeModal(true)}
+                        className="flex items-center gap-1 text-sm font-bold"
+                      >
+                        <TicketIcon className="w-5 text-pink-600" />
+                        Apply Promo Code
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setPromoDiscount(0)}
+                        className="flex items-center gap-1 text-xs font-bold"
+                      >
+                        <MinusCircleIcon className="w-4 text-red-600" />
+                        Remove Promo Code
+                      </button>
+                    )}
                   </div>
                   <div className="mb-4 flex w-full flex-col">
                     <div className="flex w-full justify-between px-1 py-1">
@@ -151,6 +237,14 @@ export default function CheckoutModal({
                     ) : (
                       <></>
                     )}
+                    {promoDiscount > 0 ? (
+                      <div className="flex w-full justify-between px-1 py-1">
+                        <label>Promo Code Discount</label>
+                        <p className="text-green-500">-{promoDiscount}%</p>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
                     <div className="flex w-full justify-between border-b border-t border-neutral-300 px-1 py-1">
                       <label>To pay</label>
                       <p className="text-xl font-bold">
@@ -159,7 +253,12 @@ export default function CheckoutModal({
                     </div>
                   </div>
 
-                  <button className="flex w-full items-center justify-center rounded-lg bg-pink-500 px-3 py-2  text-center font-bold uppercase tracking-wider duration-150 hover:bg-pink-600">
+                  <button
+                    onClick={() => {
+                      void handleEnrollCourse();
+                    }}
+                    className="flex w-full items-center justify-center rounded-lg bg-pink-500 px-3 py-2  text-center font-bold uppercase tracking-wider duration-150 hover:bg-pink-600"
+                  >
                     Checkout
                   </button>
                 </Dialog.Panel>
@@ -168,6 +267,12 @@ export default function CheckoutModal({
           </div>
         </Dialog>
       </Transition>
+      <ApplyPromoCodeModal
+        isOpen={applyPromoCodeModal}
+        setIsOpen={setApplyPromoCodeModal}
+        setPromoDiscount={setPromoDiscount}
+        courseId={course?.id}
+      />
     </>
   );
 }

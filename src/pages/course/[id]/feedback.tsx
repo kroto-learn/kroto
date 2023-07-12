@@ -6,7 +6,7 @@ import {
   PaperAirplaneIcon,
 } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TRPCError } from "@trpc/server";
+
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -70,7 +70,7 @@ const Index = () => {
   const isLoading =
     session.status === "loading" || courseLoading || feedbackLoading;
 
-  if (course instanceof TRPCError) return <>Course not found!</>;
+  if (!course) return <>Course not found!</>;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">

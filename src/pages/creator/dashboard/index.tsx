@@ -6,8 +6,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment, useEffect, type ReactNode } from "react";
 import CalenderIcon from "@heroicons/react/20/solid/CalendarIcon";
-import { CalendarIcon } from "@heroicons/react/24/outline";
 import UserGroupIcon from "@heroicons/react/20/solid/UserGroupIcon";
+import BanknotesIcon from "@heroicons/react/20/solid/BanknotesIcon";
+import { BanknotesIcon as BanknotesIconO } from "@heroicons/react/24/outline";
 import { UserGroupIcon as UserGroupIconO } from "@heroicons/react/24/outline";
 import Cog6ToothIcon from "@heroicons/react/20/solid/Cog6ToothIcon";
 import { Cog6ToothIcon as Cog6ToothIconO } from "@heroicons/react/24/outline";
@@ -21,10 +22,7 @@ import {
   QuestionMarkCircleIcon,
   RectangleStackIcon,
 } from "@heroicons/react/20/solid";
-import {
-  RectangleStackIcon as RectangleStackIconO,
-  QuestionMarkCircleIcon as QuestionMarkCircleIconO,
-} from "@heroicons/react/24/outline";
+import { RectangleStackIcon as RectangleStackIconO } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 
@@ -138,40 +136,6 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                 }`}
               />
             </Link>
-            <Link
-              href="/creator/dashboard/events"
-              className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
-                pathname && pathname.startsWith("/creator/dashboard/event")
-                  ? "text-pink-500"
-                  : "hover:text-neutral-200"
-              }`}
-            >
-              <span className="w-1/3" />
-              <div className="flex  w-full items-center gap-2">
-                <CalendarIcon
-                  className={`w-6 ${
-                    pathname && pathname.startsWith("/creator/dashboard/event")
-                      ? "hidden"
-                      : ""
-                  }`}
-                />{" "}
-                <CalenderIcon
-                  className={` w-6 ${
-                    pathname && pathname.startsWith("/creator/dashboard/event")
-                      ? "flex"
-                      : "hidden"
-                  }`}
-                />{" "}
-                <span className="hidden md:block">Events</span>
-              </div>
-              <span
-                className={`h-full w-1 rounded-l-lg bg-pink-600 ${
-                  pathname && pathname.startsWith("/creator/dashboard/event")
-                    ? "opacity-100"
-                    : "opacity-0"
-                }`}
-              />
-            </Link>
             {/* <Link
               href="/creator/dashboard/marketing"
               className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
@@ -248,9 +212,9 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               />
             </Link>
             <Link
-              href="/creator/dashboard/queries"
+              href="/creator/dashboard/payment"
               className={`group flex h-12 w-full cursor-pointer grid-cols-3 gap-3 text-xl transition duration-200 ease-linear hover:bg-neutral-700/50 ${
-                pathname && pathname.startsWith("/creator/dashboard/queries")
+                pathname && pathname.startsWith("/creator/dashboard/payment")
                   ? "text-pink-500"
                   : "hover:text-neutral-200"
               }`}
@@ -258,27 +222,27 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
               <span className="w-1/3" />
 
               <div className="flex w-full items-center gap-2">
-                <QuestionMarkCircleIconO
+                <BanknotesIconO
                   className={` w-6 ${
                     pathname &&
-                    pathname.startsWith("/creator/dashboard/queries")
+                    pathname.startsWith("/creator/dashboard/payment")
                       ? "hidden"
                       : ""
                   }`}
                 />{" "}
-                <QuestionMarkCircleIcon
+                <BanknotesIcon
                   className={`w-6 ${
                     pathname &&
-                    pathname.startsWith("/creator/dashboard/queries")
+                    pathname.startsWith("/creator/dashboard/payment")
                       ? "flex"
                       : "hidden"
                   }`}
                 />{" "}
-                <span className="hidden md:block">Queries</span>
+                <span className="hidden md:block">Payments</span>
               </div>
               <span
                 className={`h-full w-1 rounded-l-lg bg-pink-600 ${
-                  pathname && pathname.startsWith("/creator/dashboard/queries")
+                  pathname && pathname.startsWith("/creator/dashboard/payment")
                     ? "opacity-100"
                     : "opacity-0"
                 }`}
@@ -357,6 +321,28 @@ function DashboardLayoutR({ children }: { children: ReactNode }) {
                               <span className="hidden md:block">
                                 Testimonials
                               </span>{" "}
+                            </div>
+                          </Menu.Item>
+                        </Link>
+                        <Link
+                          href={`/creator/dashboard/events`}
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-12"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <CalenderIcon className={` w-4`} />{" "}
+                              <span className="hidden md:block">Events</span>{" "}
+                            </div>
+                          </Menu.Item>
+                        </Link>
+                        <Link
+                          href={`/creator/dashboard/queries`}
+                          className="flex h-12 w-full items-center justify-center font-medium transition duration-300 hover:bg-neutral-700/30 hover:text-pink-500 md:justify-start md:px-12"
+                        >
+                          <Menu.Item>
+                            <div className="flex items-center gap-2 text-xl md:text-sm">
+                              <QuestionMarkCircleIcon className={`w-4`} />{" "}
+                              <span className="hidden md:block">Queries</span>{" "}
                             </div>
                           </Menu.Item>
                         </Link>

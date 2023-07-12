@@ -9,7 +9,7 @@ import CourseCard from "@/components/CourseCard";
 import { isAdmin } from "@/server/helpers/admin";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { TRPCError } from "@trpc/server";
+
 import { AdminDashboardLayout } from "..";
 
 const Index = () => {
@@ -73,7 +73,7 @@ const Index = () => {
           <div className="flex h-[50vh] w-full items-center justify-center">
             <Loader size="lg" />
           </div>
-        ) : !(courses instanceof TRPCError) && courses && courses.length > 0 ? (
+        ) : courses && courses.length > 0 ? (
           <AnimatedSection
             delay={0.2}
             className="flex max-h-[76vh] w-full flex-col items-start gap-4 overflow-y-scroll"

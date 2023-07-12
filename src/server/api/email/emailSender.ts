@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { TRPCError } from "@trpc/server";
+
 import {
   sendCalendarInvite,
   sendEventStarted,
   sendEventUpdate,
   sendUpdatePreview,
 } from "@/server/helpers/emailHelper";
+import { TRPCError } from "@trpc/server";
 
 export const emailSenderRouter = createTRPCRouter({
   sendCalendarInvite: protectedProcedure

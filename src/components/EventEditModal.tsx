@@ -16,7 +16,6 @@ import { PhotoIcon, LinkIcon } from "@heroicons/react/20/solid";
 import { Loader } from "./Loader";
 import useRevalidateSSG from "@/hooks/useRevalidateSSG";
 import { MapPinIcon } from "@heroicons/react/24/outline";
-import { TRPCError } from "@trpc/server";
 
 const MDEditor = dynamic<MDEditorProps>(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -116,7 +115,7 @@ const EventEditModal = () => {
   );
 
   useEffect(() => {
-    if (event && !eventInit && !(event instanceof TRPCError)) {
+    if (event && !eventInit) {
       setEventInit(true);
       methods.setValue("title", event?.title ?? "");
       methods.setValue("thumbnail", event?.thumbnail ?? "");
@@ -145,7 +144,7 @@ const EventEditModal = () => {
 
   const revalidate = useRevalidateSSG();
 
-  if (event instanceof TRPCError || !event) return <></>;
+  if (!event) return <></>;
 
   return (
     <form

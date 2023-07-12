@@ -2,22 +2,37 @@ import { api } from "@/utils/api";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon, Bars3Icon } from "@heroicons/react/20/solid";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
-import { TRPCError } from "@trpc/server";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AnimatedSection from "../AnimatedSection";
 import { useRouter } from "next/router";
 import { type ReactNode, Fragment } from "react";
+import { Loader } from "../Loader";
 
 export default function EventLayoutR({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { id } = router.query as { id: string };
 
-  const { data: event } = api.event.get.useQuery({ id });
+  const { data: event, isLoading: eventLoading } = api.event.get.useQuery({
+    id,
+  });
 
   const pathname = usePathname();
 
-  if (event instanceof TRPCError || !event) return <></>;
+  if (eventLoading)
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center p-8">
+        <Loader size="lg" />
+      </div>
+    );
+
+  if (!event)
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center p-8">
+        <p className="text-center">Event not found</p>
+      </div>
+    );
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start justify-start gap-4 p-8">

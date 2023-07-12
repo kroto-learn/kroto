@@ -4,7 +4,7 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
-import { TRPCError } from "@trpc/server";
+
 import { getPlaylistDataService } from "@/server/services/youtube";
 import { generateStaticCourseOgImage } from "@/server/services/og";
 import { env } from "@/env.mjs";
@@ -17,6 +17,7 @@ import { importCourseFormSchema } from "@/pages/course/import";
 import { adminImportCourseFormSchema } from "@/pages/course/admin-import";
 import { editCourseFormSchema } from "@/components/CourseEditModal";
 import isBase64 from "is-base64";
+import { TRPCError } from "@trpc/server";
 const { NEXTAUTH_URL } = env;
 
 const OG_URL = `${
@@ -61,7 +62,7 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course) throw new TRPCError({ code: "BAD_REQUEST" });
       const isEnrolled = course?.enrollments.find(
         (er) => ctx.session.user.id === er.userId
       );
@@ -71,7 +72,7 @@ export const courseRouter = createTRPCRouter({
         ctx.session.user.id !== course?.creatorId &&
         !isAdmin(ctx.session.user.email ?? "")
       )
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const courseProgress = course.courseProgress[0];
 
@@ -104,7 +105,7 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const chapters = course.chapters;
 
@@ -218,7 +219,7 @@ export const courseRouter = createTRPCRouter({
       const { prisma } = ctx;
 
       if (!isAdmin(ctx.session.user.email ?? ""))
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const myCourses = await prisma.course.findMany({
         where: {
@@ -264,7 +265,7 @@ export const courseRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
 
-      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!input) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const course = await prisma.course.create({
         data: {
@@ -345,13 +346,13 @@ export const courseRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
 
-      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!input) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const existingCourse = await prisma.course.findFirst({
         where: { ytId: input.ytId },
       });
 
-      if (existingCourse) return new TRPCError({ code: "BAD_REQUEST" });
+      if (existingCourse) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const course = await prisma.course.create({
         data: {
@@ -430,16 +431,16 @@ export const courseRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { prisma } = ctx;
 
-      if (!input) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!input) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (!isAdmin(ctx.session.user.email ?? ""))
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const existingCourse = await prisma.course.findFirst({
         where: { ytId: input.ytId },
       });
 
-      if (existingCourse) return new TRPCError({ code: "BAD_REQUEST" });
+      if (existingCourse) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const course = await prisma.course.create({
         data: {
@@ -516,16 +517,16 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course) throw new TRPCError({ code: "BAD_REQUEST" });
       const playlistData = await getPlaylistDataService(course?.ytId ?? "");
 
       if (
         course?.creatorId !== ctx.session.user.id &&
         !isAdmin(ctx.session.user.email ?? "")
       )
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
-      if (!playlistData) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!playlistData) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const updatedCourse = await prisma.course.update({
         where: {
@@ -632,7 +633,7 @@ export const courseRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course) throw new TRPCError({ code: "BAD_REQUEST" });
 
       let thumbnail = input.thumbnail;
       if (isBase64(input.thumbnail, { allowMime: true })) {
@@ -659,7 +660,7 @@ export const courseRouter = createTRPCRouter({
         course?.creatorId !== ctx.session.user.id &&
         !isAdmin(ctx.session.user.email ?? "")
       )
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const updatedCourse = await prisma.course.update({
         where: { id: input.id },
@@ -725,13 +726,13 @@ export const courseRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (
         course?.creatorId !== ctx.session.user.id &&
         !isAdmin(ctx.session.user.email ?? "")
       )
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const updatedCourse = await prisma.course.update({
         where: { id: input.id },
@@ -807,13 +808,13 @@ export const courseRouter = createTRPCRouter({
         },
       });
 
-      if (!course) return new TRPCError({ code: "BAD_REQUEST" });
+      if (!course) throw new TRPCError({ code: "BAD_REQUEST" });
 
       if (
         course.creatorId !== ctx.session.user.id &&
         !isAdmin(ctx.session.user.email ?? "")
       )
-        return new TRPCError({ code: "BAD_REQUEST" });
+        throw new TRPCError({ code: "BAD_REQUEST" });
 
       const courseDeleted = await prisma.course.delete({
         where: {
@@ -823,4 +824,9 @@ export const courseRouter = createTRPCRouter({
 
       return courseDeleted;
     }),
+
+  // FIXME: remove me
+  testingError: publicProcedure.query(() => {
+    throw new TRPCError({ code: "BAD_REQUEST" });
+  }),
 });
