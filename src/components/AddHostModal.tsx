@@ -4,14 +4,7 @@ import { type RouterOutputs, api } from "@/utils/api";
 import { Dialog, Transition } from "@headlessui/react";
 import { UserPlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import AnimatedSection from "./AnimatedSection";
-
-import {
-  type Dispatch,
-  Fragment,
-  type SetStateAction,
-  useState,
-  useEffect,
-} from "react";
+import { type Dispatch, Fragment, type SetStateAction, useState } from "react";
 import { Loader } from "./Loader";
 import ImageWF from "@/components/ImageWF";
 
