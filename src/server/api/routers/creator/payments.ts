@@ -1,6 +1,6 @@
 import { z } from "zod";
-
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { AccountType } from "@prisma/client";
 
 export const exampleRouter = createTRPCRouter({
   getPaymentDetails: protectedProcedure.query(async ({ ctx }) => {
@@ -44,12 +44,13 @@ export const exampleRouter = createTRPCRouter({
       z.object({
         accountName: z.string(),
         accountNumber: z.string(),
-        accountType: z.string(),
+        accountType: z.nativeEnum(AccountType),
         ifscCode: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
+
       const bankDetails = await prisma.bankDetails.upsert({
         where: {
           userId: ctx.session.user.id,
