@@ -13,8 +13,7 @@ import CurrentAccount from "@/components/CurrentAccount";
 import { Fragment, useState } from "react";
 
 const Index = () => {
-  const { data: paymentDetails, isLoading } =
-    api.example.getPaymentDetails.useQuery();
+  const { data: paymentDetails } = api.example.getPaymentDetails.useQuery();
 
   const [isSaving, setIsSaving] = useState<boolean>(true);
   const [isOpen, setIsOpen] = useState<boolean>(false);
