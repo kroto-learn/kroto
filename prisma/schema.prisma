@@ -86,13 +86,15 @@ enum AccountType {
 }
 
 model BankDetails {
-  id            String @id @default(cuid())
-  userId        String @unique
+  id            String      @id @default(cuid())
+  userId        String
+  accountType   AccountType @default(SAVINGS)
   accountName   String
   accountNumber String
   ifscCode      String
-  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId])
   @@index([userId])
 }
 
@@ -110,16 +112,16 @@ model Payment {
 
 model Purchase {
   id                  String   @id @default(cuid())
-  creatorId           String   @unique
+  creatorId           String
   userId              String
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount              Int      @default(0)
-  razorpay_payment_id String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  razorpay_payment_id String
   razorpay_order_id   String
   razorpay_signature  String
   createdAt           DateTime @default(now())
 
-  @@index([userId, razorpay_payment_id])
+  @@index([userId])
 }
 
 model Event {
