@@ -126,8 +126,15 @@ const EventEditModal = () => {
       methods.setValue("eventType", event?.eventType ?? "");
       methods.setValue("description", event?.description ?? "");
       const loadInitMdText = async () => {
-        const blocks = await editor.markdownToBlocks(event?.description ?? "");
-        if (blocks) editor.replaceBlocks(editor.topLevelBlocks, blocks);
+        try {
+          const blocks = await editor.markdownToBlocks(
+            event?.description ?? ""
+          );
+          if (blocks && editor.topLevelBlocks)
+            editor.replaceBlocks(editor.topLevelBlocks, blocks);
+        } catch (err) {
+          console.log("mdEditorError", err);
+        }
       };
       void loadInitMdText();
       methods.setValue("datetime", event?.datetime ?? new Date());

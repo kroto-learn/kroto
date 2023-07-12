@@ -162,8 +162,15 @@ const CourseEditModal = () => {
       methods.setValue("thumbnail", course?.thumbnail ?? "");
       methods.setValue("description", course?.description ?? "");
       const loadInitMdText = async () => {
-        const blocks = await editor.markdownToBlocks(course?.description ?? "");
-        if (blocks) editor.replaceBlocks(editor.topLevelBlocks, blocks);
+        try {
+          const blocks = await editor.markdownToBlocks(
+            course?.description ?? ""
+          );
+          if (blocks && editor.topLevelBlocks)
+            editor.replaceBlocks(editor.topLevelBlocks, blocks);
+        } catch (err) {
+          console.log("mdEditorError", err);
+        }
       };
       void loadInitMdText();
       methods.setValue("price", course?.price.toString());
