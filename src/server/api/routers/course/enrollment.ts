@@ -178,12 +178,14 @@ export const enrollmentCourseRouter = createTRPCRouter({
         razorpay_payment_id: z.string(),
         razorpay_order_id: z.string(),
         razorpay_signature: z.string(),
+        amount: z.number(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const {
         courseId,
+        amount,
         razorpay_order_id,
         razorpay_payment_id,
         razorpay_signature,
@@ -235,7 +237,7 @@ export const enrollmentCourseRouter = createTRPCRouter({
         await prisma.payment.create({
           data: {
             userId: course.creatorId,
-            withdrawAmount: course_price,
+            withdrawAmount: amount * 100,
           },
         });
       } else {
@@ -244,9 +246,9 @@ export const enrollmentCourseRouter = createTRPCRouter({
             id: paymentDataOfCreator.id,
           },
           data: {
-            withdrawAmount: paymentDataOfCreator.withdrawAmount + course_price,
+            withdrawAmount: paymentDataOfCreator.withdrawAmount + amount * 100,
             lifeTimeEarnings:
-              paymentDataOfCreator.lifeTimeEarnings + course_price,
+              paymentDataOfCreator.lifeTimeEarnings + amount * 100,
           },
         });
       }
@@ -285,7 +287,7 @@ export const enrollmentCourseRouter = createTRPCRouter({
           razorpay_payment_id,
           razorpay_signature,
           creatorId: course.creatorId,
-          amount: course_price,
+          amount: course_price * 100,
           userId: ctx.session.user.id,
         },
       });

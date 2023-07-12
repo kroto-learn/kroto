@@ -80,13 +80,19 @@ model User {
   learningStreak        DailyStreak?
 }
 
+enum AccountType {
+  SAVINGS
+  CURRENT
+}
+
 model BankDetails {
-  id            String @id @default(cuid())
+  id            String      @id @default(cuid())
   userId        String
+  accountType   AccountType @default(SAVINGS)
   accountName   String
   accountNumber String
   ifscCode      String
-  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
   @@index([userId])
