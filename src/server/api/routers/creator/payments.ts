@@ -14,6 +14,20 @@ export const paymetnRouter = createTRPCRouter({
     return paymentDetails;
   }),
 
+  getPurchases: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+    const purchases = await prisma.purchase.findMany({
+      where: {
+        creatorId: ctx.session.user.id,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return purchases;
+  }),
+
   getBankDetails: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
     const bankDetails = await prisma.bankDetails.findFirst({
@@ -30,6 +44,7 @@ export const paymetnRouter = createTRPCRouter({
       z.object({
         accountName: z.string(),
         accountNumber: z.string(),
+        accountType: z.string(),
         ifscCode: z.string(),
       })
     )
@@ -43,11 +58,13 @@ export const paymetnRouter = createTRPCRouter({
           userId: ctx.session.user.id,
           accountName: input.accountName,
           accountNumber: input.accountNumber,
+          accountType: input.accountType,
           ifscCode: input.ifscCode,
         },
         update: {
           accountName: input.accountName,
           accountNumber: input.accountNumber,
+          accountType: input.accountType,
           ifscCode: input.ifscCode,
         },
       });
